@@ -1,0 +1,248 @@
+# Copyright (C) 2024 Scouting Nederland
+# This file is distributed under the same license as the Scouting OpenID Connect plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Scouting OpenID Connect 0.0.1\n"
+"Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/"
+"issues\n"
+"POT-Creation-Date: 2024-08-07 23:08+0200\n"
+"PO-Revision-Date: 2024-08-07 23:08+0200\n"
+"Last-Translator: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
+"Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
+"Language: nl_NL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.4\n"
+"X-Poedit-KeywordsList: __;esc_html__;_e;esc_html_e\n"
+"X-Poedit-Basepath: ../src\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: auth/OpenIDConnectClient.php:96
+msgid "The authorization endpoint is not available in the well known data."
+msgstr "Het autorisatie eindpunt is niet beschikbaar in de well known data."
+
+#: auth/OpenIDConnectClient.php:131
+msgid "The token endpoint is not available in the well known data."
+msgstr "Het token eindpunt is niet beschikbaar in de well known data."
+
+#: auth/OpenIDConnectClient.php:164 auth/OpenIDConnectClient.php:269
+msgid "Failed to retrieve tokens. Response code:"
+msgstr "Het ophalen van tokens is mislukt. Responscode:"
+
+#: auth/OpenIDConnectClient.php:164 auth/OpenIDConnectClient.php:269
+msgid "Response message:"
+msgstr "Antwoordbericht:"
+
+#: auth/OpenIDConnectClient.php:192
+msgid "The ID token is not available in the tokens."
+msgstr "Het ID-token is niet beschikbaar in de tokens."
+
+#: auth/OpenIDConnectClient.php:197
+msgid "The JSON Web Key Set (JWKS) is not available"
+msgstr "De JSON Web Key Set (JWKS) is niet beschikbaar"
+
+#: auth/OpenIDConnectClient.php:219
+msgid "The certificate chain (x5c) for the key ID (kid) specified in the header was not found."
+msgstr "De certificaatketen (x5c) voor de sleutel-ID (kid) in de koptekst is niet gevonden."
+
+#: auth/OpenIDConnectClient.php:229
+msgid "The signature in the ID token is not valid."
+msgstr "De handtekening in het ID-token is niet geldig."
+
+#: auth/OpenIDConnectClient.php:246
+msgid "The userinfo endpoint is not available in the well known data."
+msgstr "Het eindpunt userinfo is niet beschikbaar in de well known data."
+
+#: auth/OpenIDConnectClient.php:251
+msgid "The access token is not available in the tokens."
+msgstr "Het toegangstoken is niet beschikbaar in de tokens."
+
+#: auth/OpenIDConnectClient.php:285
+msgid "The end session endpoint is not available in the well known data."
+msgstr "Het eindpunt van de sessie is niet beschikbaar in de bekende gegevens."
+
+#: auth/OpenIDConnectClient.php:310
+msgid "An issuer must be provided in the config."
+msgstr "In de configuratie moet een issuer worden opgegeven."
+
+#: auth/OpenIDConnectClient.php:315
+msgid "The issuer URL is not valid."
+msgstr "De URL van de issuer is ongeldig."
+
+#: auth/OpenIDConnectClient.php:338
+msgid "Scopes must be a non-empty array."
+msgstr "Scopes moeten een niet-lege array zijn."
+
+#: auth/OpenIDConnectClient.php:345
+msgid "Scope"
+msgstr "Scope"
+
+#: auth/OpenIDConnectClient.php:345
+msgid "is not supported by the server, supported scopes are:"
+msgstr "wordt niet ondersteund door de server, ondersteunde scopes zijn:"
+
+#: auth/OpenIDConnectClient.php:362
+msgid "Well known data is not available."
+msgstr "Er zijn geen bekende gegevens beschikbaar."
+
+#: auth/OpenIDConnectClient.php:367
+msgid "The jwks_uri is not available in the well known data."
+msgstr "De jwks_uri is niet beschikbaar in de bekende gegevens."
+
+#: auth/OpenIDConnectClient.php:372
+msgid "The jwks_uri is not a valid URL."
+msgstr "De jwks_uri is geen geldige URL."
+
+#: auth/auth.php:34 auth/auth.php:65
+msgid "Login with Scouts Online"
+msgstr "Inloggen met Scouts Online"
+
+#: auth/auth.php:128
+msgid "Webmaster disabled creation of new accounts"
+msgstr "Webmaster heeft het aanmaken van nieuwe accounts uitgeschakeld"
+
+#: auth/auth.php:150
+msgid "The user denied the request"
+msgstr "De gebruiker heeft het verzoek geweigerd"
+
+#: plugin/actions.php:9
+msgid "Settings"
+msgstr "Instellingen"
+
+#: plugin/description.php:10
+msgid "WordPress plugin for logging in with Scouting Nederland OpenID Connect Server."
+msgstr "WordPress plugin om in te loggen met Scouting Nederland OpenID Connect Server."
+
+#: settings/general.php:6
+msgid "General Settings"
+msgstr "Algemene Instellingen"
+
+#: settings/general.php:14
+msgid "Set display name"
+msgstr "Weergavenaam instellen"
+
+#: settings/general.php:23
+msgid "Store birthdate to local profile"
+msgstr "Geboortedatum opslaan in lokaal profiel"
+
+#: settings/general.php:32
+msgid "Store gender to local profile"
+msgstr "Geslacht opslaan in lokaal profiel"
+
+#: settings/general.php:41
+msgid "Store Scouting ID to local profile"
+msgstr "Scouting ID opslaan in lokaal profiel"
+
+#: settings/general.php:50
+msgid "Allow new user accounts"
+msgstr "Sta nieuwe gebruikers accounts toe"
+
+#: settings/general.php:59
+msgid "Prefix for all Scouting Nederland users"
+msgstr "Voorvoegsel voor alle Scouting Nederland gebruikers"
+
+#: settings/general.php:68
+msgid "After a successful login redirect user to"
+msgstr "Na een succesvolle aanmelding wordt de gebruiker doorgestuurd naar"
+
+#: settings/general.php:123
+msgid "Full name"
+msgstr "Volledige naam"
+
+#: settings/general.php:124
+msgid "First name"
+msgstr "Voornaam"
+
+#: settings/general.php:125
+msgid "Last name"
+msgstr "Achternaam"
+
+#: settings/general.php:126
+msgid "Username"
+msgstr "Gebruikersnaam"
+
+#: settings/general.php:177
+msgid "This prefix will be added to the username of all Scouting Nederland users"
+msgstr "Dit voorvoegsel wordt toegevoegd aan de gebruikersnaam van alle Scouting Nederland gebruikers"
+
+#: settings/general.php:183
+msgid "Default (no action)"
+msgstr "Standaard (geen actie)"
+
+#: settings/general.php:184
+msgid "Frontpage"
+msgstr "Voorpagina"
+
+#: settings/general.php:185
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: settings/oidc.php:6
+msgid "OpenID Connect Settings"
+msgstr "OpenID Connect Instellingen"
+
+#: settings/oidc.php:14
+msgid "Client ID"
+msgstr "Client ID"
+
+#: settings/oidc.php:23
+msgid "Client Secret"
+msgstr "Client Secret"
+
+#: settings/oidc.php:32
+msgid "Scopes"
+msgstr "Scopes"
+
+#: settings/page.php:33
+msgid "Scouting OpenID Connect Settings"
+msgstr "Scouting OpenID Connect Instellingen"
+
+#: user/fields.php:9
+msgid "Scouts Online (SOL) Profile Information"
+msgstr "Scouts Online (SOL) Profiel Informatie"
+
+#: user/fields.php:35
+msgid "Scouting ID"
+msgstr "Scouting ID"
+
+#: user/fields.php:51
+msgid "Birthdate"
+msgstr "Geboortedatum"
+
+#: user/fields.php:67
+msgid "Gender"
+msgstr "Geslacht"
+
+#: user/fields.php:70
+msgid "Male"
+msgstr "Man"
+
+#: user/fields.php:71
+msgid "Female"
+msgstr "Vrouw"
+
+#: user/fields.php:72
+msgid "Other"
+msgstr "Overige"
+
+#: user/fields.php:73
+msgid "Unknown"
+msgstr "Onbekend"
+
+#: user/fields.php:102
+msgid "Infix"
+msgstr "Tussenvoegsel"
+
+#: user/user.php:71
+msgid "Email scope is missing"
+msgstr "Email scope ontbreekt"
+
+#: user/user.php:170
+msgid "Username and Email have different user ID"
+msgstr "Gebruikersnaam en Email hebben verschillende gebruikers-ID"
+
+#: user/user.php:196
+msgid "Something went wrong while trying to log in"
+msgstr "Er is iets misgegaan tijdens het inloggen"
