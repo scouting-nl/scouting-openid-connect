@@ -5,8 +5,8 @@ msgstr ""
 "Project-Id-Version: Scouting OpenID Connect 0.0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/"
 "issues\n"
-"POT-Creation-Date: 2024-10-26 14:48+0200\n"
-"PO-Revision-Date: 2024-10-26 14:49+0200\n"
+"POT-Creation-Date: 2024-10-26 17:59+0200\n"
+"PO-Revision-Date: 2024-10-26 18:00+0200\n"
 "Last-Translator: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language: nl_NL\n"
@@ -44,8 +44,12 @@ msgid "The JSON Web Key Set (JWKS) is not available"
 msgstr "De JSON Web Key Set (JWKS) is niet beschikbaar"
 
 #: auth/OpenIDConnectClient.php:219
-msgid "The certificate chain (x5c) for the key ID (kid) specified in the header was not found."
-msgstr "De certificaatketen (x5c) voor de sleutel-ID (kid) in de koptekst is niet gevonden."
+msgid ""
+"The certificate chain (x5c) for the key ID (kid) specified in the header was "
+"not found."
+msgstr ""
+"De certificaatketen (x5c) voor de sleutel-ID (kid) in de koptekst is niet "
+"gevonden."
 
 #: auth/OpenIDConnectClient.php:229
 msgid "The signature in the ID token is not valid."
@@ -107,13 +111,17 @@ msgstr "Webmaster heeft het aanmaken van nieuwe accounts uitgeschakeld"
 msgid "The user denied the request"
 msgstr "De gebruiker heeft het verzoek geweigerd"
 
-#: plugin/actions.php:9
+#: plugin/actions.php:9 settings/page.php:22
 msgid "Settings"
 msgstr "Instellingen"
 
 #: plugin/description.php:10
-msgid "WordPress plugin for logging in with Scouting Nederland OpenID Connect Server."
-msgstr "WordPress plugin om in te loggen met Scouting Nederland OpenID Connect Server."
+msgid ""
+"WordPress plugin for logging in with Scouting Nederland OpenID Connect "
+"Server."
+msgstr ""
+"WordPress plugin om in te loggen met Scouting Nederland OpenID Connect "
+"Server."
 
 #: settings/general.php:6
 msgid "General Settings"
@@ -164,8 +172,11 @@ msgid "Username"
 msgstr "Gebruikersnaam"
 
 #: settings/general.php:177
-msgid "This prefix will be added to the username of all Scouting Nederland users"
-msgstr "Dit voorvoegsel wordt toegevoegd aan de gebruikersnaam van alle Scouting Nederland gebruikers"
+msgid ""
+"This prefix will be added to the username of all Scouting Nederland users"
+msgstr ""
+"Dit voorvoegsel wordt toegevoegd aan de gebruikersnaam van alle Scouting "
+"Nederland gebruikers"
 
 #: settings/general.php:183
 msgid "Default (no action)"
@@ -195,9 +206,114 @@ msgstr "Client Secret"
 msgid "Scopes"
 msgstr "Scopes"
 
-#: settings/page.php:33
-msgid "Scouting OpenID Connect Settings"
-msgstr "Scouting OpenID Connect Instellingen"
+#: settings/page.php:24
+msgid "Need help with setting up?"
+msgstr "Hulp nodig bij het instellen?"
+
+#: settings/page.php:25
+msgid "Go to the support page"
+msgstr "Ga naar de support pagina"
+
+#: support/page.php:20 support/page.php:45
+msgid "Support"
+msgstr "Support"
+
+#: support/page.php:21
+msgid "Before you start make sure you have the role \"webmaster\" in"
+msgstr ""
+"Voordat je begint, moet je ervoor zorgen dat je de rol \"webmaster\" hebt in"
+
+#: support/page.php:25
+msgid "Setting up OpenID Connect"
+msgstr "Scouting OpenID Connect"
+
+#: support/page.php:27
+msgid "Go to"
+msgstr "Ga naar"
+
+#: support/page.php:27
+msgid ""
+"click on \"Managed websites\" and click on \"Add OpenID Connect connection\"."
+msgstr ""
+"klik op \"Beheerde websites\" en klik op \"Voeg OpenID Connect koppeling toe\"."
+
+#: support/page.php:28
+msgid "Add the name of your group/website."
+msgstr "Voeg de naam van je groep/website toe."
+
+#: support/page.php:29
+msgid "Add the Redirect URI:"
+msgstr "Voeg de Redirect URI toe:"
+
+#: support/page.php:30
+msgid "Add the Post Logout Redirect URI:"
+msgstr "Voeg de Post Logout Redirect URI toe:"
+
+#: support/page.php:31
+msgid ""
+"Select the scopes you want to use. The \"email\" scope is required; the "
+"\"profile\" and \"membership\" scopes are optional."
+msgstr ""
+"Selecteer de scopes die je wilt gebruiken. De scopes \"email\" zijn verplicht; "
+"de scopes \"persoonlijk\" en \"lidmaatschap\" zijn optioneel."
+
+#: support/page.php:32
+msgid "Select the organizations that can log in."
+msgstr "Selecteer de organisaties die kunnen inloggen."
+
+#: support/page.php:33
+msgid ""
+"If your organization has sub-organizations, you can also select \"Allow "
+"suborganizations.\""
+msgstr ""
+"Als je organisatie onderliggende organisaties heeft, kun je ook \"Inclusief "
+"onderliggende organisaties\" selecteren."
+
+#: support/page.php:34
+msgid "Press \"Add Website.\""
+msgstr "Druk op \"Website toevoegen\"."
+
+#: support/page.php:35
+msgid "Find the website you just created and click on ⓘ."
+msgstr "Zoek de website die je net hebt gemaakt en klik op ⓘ."
+
+#: support/page.php:36
+msgid "Copy the \"Client ID\", \"Client Secret\", and the \"Scopes\" to the"
+msgstr "Kopieer de \"Client ID\", \"Client Secret\" en de \"Scopes\" naar de"
+
+#: support/page.php:39
+msgid ""
+"Fill in the OpenID Connect Settings with the copied data. Make sure the "
+"required scopes, \"openid\" and \"email\", are present."
+msgstr ""
+"Vul de OpenID Connect Settings in met de gekopieerde gegevens. Zorg ervoor "
+"dat de vereiste scopes, \"openid\" en \"email\", aanwezig zijn."
+
+#: support/page.php:40
+msgid ""
+"Fill in the General Settings. If you want to store the name, birthdate, or "
+"gender, use the scope \"profile\". If you also want the SOL ID, use the "
+"scope \"membership\"."
+msgstr ""
+"Vul de algemene instellingen in. Als je de naam, geboortedatum of het "
+"geslacht wilt opslaan, gebruik dan de scope \"persoonlijk\". Als je ook de SOL "
+"ID wilt opslaan, gebruik dan de scope \"lidmaatschap\"."
+
+#: support/page.php:41
+msgid "Press \"Save Settings\""
+msgstr "Druk op \"Save Settings\""
+
+#: support/page.php:42
+msgid "Log out and try to log in with the Scouts Login button."
+msgstr "Log uit en probeer in te loggen met de knop Scouts Login."
+
+#: support/page.php:46
+msgid "If you need help, please contact"
+msgstr "Als je hulp nodig hebt, neem dan contact op met"
+
+#: support/page.php:48
+msgid "(developer of the plugin)"
+msgstr "(ontwikkelaar van de plugin)"
 
 #: user/fields.php:9
 msgid "Scouts Online (SOL) Profile Information"
@@ -246,3 +362,8 @@ msgstr "Gebruikersnaam en Email hebben verschillende gebruikers-ID"
 #: user/user.php:196
 msgid "Something went wrong while trying to log in"
 msgstr "Er is iets misgegaan tijdens het inloggen"
+
+#, fuzzy
+#~| msgid "Settings"
+#~ msgid "settings page"
+#~ msgstr "Instellingen"

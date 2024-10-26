@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Scouting OpenID Connect 0.0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/issues\n"
-"POT-Creation-Date: 2024-10-26 14:49+0200\n"
+"POT-Creation-Date: 2024-10-26 17:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
@@ -106,7 +106,7 @@ msgstr ""
 msgid "The user denied the request"
 msgstr ""
 
-#: plugin/actions.php:9
+#: plugin/actions.php:9 settings/page.php:22
 msgid "Settings"
 msgstr ""
 
@@ -194,8 +194,96 @@ msgstr ""
 msgid "Scopes"
 msgstr ""
 
-#: settings/page.php:33
-msgid "Scouting OpenID Connect Settings"
+#: settings/page.php:24
+msgid "Need help with setting up?"
+msgstr ""
+
+#: settings/page.php:25
+msgid "Go to the support page"
+msgstr ""
+
+#: support/page.php:20 support/page.php:45
+msgid "Support"
+msgstr ""
+
+#: support/page.php:21
+msgid "Before you start make sure you have the role \"webmaster\" in"
+msgstr ""
+
+#: support/page.php:25
+msgid "Setting up OpenID Connect"
+msgstr ""
+
+#: support/page.php:27
+msgid "Go to"
+msgstr ""
+
+#: support/page.php:27
+msgid "click on \"Managed websites\" and click on \"Add OpenID Connect connection\"."
+msgstr ""
+
+#: support/page.php:28
+msgid "Add the name of your group/website."
+msgstr ""
+
+#: support/page.php:29
+msgid "Add the Redirect URI:"
+msgstr ""
+
+#: support/page.php:30
+msgid "Add the Post Logout Redirect URI:"
+msgstr ""
+
+#: support/page.php:31
+msgid "Select the scopes you want to use. The \"email\" scope is required; the \"profile\" and \"membership\" scopes are optional."
+msgstr ""
+
+#: support/page.php:32
+msgid "Select the organizations that can log in."
+msgstr ""
+
+#: support/page.php:33
+msgid "If your organization has sub-organizations, you can also select \"Allow suborganizations.\""
+msgstr ""
+
+#: support/page.php:34
+msgid "Press \"Add Website.\""
+msgstr ""
+
+#: support/page.php:35
+msgid "Find the website you just created and click on ⓘ."
+msgstr ""
+
+#: support/page.php:36
+msgid "Copy the \"Client ID\", \"Client Secret\", and the \"Scopes\" to the"
+msgstr ""
+
+#: support/page.php:37
+msgid "settings page"
+msgstr ""
+
+#: support/page.php:39
+msgid "Fill in the OpenID Connect Settings with the copied data. Make sure the required scopes, \"openid\" and \"email\", are present."
+msgstr ""
+
+#: support/page.php:40
+msgid "Fill in the General Settings. If you want to store the name, birthdate, or gender, use the scope \"profile\". If you also want the SOL ID, use the scope \"membership\"."
+msgstr ""
+
+#: support/page.php:41
+msgid "Press \"Save Settings.\""
+msgstr ""
+
+#: support/page.php:42
+msgid "Log out and try to log in with the Scouts Login button."
+msgstr ""
+
+#: support/page.php:46
+msgid "If you need help, please contact"
+msgstr ""
+
+#: support/page.php:48
+msgid "(developer of the plugin)"
 msgstr ""
 
 #: user/fields.php:9
