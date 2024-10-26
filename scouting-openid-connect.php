@@ -59,8 +59,9 @@ function scouting_oidc_init()
 	}
 
     // Add infix field to user profile
-    add_action('show_user_profile', 'add_infix_field_between_names');
-    add_action('edit_user_profile', 'add_infix_field_between_names');
+    add_action('show_user_profile', 'add_infix_field_html');
+    add_action('edit_user_profile', 'add_infix_field_html');
+    add_action('admin_enqueue_scripts', 'enqueue_infix_field_script');
 }
 add_action('plugins_loaded', 'scouting_oidc_init');
 

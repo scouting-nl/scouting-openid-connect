@@ -78,19 +78,6 @@ function scouting_oidc_user_profile_field_gender($user) {
 }
 
 /**
- * Move infix field between first and last name fields
- * 
- * @param WP_User $user The user object
- */
-function add_infix_field_between_names($user) {
-    // Output HTML for the infix field
-    add_infix_field_html($user);
-    
-    // Output JavaScript to reposition the infix field
-    add_infix_field_js();
-}
-
-/**
  * Render the HTML for the infix field
  * 
  * @param WP_User $user The user object
@@ -109,23 +96,19 @@ function add_infix_field_html($user) {
 }
 
 /**
- * Render JavaScript to move the infix field between first and last name fields
+ * This script renders JavaScript to move the infix field between the first and last name fields.
  */
-function add_infix_field_js() {
-    ?>
-    <script type="text/javascript" defer>
-        document.addEventListener("DOMContentLoaded", function() {
-            var infixRow = document.querySelector('.user-infix-name-wrap');
-            var firstNameRow = document.querySelector('.user-first-name-wrap');
-            if (infixRow && firstNameRow) {
-                var table = document.querySelector('.user-infix-table');
-                firstNameRow.parentNode.insertBefore(infixRow, firstNameRow.nextSibling);
-                if (table) {
-                    table.remove();
-                }
-            }
-        });
-    </script>
-    <?php
+function enqueue_infix_field_script() {
+    // Enqueue the external JavaScript file with the defer attribute
+    wp_enqueue_script(
+        'infix-field-script', // Handle name
+        plugins_url('infix-field.js', __FILE__), // Path to the file
+        array(), // No dependencies
+        false, // No version specified, so WordPress will use the version of the plugin
+        array(
+            'strategy' => 'defer', // Add the defer attribute
+            'in_footer' => true // Load the script in the footer
+        )
+    );
 }
 ?>
