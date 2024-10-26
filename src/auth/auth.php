@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 require_once 'OpenIDConnectClient.php';
 require_once __DIR__.'/../../src/user/user.php';
