@@ -1,4 +1,6 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 // Add the OpenID Connect settings page to the admin menu
 function scouting_oidc_menu() {
     add_menu_page(

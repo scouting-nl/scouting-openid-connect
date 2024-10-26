@@ -1,4 +1,6 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 // Start the session if it is not already started
 function scouting_oidc_start_session() {
     if (session_status() === PHP_SESSION_NONE) {

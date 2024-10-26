@@ -1,4 +1,6 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 function add_general_settings() {
     // Add settings sections
     add_settings_section(
