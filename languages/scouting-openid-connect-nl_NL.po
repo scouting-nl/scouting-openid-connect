@@ -221,7 +221,7 @@ msgstr "Support"
 #: support/page.php:21
 msgid "Before you start make sure you have the role \"webmaster\" in"
 msgstr ""
-"Voordat je begint, moet je ervoor zorgen dat je de rol “webmaster” hebt in"
+"Voordat je begint, moet je ervoor zorgen dat je de rol \"webmaster\" hebt in"
 
 #: support/page.php:25
 msgid "Setting up OpenID Connect"
@@ -235,7 +235,7 @@ msgstr "Ga naar"
 msgid ""
 "click on \"Managed websites\" and click on \"Add OpenID Connect connection\"."
 msgstr ""
-"klik op “Beheerde websites” en klik op “Voeg OpenID Connect koppeling toe”."
+"klik op \"Beheerde websites\" en klik op \"Voeg OpenID Connect koppeling toe\"."
 
 #: support/page.php:28
 msgid "Add the name of your group/website."
@@ -254,8 +254,8 @@ msgid ""
 "Select the scopes you want to use. The \"email\" scope is required; the "
 "\"profile\" and \"membership\" scopes are optional."
 msgstr ""
-"Selecteer de scopes die je wilt gebruiken. De scopes “email” zijn verplicht; "
-"de scopes “persoonlijk” en “lidmaatschap” zijn optioneel."
+"Selecteer de scopes die je wilt gebruiken. De scopes \"email\" zijn verplicht; "
+"de scopes \"persoonlijk\" en \"lidmaatschap\" zijn optioneel."
 
 #: support/page.php:32
 msgid "Select the organizations that can log in."
@@ -266,12 +266,12 @@ msgid ""
 "If your organization has sub-organizations, you can also select \"Allow "
 "suborganizations.\""
 msgstr ""
-"Als je organisatie onderliggende organisaties heeft, kun je ook “Inclusief "
-"onderliggende organisaties” selecteren."
+"Als je organisatie onderliggende organisaties heeft, kun je ook \"Inclusief "
+"onderliggende organisaties\" selecteren."
 
 #: support/page.php:34
 msgid "Press \"Add Website.\""
-msgstr "Druk op “Website toevoegen”."
+msgstr "Druk op \"Website toevoegen\"."
 
 #: support/page.php:35
 msgid "Find the website you just created and click on ⓘ."
@@ -279,7 +279,7 @@ msgstr "Zoek de website die je net hebt gemaakt en klik op ⓘ."
 
 #: support/page.php:36
 msgid "Copy the \"Client ID\", \"Client Secret\", and the \"Scopes\" to the"
-msgstr "Kopieer de “Client ID”, “Client Secret” en de “Scopes” naar de"
+msgstr "Kopieer de \"Client ID\", \"Client Secret\" en de \"Scopes\" naar de"
 
 #: support/page.php:39
 msgid ""
@@ -287,7 +287,7 @@ msgid ""
 "required scopes, \"openid\" and \"email\", are present."
 msgstr ""
 "Vul de OpenID Connect Settings in met de gekopieerde gegevens. Zorg ervoor "
-"dat de vereiste scopes, “openid” en “email”, aanwezig zijn."
+"dat de vereiste scopes, \"openid\" en \"email\", aanwezig zijn."
 
 #: support/page.php:40
 msgid ""
@@ -296,12 +296,12 @@ msgid ""
 "scope \"membership\"."
 msgstr ""
 "Vul de algemene instellingen in. Als je de naam, geboortedatum of het "
-"geslacht wilt opslaan, gebruik dan de scope “persoonlijk”. Als je ook de SOL "
-"ID wilt opslaan, gebruik dan de scope “lidmaatschap”."
+"geslacht wilt opslaan, gebruik dan de scope \"persoonlijk\". Als je ook de SOL "
+"ID wilt opslaan, gebruik dan de scope \"lidmaatschap\"."
 
 #: support/page.php:41
 msgid "Press \"Save Settings\""
-msgstr "Druk op “Save Settings”"
+msgstr "Druk op \"Save Settings\""
 
 #: support/page.php:42
 msgid "Log out and try to log in with the Scouts Login button."
