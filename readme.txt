@@ -2,7 +2,7 @@
 Contributors: jobvk
 Tags: scouting, scouting nederland, sol, openid connect, oidc
 Requires at least: 6.4.3
-Tested up to: 6.6.1
+Tested up to: 6.6.2
 Stable tag: 0.0.1
 Requires PHP: 8.2
 License: GPLv3

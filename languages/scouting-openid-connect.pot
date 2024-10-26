@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Scouting OpenID Connect 0.0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/issues\n"
-"POT-Creation-Date: 2024-08-07 23:08+0200\n"
+"POT-Creation-Date: 2024-10-26 14:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
@@ -230,7 +230,7 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: user/fields.php:102
+#: user/fields.php:89
 msgid "Infix"
 msgstr ""
 
