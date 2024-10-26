@@ -104,8 +104,11 @@ function enqueue_infix_field_script() {
         'infix-field-script', // Handle name
         plugins_url('infix-field.js', __FILE__), // Path to the file
         array(), // No dependencies
-        null, // No version specified
-        true // Load in the footer (adds `defer` in WordPress 6.3+)
+        false, // No version specified, so WordPress will use the version of the plugin
+        array(
+            'strategy' => 'defer', // Add the defer attribute
+            'in_footer' => true // Load the script in the footer
+        )
     );
 }
 ?>
