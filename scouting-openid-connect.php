@@ -29,6 +29,7 @@ require_once 'src/auth/auth.php';
 require_once 'src/auth/session.php';
 require_once 'src/menu/menu.php';
 require_once 'src/settings/page.php';
+require_once 'src/support/page.php';
 include_once 'src/plugin/actions.php';
 include_once 'src/plugin/description.php';
 include_once 'src/user/fields.php';
@@ -70,6 +71,8 @@ add_action('init', 'scouting_oidc_start_session');
 
 // Add your settings page in the WordPress admin menu
 add_action('admin_menu', 'scouting_oidc_menu');
+add_action('admin_menu', 'scouting_oidc_settings_submenu_page');
+add_action('admin_menu', 'scouting_oidc_support_submenu_page');
 
 // Hook into admin_init to initialize settings
 add_action('admin_init', 'scouting_oidc_settings_page_init');

@@ -43,7 +43,11 @@ Bugs and feature-requests can go to: [GitHub](https://github.com/Scouting-nl/Ope
 
 ### 2. Settings page
 
-![settngs page](assets/screenshot-2.png)
+![settings page](assets/screenshot-2.png)
+
+### 2. Support page
+
+![support page](assets/screenshot-3.png)
 
 ## Installation
 
@@ -57,7 +61,7 @@ Bugs and feature-requests can go to: [GitHub](https://github.com/Scouting-nl/Ope
 
 Make sure you have the role `webmaster` in [sol.scouting.nl](https://sol.scouting.nl).
 
-1. Go to [login.scouting.nl](https://login.scouting.nl), click on `Managed websites` and click on `Add OpenID Connect connection.`
+1. Go to [login.scouting.nl](https://login.scouting.nl), click on `Managed websites` and click on `Add OpenID Connect connection`.
 2. Add the name of your group/website.
 3. Add the Redirect URI, for example: https://example.com/.
 4. Add the Post Logout Redirect URI, for example: https://example.com/.
@@ -73,7 +77,7 @@ Make sure you have the role `webmaster` in [sol.scouting.nl](https://sol.scoutin
     If you want to store the name, birthdate, or gender, use the scope `profile`. \
     If you also want the SOL ID, use the scope `membership`.
 12. Press `Save Settings`.
-13. Log out and try to log in with the Scouts Login button. Check if the user data is correct.
+13. Log out and try to log in with the Scouts Login button.
 
 ## Shortcodes
 

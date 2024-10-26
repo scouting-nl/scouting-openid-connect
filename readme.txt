@@ -20,19 +20,19 @@ With this plugin, users can seamlessly integrate their Scouting Nederland accoun
 
 == Installation ==
 
-1. Go to https://login.scouting.nl and go to the tab "Managed websites".
-2. Click on "Add OpenID Connect connection".
-3. Enter the group name or name of the website.
-4. Enter the domain of the website, example: https://www.example.com/ (make sure to include the trailing slash).
-5. Select scopes you want to allow access to. The required scopes are "openid" and "email".
-6. Select the organisations you want to allow access to.
-7. Click on "Update website".
-8. Click on circle with i in it to get the Client ID, Client Secret and Scopes.
-9. Install the plugin on your WordPress website.
-10. Go to the settings page of the plugin.
-11. Enter the Client ID, Client Secret and Scopes.
-12. Save the settings.
-13. You are now ready to login with Scouting Nederland OpenID Connect.
+1. Go to https://login.scouting.nl, click on "Managed websites" and click on "Add OpenID Connect connection".
+2. Add the name of your group/website.
+3. Add the Redirect URI, for example: https://example.com/.
+4. Add the Post Logout Redirect URI, for example: https://example.com/.
+5. Select the scopes you want to use. The "email" scope is required; the "profile" and "membership" scopes are optional.
+6. Select the organizations that can log in. If your organization has sub-organizations, you can also select `Allow suborganizations.`
+7. Press `Add Website.`
+8. Find the website you just created and click on ⓘ.
+9. Copy the `Client ID`, `Client Secret`, and the `Scopes` to your website.
+10. Fill in the OpenID Connect Settings with the copied data. Make sure the required scopes, "openid" and "email", are present.
+11. Fill in the General Settings. If you want to store the name, birthdate, or gender, use the scope "profile". If you also want the SOL ID, use the scope "membership".
+12. Press "Save Settings."
+13. Log out and try to log in with the Scouts Login button.
 
 == Frequently Asked Questions ==
 
@@ -53,6 +53,7 @@ Currently not, but this is planned for a future update of this plugin.
 
 1. Login Page
 2. Settings Page
+3. Support Page
 
 == Changelog ==
 
