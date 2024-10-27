@@ -69,7 +69,9 @@ class User {
         $this->birthdate = $user_json_decoded['birthdate'] ?? "";
 
         if ($this->email == null) {
-            wp_safe_redirect(wp_login_url() . '?error_description=error&hint=' . __("Email scope is missing", "scouting-openid-connect") . '&message=email_is_missing');
+            $hint = rawurlencode(__('Email scope is missing', 'scouting-openid-connect'));
+            $redirect_url = esc_url_raw(wp_login_url() . "?error_description=error&hint={$hint}&message=email_is_missing");
+            wp_safe_redirect($redirect_url);
             exit;
         }
     }
@@ -168,7 +170,9 @@ class User {
                 $user = $user_username;
             }
             else {
-                wp_safe_redirect(wp_login_url() . '?error_description=error&hint=' . __("Username and Email have different user ID", "scouting-openid-connect") . '&message=login_email_mismatch');
+                $hint = rawurlencode(__('Username and Email have different user ID', 'scouting-openid-connect'));
+                $redirect_url = esc_url_raw(wp_login_url() . "?error_description=error&hint={$hint}&message=login_email_mismatch");
+                wp_safe_redirect($redirect_url);
                 exit;
             }
         }
@@ -194,7 +198,9 @@ class User {
         $user = get_user_by('login', $this->userName);
 
         if (!$user) {
-            wp_safe_redirect(wp_login_url() . '?error_description=error&hint=' . __("Something went wrong while trying to log in", "scouting-openid-connect") . '&message=login_email_mismatch');
+            $hint = rawurlencode(__('Something went wrong while trying to log in', 'scouting-openid-connect'));
+            $redirect_url = esc_url_raw(wp_login_url() . "?error_description=error&hint={$hint}&message=login_email_mismatch");
+            wp_safe_redirect($redirect_url);
             exit;
         }
 

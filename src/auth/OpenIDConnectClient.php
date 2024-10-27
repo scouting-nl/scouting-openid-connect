@@ -20,9 +20,7 @@ class OpenIDConnectClientException extends Exception
 }
 
 /**
- *
  * OpenIDConnectClient for Scouting OIDC
- *
  */
 class OpenIDConnectClient
 {
@@ -465,7 +463,8 @@ class OpenIDConnectClient
      */
     private function getSessionKey(string $key) {
         if (array_key_exists($key, $_SESSION)) {
-            return $_SESSION[$key];
+            // Sanitize the session data to ensure it's safe to use.
+            return sanitize_text_field($_SESSION[$key]);
         }
         return false;
     }
