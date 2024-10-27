@@ -9,10 +9,9 @@ function scouting_oidc_support_submenu_page() {
         'manage_options',                      // Capability
         'scouting-oidc-support',               // Submenu slug
         'scouting_oidc_support_page_callback', // Callback function
-        2                                      // Menu position
+        3                                      // Menu position
     );
 }
-
 
 // Callback to render support page content
 function scouting_oidc_support_page_callback() {

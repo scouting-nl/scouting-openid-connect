@@ -31,6 +31,7 @@ require_once 'src/auth/auth.php';
 require_once 'src/auth/session.php';
 require_once 'src/menu/menu.php';
 require_once 'src/settings/page.php';
+require_once 'src/shortcode/page.php';
 require_once 'src/support/page.php';
 include_once 'src/plugin/actions.php';
 include_once 'src/plugin/description.php';
@@ -65,6 +66,7 @@ function scouting_oidc_init()
     add_action('show_user_profile', 'add_infix_field_html');
     add_action('edit_user_profile', 'add_infix_field_html');
     add_action('admin_enqueue_scripts', 'enqueue_infix_field_script');
+    add_action('admin_enqueue_scripts', 'enqueue_live_shortcode_script');
 }
 add_action('plugins_loaded', 'scouting_oidc_init');
 
@@ -74,6 +76,7 @@ add_action('init', 'scouting_oidc_start_session');
 // Add your settings page in the WordPress admin menu
 add_action('admin_menu', 'scouting_oidc_menu');
 add_action('admin_menu', 'scouting_oidc_settings_submenu_page');
+add_action('admin_menu', 'scouting_oidc_shortcode_submenu_page');
 add_action('admin_menu', 'scouting_oidc_support_submenu_page');
 
 // Hook into admin_init to initialize settings
