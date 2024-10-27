@@ -13,10 +13,10 @@ class Auth {
 
     public function __construct() {
         $this->oidc_client = new OpenIDConnectClient(
-            get_option('scouting_oidc_client_id'),
-            get_option('scouting_oidc_client_secret'),
+            sanitize_text_field(get_option('scouting_oidc_client_id')),
+            sanitize_text_field(get_option('scouting_oidc_client_secret')),
             get_site_url(),
-            'https://login.scouting.nl',
+            'https://login.scouting.nl'  // Trusted external URL
        );
     }
 
@@ -41,18 +41,20 @@ class Auth {
         // Extract shortcode attributes (if any)
         $atts = shortcode_atts(
             array(
-                'width' => '250', // Default width in pixels
-                'height' => '40', // Default height in pixels
+                'width' => '250',                // Default width in pixels
+                'height' => '40',                // Default height in pixels
                 'background_color' => '#4CAF50', // Default background color
-                'text_color' => '#ffffff', // Default text color
+                'text_color' => '#ffffff',       // Default text color
            ),
             $atts,
             'scouting_oidc_button' // Name of your shortcode
        );
 
-        // Ensure minimal button dimensions
+        // Ensure minimal button dimensions and sanitize
         $atts['width'] = max(120, intval($atts['width']));
         $atts['height'] = max(40, intval($atts['height']));
+        $atts['background_color'] = sanitize_hex_color($atts['background_color']);
+        $atts['text_color'] = sanitize_hex_color($atts['text_color']);
 
         // Button style
         $button_style = "display: flex; justify-content: center; align-items: center; background-color: " . esc_attr($atts['background_color']) . "; color: " . esc_attr($atts['text_color']) . "; border: none; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: bold; width: 100%; height: 100%; text-align: center;";
@@ -71,7 +73,7 @@ class Auth {
 
     // Create shortcode with the OpenID Authentication URL
     public function scouting_oidc_login_url_shortcode() {
-        return $this->get_login_url();
+        return esc_url($this->get_login_url());
     }
 
     // Callback to login with OpenID Connect
@@ -85,21 +87,21 @@ class Auth {
             return;
         }
 
-        // Check if 'error' and 'error_description' parameter is set in the URL
-        if (isset($_GET['error_description']) && isset($_GET['hint']) && isset($_GET['message'])) {
+        // Check if eror_description, hint, and message are set in the URL and sanitize them before redirecting
+        if (isset($_GET['error_description'], $_GET['hint'], $_GET['message'])) {
             $this->oidc_client->unsetStateAndNonce();
-            wp_safe_redirect(wp_login_url() . '?error_description=' . $_GET['error_description'] . '&hint=' . $_GET['hint'] . '&message=' . $_GET['message']);
+
+            $error_description = rawurlencode(sanitize_text_field(wp_unslash($_GET['error_description'])));
+            $hint = rawurlencode(sanitize_text_field(wp_unslash($_GET['hint'])));
+            $message = rawurlencode(sanitize_text_field(wp_unslash($_GET['message'])));
+
+            $redirect_url = esc_url_raw(wp_login_url() . '?error_description=' . $error_description . '&hint=' . $hint . '&message=' . $message);
+            wp_safe_redirect($redirect_url);
             exit;
         }
 
-        // Check if 'state' parameter is set in the URL
-        if (!isset($_GET['state'])) {
-            return;
-        }
-
         // Verify state parameter for security
-        $state = $this->oidc_client->getState();
-        if ($state === null || $_GET['state'] !== $state) {
+        if (!isset($_GET['state']) || $this->oidc_client->getState() !== sanitize_text_field($_GET['state'])) {
             return;
         }
 
@@ -108,8 +110,8 @@ class Auth {
             return;
         }
 
-        // Retrieve tokens from the OpenID Connect server
-        $this->oidc_client->retrieveTokens($_GET['code']);
+        // Retrieve tokens from the OpenID Connect server and sanitize the 'code' parameter
+        $this->oidc_client->retrieveTokens(sanitize_text_field(wp_unslash($_GET['code'])));
 
         // Validate the ID token
         $user_json_encoded = $this->oidc_client->validateTokens();
@@ -126,7 +128,9 @@ class Auth {
                 $user->createUser();
                 $user->loginUser();
             } else {
-                wp_safe_redirect(wp_login_url() . '?error_description=error&hint=' . __("Webmaster disabled creation of new accounts", "scouting-openid-connect") . '&message=disabled_auto_create');
+                $hint = rawurlencode(__('Webmaster disabled creation of new accounts', 'scouting-openid-connect'));
+                $redirect_url = esc_url_raw(wp_login_url() . "?error_description=error&hint={$hint}&message=disabled_auto_create");
+                wp_safe_redirect($redirect_url);
                 exit;
             }
         }
@@ -138,13 +142,13 @@ class Auth {
             return;
         }
 
-        if (!isset($_GET['error_description']) && !isset($_GET['hint']) && !isset($_GET['message'])) {
+        if (!isset($_GET['error_description'], $_GET['hint'], $_GET['message'])) {
             return;
         }
 
-        $error_description = $_GET['error_description'];
-        $hint = $_GET['hint'];
-        $message = $_GET['message'];
+        $error_description = sanitize_text_field(wp_unslash($_GET['error_description']));
+        $message = sanitize_text_field(wp_unslash($_GET['message']));
+        $hint = sanitize_text_field(wp_unslash($_GET['hint']));
 
         // If the error equals `The user denied the request`, show a translated message
         if ($hint == 'The user denied the request') {
@@ -167,7 +171,7 @@ class Auth {
 
     // Redirect after logout based on settings
     public function scouting_oidc_logout_redirect() {
-        $logout_url = $this->oidc_client->getLogoutUrl();
+        $logout_url = esc_url_raw($this->oidc_client->getLogoutUrl());
         wp_redirect($logout_url);
         exit;
     }
@@ -180,7 +184,7 @@ class Auth {
     // Helper function to get the login URL
     private function get_login_url() {
         $response_type = 'code';
-        $scopes = explode(" ", get_option('scouting_oidc_scopes'));
+        $scopes = array_map('sanitize_text_field', explode(" ", get_option('scouting_oidc_scopes')));
         return $this->oidc_client->getAuthenticationURL($response_type, $scopes);
     }
 }

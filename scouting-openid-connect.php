@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * License URI:          https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain:          scouting-openid-connect
  * Domain Path:          /languages
- */
+ **/
 
 require_once 'src/auth/auth.php';
 require_once 'src/auth/session.php';

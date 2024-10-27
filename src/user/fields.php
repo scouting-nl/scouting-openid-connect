@@ -106,7 +106,7 @@ function enqueue_infix_field_script() {
         'infix-field-script', // Handle name
         plugins_url('infix-field.js', __FILE__), // Path to the file
         array(), // No dependencies
-        false, // No version specified, so WordPress will use the version of the plugin
+        "0.0.1", // Version number
         array(
             'strategy' => 'defer', // Add the defer attribute
             'in_footer' => true // Load the script in the footer
