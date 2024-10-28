@@ -101,7 +101,7 @@ class OpenIDConnectClient
 
         // Generate and store a nonce in the session
         // The nonce is an arbitrary value
-        $nonce = $this->setNonce($this->generateToken(32));
+        $nonce = $this->setNonce();
 
         // State essentially acts as a session key for OIDC
         $state = $this->setState($this->generateToken(32));
@@ -168,14 +168,14 @@ class OpenIDConnectClient
         $this->tokens = json_decode(wp_remote_retrieve_body($response));
 
         // Cleanup state and nonce
-        $this->unsetStateAndNonce();
+        $this->unsetStatesAndNonce();
     }
 
     /**
      * Function to unset the state and nonce
      */
-    public function unsetStateAndNonce() {
-        $this->unsetState();
+    public function unsetStatesAndNonce() {
+        $this->unsetStates();
         $this->unsetNonce();
     }
 
@@ -408,10 +408,10 @@ class OpenIDConnectClient
     /**
      * Stores nonce
      * 
-     * @param string $nonce the nonce to store
      * @return string the nonce
      */
-    private function setNonce(string $nonce) {
+    private function setNonce() {
+        $nonce = wp_create_nonce('scouting_oidc_nonce');
         $this->setSessionKey('scouting_oidc_nonce', $nonce);
         return $nonce;
     }
@@ -435,42 +435,76 @@ class OpenIDConnectClient
     }
 
     /**
-     * Stores $state
+     * Adds a state to the stored array of states.
+     * 
+     * @param string $state the state to store
+     * @return string the state
      */
     private function setState(string $state) {
-        $this->setSessionKey('scouting_oidc_state', $state);
+        // Retrieve the current array of states, or initialize as empty
+        $states = $this->getSessionKey('scouting_oidc_states') ?? [];
+
+        // Ensure $states is an array (initialize as an empty array if it's null or not an array)
+        if (!is_array($states)) {
+            $states = [];
+        }
+
+        // Add the new state to the array
+        $states[] = $state;
+
+        // Store the updated array back in the session
+        $this->setSessionKey('scouting_oidc_states', $states);
+
         return $state;
     }
 
     /**
-     * Get stored state
+     * Get all stored states.
      *
-     * @return string the state stored in the session
+     * @return array the array of states stored in the session
      */
-    public function getState() {
-        return $this->getSessionKey('scouting_oidc_state');
+    public function getStates(): array {
+        return $this->getSessionKey('scouting_oidc_states') ?? [];
+    }
+
+    /**
+     * Check if a specific state exists in the stored array.
+     *
+     * @param string $state The state to search for
+     * @return bool True if the state exists, false otherwise
+     */
+    public function hasState(string $state): bool {
+        $states = $this->getStates();
+        return in_array($state, $states, true);
     }
 
     /**
      * Cleanup state from session
      */
-    private function unsetState() {
-        $this->unsetSessionKey('scouting_oidc_state');
+    private function unsetStates() {
+        $this->unsetSessionKey('scouting_oidc_states');
     }
     
     /**
+     * Gets value from session with key
+     * 
      * @param string $key the key to retrieve from the session
+     * @return string|array|false the sanitized session value or false if the key does not exist
      */
     private function getSessionKey(string $key) {
         if (array_key_exists($key, $_SESSION)) {
-            // Sanitize the session data to ensure it's safe to use.
-            return sanitize_text_field($_SESSION[$key]);
+            // Check if the value is an array and sanitize accordingly
+            if (is_array($_SESSION[$key])) {
+                return array_map('sanitize_text_field', $_SESSION[$key]);
+            } else {
+                return sanitize_text_field($_SESSION[$key]);
+            }
         }
         return false;
     }
 
     /**
-     * Sets
+     * Sets value in session with key
      * 
      * @param string $key the key to set in the session
      * @param mixed $value the value to set in the session
@@ -480,7 +514,7 @@ class OpenIDConnectClient
     }
 
     /**
-     * Unset a key in the session
+     * Unset value from session with key
      * 
      * @param string $key the key to unset in the session
      */

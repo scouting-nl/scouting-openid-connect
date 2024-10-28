@@ -83,13 +83,25 @@ class Auth {
             return;
         }
 
+        // Check if user is logged in
         if (is_user_logged_in()) {
             return;
         }
 
+        //check if nonce is valid with wp_verify_nonce
+        if (wp_verify_nonce($this->oidc_client->getNonce())) {
+            $this->oidc_client->unsetStatesAndNonce();
+
+            $hint = rawurlencode(__('Nonce is invalid', 'scouting-openid-connect'));
+
+            $redirect_url = esc_url_raw(wp_login_url() . '?error_description=error&hint=' . $hint . '&message=nonce_invalid');
+            wp_safe_redirect($redirect_url);
+            exit;
+        }
+
         // Check if eror_description, hint, and message are set in the URL and sanitize them before redirecting
         if (isset($_GET['error_description'], $_GET['hint'], $_GET['message'])) {
-            $this->oidc_client->unsetStateAndNonce();
+            $this->oidc_client->unsetStatesAndNonce();
 
             $error_description = rawurlencode(sanitize_text_field(wp_unslash($_GET['error_description'])));
             $hint = rawurlencode(sanitize_text_field(wp_unslash($_GET['hint'])));
@@ -100,14 +112,31 @@ class Auth {
             exit;
         }
 
-        // Verify state parameter for security
-        if (!isset($_GET['state']) || $this->oidc_client->getState() !== sanitize_text_field($_GET['state'])) {
+        // Check if 'state' parameter is set in the URL
+        if (!isset($_GET['state'])) {
             return;
+        }
+
+        // Verify state parameter for security
+        if (!$this->oidc_client->hasstate(sanitize_text_field(wp_unslash($_GET['state'])))) {
+            $this->oidc_client->unsetStatesAndNonce();
+
+            $hint = rawurlencode(__('State is invalid', 'scouting-openid-connect'));
+
+            $redirect_url = esc_url_raw(wp_login_url() . '?error_description=error&hint=' . $hint . '&message=state_invalid');
+            wp_safe_redirect($redirect_url);
+            exit;
         }
 
         // Check if 'code' parameter is set in the URL
         if (!isset($_GET['code'])) {
-            return;
+            $this->oidc_client->unsetStatesAndNonce();
+
+            $hint = rawurlencode(__('Code is missing', 'scouting-openid-connect'));
+
+            $redirect_url = esc_url_raw(wp_login_url() . '?error_description=error&hint=' . $hint . '&message=code_missing');
+            wp_safe_redirect($redirect_url);
+            exit;
         }
 
         // Retrieve tokens from the OpenID Connect server and sanitize the 'code' parameter
@@ -138,10 +167,18 @@ class Auth {
 
     // Callback after failed login
     public function scouting_oidc_login_failed($message) {
+        // Check if user is logged in
         if (!is_login()) {
             return;
         }
 
+        // Check if nonce is valid
+        if (wp_verify_nonce($this->oidc_client->getNonce())) {
+            $this->oidc_client->unsetStatesAndNonce();
+            return;
+        }
+
+        // Check if error_description, hint, and message are set in the URL
         if (!isset($_GET['error_description'], $_GET['hint'], $_GET['message'])) {
             return;
         }
@@ -155,6 +192,7 @@ class Auth {
             $hint = __("The user denied the request", "scouting-openid-connect");
         }
 
+        // Display the error message
         return '<div id="login_error" class="notice notice-error"><p><strong>Error: </strong>' . esc_html($hint) . '</p></div>';
     }
 
