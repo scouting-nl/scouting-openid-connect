@@ -1,5 +1,9 @@
 <?php
+namespace ScoutingOIDC;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
+use ScoutingOIDC\ScoutingOIDC_Session;
 
 /**
  * OpenIDConnectClient for Scouting OpenID Connect
@@ -11,13 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @license    GPLv3
  *
  */
-
-/**
- * OpenIDConnect Exception Class
- */
-class OpenIDConnectClientException extends Exception
-{
-}
 
 /**
  * OpenIDConnectClient for Scouting OIDC
@@ -65,6 +62,11 @@ class OpenIDConnectClient
     private $tokens = [];
 
     /**
+     * @var ScoutingOIDC_Session holds the session
+     */
+    private $session;
+
+    /**
      * OpenIDConnectClient constructor
      * 
      * @param string $client_id
@@ -77,6 +79,11 @@ class OpenIDConnectClient
         $this->clientSecret = $client_secret;
         $this->redirectURL = $redirect_uri . '/';
         $this->issuer = $scouting_issuer;
+
+        // Load session to store tokens if needed
+        $this->session = new ScoutingOIDC_Session();
+        $this->session->scouting_oidc_session_start();
+
         $this->getWellKnownData();
         $this->getJWKSData();
     }
@@ -86,14 +93,12 @@ class OpenIDConnectClient
      * 
      * @param string $response_type the response type
      * @param array $scopes_array an array of scopes
-     * @return string a URL to the authorization server
-     * 
-     * @throws OpenIDConnectClientException
+     * @return string|WP_Error returns the authentication URL or a WP_Error
      */
     public function getAuthenticationURL($response_type, $scopes_array) {
         // Check if authorization_endpoint is available in well known data
         if (!isset($this->wellKnownData->authorization_endpoint)) {
-            throw new OpenIDConnectClientException(esc_html__('The authorization endpoint is not available in the well known data.', 'scouting-openid-connect'));
+            return new WP_Error('oidc_error', esc_html__('The authorization endpoint is not available in the well known data.', 'scouting-openid-connect'), $this->wellKnownData);
         }
 
         // Set the scopes
@@ -122,13 +127,12 @@ class OpenIDConnectClient
      * Retrieves the tokens from the token endpoint
      * 
      * @param string $code the code from the authorization server
-     * 
-     * @throws OpenIDConnectClientException
+     * @return WP_Error returns a WP_Error if something went wrong
      */
     public function retrieveTokens($code) {
         // Check if token_endpoint is available in well known data
         if (!isset($this->wellKnownData->token_endpoint)) {
-            throw new OpenIDConnectClientException(esc_html__('The token endpoint is not available in the well known data.', 'scouting-openid-connect'));
+            return new WP_Error('oidc_error', esc_html__('The token endpoint is not available in the well known data.', 'scouting-openid-connect'), $this->wellKnownData);
         }
 
         // Set the grant type to authorization_code
@@ -155,13 +159,12 @@ class OpenIDConnectClient
 
         $response = wp_remote_post($this->wellKnownData->token_endpoint, $args);
         if (is_wp_error($response)) {
-            $error_string = $response->get_error_message();
-            throw new OpenIDConnectClientException(esc_html($error_string));
+            return $response;
         } 
         
         // Check if response code is 200 and response message is OK
         if (wp_remote_retrieve_response_code($response) !== 200 || wp_remote_retrieve_response_message($response) !== 'OK') {
-            throw new OpenIDConnectClientException(esc_html__('Failed to retrieve tokens. Response code:', 'scouting-openid-connect') . ' ' . esc_html(wp_remote_retrieve_response_code($response)) . ' ' . esc_html__('Response message:', 'scouting-openid-connect') . ' ' . esc_html(wp_remote_retrieve_response_message($response)));
+            return new WP_Error('oidc_error', esc_html__('Failed to retrieve tokens. Response code:', 'scouting-openid-connect') . ' ' . esc_html(wp_remote_retrieve_response_code($response)) . ' ' . esc_html__('Response message:', 'scouting-openid-connect') . ' ' . esc_html(wp_remote_retrieve_response_message($response)), $response);
         }
 
         // Store the tokens
@@ -182,19 +185,17 @@ class OpenIDConnectClient
     /**
      * Validates the ID token and returns the payload
      * 
-     * @return array the payload of the ID token
-     *
-     * @throws OpenIDConnectClientException
+     * @return array|WP_Error returns the payload or a WP_Error if something went wrong
      */
     public function validateTokens() {
         // Check if id_token is available in tokens
         if (!isset($this->tokens->id_token)) {
-            throw new OpenIDConnectClientException(esc_html__('The ID token is not available in the tokens.', 'scouting-openid-connect'));
+            return new WP_Error('oidc_error', esc_html__('The ID token is not available in the tokens.', 'scouting-openid-connect'), $this->tokens);
         }
 
         // Check if jwks is available
         if (empty($this->jwks)) {
-            throw new OpenIDConnectClientException(esc_html__('The JSON Web Key Set (JWKS) is not available', 'scouting-openid-connect'));
+            return new WP_Error('oidc_error', esc_html__('The JSON Web Key Set (JWKS) is not available', 'scouting-openid-connect'), $this->jwks);
         }
 
         // Split the token into header, payload and signature
@@ -216,7 +217,7 @@ class OpenIDConnectClient
 
         // Check if the certificate chain (x5c) was found
         if ($x5c === null) {
-            throw new OpenIDConnectClientException(esc_html__('The certificate chain (x5c) for the key ID (kid) specified in the header was not found.', 'scouting-openid-connect'));
+            return new WP_Error('oidc_error', esc_html__('The certificate chain (x5c) for the key ID (kid) specified in the header was not found.', 'scouting-openid-connect'), $this->jwks);
         }
 
         // Convert the certificate chain (x5c) to a public key certificate
@@ -226,7 +227,7 @@ class OpenIDConnectClient
         $publicKey = openssl_pkey_get_public($public_key_certificate);
         $signatureValid = openssl_verify($headerEncoded . '.' . $payloadEncoded, $signature, $publicKey, OPENSSL_ALGO_SHA256);
         if ($signatureValid !== 1) {
-            throw new OpenIDConnectClientException(esc_html__('The signature in the ID token is not valid.', 'scouting-openid-connect'));
+            return new WP_Error('oidc_error', esc_html__('The signature in the ID token is not valid.', 'scouting-openid-connect'), $this->tokens);
         }
         else {
             return $payload;
@@ -236,19 +237,17 @@ class OpenIDConnectClient
     /**
      * Gets the user info from the userinfo endpoint
      * 
-     * @return object the user info
-     *
-     * @throws OpenIDConnectClientException
+     * @return object|WP_Error returns the user info or a WP_Error if something went wrong
      */
     public function getUserInfo() {
         // Check if userinfo_endpoint is available in well known data
         if (!isset($this->wellKnownData->userinfo_endpoint)) {
-            throw new OpenIDConnectClientException(esc_html__('The userinfo endpoint is not available in the well known data.', 'scouting-openid-connect'));
+            return new WP_Error('oidc_error', esc_html__('The userinfo endpoint is not available in the well known data.', 'scouting-openid-connect'), $this->wellKnownData);
         }
 
         // Check if access_token is available in tokens
         if (!isset($this->tokens->access_token)) {
-            throw new OpenIDConnectClientException(esc_html__('The access token is not available in the tokens.', 'scouting-openid-connect'));
+            return new WP_Error('oidc_error', esc_html__('The access token is not available in the tokens.', 'scouting-openid-connect'), $this->tokens);
         }
 
         // Set the arguments for the GET request
@@ -260,13 +259,12 @@ class OpenIDConnectClient
 
         $response = wp_remote_get($this->wellKnownData->userinfo_endpoint, $args);
         if (is_wp_error($response)) {
-            $error_string = $response->get_error_message();
-            throw new OpenIDConnectClientException(esc_html($error_string));
+            return $response;
         } 
         
         // Check if response code is 200 and response message is OK
         if (wp_remote_retrieve_response_code($response) !== 200 || wp_remote_retrieve_response_message($response) !== 'OK') {
-            throw new OpenIDConnectClientException(esc_html__('Failed to retrieve tokens. Response code:', 'scouting-openid-connect') . ' ' . esc_html(wp_remote_retrieve_response_code($response)) . ' ' . esc_html__('Response message:', 'scouting-openid-connect') . ' ' . esc_html(wp_remote_retrieve_response_message($response)));
+            return new WP_Error('oidc_error', esc_html__('Failed to retrieve user info. Response code:', 'scouting-openid-connect') . ' ' . esc_html(wp_remote_retrieve_response_code($response)) . ' ' . esc_html__('Response message:', 'scouting-openid-connect') . ' ' . esc_html(wp_remote_retrieve_response_message($response)), $response);
         }
 
         return json_decode(wp_remote_retrieve_body($response));
@@ -275,14 +273,12 @@ class OpenIDConnectClient
     /**
      * Gets the logout URL
      * 
-     * @return string a URL to the end session endpoint
-     * 
-     * @throws OpenIDConnectClientException
+     * @return string|WP_Error returns the logout URL or a WP_Error if something went wrong
      */
     public function getLogoutUrl() {
         // Check if end_session_endpoint is available in well known data
         if (!isset($this->wellKnownData->end_session_endpoint)) {
-            throw new OpenIDConnectClientException(esc_html__('The end session endpoint is not available in the well known data.', 'scouting-openid-connect'));
+            return new WP_Error('oidc_error', esc_html__('The end session endpoint is not available in the well known data.', 'scouting-openid-connect'), $this->wellKnownData);
         }
 
         // add id_token_hint & client_id to the logout URL
@@ -297,7 +293,7 @@ class OpenIDConnectClient
     /**
      * Gets anything that we need configuration wise including endpoints, and other values
      *
-     * @throws OpenIDConnectClientException
+     * @return WP_Error|void returns a WP_Error if something went wrong
      */
     private function getWellKnownData() {
         // Check if $this->wellKnownData has already been set
@@ -307,12 +303,12 @@ class OpenIDConnectClient
 
         // Check if $this->issuer is not empty
         if (empty($this->issuer)) {
-            throw new OpenIDConnectClientException(esc_html__('An issuer must be provided in the config.', 'scouting-openid-connect'));
+            return new WP_Error('oidc_error', esc_html__('An issuer must be provided in the config.', 'scouting-openid-connect'), $this->issuer);
         }
 
         // Check if $this->issuer is not a valid URL
         if (!filter_var($this->issuer, FILTER_VALIDATE_URL)) {
-            throw new OpenIDConnectClientException(esc_html__('The issuer URL is not valid.', 'scouting-openid-connect'));
+            return new WP_Error('oidc_error', esc_html__('The issuer URL is not valid.', 'scouting-openid-connect'), $this->issuer);
         }
 
         $well_known_config_url = $this->issuer . '/.well-known/openid-configuration';
@@ -320,29 +316,29 @@ class OpenIDConnectClient
         // Get the well known configuration from the issuer
         $response = wp_remote_get($well_known_config_url);
         if (is_wp_error($response)) {
-            $error_string = $response->get_error_message();
-            throw new OpenIDConnectClientException(esc_html($error_string));
+            return $response;
         } else {
             $this->wellKnownData = json_decode(wp_remote_retrieve_body($response));
         }
     }
     
     /**
-     * @param array $scopes_array an array of scopes
+     * Sets the scopes
      * 
-     * @throws OpenIDConnectClientException
+     * @param array $scopes_array an array of scopes
+     * @return WP_Error|void returns a WP_Error if something went wrong
      */
     private function setScopes(array $scopes_array) {
         // Check if $scopes_array is not a valid array or is empty
         if (!is_array($scopes_array) || empty($scopes_array)) {
-            throw new OpenIDConnectClientException(esc_html__('Scopes must be a non-empty array.', 'scouting-openid-connect'));
+            return new WP_Error('oidc_error', esc_html__('Scopes must be a non-empty array.', 'scouting-openid-connect'), $scopes_array);
         }
 
         // Check if scopes are allowed by the server
         if (isset($this->wellKnownData->scopes_supported)) {
             foreach ($scopes_array as $scope) {
                 if (!in_array($scope, $this->wellKnownData->scopes_supported)) {
-                    throw new OpenIDConnectClientException(esc_html__('Scope', 'scouting-openid-connect') . ' '. esc_html($scope) . ' ' . esc_html__('is not supported by the server, supported scopes are:', 'scouting-openid-connect') . ' ' . implode(', ', array_map('esc_html', $this->wellKnownData->scopes_supported)));
+                    return new WP_Error('oidc_error', esc_html__('Scope', 'scouting-openid-connect') . ' '. esc_html($scope) . ' ' . esc_html__('is not supported by the server, supported scopes are:', 'scouting-openid-connect') . ' ' . implode(', ', array_map('esc_html', $this->wellKnownData->scopes_supported)), [$scope, $this->wellKnownData->scopes_supported]);
                 }
             }
         }
@@ -354,29 +350,28 @@ class OpenIDConnectClient
     /**
      * Gets the JSON Web Key Set (JWKS) from the jwks_uri
      *
-     * @throws OpenIDConnectClientException
+     * @return WP_Error|void returns a WP_Error if something went wrong
      */
     private function getJWKSData() {
         // Check if well known data is available
         if (!$this->wellKnownData) {
-            throw new OpenIDConnectClientException(esc_html__('Well known data is not available.', 'scouting-openid-connect'));
+            return new WP_Error('oidc_error', esc_html__('Well known data is not available.', 'scouting-openid-connect'), $this->wellKnownData);
         }
 
         // Check if jwks_uri is available in well known data
         if (!isset($this->wellKnownData->jwks_uri)) {
-            throw new OpenIDConnectClientException(esc_html__('The jwks_uri is not available in the well known data.', 'scouting-openid-connect'));
+            return new WP_Error('oidc_error', esc_html__('The jwks_uri is not available in the well known data.', 'scouting-openid-connect'), $this->wellKnownData);
         }
 
         // Check if jwks_uri is a valid URL
         if (!filter_var($this->wellKnownData->jwks_uri, FILTER_VALIDATE_URL)) {
-            throw new OpenIDConnectClientException(esc_html__('The jwks_uri is not a valid URL.', 'scouting-openid-connect'));
+            return new WP_Error('oidc_error', esc_html__('The jwks_uri is not a valid URL.', 'scouting-openid-connect'), $this->wellKnownData->jwks_uri);
         }
 
         // Get the JSON Web Key Set (JWKS) from the jwks_uri
         $response = wp_remote_get($this->wellKnownData->jwks_uri);
         if (is_wp_error($response)) {
-            $error_string = $response->get_error_message();
-            throw new OpenIDConnectClientException(esc_html($error_string));
+            return $response;
         } else {
             $this->jwks = json_decode(wp_remote_retrieve_body($response));
         }
@@ -412,17 +407,17 @@ class OpenIDConnectClient
      */
     private function setNonce() {
         $nonce = wp_create_nonce('scouting_oidc_nonce');
-        $this->setSessionKey('scouting_oidc_nonce', $nonce);
+        $this->session->scouting_oidc_session_set('scouting_oidc_nonce', $nonce);
         return $nonce;
     }
 
     /**
      * Get stored nonce
      *
-     * @return string
+     * @return string|null
      */
     public function getNonce() {
-        return $this->getSessionKey('scouting_oidc_nonce');
+        return $this->session->scouting_oidc_session_get('scouting_oidc_nonce');
     }
 
     /**
@@ -431,9 +426,8 @@ class OpenIDConnectClient
      * @return void
      */
     private function unsetNonce() {
-        $this->unsetSessionKey('scouting_oidc_nonce');
+        $this->session->scouting_oidc_session_delete('scouting_oidc_nonce');
     }
-
     /**
      * Adds a state to the stored array of states.
      * 
@@ -442,7 +436,7 @@ class OpenIDConnectClient
      */
     private function setState(string $state) {
         // Retrieve the current array of states, or initialize as empty
-        $states = $this->getSessionKey('scouting_oidc_states') ?? [];
+        $states = $this->session->scouting_oidc_session_get('scouting_oidc_states') ?? [];
 
         // Ensure $states is an array (initialize as an empty array if it's null or not an array)
         if (!is_array($states)) {
@@ -453,18 +447,9 @@ class OpenIDConnectClient
         $states[] = $state;
 
         // Store the updated array back in the session
-        $this->setSessionKey('scouting_oidc_states', $states);
+        $this->session->scouting_oidc_session_set('scouting_oidc_states', $states);
 
         return $state;
-    }
-
-    /**
-     * Get all stored states.
-     *
-     * @return array the array of states stored in the session
-     */
-    public function getStates(): array {
-        return $this->getSessionKey('scouting_oidc_states') ?? [];
     }
 
     /**
@@ -474,52 +459,17 @@ class OpenIDConnectClient
      * @return bool True if the state exists, false otherwise
      */
     public function hasState(string $state): bool {
-        $states = $this->getStates();
+        $states = $this->session->scouting_oidc_session_get('scouting_oidc_states') ?? [];
         return in_array($state, $states, true);
     }
 
     /**
      * Cleanup state from session
+     * 
+     * @return void
      */
     private function unsetStates() {
-        $this->unsetSessionKey('scouting_oidc_states');
-    }
-    
-    /**
-     * Gets value from session with key
-     * 
-     * @param string $key the key to retrieve from the session
-     * @return string|array|false the sanitized session value or false if the key does not exist
-     */
-    private function getSessionKey(string $key) {
-        if (array_key_exists($key, $_SESSION)) {
-            // Check if the value is an array and sanitize accordingly
-            if (is_array($_SESSION[$key])) {
-                return array_map('sanitize_text_field', $_SESSION[$key]);
-            } else {
-                return sanitize_text_field($_SESSION[$key]);
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Sets value in session with key
-     * 
-     * @param string $key the key to set in the session
-     * @param mixed $value the value to set in the session
-     */
-    private function setSessionKey(string $key, mixed $value) {
-        $_SESSION[$key] = $value;
-    }
-
-    /**
-     * Unset value from session with key
-     * 
-     * @param string $key the key to unset in the session
-     */
-    private function unsetSessionKey(string $key) {
-        unset($_SESSION[$key]);
+        $this->session->scouting_oidc_session_delete('scouting_oidc_states');
     }
 
     /**

@@ -37,7 +37,25 @@ include_once 'src/plugin/actions.php';
 include_once 'src/plugin/description.php';
 include_once 'src/user/fields.php';
 
-$auth = new Auth();
+use ScoutingOIDC\ScoutingOIDC_Auth;
+use ScoutingOIDC\ScoutingOIDC_Session;
+use ScoutingOIDC\ScoutingOIDC_Menu;
+use ScoutingOIDC\ScoutingOIDC_Actions;
+use ScoutingOIDC\ScoutingOIDC_Description;
+use ScoutingOIDC\ScoutingOIDC_Settings;
+use ScoutingOIDC\ScoutingOIDC_Shortcode;
+use ScoutingOIDC\ScoutingOIDC_Support;
+use ScoutingOIDC\ScoutingOIDC_Fields;
+
+$scouting_oidc_auth = new ScoutingOIDC_Auth();
+$scouting_oidc_session = new ScoutingOIDC_Session();
+$scouting_oidc_menu = new ScoutingOIDC_Menu();
+$scouting_oidc_actions = new ScoutingOIDC_Actions();
+$scouting_oidc_description = new ScoutingOIDC_Description();
+$scouting_oidc_settings = new ScoutingOIDC_Settings();
+$scouting_oidc_shortcode = new ScoutingOIDC_Shortcode();
+$scouting_oidc_support = new ScoutingOIDC_Support();
+$scouting_oidc_fields = new ScoutingOIDC_Fields();
 
 // Init plugin
 function scouting_oidc_init()
@@ -46,63 +64,65 @@ function scouting_oidc_init()
     load_plugin_textdomain('scouting-openid-connect', false, dirname(plugin_basename(__FILE__)) . '/languages');
 
     // Add the OpenID Connect button to the login form
-    add_action('login_form', array($GLOBALS['auth'], 'scouting_oidc_login_form'));
+    add_action('login_form', array($GLOBALS['scouting_oidc_auth'], 'scouting_oidc_auth_login_form'));
 
     // Create shortcodes for OpenID Connect button and link
-    add_shortcode('scouting_oidc_button', array($GLOBALS['auth'], 'scouting_oidc_login_button_shortcode'));
-    add_shortcode('scouting_oidc_link', array($GLOBALS['auth'], 'scouting_oidc_login_url_shortcode'));
+    add_shortcode('scouting_oidc_button', array($GLOBALS['scouting_oidc_auth'], 'scouting_oidc_auth_login_button_shortcode'));
+    add_shortcode('scouting_oidc_link', array($GLOBALS['scouting_oidc_auth'], 'scouting_oidc_auth_login_url_shortcode'));
 
     // Geef extra links in de plugin-overzichtspagina
-	add_filter('plugin_action_links_'.plugin_basename(__FILE__), 'scouting_oidc_plugin_action_links');
+	add_filter('plugin_action_links_'.plugin_basename(__FILE__), [$GLOBALS['scouting_oidc_actions'], 'scouting_oidc_actions_plugin_links']);
 
     // Add scouting ID, birthday and gender to user profile 
 	if (get_option('scouting_oidc_user_scouting_id') || get_option('scouting_oidc_user_birthday') || get_option('scouting_oidc_user_gender'))
 	{
-		add_action('show_user_profile', 'scouting_oidc_user_profile_fields');
-		add_action('edit_user_profile', 'scouting_oidc_user_profile_fields');
+		add_action('show_user_profile', [$GLOBALS['scouting_oidc_fields'], 'scouting_oidc_fields_user_profile']);
+		add_action('edit_user_profile', [$GLOBALS['scouting_oidc_fields'], 'scouting_oidc_fields_user_profile']);
 	}
 
     // Add infix field to user profile
-    add_action('show_user_profile', 'add_infix_field_html');
-    add_action('edit_user_profile', 'add_infix_field_html');
-    add_action('admin_enqueue_scripts', 'enqueue_infix_field_script');
-    add_action('admin_enqueue_scripts', 'enqueue_live_shortcode_script');
+    add_action('show_user_profile',  [$GLOBALS['scouting_oidc_fields'], 'scouting_oidc_fields_show_infix_field']);
+    add_action('edit_user_profile',  [$GLOBALS['scouting_oidc_fields'], 'scouting_oidc_fields_show_infix_field']);
+    add_action('admin_enqueue_scripts', [$GLOBALS['scouting_oidc_fields'], 'scouting_oidc_fields_enqueue_infix_field_script']);
+    add_action('admin_enqueue_scripts', [$GLOBALS['scouting_oidc_shortcode'], 'scouting_oidc_shortcode_enqueue_live_script']);
 }
 add_action('plugins_loaded', 'scouting_oidc_init');
 
-// Start session
-add_action('init', 'scouting_oidc_start_session');
+// Session session
+add_action('init', [$scouting_oidc_session, 'scouting_oidc_session_start']);    // Start session on init
+add_action('wp_logout', [$scouting_oidc_session, 'scouting_oidc_session_end']); // End session on logout
+add_action('wp_login', [$scouting_oidc_session, 'scouting_oidc_session_end']);  // End session on login to reset
 
-// Add your settings page in the WordPress admin menu
-add_action('admin_menu', 'scouting_oidc_menu');
-add_action('admin_menu', 'scouting_oidc_settings_submenu_page');
-add_action('admin_menu', 'scouting_oidc_shortcode_submenu_page');
-add_action('admin_menu', 'scouting_oidc_support_submenu_page');
+// Add pages to the admin menu
+add_action('admin_menu', [$scouting_oidc_menu, 'scouting_oidc_menu']);
+add_action('admin_menu', [$scouting_oidc_settings, 'scouting_oidc_settings_submenu_page']);
+add_action('admin_menu', [$scouting_oidc_shortcode, 'scouting_oidc_shortcode_submenu_page']);
+add_action('admin_menu', [$scouting_oidc_support, 'scouting_oidc_support_submenu_page']);
 
 // Hook into admin_init to initialize settings
-add_action('admin_init', 'scouting_oidc_settings_page_init');
+add_action('admin_init', [$scouting_oidc_settings, 'scouting_oidc_settings_page_init']);
 
 // Callback to render settings page content
-add_action('template_redirect', array($auth, 'scouting_oidc_callback'));
+add_action('template_redirect', [$scouting_oidc_auth, 'scouting_oidc_auth_callback']);
 
 // Add login error message
-add_filter('login_message', array($auth, 'scouting_oidc_login_failed'));
+add_filter('login_message', [$scouting_oidc_auth, 'scouting_oidc_auth_login_failed']);
 
 // Modify plugin description
-add_filter('all_plugins', 'scouting_oidc_modify_plugin_description');
+add_filter('all_plugins', [$scouting_oidc_description, 'scouting_oidc_description_modify_plugin']);
 
 // Add display to safe style css for user profile fields
-add_filter( 'safe_style_css', function( $styles ) {
+add_filter('safe_style_css', function( $styles ) {
     $styles[] = 'display';
     return $styles;
-} );
+});
 
 // add login redirect
-add_action('wp_login', array($auth, 'scouting_oidc_login_redirect'));
+add_action('wp_login', [$scouting_oidc_auth, 'scouting_oidc_auth_login_redirect']);
 
 // add logout redirect
-add_action('wp_logout', array($auth, 'scouting_oidc_logout_redirect'));
+add_action('wp_logout', [$scouting_oidc_auth, 'scouting_oidc_auth_logout_redirect']);
 
 // Setup defaults during installation
-register_activation_hook(__FILE__, 'scouting_oidc_settings_install');
+register_activation_hook(__FILE__, [$scouting_oidc_settings, 'scouting_oidc_settings_install']);
 ?>
