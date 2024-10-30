@@ -1,7 +1,9 @@
 <?php
+namespace ScoutingOIDC;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class User {
+class ScoutingOIDC_User {
 
     /**
      * @var string Username
@@ -81,7 +83,7 @@ class User {
      * 
      * @return bool True if user exists, false otherwise
      */
-    public function checkIfUserExist() {
+    public function scouting_oidc_user_check_if_exist() {
         $user_id = username_exists($this->userName);
         $email_id = email_exists($this->email);
 
@@ -97,14 +99,14 @@ class User {
      * 
      * @return int User ID
      */
-    public function createUser() {
+    public function scouting_oidc_user_create() {
         $user_id = wp_create_user($this->userName, wp_generate_password(18, true, true), $this->email);
 
         if (is_wp_error($user_id)) {
             return 0;
         }
 
-        $this->updateUserMeta($user_id);
+        $this->couting_oidc_user_update_meta($user_id);
 
         return $user_id;
     }
@@ -114,7 +116,7 @@ class User {
      * 
      * @param int $user_id User ID
      */
-    public function updateUserMeta(int $user_id) {
+    public function couting_oidc_user_update_meta(int $user_id) {
         update_user_meta($user_id, 'first_name', $this->firstName);
         update_user_meta($user_id, 'scouting_oidc_infix', $this->infix);
         update_user_meta($user_id, 'last_name', $this->familyName);
@@ -157,7 +159,7 @@ class User {
     /**
      * Update user data if user already exists
      */
-    public function updateUser() {
+    public function scouting_oidc_user_update() {
         $user_name = username_exists($this->userName);
         $email = email_exists($this->email);
 
@@ -194,7 +196,7 @@ class User {
      * 
      * @return bool True if user is logged in, false otherwise
      */	
-    public function loginUser() {
+    public function scouting_oidc_user_login() {
         $user = get_user_by('login', $this->userName);
 
         if (!$user) {
