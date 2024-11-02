@@ -6,10 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 include_once 'oidc.php';
 include_once 'general.php';
 
-use ScoutingOIDC\ScoutingOIDC_Settings_Oidc;
-use ScoutingOIDC\ScoutingOIDC_Settings_General;
+use ScoutingOIDC\Settings_Oidc;
+use ScoutingOIDC\Settings_General;
 
-class ScoutingOIDC_Settings
+class Settings
 {
     public function scouting_oidc_settings_submenu_page() {
         add_submenu_page(
@@ -46,10 +46,10 @@ class ScoutingOIDC_Settings
 
     // Add the OpenID Connect settings page to the admin menu
     public function scouting_oidc_settings_page_init() {
-        $scouting_oidc_settings_oidc = new ScoutingOIDC_Settings_Oidc();
+        $scouting_oidc_settings_oidc = new Settings_Oidc();
         $scouting_oidc_settings_oidc->scouting_oidc_settings_oidc();
 
-        $scouting_oidc_settings_general = new ScoutingOIDC_Settings_General();
+        $scouting_oidc_settings_general = new Settings_General();
         $scouting_oidc_settings_general->scouting_oidc_settings_general();
     }
 

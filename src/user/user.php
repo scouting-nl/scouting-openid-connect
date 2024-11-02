@@ -3,7 +3,7 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class ScoutingOIDC_User {
+class User {
 
     /**
      * @var string Username
@@ -106,7 +106,7 @@ class ScoutingOIDC_User {
             return 0;
         }
 
-        $this->couting_oidc_user_update_meta($user_id);
+        $this-scouting_oidc_user_update_meta($user_id);
 
         return $user_id;
     }
@@ -116,7 +116,7 @@ class ScoutingOIDC_User {
      * 
      * @param int $user_id User ID
      */
-    public function couting_oidc_user_update_meta(int $user_id) {
+    public function scouting_oidc_user_update_meta(int $user_id) {
         update_user_meta($user_id, 'first_name', $this->firstName);
         update_user_meta($user_id, 'scouting_oidc_infix', $this->infix);
         update_user_meta($user_id, 'last_name', $this->familyName);
@@ -188,7 +188,7 @@ class ScoutingOIDC_User {
             $user = get_user_by('email', $this->email);
         }
 
-        $this->updateUserMeta($user->ID);
+        $this->scouting_oidc_user_update_meta($user->ID);
     }
 
     /**

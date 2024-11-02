@@ -3,7 +3,7 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class ScoutingOIDC_Actions
+class Actions
 {
 	/**
 	 * Add settings link to scouting-oidc plugin on the plugins page

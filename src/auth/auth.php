@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 require_once 'OpenIDConnectClient.php';
 require_once __DIR__.'/../../src/user/user.php';
 
-use ScoutingOIDC\ScoutingOIDC_User;
+use ScoutingOIDC\User;
 
-class ScoutingOIDC_Auth {
+class Auth {
 
     /**
      * @var OpenIDConnectClient OpenID Connect client
@@ -150,7 +150,7 @@ class ScoutingOIDC_Auth {
         $user_json_encoded = $this->oidc_client->validateTokens();
 
         // Create a new User object
-        $user = new ScoutingOIDC_User($user_json_encoded);
+        $user = new User($user_json_encoded);
         
         // Check if user is already created
         if ($user->scouting_oidc_user_check_if_exist()) {

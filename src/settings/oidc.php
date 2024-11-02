@@ -3,7 +3,7 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class ScoutingOIDC_Settings_Oidc
+class Settings_Oidc
 {
     function scouting_oidc_settings_oidc() {
         // Add settings sections

@@ -3,7 +3,7 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class ScoutingOIDC_Menu
+class Menu
 {
     // Add the OpenID Connect settings page to the admin menu
     public function scouting_oidc_menu() {

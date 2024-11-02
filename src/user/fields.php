@@ -3,7 +3,7 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class ScoutingOIDC_Fields
+class Fields
 {
     /**
      * Show the user profile fields in the user profile and edit user profile pages

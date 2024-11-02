@@ -3,7 +3,7 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class ScoutingOIDC_Support
+class Support
 {
     public function scouting_oidc_support_submenu_page() {
         add_submenu_page(
