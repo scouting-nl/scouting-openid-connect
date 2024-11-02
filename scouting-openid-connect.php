@@ -37,25 +37,25 @@ include_once 'src/plugin/actions.php';
 include_once 'src/plugin/description.php';
 include_once 'src/user/fields.php';
 
-use ScoutingOIDC\ScoutingOIDC_Auth;
-use ScoutingOIDC\ScoutingOIDC_Session;
-use ScoutingOIDC\ScoutingOIDC_Menu;
-use ScoutingOIDC\ScoutingOIDC_Actions;
-use ScoutingOIDC\ScoutingOIDC_Description;
-use ScoutingOIDC\ScoutingOIDC_Settings;
-use ScoutingOIDC\ScoutingOIDC_Shortcode;
-use ScoutingOIDC\ScoutingOIDC_Support;
-use ScoutingOIDC\ScoutingOIDC_Fields;
+use ScoutingOIDC\Auth;
+use ScoutingOIDC\Session;
+use ScoutingOIDC\Menu;
+use ScoutingOIDC\Actions;
+use ScoutingOIDC\Description;
+use ScoutingOIDC\Settings;
+use ScoutingOIDC\Shortcode;
+use ScoutingOIDC\Support;
+use ScoutingOIDC\Fields;
 
-$scouting_oidc_auth = new ScoutingOIDC_Auth();
-$scouting_oidc_session = new ScoutingOIDC_Session();
-$scouting_oidc_menu = new ScoutingOIDC_Menu();
-$scouting_oidc_actions = new ScoutingOIDC_Actions();
-$scouting_oidc_description = new ScoutingOIDC_Description();
-$scouting_oidc_settings = new ScoutingOIDC_Settings();
-$scouting_oidc_shortcode = new ScoutingOIDC_Shortcode();
-$scouting_oidc_support = new ScoutingOIDC_Support();
-$scouting_oidc_fields = new ScoutingOIDC_Fields();
+$scouting_oidc_auth = new Auth();
+$scouting_oidc_session = new Session();
+$scouting_oidc_menu = new Menu();
+$scouting_oidc_actions = new Actions();
+$scouting_oidc_description = new Description();
+$scouting_oidc_settings = new Settings();
+$scouting_oidc_shortcode = new Shortcode();
+$scouting_oidc_support = new Support();
+$scouting_oidc_fields = new Fields();
 
 // Init plugin
 function scouting_oidc_init()

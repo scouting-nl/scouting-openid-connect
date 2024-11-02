@@ -3,7 +3,7 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class ScoutingOIDC_Description
+class Description
 {
 	/**
 	 * Modify the description of the Scouting OpenID Connect plugin

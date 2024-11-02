@@ -3,7 +3,7 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-use ScoutingOIDC\ScoutingOIDC_Session;
+use ScoutingOIDC\Session;
 
 /**
  * OpenIDConnectClient for Scouting OpenID Connect
@@ -62,7 +62,7 @@ class OpenIDConnectClient
     private $tokens = [];
 
     /**
-     * @var ScoutingOIDC_Session holds the session
+     * @var Session holds the session
      */
     private $session;
 
@@ -81,7 +81,7 @@ class OpenIDConnectClient
         $this->issuer = $scouting_issuer;
 
         // Load session to store tokens if needed
-        $this->session = new ScoutingOIDC_Session();
+        $this->session = new Session();
         $this->session->scouting_oidc_session_start();
 
         $this->getWellKnownData();

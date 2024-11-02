@@ -3,7 +3,7 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class ScoutingOIDC_Session {
+class Session {
     // Start the session if it is not already started
     public static function scouting_oidc_session_start() {
         if (session_status() === PHP_SESSION_NONE) {

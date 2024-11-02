@@ -3,7 +3,7 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class ScoutingOIDC_Shortcode
+class Shortcode
 {
     public function scouting_oidc_shortcode_submenu_page() {
         add_submenu_page(
