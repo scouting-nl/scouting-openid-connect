@@ -8,7 +8,7 @@ on:
       - 'releases/*' # All branches under releases
 
 jobs:
-  test:
+  plugin-check:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
