@@ -16,7 +16,7 @@ class Support
             3                                               // Menu position
         );
     }
-    
+
     // Callback to render support page content
     public function scouting_oidc_support_page_callback() {
         ?>
@@ -28,7 +28,7 @@ class Support
     
             <h2><?php esc_html_e('Setting up OpenID Connect', 'scouting-openid-connect'); ?></h2>
             <ol>
-                <li><?php esc_html_e('Go to', 'scouting-openid-connect'); ?> <a href="https://login.scouting.nl" target="_blank">https://login.scouting.nl</a>, <?php esc_html_e('click on "Managed websites" and click on "Add OpenID Connect connection".', 'scouting-openid-connect'); ?></li>
+                <li><?php esc_html_e('Go to', 'scouting-openid-connect'); ?> <a href="https://login.scouting.nl" target="_blank">login.scouting.nl</a>, <?php esc_html_e('click on "Managed websites" and click on "Add OpenID Connect connection".', 'scouting-openid-connect'); ?></li>
                 <li><?php esc_html_e('Add the name of your group/website.', 'scouting-openid-connect'); ?></li>
                 <li><?php esc_html_e('Add the Redirect URI:', 'scouting-openid-connect'); ?> <code><?php echo esc_url(home_url('/')); ?></code></li>
                 <li><?php esc_html_e('Add the Post Logout Redirect URI:', 'scouting-openid-connect'); ?> <code><?php echo esc_url(home_url('/')); ?></code></li>

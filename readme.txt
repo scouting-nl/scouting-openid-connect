@@ -53,7 +53,8 @@ Currently not, but this is planned for a future update of this plugin.
 
 1. Login Page
 2. Settings Page
-3. Support Page
+3. Shortcode Page
+4. Support Page
 
 == Changelog ==
 

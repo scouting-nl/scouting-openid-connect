@@ -17,13 +17,13 @@ class Fields
         <table class="form-table" role="presentation">
             <?php
             if (get_option('scouting_oidc_user_scouting_id')) {
-                scouting_oidc_fields_scouting_id($user);
+                $this->scouting_oidc_fields_scouting_id($user);
             }
             if (get_option('scouting_oidc_user_birthdate')) {
-                scouting_oidc_fields_birthdate($user);
+                $this->scouting_oidc_fields_birthdate($user);
             }
             if (get_option('scouting_oidc_user_gender')) {
-                scouting_oidc_fields_gender($user);
+                $this->scouting_oidc_fields_gender($user);
             }
             ?>
         </table>
@@ -107,13 +107,13 @@ class Fields
     public function scouting_oidc_fields_enqueue_infix_field_script() {
         // Enqueue the external JavaScript file with the defer attribute
         wp_enqueue_script(
-            'infix-field-script', // Handle name
+            'infix-field-script',                    // Handle name
             plugins_url('infix-field.js', __FILE__), // Path to the file
-            array(), // No dependencies
-            "0.0.1", // Version number
+            array(),                                 // No dependencies
+            "0.0.1",                                 // Version number
             array(
-                'strategy' => 'defer', // Add the defer attribute
-                'in_footer' => true // Load the script in the footer
+                'strategy' => 'defer',               // Add the defer attribute
+                'in_footer' => true                  // Load the script in the footer
             )
         );
     }

@@ -5,8 +5,8 @@ msgstr ""
 "Project-Id-Version: Scouting OpenID Connect 0.0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/"
 "issues\n"
-"POT-Creation-Date: 2024-10-30 23:50+0100\n"
-"PO-Revision-Date: 2024-10-30 23:50+0100\n"
+"POT-Creation-Date: 2024-11-04 21:19+0100\n"
+"PO-Revision-Date: 2024-11-04 21:19+0100\n"
 "Last-Translator: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language: nl_NL\n"
@@ -187,22 +187,22 @@ msgstr "Achternaam"
 msgid "Username"
 msgstr "Gebruikersnaam"
 
-#: settings/general.php:183
+#: settings/general.php:182
 msgid ""
 "This prefix will be added to the username of all Scouting Nederland users"
 msgstr ""
 "Dit voorvoegsel wordt toegevoegd aan de gebruikersnaam van alle Scouting "
 "Nederland gebruikers"
 
-#: settings/general.php:189
+#: settings/general.php:188
 msgid "Default (no action)"
 msgstr "Standaard (geen actie)"
 
-#: settings/general.php:190
+#: settings/general.php:189
 msgid "Frontpage"
 msgstr "Voorpagina"
 
-#: settings/general.php:191
+#: settings/general.php:190
 msgid "Dashboard"
 msgstr "Dashboard"
 

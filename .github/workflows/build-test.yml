@@ -8,11 +8,11 @@ on:
       - 'releases/*' # All branches under releases
 
 jobs:
-  test:
+  plugin-check:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4.2.2
 
     - name: Run plugin check
-      uses: wordpress/plugin-check-action@v1
+      uses: wordpress/plugin-check-action@v1.0.7

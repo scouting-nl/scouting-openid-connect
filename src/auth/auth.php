@@ -3,8 +3,8 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-require_once 'OpenIDConnectClient.php';
-require_once __DIR__.'/../../src/user/user.php';
+require_once plugin_dir_path(__FILE__) .'OpenIDConnectClient.php';
+require_once plugin_dir_path(__FILE__) . '../../src/user/user.php';
 
 use ScoutingOIDC\User;
 
