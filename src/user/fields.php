@@ -17,13 +17,13 @@ class Fields
         <table class="form-table" role="presentation">
             <?php
             if (get_option('scouting_oidc_user_scouting_id')) {
-                scouting_oidc_fields_scouting_id($user);
+                $this->scouting_oidc_fields_scouting_id($user);
             }
             if (get_option('scouting_oidc_user_birthdate')) {
-                scouting_oidc_fields_birthdate($user);
+                $this->scouting_oidc_fields_birthdate($user);
             }
             if (get_option('scouting_oidc_user_gender')) {
-                scouting_oidc_fields_gender($user);
+                $this->scouting_oidc_fields_gender($user);
             }
             ?>
         </table>

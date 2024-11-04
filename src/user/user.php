@@ -106,7 +106,7 @@ class User {
             return 0;
         }
 
-        $this-scouting_oidc_user_update_meta($user_id);
+        $this->scouting_oidc_user_update_meta($user_id);
 
         return $user_id;
     }
