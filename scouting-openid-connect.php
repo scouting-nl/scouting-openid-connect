@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @copyright  2024 Scouting Nederland
  * @license    GPLv3
  * @version    0.0.1
- * @link       https://github.com/Scouting-nl/OpenID-Connect-Wordpress
+ * @link       https://github.com/Scouting-nl/scouting-openid-connect
  *
  * @wordpress-plugin
  * Plugin Name:          Scouting OpenID Connect
- * Plugin URI:           https://github.com/Scouting-nl/OpenID-Connect-Wordpress
+ * Plugin URI:           https://github.com/Scouting-nl/scouting-openid-connect
  * Description:          WordPress plugin for logging in with Scouting Nederland OpenID Connect Server.
  * Version:              0.0.1
  * Requires at least:    6.4.3

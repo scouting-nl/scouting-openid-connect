@@ -33,7 +33,7 @@ It provides a secure and convenient way for Scouting Nederland members to access
 
 With this plugin, users can seamlessly integrate their Scouting Nederland accounts with their WordPress websites, enhancing the user experience and simplifying the login process.
 
-Bugs and feature-requests can go to: [GitHub](https://github.com/Scouting-nl/OpenID-Connect-Wordpress/issues) or [WordPress](https://wordpress.org/support/plugin/scouting-openid-connect)
+Bugs and feature-requests can go to: [GitHub](https://github.com/Scouting-nl/scouting-openid-connect/issues) or [WordPress](https://wordpress.org/support/plugin/scouting-openid-connect)
 
 ## Screenshots
 
