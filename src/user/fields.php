@@ -107,13 +107,13 @@ class Fields
     public function scouting_oidc_fields_enqueue_infix_field_script() {
         // Enqueue the external JavaScript file with the defer attribute
         wp_enqueue_script(
-            'infix-field-script', // Handle name
+            'infix-field-script',                    // Handle name
             plugins_url('infix-field.js', __FILE__), // Path to the file
-            array(), // No dependencies
-            "0.0.1", // Version number
+            array(),                                 // No dependencies
+            "0.0.1",                                 // Version number
             array(
-                'strategy' => 'defer', // Add the defer attribute
-                'in_footer' => true // Load the script in the footer
+                'strategy' => 'defer',               // Add the defer attribute
+                'in_footer' => true                  // Load the script in the footer
             )
         );
     }

@@ -3,8 +3,8 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-include_once 'oidc.php';
-include_once 'general.php';
+require_once plugin_dir_path(__FILE__) . 'oidc.php';
+require_once plugin_dir_path(__FILE__) . 'general.php';
 
 use ScoutingOIDC\Settings_Oidc;
 use ScoutingOIDC\Settings_General;

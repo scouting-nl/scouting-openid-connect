@@ -16,7 +16,7 @@ class Support
             3                                               // Menu position
         );
     }
-    
+
     // Callback to render support page content
     public function scouting_oidc_support_page_callback() {
         ?>

@@ -119,10 +119,10 @@ class Settings_General
             'scouting_oidc_login_redirect'  // Option name
         );
     }
-    
+
     // Callback to render section content
     public function scouting_oidc_settings_general_callback() {}
-    
+
     // Callback to render text field
     public function scouting_oidc_settings_general_display_name_callback() {
         $possible_values = array(
@@ -142,7 +142,7 @@ class Settings_General
         }
         echo '</select>';
     }
-    
+
     // Callback to render text field
     public function scouting_oidc_settings_general_birthdate_callback() {
         if (get_option('scouting_oidc_user_birthdate'))
@@ -150,7 +150,7 @@ class Settings_General
         else
             echo '<input type="checkbox" id="scouting_oidc_user_birthdate" name="scouting_oidc_user_birthdate"/>';
     }
-    
+
     // Callback to render text field
     public function scouting_oidc_settings_general_gender_callback() {
         if (get_option('scouting_oidc_user_gender'))
@@ -158,7 +158,7 @@ class Settings_General
         else 
             echo '<input type="checkbox" id="scouting_oidc_user_gender" name="scouting_oidc_user_gender"/>';
     }
-    
+
     // Callback to render text field
     public function scouting_oidc_settings_general_scouting_id_callback() {
         if (get_option('scouting_oidc_user_scouting_id'))
@@ -166,7 +166,7 @@ class Settings_General
         else
             echo '<input type="checkbox" id="scouting_oidc_user_scouting_id" name="scouting_oidc_user_scouting_id"/>';
     }
-    
+
     // Callback to render text field
     public function scouting_oidc_settings_general_user_auto_create_callback() {
         if (get_option('scouting_oidc_user_auto_create'))
@@ -174,15 +174,14 @@ class Settings_General
         else
             echo '<input type="checkbox" id="scouting_oidc_user_auto_create" name="scouting_oidc_user_auto_create"/>';
     }
-    
-    
+
     // Callback to render text field
     public function scouting_oidc_settings_general_user_name_prefix_callback() {
         $value = get_option('scouting_oidc_user_name_prefix');
         echo '<input type="text" id="scouting_oidc_user_name_prefix" name="scouting_oidc_user_name_prefix" placeholder="Prefix Username" value="' . esc_attr($value) . '" size="20" />';
         echo '<p class="description">' . esc_html__("This prefix will be added to the username of all Scouting Nederland users", "scouting-openid-connect") . '</p>';
     }
-    
+
     // callback to render select field for login redirect
     public function scouting_oidc_settings_general_login_redirect_callback() {
         $possible_values = array(

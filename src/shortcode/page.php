@@ -106,13 +106,13 @@ class Shortcode
     public function scouting_oidc_shortcode_enqueue_live_script() {
         // Enqueue the external JavaScript file with the defer attribute
         wp_enqueue_script(
-            'live-shortcode-script', // Handle name
+            'live-shortcode-script',                    // Handle name
             plugins_url('live-shortcode.js', __FILE__), // Path to the file
-            array(), // No dependencies
-            "0.0.1", // Version number
+            array(),                                    // No dependencies
+            "0.0.1",                                    // Version number
             array(
-                'strategy' => 'defer', // Add the defer attribute
-                'in_footer' => true // Load the script in the footer
+                'strategy' => 'defer',                  // Add the defer attribute
+                'in_footer' => true                     // Load the script in the footer
             )
         );
     }

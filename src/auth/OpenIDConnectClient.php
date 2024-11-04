@@ -122,7 +122,7 @@ class OpenIDConnectClient
 
         return $this->wellKnownData->authorization_endpoint . '?' . http_build_query($auth_params, '', '&', PHP_QUERY_RFC1738);
     }
-    
+
     /**
      * Retrieves the tokens from the token endpoint
      * 
@@ -321,7 +321,7 @@ class OpenIDConnectClient
             $this->wellKnownData = json_decode(wp_remote_retrieve_body($response));
         }
     }
-    
+
     /**
      * Sets the scopes
      * 
@@ -428,6 +428,7 @@ class OpenIDConnectClient
     private function unsetNonce() {
         $this->session->scouting_oidc_session_delete('scouting_oidc_nonce');
     }
+
     /**
      * Adds a state to the stored array of states.
      * 

@@ -27,15 +27,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * Domain Path:          /languages
  **/
 
-require_once 'src/auth/auth.php';
-require_once 'src/auth/session.php';
-require_once 'src/menu/menu.php';
-require_once 'src/settings/page.php';
-require_once 'src/shortcode/page.php';
-require_once 'src/support/page.php';
-include_once 'src/plugin/actions.php';
-include_once 'src/plugin/description.php';
-include_once 'src/user/fields.php';
+require_once plugin_dir_path(__FILE__) . 'src/auth/auth.php';
+require_once plugin_dir_path(__FILE__) . 'src/auth/session.php';
+require_once plugin_dir_path(__FILE__) . 'src/menu/menu.php';
+require_once plugin_dir_path(__FILE__) . 'src/settings/page.php';
+require_once plugin_dir_path(__FILE__) . 'src/shortcode/page.php';
+require_once plugin_dir_path(__FILE__) . 'src/support/page.php';
+require_once plugin_dir_path(__FILE__) . 'src/plugin/actions.php';
+require_once plugin_dir_path(__FILE__) . 'src/plugin/description.php';
+require_once plugin_dir_path(__FILE__) . 'src/user/fields.php';
 
 use ScoutingOIDC\Auth;
 use ScoutingOIDC\Session;

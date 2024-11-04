@@ -59,22 +59,22 @@ class Settings_Oidc
             'scouting_oidc_scopes'          // Option name
         );
     }
-    
+
     // Callback to render section content
     function scouting_oidc_settings_oidc_callback() {}
-    
+
     // Callback to render text field
     function scouting_oidc_settings_oidc_client_id_callback() {
         $value = get_option('scouting_oidc_client_id');
         echo '<input type="text" id="scouting_oidc_client_id" name="scouting_oidc_client_id" placeholder="'. esc_attr__("Client ID", "scouting-openid-connect") .'" value="' . esc_attr($value) . '" size="50" required>';
     }
-    
+
     // Callback to render text field
     function scouting_oidc_settings_oidc_client_secret_callback() {
         $value = get_option('scouting_oidc_client_secret');
         echo '<input type="text" id="scouting_oidc_client_secret" name="scouting_oidc_client_secret" placeholder="'. esc_attr__("Client Secret", "scouting-openid-connect") .'" value="' . esc_attr($value) . '" size="150" required>';
     }
-    
+
     // Callback to render text field
     function scouting_oidc_settings_oidc_scopes_callback() {
         $value = get_option('scouting_oidc_scopes');
