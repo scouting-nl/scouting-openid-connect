@@ -60,31 +60,33 @@ $scouting_oidc_fields = new Fields();
 // Init plugin
 function scouting_oidc_init()
 {
+    global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode; // Declare global variable
+
     // Add translations to the plugin
     load_plugin_textdomain('scouting-openid-connect', false, dirname(plugin_basename(__FILE__)) . '/languages');
 
     // Add the OpenID Connect button to the login form
-    add_action('login_form', array($GLOBALS['scouting_oidc_auth'], 'scouting_oidc_auth_login_form'));
+    add_action('login_form', array($scouting_oidc_auth, 'scouting_oidc_auth_login_form'));
 
     // Create shortcodes for OpenID Connect button and link
-    add_shortcode('scouting_oidc_button', array($GLOBALS['scouting_oidc_auth'], 'scouting_oidc_auth_login_button_shortcode'));
-    add_shortcode('scouting_oidc_link', array($GLOBALS['scouting_oidc_auth'], 'scouting_oidc_auth_login_url_shortcode'));
+    add_shortcode('scouting_oidc_button', array($scouting_oidc_auth, 'scouting_oidc_auth_login_button_shortcode'));
+    add_shortcode('scouting_oidc_link', array($scouting_oidc_auth, 'scouting_oidc_auth_login_url_shortcode'));
 
     // Geef extra links in de plugin-overzichtspagina
-	add_filter('plugin_action_links_'.plugin_basename(__FILE__), [$GLOBALS['scouting_oidc_actions'], 'scouting_oidc_actions_plugin_links']);
+	add_filter('plugin_action_links_'.plugin_basename(__FILE__), [$scouting_oidc_actions, 'scouting_oidc_actions_plugin_links']);
 
     // Add scouting ID, birthday and gender to user profile 
 	if (get_option('scouting_oidc_user_scouting_id') || get_option('scouting_oidc_user_birthday') || get_option('scouting_oidc_user_gender'))
 	{
-		add_action('show_user_profile', [$GLOBALS['scouting_oidc_fields'], 'scouting_oidc_fields_user_profile']);
-		add_action('edit_user_profile', [$GLOBALS['scouting_oidc_fields'], 'scouting_oidc_fields_user_profile']);
+		add_action('show_user_profile', [$scouting_oidc_fields, 'scouting_oidc_fields_user_profile']);
+		add_action('edit_user_profile', [$scouting_oidc_fields, 'scouting_oidc_fields_user_profile']);
 	}
 
     // Add infix field to user profile
-    add_action('show_user_profile',  [$GLOBALS['scouting_oidc_fields'], 'scouting_oidc_fields_show_infix_field']);
-    add_action('edit_user_profile',  [$GLOBALS['scouting_oidc_fields'], 'scouting_oidc_fields_show_infix_field']);
-    add_action('admin_enqueue_scripts', [$GLOBALS['scouting_oidc_fields'], 'scouting_oidc_fields_enqueue_infix_field_script']);
-    add_action('admin_enqueue_scripts', [$GLOBALS['scouting_oidc_shortcode'], 'scouting_oidc_shortcode_enqueue_live_script']);
+    add_action('show_user_profile',  [$scouting_oidc_fields, 'scouting_oidc_fields_show_infix_field']);
+    add_action('edit_user_profile',  [$scouting_oidc_fields, 'scouting_oidc_fields_show_infix_field']);
+    add_action('admin_enqueue_scripts', [$scouting_oidc_fields, 'scouting_oidc_fields_enqueue_infix_field_script']);
+    add_action('admin_enqueue_scripts', [$scouting_oidc_shortcode, 'scouting_oidc_shortcode_enqueue_live_script']);
 }
 add_action('plugins_loaded', 'scouting_oidc_init');
 
