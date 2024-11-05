@@ -110,7 +110,7 @@ class Fields
             'infix-field-script',                    // Handle name
             plugins_url('infix-field.js', __FILE__), // Path to the file
             array(),                                 // No dependencies
-            "0.0.1",                                 // Version number
+            "0.0.2",                                 // Version number
             array(
                 'strategy' => 'defer',               // Add the defer attribute
                 'in_footer' => true                  // Load the script in the footer
