@@ -45,9 +45,13 @@ Bugs and feature-requests can go to: [GitHub](https://github.com/Scouting-nl/sco
 
 ![settings page](assets/screenshot-2.png)
 
-### 2. Support page
+### 3. Shortcode page
 
 ![support page](assets/screenshot-3.png)
+
+### 4. Support page
+
+![support page](assets/screenshot-4.png)
 
 ## Installation
 
