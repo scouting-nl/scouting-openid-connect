@@ -48,7 +48,7 @@ class Settings_General
             [$this, 'scouting_oidc_settings_general_scouting_id_callback'],      // Callback to render field
             'scouting-openid-connect-settings',                                  // Page slug
             'scouting_oidc_general_settings'                                     // Section ID where the field should be added
-       );
+        );
     
         // Add a settings text field
         add_settings_field(
