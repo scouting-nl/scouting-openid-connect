@@ -43,20 +43,29 @@ class Settings_Oidc
     
         // Register settings
         register_setting(
-            'scouting_oidc_settings_group', // Settings group name
-            'scouting_oidc_client_id'       // Option name
+            'scouting_oidc_settings_group',                  // Settings group name
+            'scouting_oidc_client_id',                       // Option name
+            [
+                'sanitize_callback' => 'sanitize_text_field' // Sanitize the input value as a text field
+            ]
         );
     
         // Register settings
         register_setting(
-            'scouting_oidc_settings_group', // Settings group name
-            'scouting_oidc_client_secret'   // Option name
+            'scouting_oidc_settings_group',                  // Settings group name
+            'scouting_oidc_client_secret',                   // Option name
+            [
+                'sanitize_callback' => 'sanitize_text_field' // Sanitize the input value as a text field
+            ]
         );
     
         // Register settings
         register_setting(
-            'scouting_oidc_settings_group', // Settings group name
-            'scouting_oidc_scopes'          // Option name
+            'scouting_oidc_settings_group',                  // Settings group name
+            'scouting_oidc_scopes',                          // Option name
+            [
+                'sanitize_callback' => 'sanitize_text_field' // Sanitize the input value as a text field
+            ]
         );
     }
 

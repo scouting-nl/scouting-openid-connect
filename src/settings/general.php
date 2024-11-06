@@ -79,45 +79,89 @@ class Settings_General
     
         // Register settings
         register_setting(
-            'scouting_oidc_settings_group',   // Settings group name
-            'scouting_oidc_user_display_name' // Option name
+            'scouting_oidc_settings_group',                                                  // Settings group name
+            'scouting_oidc_user_display_name',                                               // Option name
+            [
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_display_name_option'] // Sanitize the input value as display name
+            ]
         );
     
         // Register settings
         register_setting(
-            'scouting_oidc_settings_group', // Settings group name
-            'scouting_oidc_user_birthdate'  // Option name
+            'scouting_oidc_settings_group',                                             // Settings group name
+            'scouting_oidc_user_birthdate',                                             // Option name
+            [
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as an integer
+            ]
         );
     
         // Register settings
         register_setting(
-            'scouting_oidc_settings_group', // Settings group name
-            'scouting_oidc_user_gender'     // Option name
+            'scouting_oidc_settings_group',                                             // Settings group name
+            'scouting_oidc_user_gender',                                                // Option name
+            [
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as an integer
+            ]
         );
     
         // Register settings
         register_setting(
-            'scouting_oidc_settings_group',  // Settings group name
-            'scouting_oidc_user_scouting_id' // Option name
+            'scouting_oidc_settings_group',                                             // Settings group name
+            'scouting_oidc_user_scouting_id',                                           // Option name
+            [
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as an integer
+            ]
         );
     
         // Register settings
         register_setting(
-            'scouting_oidc_settings_group',  // Settings group name
-            'scouting_oidc_user_auto_create' // Option name
+            'scouting_oidc_settings_group',                                             // Settings group name
+            'scouting_oidc_user_auto_create',                                           // Option name
+            [
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as an integer
+            ]
         );
     
         // Register settings
         register_setting(
-            'scouting_oidc_settings_group',  // Settings group name
-            'scouting_oidc_user_name_prefix' // Option name
-       );
+            'scouting_oidc_settings_group',                  // Settings group name
+            'scouting_oidc_user_name_prefix',                // Option name
+            [
+                'sanitize_callback' => 'sanitize_text_field' // Sanitize the input value as a text field
+            ]
+        );
     
         // Register settings
         register_setting(
-            'scouting_oidc_settings_group', // Settings group name
-            'scouting_oidc_login_redirect'  // Option name
+            'scouting_oidc_settings_group',                                                    // Settings group name
+            'scouting_oidc_login_redirect',                                                    // Option name
+            [
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_login_redirect_option'] // Sanitize the input value as login redirect
+            ]
         );
+    }
+
+    // Sanitize the display name option
+    public function scouting_oidc_sanitize_display_name_option($input) {
+        // Define allowed options
+        $valid = ['fullname', 'firstname', 'lastname', 'username'];
+        
+        // Return the input if it’s a valid option; otherwise, default to 'fullname'
+        return in_array($input, $valid, true) ? $input : 'fullname';
+    }
+
+    // Sanitize the input value as boolean
+    public function scouting_oidc_sanitize_boolean_option($input) {
+        return $input ? 1 : 0;
+    }
+
+    // Sanitize the login redirect option
+    public function scouting_oidc_sanitize_login_redirect_option($input) {
+        // Define allowed options
+        $valid = ['default', 'frontpage', 'dashboard'];
+        
+        // Return the input if it’s a valid option; otherwise, default to 'default'
+        return in_array($input, $valid, true) ? $input : 'default';
     }
 
     // Callback to render section content
