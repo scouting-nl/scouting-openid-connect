@@ -2,11 +2,11 @@
 # This file is distributed under the same license as the Scouting OpenID Connect plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Scouting OpenID Connect 0.0.2\n"
+"Project-Id-Version: Scouting OpenID Connect 0.0.3\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/"
 "issues\n"
-"POT-Creation-Date: 2024-11-04 21:19+0100\n"
-"PO-Revision-Date: 2024-11-05 00:45+0100\n"
+"POT-Creation-Date: 2024-11-28 23:24+0100\n"
+"PO-Revision-Date: 2024-11-28 23:26+0100\n"
 "Last-Translator: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language: nl_NL\n"
@@ -19,31 +19,31 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: auth/OpenIDConnectClient.php:101
-msgid "The authorization endpoint is not available in the well known data."
-msgstr "Het autorisatie eindpunt is niet beschikbaar in de well known data."
+#: auth/OpenIDConnectClient.php:100
+msgid "The authorization_endpoint is not available in the well-known data."
+msgstr "Het authorization_endpoint is niet beschikbaar in de well-known data."
 
-#: auth/OpenIDConnectClient.php:135
-msgid "The token endpoint is not available in the well known data."
-msgstr "Het token eindpunt is niet beschikbaar in de well known data."
+#: auth/OpenIDConnectClient.php:116
+msgid "The following scopes are not supported:"
+msgstr "De volgende scopes worden niet ondersteund:"
 
-#: auth/OpenIDConnectClient.php:167
-msgid "Failed to retrieve tokens. Response code:"
-msgstr "Het ophalen van tokens is mislukt. Responscode:"
+#: auth/OpenIDConnectClient.php:116
+msgid "The supported scopes are:"
+msgstr "De ondersteunde scopes zijn:"
 
-#: auth/OpenIDConnectClient.php:167 auth/OpenIDConnectClient.php:267
-msgid "Response message:"
-msgstr "Antwoordbericht:"
+#: auth/OpenIDConnectClient.php:151
+msgid "The token_endpoint is not available in the well-known data."
+msgstr "Het token_endpoint is niet beschikbaar in de well-known data."
 
-#: auth/OpenIDConnectClient.php:193
+#: auth/OpenIDConnectClient.php:222
 msgid "The ID token is not available in the tokens."
 msgstr "Het ID-token is niet beschikbaar in de tokens."
 
-#: auth/OpenIDConnectClient.php:198
-msgid "The JSON Web Key Set (JWKS) is not available"
-msgstr "De JSON Web Key Set (JWKS) is niet beschikbaar"
+#: auth/OpenIDConnectClient.php:230
+msgid "The JSON Web Key Set (JWKS) is not available."
+msgstr "De JSON Web Key Set (JWKS) is niet beschikbaar."
 
-#: auth/OpenIDConnectClient.php:220
+#: auth/OpenIDConnectClient.php:255
 msgid ""
 "The certificate chain (x5c) for the key ID (kid) specified in the header was "
 "not found."
@@ -51,79 +51,64 @@ msgstr ""
 "De certificaatketen (x5c) voor de sleutel-ID (kid) in de koptekst is niet "
 "gevonden."
 
-#: auth/OpenIDConnectClient.php:230
+#: auth/OpenIDConnectClient.php:268
 msgid "The signature in the ID token is not valid."
 msgstr "De handtekening in het ID-token is niet geldig."
 
-#: auth/OpenIDConnectClient.php:245
-msgid "The userinfo endpoint is not available in the well known data."
-msgstr "Het eindpunt userinfo is niet beschikbaar in de well known data."
+#: auth/OpenIDConnectClient.php:344 auth/OpenIDConnectClient.php:403
+msgid "No additional details provided."
+msgstr "Geen aanvullende details verstrekt."
 
-#: auth/OpenIDConnectClient.php:250
-msgid "The access token is not available in the tokens."
-msgstr "Het toegangstoken is niet beschikbaar in de tokens."
+#: auth/OpenIDConnectClient.php:345
+msgid "When retrieving well-known data, the status code was:"
+msgstr "Bij het ophalen van well-known data was de statuscode:"
 
-#: auth/OpenIDConnectClient.php:267
-msgid "Failed to retrieve user info. Response code:"
-msgstr "Kon gebruikersinformatie niet ophalen. Responscode:"
+#: auth/OpenIDConnectClient.php:345 auth/OpenIDConnectClient.php:379
+#: auth/OpenIDConnectClient.php:404 auth/auth.php:238
+msgid "Details:"
+msgstr "Details:"
 
-#: auth/OpenIDConnectClient.php:281
-msgid "The end session endpoint is not available in the well known data."
-msgstr "Het eindpunt van de sessie is niet beschikbaar in de bekende gegevens."
+#: auth/OpenIDConnectClient.php:371
+msgid "The jwks_uri is not available in the well-known data."
+msgstr "De jwks_uri is niet beschikbaar in de well-known data."
 
-#: auth/OpenIDConnectClient.php:306
-msgid "An issuer must be provided in the config."
-msgstr "In de configuratie moet een issuer worden opgegeven."
-
-#: auth/OpenIDConnectClient.php:311
-msgid "The issuer URL is not valid."
-msgstr "De URL van de issuer is ongeldig."
-
-#: auth/OpenIDConnectClient.php:334
-msgid "Scopes must be a non-empty array."
-msgstr "Scopes moeten een niet-lege array zijn."
-
-#: auth/OpenIDConnectClient.php:341
-msgid "Scope"
-msgstr "Scope"
-
-#: auth/OpenIDConnectClient.php:341
-msgid "is not supported by the server, supported scopes are:"
-msgstr "wordt niet ondersteund door de server, ondersteunde scopes zijn:"
-
-#: auth/OpenIDConnectClient.php:358
-msgid "Well known data is not available."
-msgstr "Er zijn geen bekende gegevens beschikbaar."
-
-#: auth/OpenIDConnectClient.php:363
-msgid "The jwks_uri is not available in the well known data."
-msgstr "De jwks_uri is niet beschikbaar in de bekende gegevens."
-
-#: auth/OpenIDConnectClient.php:368
+#: auth/OpenIDConnectClient.php:379
 msgid "The jwks_uri is not a valid URL."
 msgstr "De jwks_uri is geen geldige URL."
 
-#: auth/auth.php:39 auth/auth.php:72
+#: auth/OpenIDConnectClient.php:379
+msgid "The jwks_uri is not valid:"
+msgstr "De jwks_uri is niet geldig:"
+
+#: auth/OpenIDConnectClient.php:404
+msgid "When retrieving JWKS data, the status code was:"
+msgstr "Bij het ophalen van JWKS-gegevens was de statuscode:"
+
+#: auth/auth.php:50 auth/auth.php:95
 msgid "Login with Scouts Online"
 msgstr "Inloggen met Scouts Online"
 
-#: auth/auth.php:99
+#: auth/auth.php:105
+msgid "Client ID or Client Secret are missing in the configuration"
+msgstr "Client-ID of Client Secret ontbreekt in de configuratie"
+
+#: auth/auth.php:138
 msgid "Nonce is invalid"
 msgstr "Nonce is ongeldig"
 
-#: auth/auth.php:128
+#: auth/auth.php:167
 msgid "State is invalid"
 msgstr "State is ongeldig"
 
-#: auth/auth.php:139
+#: auth/auth.php:178
 msgid "Code is missing"
 msgstr "Code ontbreekt"
 
-#: auth/auth.php:164
+#: auth/auth.php:203
 msgid "Webmaster disabled creation of new accounts"
 msgstr "Webmaster heeft het aanmaken van nieuwe accounts uitgeschakeld"
 
-#: auth/auth.php:196
+#: auth/auth.php:234
 msgid "The user denied the request"
 msgstr "De gebruiker heeft het verzoek geweigerd"
 
@@ -171,38 +156,38 @@ msgstr "Voorvoegsel voor alle Scouting Nederland gebruikers"
 msgid "After a successful login redirect user to"
 msgstr "Na een succesvolle aanmelding wordt de gebruiker doorgestuurd naar"
 
-#: settings/general.php:129
+#: settings/general.php:173
 msgid "Full name"
 msgstr "Volledige naam"
 
-#: settings/general.php:130
+#: settings/general.php:174
 msgid "First name"
 msgstr "Voornaam"
 
-#: settings/general.php:131
+#: settings/general.php:175
 msgid "Last name"
 msgstr "Achternaam"
 
-#: settings/general.php:132
+#: settings/general.php:176
 msgid "Username"
 msgstr "Gebruikersnaam"
 
-#: settings/general.php:182
+#: settings/general.php:226
 msgid ""
 "This prefix will be added to the username of all Scouting Nederland users"
 msgstr ""
 "Dit voorvoegsel wordt toegevoegd aan de gebruikersnaam van alle Scouting "
 "Nederland gebruikers"
 
-#: settings/general.php:188
+#: settings/general.php:232
 msgid "Default (no action)"
 msgstr "Standaard (geen actie)"
 
-#: settings/general.php:189
+#: settings/general.php:233
 msgid "Frontpage"
 msgstr "Voorpagina"
 
-#: settings/general.php:190
+#: settings/general.php:234
 msgid "Dashboard"
 msgstr "Dashboard"
 
@@ -543,13 +528,47 @@ msgstr "Tussenvoegsel"
 msgid "Email scope is missing"
 msgstr "Email scope ontbreekt"
 
-#: user/user.php:175
+#: user/user.php:178
 msgid "Username and Email have different user ID"
 msgstr "Gebruikersnaam en Email hebben verschillende gebruikers-ID"
 
-#: user/user.php:203
+#: user/user.php:206
 msgid "Something went wrong while trying to log in"
 msgstr "Er is iets misgegaan tijdens het inloggen"
+
+#~ msgid "An issuer must be provided in the config."
+#~ msgstr "In de configuratie moet een issuer worden opgegeven."
+
+#~ msgid "The issuer URL is not valid."
+#~ msgstr "De URL van de issuer is ongeldig."
+
+#~ msgid "well-known data is not available."
+#~ msgstr "Er zijn geen bekende gegevens beschikbaar."
+
+#~ msgid "Failed to retrieve tokens. Response code:"
+#~ msgstr "Het ophalen van tokens is mislukt. Responscode:"
+
+#~ msgid "Response message:"
+#~ msgstr "Antwoordbericht:"
+
+#~ msgid "The userinfo endpoint is not available in the well-known data."
+#~ msgstr "Het eindpunt userinfo is niet beschikbaar in de well-known data."
+
+#~ msgid "The access token is not available in the tokens."
+#~ msgstr "Het toegangstoken is niet beschikbaar in de tokens."
+
+#~ msgid "Failed to retrieve user info. Response code:"
+#~ msgstr "Kon gebruikersinformatie niet ophalen. Responscode:"
+
+#~ msgid "The end session endpoint is not available in the well-known data."
+#~ msgstr ""
+#~ "Het eindpunt van de sessie is niet beschikbaar in de bekende gegevens."
+
+#~ msgid "Scopes must be a non-empty array."
+#~ msgstr "Scopes moeten een niet-lege array zijn."
+
+#~ msgid "Scope"
+#~ msgstr "Scope"
 
 #, fuzzy
 #~| msgid "Settings"

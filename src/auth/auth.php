@@ -9,7 +9,6 @@ require_once plugin_dir_path(__FILE__) . '../../src/user/user.php';
 use ScoutingOIDC\User;
 
 class Auth {
-
     /**
      * @var OpenIDConnectClient OpenID Connect client
      */
@@ -26,6 +25,18 @@ class Auth {
 
     // Add the OpenID Connect button to the login form
     public function scouting_oidc_auth_login_form() {
+        // Check if the client ID and client secret are empty 
+        if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
+            return;
+        }
+
+        $login_url = $this->scouting_oidc_auth_login_url();
+
+        // Check if the login URL starts with 'init_error'
+        if (substr($login_url, 0, 10) == 'init_error') {
+            return;
+        }
+
         // Add divider to the login form to separate the default login form from the OpenID Connect button
         echo '<hr id="scouding-oidc-divider" style="border-top: 2px solid #8c8f94; border-radius: 4px;"/>';
 
@@ -34,7 +45,7 @@ class Auth {
 
         // Add the OpenID Connect button to the login form
         echo '<div id="scouting-oidc-login-div" style="margin: 16px 0px; width: 100%; height: 40px;">';
-        echo '<a id="scouting-oidc-login-link" href="' . esc_url($this->scouting_oidc_auth_login_url()) . '" style="' . esc_attr($button_style) . '">';
+        echo '<a id="scouting-oidc-login-link" href="' . esc_url($login_url) . '" style="' . esc_attr($button_style) . '">';
         echo '<img id="scouting-oidc-login-img" src="' . esc_url($this->scouting_oidc_auth_icon_url()) . '" alt="Scouting NL Logo" style="width: 40px; height: 40px; margin-right: 10px;">';
         echo '<span id="scouting-oidc-login-text">' . esc_html__('Login with Scouts Online', 'scouting-openid-connect') . '</span>';
         echo '</a></div>';
@@ -42,6 +53,18 @@ class Auth {
 
     // Create shortcode with a login button
     public function scouting_oidc_auth_login_button_shortcode($atts) {
+        // Check if the client ID and client secret are empty 
+        if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
+            return;
+        }
+
+        $login_url = $this->scouting_oidc_auth_login_url();
+
+        // Check if the login URL starts with 'init_error'
+        if (substr($login_url, 0, 10) == 'init_error') {
+            return;
+        }
+
         // Extract shortcode attributes (if any)
         $atts = shortcode_atts(
             array(
@@ -49,10 +72,10 @@ class Auth {
                 'height' => '40',                // Default height in pixels
                 'background_color' => '#4CAF50', // Default background color
                 'text_color' => '#ffffff',       // Default text color
-           ),
+            ),
             $atts,
             'scouting_oidc_button' // Name of your shortcode
-       );
+        );
 
         // Ensure minimal button dimensions and sanitize
         $atts['width'] = max(120, intval($atts['width']));
@@ -64,7 +87,7 @@ class Auth {
         $button_style = "display: flex; justify-content: center; align-items: center; background-color: " . esc_attr($atts['background_color']) . "; color: " . esc_attr($atts['text_color']) . "; border: none; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: bold; width: 100%; height: 100%; text-align: center;";
         
         $button_html = '<div id="scouting-oidc-login-div" style="min-width: 120px; width: ' . esc_attr($atts['width']) . 'px; min-height: 40px; height: ' . esc_attr($atts['height']) . 'px;">';
-        $button_html .= '<a id="scouting-oidc-login-link" href="' . esc_url($this->scouting_oidc_auth_login_url()) . '" style="' . esc_attr($button_style) . '">';
+        $button_html .= '<a id="scouting-oidc-login-link" href="' . esc_url($login_url) . '" style="' . esc_attr($button_style) . '">';
         // If width is smaller than 225px, the image will not be displayed
         if (intval($atts['width']) >= 225) {
             $button_html .= '<img id="scouting-oidc-login-img" src="' . esc_url($this->scouting_oidc_auth_icon_url()) . '" alt="Scouting NL Logo" style="width: 40px; height: 40px; margin-right: 10px;">';
@@ -77,13 +100,29 @@ class Auth {
 
     // Create shortcode with the OpenID Authentication URL
     public function scouting_oidc_auth_login_url_shortcode() {
+        // Check if the client ID and client secret are empty 
+        if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
+            $hint = rawurlencode(__('Client ID or Client Secret are missing in the configuration', 'scouting-openid-connect'));
+            return esc_url_raw(wp_login_url() . '?login=failed&error_description=init&hint=' . $hint . '&message=init_error');
+        }
+
+        $login_url = $this->scouting_oidc_auth_login_url();
+
+        // Check if the login URL starts with 'init_error'
+        if (substr($login_url, 0, 10) == 'init_error') {
+            // Get hint from the URL
+            $hint = substr($login_url, 12);
+
+            // Return login URL with hint
+            return esc_url_raw(wp_login_url() . '?login=failed&error_description=init&hint=' . $hint . '&message=init_error');
+        }
         return esc_url($this->scouting_oidc_auth_login_url());
     }
 
     // Callback to login with OpenID Connect
     public function scouting_oidc_auth_callback() {
         // Check if we're on the front page
-        if (!is_front_page() || !is_home()) {
+        if (!is_front_page()) {
             return;
         }
 
@@ -92,13 +131,13 @@ class Auth {
             return;
         }
 
-        //check if nonce is valid with wp_verify_nonce
+        // Check if nonce is valid with wp_verify_nonce
         if (wp_verify_nonce($this->oidc_client->getNonce())) {
             $this->oidc_client->unsetStatesAndNonce();
 
             $hint = rawurlencode(__('Nonce is invalid', 'scouting-openid-connect'));
 
-            $redirect_url = esc_url_raw(wp_login_url() . '?error_description=error&hint=' . $hint . '&message=nonce_invalid');
+            $redirect_url = esc_url_raw(wp_login_url() . '?login=failed&error_description=error&hint=' . $hint . '&message=nonce_invalid');
             wp_safe_redirect($redirect_url);
             exit;
         }
@@ -111,7 +150,7 @@ class Auth {
             $hint = rawurlencode(sanitize_text_field(wp_unslash($_GET['hint'])));
             $message = rawurlencode(sanitize_text_field(wp_unslash($_GET['message'])));
 
-            $redirect_url = esc_url_raw(wp_login_url() . '?error_description=' . $error_description . '&hint=' . $hint . '&message=' . $message);
+            $redirect_url = esc_url_raw(wp_login_url() . '?login=failed&error_description=' . $error_description . '&hint=' . $hint . '&message=' . $message);
             wp_safe_redirect($redirect_url);
             exit;
         }
@@ -127,7 +166,7 @@ class Auth {
 
             $hint = rawurlencode(__('State is invalid', 'scouting-openid-connect'));
 
-            $redirect_url = esc_url_raw(wp_login_url() . '?error_description=error&hint=' . $hint . '&message=state_invalid');
+            $redirect_url = esc_url_raw(wp_login_url() . '?login=failed&error_description=error&hint=' . $hint . '&message=state_invalid');
             wp_safe_redirect($redirect_url);
             exit;
         }
@@ -138,7 +177,7 @@ class Auth {
 
             $hint = rawurlencode(__('Code is missing', 'scouting-openid-connect'));
 
-            $redirect_url = esc_url_raw(wp_login_url() . '?error_description=error&hint=' . $hint . '&message=code_missing');
+            $redirect_url = esc_url_raw(wp_login_url() . '?login=failed&error_description=error&hint=' . $hint . '&message=code_missing');
             wp_safe_redirect($redirect_url);
             exit;
         }
@@ -162,7 +201,7 @@ class Auth {
                 $user->scouting_oidc_user_login();
             } else {
                 $hint = rawurlencode(__('Webmaster disabled creation of new accounts', 'scouting-openid-connect'));
-                $redirect_url = esc_url_raw(wp_login_url() . "?error_description=error&hint={$hint}&message=disabled_auto_create");
+                $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=disabled_auto_create");
                 wp_safe_redirect($redirect_url);
                 exit;
             }
@@ -179,7 +218,6 @@ class Auth {
         // Check if nonce is valid
         if (wp_verify_nonce($this->oidc_client->getNonce())) {
             $this->oidc_client->unsetStatesAndNonce();
-            return;
         }
 
         // Check if error_description, hint, and message are set in the URL
@@ -188,12 +226,24 @@ class Auth {
         }
 
         $error_description = sanitize_text_field(wp_unslash($_GET['error_description']));
-        $message = sanitize_text_field(wp_unslash($_GET['message']));
+        $error_message = sanitize_text_field(wp_unslash($_GET['message']));
         $hint = sanitize_text_field(wp_unslash($_GET['hint']));
 
         // If the error equals `The user denied the request`, show a translated message
         if ($hint == 'The user denied the request') {
             $hint = __("The user denied the request", "scouting-openid-connect");
+        }
+
+        // If $hint contains Details: then put it on a new line and make it bold
+        $details = __('Details:', 'scouting-openid-connect');
+        if (strpos($hint, $details) !== false) {
+            $details = explode($details, $hint);
+            $error = '<div id="login_error" class="notice notice-error"><p><strong>Error: </strong>';
+            $error .= esc_html($details[0]);
+            $error .= '<br><strong>Details:</strong>';
+            $error .= esc_html($details[1]);
+            $error .= '</p></div>';
+            return $error;
         }
 
         // Display the error message
@@ -227,6 +277,20 @@ class Auth {
     private function scouting_oidc_auth_login_url() {
         $response_type = 'code';
         $scopes = array_map('sanitize_text_field', explode(" ", get_option('scouting_oidc_scopes')));
+
+        // Check if nonce is valid
+        if (wp_verify_nonce($this->oidc_client->getNonce())) {
+            $this->oidc_client->unsetStatesAndNonce();
+        }
+        
+        // Check if error_description, hint, and message are set in the URL
+        if (isset($_GET['error_description'], $_GET['hint'])) {
+            $error_description = sanitize_text_field(wp_unslash($_GET['error_description']));
+            $hint = sanitize_text_field(wp_unslash($_GET['hint']));
+            if ($error_description == 'init')
+                return "init_error:" . $hint;
+        }
+
         return $this->oidc_client->getAuthenticationURL($response_type, $scopes);
     }
 }

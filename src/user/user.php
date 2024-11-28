@@ -72,7 +72,7 @@ class User {
 
         if ($this->email == null) {
             $hint = rawurlencode(__('Email scope is missing', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?error_description=error&hint={$hint}&message=email_is_missing");
+            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=email_is_missing");
             wp_safe_redirect($redirect_url);
             exit;
         }
@@ -103,7 +103,10 @@ class User {
         $user_id = wp_create_user($this->userName, wp_generate_password(18, true, true), $this->email);
 
         if (is_wp_error($user_id)) {
-            return 0;
+            $hint = rawurlencode($user_id->get_error_message());
+            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=user_creation_failed");
+            wp_safe_redirect($redirect_url);
+            exit;
         }
 
         $this->scouting_oidc_user_update_meta($user_id);
@@ -173,7 +176,7 @@ class User {
             }
             else {
                 $hint = rawurlencode(__('Username and Email have different user ID', 'scouting-openid-connect'));
-                $redirect_url = esc_url_raw(wp_login_url() . "?error_description=error&hint={$hint}&message=login_email_mismatch");
+                $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=login_email_mismatch");
                 wp_safe_redirect($redirect_url);
                 exit;
             }
@@ -201,7 +204,7 @@ class User {
 
         if (!$user) {
             $hint = rawurlencode(__('Something went wrong while trying to log in', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?error_description=error&hint={$hint}&message=login_email_mismatch");
+            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=login_email_mismatch");
             wp_safe_redirect($redirect_url);
             exit;
         }
