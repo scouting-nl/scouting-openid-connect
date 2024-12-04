@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Scouting OpenID Connect 0.0.3\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/issues\n"
-"POT-Creation-Date: 2024-11-28 23:23+0100\n"
+"POT-Creation-Date: 2024-12-04 20:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
@@ -18,19 +18,19 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: auth/OpenIDConnectClient.php:100
+#: auth/OpenIDConnectClient.php:101
 msgid "The authorization_endpoint is not available in the well-known data."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:116
+#: auth/OpenIDConnectClient.php:117
 msgid "The following scopes are not supported:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:116
+#: auth/OpenIDConnectClient.php:117
 msgid "The supported scopes are:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:151
+#: auth/OpenIDConnectClient.php:152
 msgid "The token_endpoint is not available in the well-known data."
 msgstr ""
 
@@ -59,7 +59,7 @@ msgid "When retrieving well-known data, the status code was:"
 msgstr ""
 
 #: auth/OpenIDConnectClient.php:345 auth/OpenIDConnectClient.php:379
-#: auth/OpenIDConnectClient.php:404 auth/auth.php:238
+#: auth/OpenIDConnectClient.php:404 auth/auth.php:240
 msgid "Details:"
 msgstr ""
 
@@ -79,31 +79,31 @@ msgstr ""
 msgid "When retrieving JWKS data, the status code was:"
 msgstr ""
 
-#: auth/auth.php:50 auth/auth.php:95
+#: auth/auth.php:52 auth/auth.php:97
 msgid "Login with Scouts Online"
 msgstr ""
 
-#: auth/auth.php:105
+#: auth/auth.php:107
 msgid "Client ID or Client Secret are missing in the configuration"
 msgstr ""
 
-#: auth/auth.php:138
+#: auth/auth.php:140
 msgid "Nonce is invalid"
 msgstr ""
 
-#: auth/auth.php:167
+#: auth/auth.php:169
 msgid "State is invalid"
 msgstr ""
 
-#: auth/auth.php:178
+#: auth/auth.php:180
 msgid "Code is missing"
 msgstr ""
 
-#: auth/auth.php:203
+#: auth/auth.php:205
 msgid "Webmaster disabled creation of new accounts"
 msgstr ""
 
-#: auth/auth.php:234
+#: auth/auth.php:236
 msgid "The user denied the request"
 msgstr ""
 

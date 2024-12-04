@@ -27,15 +27,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * Domain Path:          /languages
  **/
 
-require_once plugin_dir_path(__FILE__) . 'src/auth/auth.php';
-require_once plugin_dir_path(__FILE__) . 'src/auth/session.php';
-require_once plugin_dir_path(__FILE__) . 'src/menu/menu.php';
-require_once plugin_dir_path(__FILE__) . 'src/settings/page.php';
-require_once plugin_dir_path(__FILE__) . 'src/shortcode/page.php';
-require_once plugin_dir_path(__FILE__) . 'src/support/page.php';
-require_once plugin_dir_path(__FILE__) . 'src/plugin/actions.php';
-require_once plugin_dir_path(__FILE__) . 'src/plugin/description.php';
-require_once plugin_dir_path(__FILE__) . 'src/user/fields.php';
+define('SCOUTING_OIDC_PATH', plugin_dir_path( __FILE__ ));
+require_once SCOUTING_OIDC_PATH . 'src/auth/auth.php';
+require_once SCOUTING_OIDC_PATH . 'src/auth/session.php';
+require_once SCOUTING_OIDC_PATH . 'src/menu/menu.php';
+require_once SCOUTING_OIDC_PATH . 'src/settings/page.php';
+require_once SCOUTING_OIDC_PATH . 'src/shortcode/page.php';
+require_once SCOUTING_OIDC_PATH . 'src/support/page.php';
+require_once SCOUTING_OIDC_PATH . 'src/plugin/actions.php';
+require_once SCOUTING_OIDC_PATH . 'src/plugin/description.php';
+require_once SCOUTING_OIDC_PATH . 'src/user/fields.php';
 
 use ScoutingOIDC\Auth;
 use ScoutingOIDC\Session;

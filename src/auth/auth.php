@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 require_once plugin_dir_path(__FILE__) .'OpenIDConnectClient.php';
 require_once plugin_dir_path(__FILE__) . '../../src/user/user.php';
+require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
+require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
 
 use ScoutingOIDC\User;
 
@@ -46,7 +48,7 @@ class Auth {
         // Add the OpenID Connect button to the login form
         echo '<div id="scouting-oidc-login-div" style="margin: 16px 0px; width: 100%; height: 40px;">';
         echo '<a id="scouting-oidc-login-link" href="' . esc_url($login_url) . '" style="' . esc_attr($button_style) . '">';
-        echo '<img id="scouting-oidc-login-img" src="' . esc_url($this->scouting_oidc_auth_icon_url()) . '" alt="Scouting NL Logo" style="width: 40px; height: 40px; margin-right: 10px;">';
+        echo wp_kses($this->scouting_oidc_auth_icon(), $this->scouting_oidc_auth_icon_wp_kses_allowed_svg());
         echo '<span id="scouting-oidc-login-text">' . esc_html__('Login with Scouts Online', 'scouting-openid-connect') . '</span>';
         echo '</a></div>';
     }
@@ -90,7 +92,7 @@ class Auth {
         $button_html .= '<a id="scouting-oidc-login-link" href="' . esc_url($login_url) . '" style="' . esc_attr($button_style) . '">';
         // If width is smaller than 225px, the image will not be displayed
         if (intval($atts['width']) >= 225) {
-            $button_html .= '<img id="scouting-oidc-login-img" src="' . esc_url($this->scouting_oidc_auth_icon_url()) . '" alt="Scouting NL Logo" style="width: 40px; height: 40px; margin-right: 10px;">';
+            $button_html .= wp_kses($this->scouting_oidc_auth_icon(), $this->scouting_oidc_auth_icon_wp_kses_allowed_svg());
         }
         $button_html .= '<span id="scouting-oidc-login-text">' . esc_html__('Login with Scouts Online', 'scouting-openid-connect') . '</span>';
         $button_html .= '</a></div>';
@@ -269,8 +271,51 @@ class Auth {
     }
 
     // Helper function to get the icon URL
-    private function scouting_oidc_auth_icon_url() {
-        return plugins_url('../../assets/icon.svg', __FILE__);
+    private function scouting_oidc_auth_icon() {
+        // Define the path to the SVG file
+        $svg_file_path = SCOUTING_OIDC_PATH . 'assets/icon.svg';
+
+        // Check if the file exists
+        if (file_exists($svg_file_path)) {
+            // Get the contents of the SVG file
+            $wp_filesystem = new \WP_Filesystem_Direct(null);
+            $svg_content = $wp_filesystem->get_contents($svg_file_path);
+
+            // Modify the SVG tag to include additional attributes
+            $svg_content = preg_replace(
+                '/<svg([^>]+)>/',
+                '<svg\1 id="scouting-oidc-login-img" style="width: 2.5rem; height: 2.5rem; margin-right: 10px;" role="img" aria-label="Scouting NL Logo">',
+                $svg_content
+            );
+
+            // Return the SVG content
+            return $svg_content;
+        }
+    }
+
+    // Helper function to get the allowed SVG tags
+    private function scouting_oidc_auth_icon_wp_kses_allowed_svg () {
+        return array(
+            'svg' => array(
+                'version' => true,
+                'xmlns' => true,
+                'viewbox' => true,
+                'id' => true,
+                'style' => true,
+                'role' => true,
+                'aria-label' => true,
+            ),
+            'title' => array(),
+            'style' => array(),
+            'g' => array(
+                'id' => true,
+            ),
+            'path' => array(
+                'id' => true,
+                'class' => true,
+                'd' => true,
+            ),
+        );
     }
 
     // Helper function to get the login URL

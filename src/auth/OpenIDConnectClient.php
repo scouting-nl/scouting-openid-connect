@@ -82,6 +82,7 @@ class OpenIDConnectClient
 
         // Load session to store tokens if needed
         $this->session = new Session();
+        $this->session->scouting_oidc_session_set_cookie();
     }
 
     /**
@@ -205,7 +206,6 @@ class OpenIDConnectClient
     public function unsetStatesAndNonce() {
         $this->session->scouting_oidc_session_delete('scouting_oidc_states');
         $this->session->scouting_oidc_session_delete('scouting_oidc_nonce');
-        $this->session->scouting_oidc_session_end();
     }
 
     /**
