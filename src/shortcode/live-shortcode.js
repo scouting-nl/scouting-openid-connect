@@ -133,5 +133,5 @@ scoutingOIDCHeightInput.addEventListener('input', updateValueHeight);
 scoutingOIDCBackgroundColorInput.addEventListener('input', updateValueBackgroundColor);
 scoutingOIDCTextColorInput.addEventListener('input', updateValueTextColor);
 
-// remove href attribute from the link
+// Remove href attribute from the link
 scoutingOIDCLoginLink.removeAttribute('href');

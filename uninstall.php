@@ -1,5 +1,5 @@
 <?php 
-// exit if uninstall constant is not defined
+// Exit if uninstall constant is not defined
 if (!defined('WP_UNINSTALL_PLUGIN')) exit;
 
 // Delete options
@@ -20,7 +20,17 @@ foreach ($options as $option) {
 	if (get_option($option)) delete_option($option);
 }
 
-//Delete user meta
+// Delete transients
+$transients = array(
+	'scouting_oidc_well_known_data',
+	'scouting_oidc_jwks_data',
+);
+
+foreach ($transients as $transient) {
+	if (get_transient($transient)) delete_transient($transient);
+}
+
+// Delete user meta
 $metas = array(
 	'scouting_oidc_id',
 	'scouting_oidc_birthdate',

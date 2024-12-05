@@ -6,8 +6,8 @@
 
 **Contributors:** [jobvk](https://github.com/jobvk) \
 **Requires at least:** 6.4.3 \
-**Tested up to:** 6.6.1 \
-**Stable tag:** 0.0.2 \
+**Tested up to:** 6.7.1 \
+**Stable tag:** 0.0.3 \
 **Tags:** scouting, scouting nederland, sol, openid connect, oidc \
 **License:** GPLv3 \
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,7 +22,6 @@ Connect your Wordpress website to the Scouting Nederland OpenID Connect server.
 * [Configuration](#configuration)
 * [Shortcodes](#shortcodes)
 * [Frequently-Asked-Questions](#frequently-asked-questions)
-* [Upgrade-Notice](#upgrade-notice)
 * [Translations](#translations)
 
 ## Description

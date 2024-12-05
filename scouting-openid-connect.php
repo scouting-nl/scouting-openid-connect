@@ -9,14 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @author     Job van Koeveringe <job.van.koeveringe@scouting.nl>
  * @copyright  2024 Scouting Nederland
  * @license    GPLv3
- * @version    0.0.2
+ * @version    0.0.3
  * @link       https://github.com/Scouting-nl/scouting-openid-connect
  *
  * @wordpress-plugin
  * Plugin Name:          Scouting OpenID Connect
  * Plugin URI:           https://github.com/Scouting-nl/scouting-openid-connect
  * Description:          WordPress plugin for logging in with Scouting Nederland OpenID Connect Server.
- * Version:              0.0.2
+ * Version:              0.0.3
  * Requires at least:    6.4.3
  * Requires PHP:         8.2
  * Author:               Job van Koeveringe
@@ -27,15 +27,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * Domain Path:          /languages
  **/
 
-require_once plugin_dir_path(__FILE__) . 'src/auth/auth.php';
-require_once plugin_dir_path(__FILE__) . 'src/auth/session.php';
-require_once plugin_dir_path(__FILE__) . 'src/menu/menu.php';
-require_once plugin_dir_path(__FILE__) . 'src/settings/page.php';
-require_once plugin_dir_path(__FILE__) . 'src/shortcode/page.php';
-require_once plugin_dir_path(__FILE__) . 'src/support/page.php';
-require_once plugin_dir_path(__FILE__) . 'src/plugin/actions.php';
-require_once plugin_dir_path(__FILE__) . 'src/plugin/description.php';
-require_once plugin_dir_path(__FILE__) . 'src/user/fields.php';
+define('SCOUTING_OIDC_PATH', plugin_dir_path( __FILE__ ));
+require_once SCOUTING_OIDC_PATH . 'src/auth/auth.php';
+require_once SCOUTING_OIDC_PATH . 'src/auth/session.php';
+require_once SCOUTING_OIDC_PATH . 'src/menu/menu.php';
+require_once SCOUTING_OIDC_PATH . 'src/settings/page.php';
+require_once SCOUTING_OIDC_PATH . 'src/shortcode/page.php';
+require_once SCOUTING_OIDC_PATH . 'src/support/page.php';
+require_once SCOUTING_OIDC_PATH . 'src/plugin/actions.php';
+require_once SCOUTING_OIDC_PATH . 'src/plugin/description.php';
+require_once SCOUTING_OIDC_PATH . 'src/user/fields.php';
 
 use ScoutingOIDC\Auth;
 use ScoutingOIDC\Session;
@@ -90,11 +91,6 @@ function scouting_oidc_init()
 }
 add_action('plugins_loaded', 'scouting_oidc_init');
 
-// Session session
-add_action('init', [$scouting_oidc_session, 'scouting_oidc_session_start']);    // Start session on init
-add_action('wp_logout', [$scouting_oidc_session, 'scouting_oidc_session_end']); // End session on logout
-add_action('wp_login', [$scouting_oidc_session, 'scouting_oidc_session_end']);  // End session on login to reset
-
 // Add pages to the admin menu
 add_action('admin_menu', [$scouting_oidc_menu, 'scouting_oidc_menu']);
 add_action('admin_menu', [$scouting_oidc_settings, 'scouting_oidc_settings_submenu_page']);
@@ -119,10 +115,10 @@ add_filter('safe_style_css', function( $styles ) {
     return $styles;
 });
 
-// add login redirect
+// Add login redirect
 add_action('wp_login', [$scouting_oidc_auth, 'scouting_oidc_auth_login_redirect']);
 
-// add logout redirect
+// Add logout redirect
 add_action('wp_logout', [$scouting_oidc_auth, 'scouting_oidc_auth_logout_redirect']);
 
 // Setup defaults during installation
