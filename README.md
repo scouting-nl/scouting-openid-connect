@@ -7,7 +7,7 @@
 **Contributors:** [jobvk](https://github.com/jobvk) \
 **Requires at least:** 6.4.3 \
 **Tested up to:** 6.7.1 \
-**Stable tag:** 0.0.3 \
+**Stable tag:** 1.0.0 \
 **Tags:** scouting, scouting nederland, sol, openid connect, oidc \
 **License:** GPLv3 \
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html
@@ -73,7 +73,7 @@ Make sure you have the role `webmaster` in [sol.scouting.nl](https://sol.scoutin
     If your organization has sub-organizations, you can also select `Allow suborganizations.`
 7. Press `Add Website.`
 8. Find the website you just created and click on ⓘ.
-9. Copy the `Client ID`, `Client Secret`, and the `Scopes` to your website.
+9. Copy the client ID, client secret, and the scopes to your website.
 10. Fill in the OpenID Connect Settings with the copied data. \
     Make sure the required scopes, `openid` and `email`, are present.
 11. Fill in the General Settings. \

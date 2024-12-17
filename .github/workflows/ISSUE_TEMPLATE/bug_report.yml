@@ -1,0 +1,70 @@
+name: Report an issue
+description: Report an issue for the Scouting OpenID Connect WordPress plugin.
+labels: bug
+assignees:
+  - jobvk
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Bug Report
+        
+        This issue form is for reporting bugs only!
+
+        For support, please contact [cms@support.scouting.nl & job.van.koeveringe@scouting.nl](mailto:cms@support.scouting.nl?cc=job.van.koeveringe@scouting.nl&subject=WordPress%20Scouting%20OIDC%20Support) (developer of the plugin).
+        or ask the community on the [support page](https://github.com/scouting-nl/scouting-openid-connect/discussions/categories/support).
+
+        If you have a feature or enhancement request, please use the [discussions ideas page](https://github.com/scouting-nl/scouting-openid-connect/discussions/categories/ideas).
+        If you need help anything else please have a look on our [discussions page](https://github.com/scouting-nl/scouting-openid-connect/discussions/).
+  - type: checkboxes
+    attributes:
+      label: Checklist
+      options:
+        - label: I'm running the [latest](https://github.com/scouting-nl/scouting-openid-connect/releases/latest) version of the Scouting OpenID Connect WordPress plugin.
+          required: true
+        - label: I checked if there is not a duplicate issue with the same question.
+          required: true
+        - label: I have read the [README.md](https://github.com/scouting-nl/scouting-openid-connect/blob/main/README.md) page.
+          required: true
+        - label:  This issue is a bug related to the Scouting OpenID Connect WordPress plugin.
+          required: true
+        - label: This issue only contains 1 issue (if you have multiple issues, open one issue for each issue).
+          required: true
+        - label: I have filled out the issue template to the best of my ability.
+          required: true
+  - type: markdown
+    attributes:
+      value: |
+        # Problem
+  - type: textarea
+    id:  problem
+    validations:
+      required: true
+    attributes:
+      label: The Problem
+      description: >-
+        Describe the issue you are experiencing here to communicate to the
+        maintainer. Tell me what you were trying to do and what happened.
+
+        Provide a clear and concise description of what the problem is.
+  - type: markdown
+    attributes:
+      value: |
+        # Logs
+  - type: textarea
+    id: logs
+    attributes:
+      label: Anything in the logs that might be useful for us?
+      description: For example, error message, or stack traces.
+  - type: markdown
+    attributes:
+      value: |
+        # Details
+  - type: textarea
+    id: additional-information
+    attributes:
+      label: Additional information
+      description: >
+        If you have any additional information for the maintainer, use the field below.
+        Please note, you can attach screenshots or screen recordings here, by
+        dragging and dropping files in the field below.
