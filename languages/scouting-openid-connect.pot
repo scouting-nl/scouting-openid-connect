@@ -1,0 +1,452 @@
+# Copyright (C) 2024 Scouting Nederland
+# This file is distributed under the same license as the Scouting OpenID Connect plugin.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Scouting OpenID Connect 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/issues\n"
+"POT-Creation-Date: 2024-12-16 21:45+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.5\n"
+"X-Poedit-KeywordsList: __;esc_html__;_e;esc_html_e\n"
+"X-Poedit-Basepath: ../src\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: auth/OpenIDConnectClient.php:101
+msgid "The authorization_endpoint is not available in the well-known data."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:117
+msgid "The following scopes are not supported:"
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:117
+msgid "The supported scopes are:"
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:152
+msgid "The token_endpoint is not available in the well-known data."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:222
+msgid "The ID token is not available in the tokens."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:230
+msgid "The JSON Web Key Set (JWKS) is not available."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:255
+msgid "The certificate chain (x5c) for the key ID (kid) specified in the header was not found."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:268
+msgid "The signature in the ID token is not valid."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:344 auth/OpenIDConnectClient.php:403
+msgid "No additional details provided."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:345
+msgid "When retrieving well-known data, the status code was:"
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:345 auth/OpenIDConnectClient.php:379
+#: auth/OpenIDConnectClient.php:404 auth/auth.php:240
+msgid "Details:"
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:371
+msgid "The jwks_uri is not available in the well-known data."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:379
+msgid "The jwks_uri is not a valid URL."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:379
+msgid "The jwks_uri is not valid:"
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:404
+msgid "When retrieving JWKS data, the status code was:"
+msgstr ""
+
+#: auth/auth.php:52 auth/auth.php:97
+msgid "Login with Scouts Online"
+msgstr ""
+
+#: auth/auth.php:107
+msgid "Client ID or Client Secret are missing in the configuration"
+msgstr ""
+
+#: auth/auth.php:140
+msgid "Nonce is invalid"
+msgstr ""
+
+#: auth/auth.php:169
+msgid "State is invalid"
+msgstr ""
+
+#: auth/auth.php:180
+msgid "Code is missing"
+msgstr ""
+
+#: auth/auth.php:205
+msgid "Webmaster disabled creation of new accounts"
+msgstr ""
+
+#: auth/auth.php:236
+msgid "The user denied the request"
+msgstr ""
+
+#: plugin/actions.php:15 settings/page.php:30
+msgid "Settings"
+msgstr ""
+
+#: plugin/description.php:16
+msgid "WordPress plugin for logging in with Scouting Nederland OpenID Connect Server."
+msgstr ""
+
+#: settings/general.php:12
+msgid "General Settings"
+msgstr ""
+
+#: settings/general.php:20
+msgid "Set display name"
+msgstr ""
+
+#: settings/general.php:29
+msgid "Store birthdate to local profile"
+msgstr ""
+
+#: settings/general.php:38
+msgid "Store gender to local profile"
+msgstr ""
+
+#: settings/general.php:47
+msgid "Store Scouting ID to local profile"
+msgstr ""
+
+#: settings/general.php:56
+msgid "Allow new user accounts"
+msgstr ""
+
+#: settings/general.php:65
+msgid "Prefix for all Scouting Nederland users"
+msgstr ""
+
+#: settings/general.php:74
+msgid "After a successful login redirect user to"
+msgstr ""
+
+#: settings/general.php:173
+msgid "Full name"
+msgstr ""
+
+#: settings/general.php:174
+msgid "First name"
+msgstr ""
+
+#: settings/general.php:175
+msgid "Last name"
+msgstr ""
+
+#: settings/general.php:176
+msgid "Username"
+msgstr ""
+
+#: settings/general.php:226
+msgid "This prefix will be added to the username of all Scouting Nederland users"
+msgstr ""
+
+#: settings/general.php:232
+msgid "Default (no action)"
+msgstr ""
+
+#: settings/general.php:233
+msgid "Frontpage"
+msgstr ""
+
+#: settings/general.php:234
+msgid "Dashboard"
+msgstr ""
+
+#: settings/oidc.php:12
+msgid "OpenID Connect Settings"
+msgstr ""
+
+#: settings/oidc.php:20
+msgid "Client ID"
+msgstr ""
+
+#: settings/oidc.php:29
+msgid "Client Secret"
+msgstr ""
+
+#: settings/oidc.php:38
+msgid "Scopes"
+msgstr ""
+
+#: settings/page.php:32
+msgid "Need help with setting up?"
+msgstr ""
+
+#: settings/page.php:33
+msgid "Go to the support page"
+msgstr ""
+
+#: shortcode/page.php:24
+msgid "Shortcode"
+msgstr ""
+
+#: shortcode/page.php:27
+msgid "Shortcodes are small pieces of code that allow you to easily add dynamic content to your WordPress site, enabling you to embed files or create objects with just one line of code."
+msgstr ""
+
+#: shortcode/page.php:29
+msgid "They can be used for various purposes, such as adding galleries, embedding videos, or displaying specific content types."
+msgstr ""
+
+#: shortcode/page.php:31
+msgid "To use a shortcode, simply insert it into the content area of your post or page, and WordPress will parse it, replacing it with the corresponding content when viewed."
+msgstr ""
+
+#: shortcode/page.php:33
+msgid "For more information on how to use shortcodes and their benefits, visit the following link: "
+msgstr ""
+
+#: shortcode/page.php:34
+msgid "WordPress Shortcode Block Support"
+msgstr ""
+
+#: shortcode/page.php:37
+msgid "Shortcodes for OpenID Connect"
+msgstr ""
+
+#: shortcode/page.php:39
+msgid "OpenID Connect Button"
+msgstr ""
+
+#: shortcode/page.php:42
+msgid "Button Example"
+msgstr ""
+
+#: shortcode/page.php:44
+msgid "The OpenID Connect button shortcode allows you to add a button to your WordPress site that users can click to log in using their Scouts Online account."
+msgstr ""
+
+#: shortcode/page.php:46
+msgid "To add the OpenID Connect button to your site, use the following shortcode:"
+msgstr ""
+
+#: shortcode/page.php:49
+msgid "You can customize the appearance of the button by adding attributes to the shortcode. The following attributes are available:"
+msgstr ""
+
+#: shortcode/page.php:51
+msgid "The width of the button in pixels."
+msgstr ""
+
+#: shortcode/page.php:52
+msgid "The height of the button in pixels."
+msgstr ""
+
+#: shortcode/page.php:53
+msgid "The background color of the button."
+msgstr ""
+
+#: shortcode/page.php:54
+msgid "The text color of the button."
+msgstr ""
+
+#: shortcode/page.php:58
+msgid "Live Shortcode Editor"
+msgstr ""
+
+#: shortcode/page.php:62
+msgid "Default is 250px, minimum is 120px. If the width is smaller than 225px, the logo will be removed."
+msgstr ""
+
+#: shortcode/page.php:66
+msgid "Default is 40px, minimum is 40px."
+msgstr ""
+
+#: shortcode/page.php:70
+msgid "The default color is #4caf50."
+msgstr ""
+
+#: shortcode/page.php:74
+msgid "The default color is #ffffff."
+msgstr ""
+
+#: shortcode/page.php:80
+msgid "Example of the shortcode with custom attributes:"
+msgstr ""
+
+#: shortcode/page.php:82
+msgid "Example of the shortcode above:"
+msgstr ""
+
+#: shortcode/page.php:84
+msgid "Note: The button is not interactive in this preview."
+msgstr ""
+
+#: shortcode/page.php:89
+msgid "OpenID Connect Link"
+msgstr ""
+
+#: shortcode/page.php:91
+msgid "The OpenID Connect link shortcode allows you to add a text link to your WordPress site that users can click to log in using their Scouts Online account."
+msgstr ""
+
+#: shortcode/page.php:93
+msgid "To add the OpenID Connect link to your site, use the following shortcode:"
+msgstr ""
+
+#: shortcode/page.php:96
+msgid "You can not customize the appearance of the link."
+msgstr ""
+
+#: shortcode/page.php:97
+msgid "Example of the link shortcode:"
+msgstr ""
+
+#: shortcode/page.php:98
+msgid "Note: Do not copy this link, it will not work. This is just an example of how the link will look like."
+msgstr ""
+
+#: support/page.php:24 support/page.php:49
+msgid "Support"
+msgstr ""
+
+#: support/page.php:25
+msgid "Before you start make sure you have the role \"webmaster\" in"
+msgstr ""
+
+#: support/page.php:29
+msgid "Setting up OpenID Connect"
+msgstr ""
+
+#: support/page.php:31
+msgid "Go to"
+msgstr ""
+
+#: support/page.php:31
+msgid "click on \"Managed websites\" and click on \"Add OpenID Connect connection\"."
+msgstr ""
+
+#: support/page.php:32
+msgid "Add the name of your group/website."
+msgstr ""
+
+#: support/page.php:33
+msgid "Add the Redirect URI:"
+msgstr ""
+
+#: support/page.php:34
+msgid "Add the Post Logout Redirect URI:"
+msgstr ""
+
+#: support/page.php:35
+msgid "Select the scopes you want to use. The \"email\" scope is required; the \"profile\" and \"membership\" scopes are optional."
+msgstr ""
+
+#: support/page.php:36
+msgid "Select the organizations that can log in."
+msgstr ""
+
+#: support/page.php:37
+msgid "If your organization has sub-organizations, you can also select \"Allow suborganizations.\""
+msgstr ""
+
+#: support/page.php:38
+msgid "Press \"Add Website.\""
+msgstr ""
+
+#: support/page.php:39
+msgid "Find the website you just created and click on ⓘ."
+msgstr ""
+
+#: support/page.php:40
+msgid "Copy the \"Client ID\", \"Client Secret\", and the \"Scopes\" to the"
+msgstr ""
+
+#: support/page.php:43
+msgid "Fill in the OpenID Connect Settings with the copied data. Make sure the required scopes, \"openid\" and \"email\", are present."
+msgstr ""
+
+#: support/page.php:44
+msgid "Fill in the General Settings. If you want to store the name, birthdate, or gender, use the scope \"profile\". If you also want the SOL ID, use the scope \"membership\"."
+msgstr ""
+
+#: support/page.php:45
+msgid "Press \"Save Settings\""
+msgstr ""
+
+#: support/page.php:46
+msgid "Log out and try to log in with the Scouts Login button."
+msgstr ""
+
+#: support/page.php:50
+msgid "If you need help, please contact"
+msgstr ""
+
+#: support/page.php:52
+msgid "(developer of the plugin)"
+msgstr ""
+
+#: user/fields.php:15
+msgid "Scouts Online (SOL) Profile Information"
+msgstr ""
+
+#: user/fields.php:41
+msgid "Scouting ID"
+msgstr ""
+
+#: user/fields.php:57
+msgid "Birthdate"
+msgstr ""
+
+#: user/fields.php:73
+msgid "Gender"
+msgstr ""
+
+#: user/fields.php:76
+msgid "Male"
+msgstr ""
+
+#: user/fields.php:77
+msgid "Female"
+msgstr ""
+
+#: user/fields.php:78
+msgid "Other"
+msgstr ""
+
+#: user/fields.php:79
+msgid "Unknown"
+msgstr ""
+
+#: user/fields.php:95
+msgid "Infix"
+msgstr ""
+
+#: user/user.php:74
+msgid "Email scope is missing"
+msgstr ""
+
+#: user/user.php:178
+msgid "Username and Email have different user ID"
+msgstr ""
+
+#: user/user.php:206
+msgid "Something went wrong while trying to log in"
+msgstr ""

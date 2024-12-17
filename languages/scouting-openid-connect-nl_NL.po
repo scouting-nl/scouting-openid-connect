@@ -1,0 +1,576 @@
+# Copyright (C) 2024 Scouting Nederland
+# This file is distributed under the same license as the Scouting OpenID Connect plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Scouting OpenID Connect 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/"
+"issues\n"
+"POT-Creation-Date: 2024-12-16 21:45+0100\n"
+"PO-Revision-Date: 2024-12-16 21:45+0100\n"
+"Last-Translator: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
+"Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
+"Language: nl_NL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.5\n"
+"X-Poedit-KeywordsList: __;esc_html__;_e;esc_html_e\n"
+"X-Poedit-Basepath: ../src\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: auth/OpenIDConnectClient.php:101
+msgid "The authorization_endpoint is not available in the well-known data."
+msgstr "Het authorization_endpoint is niet beschikbaar in de well-known data."
+
+#: auth/OpenIDConnectClient.php:117
+msgid "The following scopes are not supported:"
+msgstr "De volgende scopes worden niet ondersteund:"
+
+#: auth/OpenIDConnectClient.php:117
+msgid "The supported scopes are:"
+msgstr "De ondersteunde scopes zijn:"
+
+#: auth/OpenIDConnectClient.php:152
+msgid "The token_endpoint is not available in the well-known data."
+msgstr "Het token_endpoint is niet beschikbaar in de well-known data."
+
+#: auth/OpenIDConnectClient.php:222
+msgid "The ID token is not available in the tokens."
+msgstr "Het ID-token is niet beschikbaar in de tokens."
+
+#: auth/OpenIDConnectClient.php:230
+msgid "The JSON Web Key Set (JWKS) is not available."
+msgstr "De JSON Web Key Set (JWKS) is niet beschikbaar."
+
+#: auth/OpenIDConnectClient.php:255
+msgid ""
+"The certificate chain (x5c) for the key ID (kid) specified in the header was "
+"not found."
+msgstr ""
+"De certificaatketen (x5c) voor de sleutel-ID (kid) in de koptekst is niet "
+"gevonden."
+
+#: auth/OpenIDConnectClient.php:268
+msgid "The signature in the ID token is not valid."
+msgstr "De handtekening in het ID-token is niet geldig."
+
+#: auth/OpenIDConnectClient.php:344 auth/OpenIDConnectClient.php:403
+msgid "No additional details provided."
+msgstr "Geen aanvullende details verstrekt."
+
+#: auth/OpenIDConnectClient.php:345
+msgid "When retrieving well-known data, the status code was:"
+msgstr "Bij het ophalen van well-known data was de statuscode:"
+
+#: auth/OpenIDConnectClient.php:345 auth/OpenIDConnectClient.php:379
+#: auth/OpenIDConnectClient.php:404 auth/auth.php:240
+msgid "Details:"
+msgstr "Details:"
+
+#: auth/OpenIDConnectClient.php:371
+msgid "The jwks_uri is not available in the well-known data."
+msgstr "De jwks_uri is niet beschikbaar in de well-known data."
+
+#: auth/OpenIDConnectClient.php:379
+msgid "The jwks_uri is not a valid URL."
+msgstr "De jwks_uri is geen geldige URL."
+
+#: auth/OpenIDConnectClient.php:379
+msgid "The jwks_uri is not valid:"
+msgstr "De jwks_uri is niet geldig:"
+
+#: auth/OpenIDConnectClient.php:404
+msgid "When retrieving JWKS data, the status code was:"
+msgstr "Bij het ophalen van JWKS-gegevens was de statuscode:"
+
+#: auth/auth.php:52 auth/auth.php:97
+msgid "Login with Scouts Online"
+msgstr "Inloggen met Scouts Online"
+
+#: auth/auth.php:107
+msgid "Client ID or Client Secret are missing in the configuration"
+msgstr "Client-ID of Client Secret ontbreekt in de configuratie"
+
+#: auth/auth.php:140
+msgid "Nonce is invalid"
+msgstr "Nonce is ongeldig"
+
+#: auth/auth.php:169
+msgid "State is invalid"
+msgstr "State is ongeldig"
+
+#: auth/auth.php:180
+msgid "Code is missing"
+msgstr "Code ontbreekt"
+
+#: auth/auth.php:205
+msgid "Webmaster disabled creation of new accounts"
+msgstr "Webmaster heeft het aanmaken van nieuwe accounts uitgeschakeld"
+
+#: auth/auth.php:236
+msgid "The user denied the request"
+msgstr "De gebruiker heeft het verzoek geweigerd"
+
+#: plugin/actions.php:15 settings/page.php:30
+msgid "Settings"
+msgstr "Instellingen"
+
+#: plugin/description.php:16
+msgid ""
+"WordPress plugin for logging in with Scouting Nederland OpenID Connect "
+"Server."
+msgstr ""
+"WordPress plugin om in te loggen met Scouting Nederland OpenID Connect "
+"Server."
+
+#: settings/general.php:12
+msgid "General Settings"
+msgstr "Algemene Instellingen"
+
+#: settings/general.php:20
+msgid "Set display name"
+msgstr "Weergavenaam instellen"
+
+#: settings/general.php:29
+msgid "Store birthdate to local profile"
+msgstr "Geboortedatum opslaan in lokaal profiel"
+
+#: settings/general.php:38
+msgid "Store gender to local profile"
+msgstr "Geslacht opslaan in lokaal profiel"
+
+#: settings/general.php:47
+msgid "Store Scouting ID to local profile"
+msgstr "Scouting ID opslaan in lokaal profiel"
+
+#: settings/general.php:56
+msgid "Allow new user accounts"
+msgstr "Sta nieuwe gebruikers accounts toe"
+
+#: settings/general.php:65
+msgid "Prefix for all Scouting Nederland users"
+msgstr "Voorvoegsel voor alle Scouting Nederland gebruikers"
+
+#: settings/general.php:74
+msgid "After a successful login redirect user to"
+msgstr "Na een succesvolle aanmelding wordt de gebruiker doorgestuurd naar"
+
+#: settings/general.php:173
+msgid "Full name"
+msgstr "Volledige naam"
+
+#: settings/general.php:174
+msgid "First name"
+msgstr "Voornaam"
+
+#: settings/general.php:175
+msgid "Last name"
+msgstr "Achternaam"
+
+#: settings/general.php:176
+msgid "Username"
+msgstr "Gebruikersnaam"
+
+#: settings/general.php:226
+msgid ""
+"This prefix will be added to the username of all Scouting Nederland users"
+msgstr ""
+"Dit voorvoegsel wordt toegevoegd aan de gebruikersnaam van alle Scouting "
+"Nederland gebruikers"
+
+#: settings/general.php:232
+msgid "Default (no action)"
+msgstr "Standaard (geen actie)"
+
+#: settings/general.php:233
+msgid "Frontpage"
+msgstr "Voorpagina"
+
+#: settings/general.php:234
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: settings/oidc.php:12
+msgid "OpenID Connect Settings"
+msgstr "OpenID Connect Instellingen"
+
+#: settings/oidc.php:20
+msgid "Client ID"
+msgstr "Client ID"
+
+#: settings/oidc.php:29
+msgid "Client Secret"
+msgstr "Client Secret"
+
+#: settings/oidc.php:38
+msgid "Scopes"
+msgstr "Scopes"
+
+#: settings/page.php:32
+msgid "Need help with setting up?"
+msgstr "Hulp nodig bij het instellen?"
+
+#: settings/page.php:33
+msgid "Go to the support page"
+msgstr "Ga naar de support pagina"
+
+#: shortcode/page.php:24
+msgid "Shortcode"
+msgstr "Shortcode"
+
+#: shortcode/page.php:27
+msgid ""
+"Shortcodes are small pieces of code that allow you to easily add dynamic "
+"content to your WordPress site, enabling you to embed files or create "
+"objects with just one line of code."
+msgstr ""
+"Shortcodes zijn kleine stukjes code waarmee je eenvoudig dynamische inhoud "
+"aan je WordPress-site kunt toevoegen, zodat je bestanden kunt insluiten of "
+"objecten kunt maken met slechts één regel code."
+
+#: shortcode/page.php:29
+msgid ""
+"They can be used for various purposes, such as adding galleries, embedding "
+"videos, or displaying specific content types."
+msgstr ""
+"Ze kunnen voor verschillende doeleinden worden gebruikt, zoals het toevoegen "
+"van galerijen, het insluiten van video's of het weergeven van specifieke "
+"inhoudstypen."
+
+#: shortcode/page.php:31
+msgid ""
+"To use a shortcode, simply insert it into the content area of your post or "
+"page, and WordPress will parse it, replacing it with the corresponding "
+"content when viewed."
+msgstr ""
+"Om een shortcode te gebruiken, voeg je deze eenvoudig in het inhoudsgebied "
+"van je bericht of pagina in, en WordPress zal het parseren en vervangen door "
+"de bijbehorende inhoud wanneer het wordt bekeken."
+
+#: shortcode/page.php:33
+msgid ""
+"For more information on how to use shortcodes and their benefits, visit the "
+"following link: "
+msgstr ""
+"Voor meer informatie over hoe je shortcodes kunt gebruiken en hun voordelen, "
+"bezoek je de volgende link: "
+
+#: shortcode/page.php:34
+msgid "WordPress Shortcode Block Support"
+msgstr "Ondersteuning voor WordPress Shortcode-blokken"
+
+#: shortcode/page.php:37
+msgid "Shortcodes for OpenID Connect"
+msgstr "Shortcodes for OpenID Connect"
+
+#: shortcode/page.php:39
+msgid "OpenID Connect Button"
+msgstr "OpenID Connect Knop"
+
+#: shortcode/page.php:42
+msgid "Button Example"
+msgstr "Knop Voorbeeld"
+
+#: shortcode/page.php:44
+msgid ""
+"The OpenID Connect button shortcode allows you to add a button to your "
+"WordPress site that users can click to log in using their Scouts Online "
+"account."
+msgstr ""
+"De OpenID Connect-knop shortcode stelt je in staat een knop aan je WordPress-"
+"site toe te voegen waarop gebruikers kunnen klikken om in te loggen met hun "
+"Scouts Online-account."
+
+#: shortcode/page.php:46
+msgid ""
+"To add the OpenID Connect button to your site, use the following shortcode:"
+msgstr ""
+"Om de OpenID Connect-knop aan je site toe te voegen, gebruik je de volgende "
+"shortcode:"
+
+#: shortcode/page.php:49
+msgid ""
+"You can customize the appearance of the button by adding attributes to the "
+"shortcode. The following attributes are available:"
+msgstr ""
+"Je kunt het uiterlijk van de knop aanpassen door attributen aan de shortcode "
+"toe te voegen. De volgende attributen zijn beschikbaar:"
+
+#: shortcode/page.php:51
+msgid "The width of the button in pixels."
+msgstr "De breedte van de knop in pixels."
+
+#: shortcode/page.php:52
+msgid "The height of the button in pixels."
+msgstr "De hoogte van de knop in pixels."
+
+#: shortcode/page.php:53
+msgid "The background color of the button."
+msgstr "De achtergrondkleur van de knop."
+
+#: shortcode/page.php:54
+msgid "The text color of the button."
+msgstr "De tekstkleur van de knop."
+
+#: shortcode/page.php:58
+msgid "Live Shortcode Editor"
+msgstr "Live Shortcode-editor"
+
+#: shortcode/page.php:62
+msgid ""
+"Default is 250px, minimum is 120px. If the width is smaller than 225px, the "
+"logo will be removed."
+msgstr ""
+"Standaard is 250px, minimum is 120px. Als de breedte kleiner is dan 225px, "
+"wordt het logo verwijderd."
+
+#: shortcode/page.php:66
+msgid "Default is 40px, minimum is 40px."
+msgstr "Standaard is 40px, minimum is 40px."
+
+#: shortcode/page.php:70
+msgid "The default color is #4caf50."
+msgstr "De standaardkleur is #4caf50."
+
+#: shortcode/page.php:74
+msgid "The default color is #ffffff."
+msgstr "De standaardkleur is #ffffff."
+
+#: shortcode/page.php:80
+msgid "Example of the shortcode with custom attributes:"
+msgstr "Voorbeeld van de shortcode met aangepaste attributen:"
+
+#: shortcode/page.php:82
+msgid "Example of the shortcode above:"
+msgstr "Voorbeeld van de bovenstaande shortcode:"
+
+#: shortcode/page.php:84
+msgid "Note: The button is not interactive in this preview."
+msgstr "Opmerking: De knop is niet interactief in deze preview."
+
+#: shortcode/page.php:89
+msgid "OpenID Connect Link"
+msgstr "OpenID Connect Link"
+
+#: shortcode/page.php:91
+msgid ""
+"The OpenID Connect link shortcode allows you to add a text link to your "
+"WordPress site that users can click to log in using their Scouts Online "
+"account."
+msgstr ""
+"De OpenID Connect link shortcode stelt je in staat een tekstlink aan je "
+"WordPress-site toe te voegen waarop gebruikers kunnen klikken om in te "
+"loggen met hun Scouts Online-account."
+
+#: shortcode/page.php:93
+msgid ""
+"To add the OpenID Connect link to your site, use the following shortcode:"
+msgstr ""
+"Om de OpenID Connect-link aan je site toe te voegen, gebruik je de volgende "
+"shortcode:"
+
+#: shortcode/page.php:96
+msgid "You can not customize the appearance of the link."
+msgstr "Je kunt het uiterlijk van de link niet aanpassen."
+
+#: shortcode/page.php:97
+msgid "Example of the link shortcode:"
+msgstr "Voorbeeld van de link shortcode:"
+
+#: shortcode/page.php:98
+msgid ""
+"Note: Do not copy this link, it will not work. This is just an example of "
+"how the link will look like."
+msgstr ""
+"Opmerking: Kopieer deze link niet, deze zal niet werken. Dit is slechts een "
+"voorbeeld van hoe de link eruit zal zien."
+
+#: support/page.php:24 support/page.php:49
+msgid "Support"
+msgstr "Support"
+
+#: support/page.php:25
+msgid "Before you start make sure you have the role \"webmaster\" in"
+msgstr ""
+"Voordat je begint, moet je ervoor zorgen dat je de rol \"webmaster\" hebt in"
+
+#: support/page.php:29
+msgid "Setting up OpenID Connect"
+msgstr "Scouting OpenID Connect"
+
+#: support/page.php:31
+msgid "Go to"
+msgstr "Ga naar"
+
+#: support/page.php:31
+msgid ""
+"click on \"Managed websites\" and click on \"Add OpenID Connect connection\"."
+msgstr ""
+"klik op \"Beheerde websites\" en klik op \"Voeg OpenID Connect koppeling "
+"toe\"."
+
+#: support/page.php:32
+msgid "Add the name of your group/website."
+msgstr "Voeg de naam van je groep/website toe."
+
+#: support/page.php:33
+msgid "Add the Redirect URI:"
+msgstr "Voeg de Redirect URI toe:"
+
+#: support/page.php:34
+msgid "Add the Post Logout Redirect URI:"
+msgstr "Voeg de Post Logout Redirect URI toe:"
+
+#: support/page.php:35
+msgid ""
+"Select the scopes you want to use. The \"email\" scope is required; the "
+"\"profile\" and \"membership\" scopes are optional."
+msgstr ""
+"Selecteer de scopes die je wilt gebruiken. De scopes \"email\" zijn "
+"verplicht; de scopes \"persoonlijk\" en \"lidmaatschap\" zijn optioneel."
+
+#: support/page.php:36
+msgid "Select the organizations that can log in."
+msgstr "Selecteer de organisaties die kunnen inloggen."
+
+#: support/page.php:37
+msgid ""
+"If your organization has sub-organizations, you can also select \"Allow "
+"suborganizations.\""
+msgstr ""
+"Als je organisatie onderliggende organisaties heeft, kun je ook \"Inclusief "
+"onderliggende organisaties\" selecteren."
+
+#: support/page.php:38
+msgid "Press \"Add Website.\""
+msgstr "Druk op \"Website toevoegen\"."
+
+#: support/page.php:39
+msgid "Find the website you just created and click on ⓘ."
+msgstr "Zoek de website die je net hebt gemaakt en klik op ⓘ."
+
+#: support/page.php:40
+msgid "Copy the \"Client ID\", \"Client Secret\", and the \"Scopes\" to the"
+msgstr "Kopieer de \"Client ID\", \"Client Secret\" en de \"Scopes\" naar de"
+
+#: support/page.php:43
+msgid ""
+"Fill in the OpenID Connect Settings with the copied data. Make sure the "
+"required scopes, \"openid\" and \"email\", are present."
+msgstr ""
+"Vul de OpenID Connect Settings in met de gekopieerde gegevens. Zorg ervoor "
+"dat de vereiste scopes, \"openid\" en \"email\", aanwezig zijn."
+
+#: support/page.php:44
+msgid ""
+"Fill in the General Settings. If you want to store the name, birthdate, or "
+"gender, use the scope \"profile\". If you also want the SOL ID, use the "
+"scope \"membership\"."
+msgstr ""
+"Vul de algemene instellingen in. Als je de naam, geboortedatum of het "
+"geslacht wilt opslaan, gebruik dan de scope \"persoonlijk\". Als je ook de "
+"SOL ID wilt opslaan, gebruik dan de scope \"lidmaatschap\"."
+
+#: support/page.php:45
+msgid "Press \"Save Settings\""
+msgstr "Druk op \"Save Settings\""
+
+#: support/page.php:46
+msgid "Log out and try to log in with the Scouts Login button."
+msgstr "Log uit en probeer in te loggen met de knop Scouts Login."
+
+#: support/page.php:50
+msgid "If you need help, please contact"
+msgstr "Als je hulp nodig hebt, neem dan contact op met"
+
+#: support/page.php:52
+msgid "(developer of the plugin)"
+msgstr "(ontwikkelaar van de plugin)"
+
+#: user/fields.php:15
+msgid "Scouts Online (SOL) Profile Information"
+msgstr "Scouts Online (SOL) Profiel Informatie"
+
+#: user/fields.php:41
+msgid "Scouting ID"
+msgstr "Scouting ID"
+
+#: user/fields.php:57
+msgid "Birthdate"
+msgstr "Geboortedatum"
+
+#: user/fields.php:73
+msgid "Gender"
+msgstr "Geslacht"
+
+#: user/fields.php:76
+msgid "Male"
+msgstr "Man"
+
+#: user/fields.php:77
+msgid "Female"
+msgstr "Vrouw"
+
+#: user/fields.php:78
+msgid "Other"
+msgstr "Overige"
+
+#: user/fields.php:79
+msgid "Unknown"
+msgstr "Onbekend"
+
+#: user/fields.php:95
+msgid "Infix"
+msgstr "Tussenvoegsel"
+
+#: user/user.php:74
+msgid "Email scope is missing"
+msgstr "Email scope ontbreekt"
+
+#: user/user.php:178
+msgid "Username and Email have different user ID"
+msgstr "Gebruikersnaam en Email hebben verschillende gebruikers-ID"
+
+#: user/user.php:206
+msgid "Something went wrong while trying to log in"
+msgstr "Er is iets misgegaan tijdens het inloggen"
+
+#~ msgid "An issuer must be provided in the config."
+#~ msgstr "In de configuratie moet een issuer worden opgegeven."
+
+#~ msgid "The issuer URL is not valid."
+#~ msgstr "De URL van de issuer is ongeldig."
+
+#~ msgid "well-known data is not available."
+#~ msgstr "Er zijn geen bekende gegevens beschikbaar."
+
+#~ msgid "Failed to retrieve tokens. Response code:"
+#~ msgstr "Het ophalen van tokens is mislukt. Responscode:"
+
+#~ msgid "Response message:"
+#~ msgstr "Antwoordbericht:"
+
+#~ msgid "The userinfo endpoint is not available in the well-known data."
+#~ msgstr "Het eindpunt userinfo is niet beschikbaar in de well-known data."
+
+#~ msgid "The access token is not available in the tokens."
+#~ msgstr "Het toegangstoken is niet beschikbaar in de tokens."
+
+#~ msgid "Failed to retrieve user info. Response code:"
+#~ msgstr "Kon gebruikersinformatie niet ophalen. Responscode:"
+
+#~ msgid "The end session endpoint is not available in the well-known data."
+#~ msgstr ""
+#~ "Het eindpunt van de sessie is niet beschikbaar in de bekende gegevens."
+
+#~ msgid "Scopes must be a non-empty array."
+#~ msgstr "Scopes moeten een niet-lege array zijn."
+
+#~ msgid "Scope"
+#~ msgstr "Scope"
+
+#, fuzzy
+#~| msgid "Settings"
+#~ msgid "settings page"
+#~ msgstr "Instellingen"

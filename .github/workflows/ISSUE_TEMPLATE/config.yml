@@ -1,0 +1,17 @@
+blank_issues_enabled: false
+contact_links:
+  - name: I have a question or need support, Ask the support team.
+    url: mailto:cms@support.scouting.nl?cc=job.van.koeveringe@scouting.nl&subject=WordPress%20Scouting%20OIDC%20Support
+    about: Let the plugin support team help you with your question or issue.
+  - name: I have a question or need support, ask the community.
+    url: https://github.com/scouting-nl/scouting-openid-connect/discussions/categories/support
+    about: Let the people of our community help you.
+  - name: If you have a feature request or idea.
+    url: https://github.com/scouting-nl/scouting-openid-connect/discussions/categories/ideas
+    about: Show your feature request or idea to our community.
+  - name: Offical Scouting Nederland website
+    url: https://www.scouting.nl/
+    about: Find more information about Scouting Nederland.
+  - name: Offical Scouting Nederland OpenID Connect website
+    url: https://login.scouting.nl/
+    about: Find more information about Scouting Nederland OpenID Connect.
