@@ -1,4 +1,4 @@
-name: Report an issue
+name: 🐛 Report an issue
 description: Report an issue for the Scouting OpenID Connect WordPress plugin.
 labels: bug
 assignees:
@@ -26,7 +26,7 @@ body:
           required: true
         - label: I have read the [README.md](https://github.com/scouting-nl/scouting-openid-connect/blob/main/README.md) page.
           required: true
-        - label:  This issue is a bug related to the Scouting OpenID Connect WordPress plugin.
+        - label: This issue is a bug related to the Scouting OpenID Connect WordPress plugin.
           required: true
         - label: This issue only contains 1 issue (if you have multiple issues, open one issue for each issue).
           required: true
