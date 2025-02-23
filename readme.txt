@@ -3,7 +3,7 @@ Contributors: jobvk
 Tags: scouting, scouting nederland, sol, openid connect, oidc
 Requires at least: 6.4.3
 Tested up to: 6.7.1
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 Requires PHP: 8.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -60,10 +60,14 @@ Currently not, but this is planned for a future update of this plugin.
 
 == Changelog ==
 
+= 1.0.1 =
+* Fixed hook wp_login
+* Tested plugin up to WordPress 6.7.1 => 6.7.2
+
 = 1.0.0 =
-Initial release
+* Initial release
 
 == Upgrade Notice ==
 
 = 1.0.0 =
-Initial release
+* Initial release
