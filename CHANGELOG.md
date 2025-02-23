@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [[1.0.1](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/1.0.1)] - 2025-02-23
  
-Fix hook wp_login
+Fix hook [wp_login](https://developer.wordpress.org/reference/hooks/wp_login/) by adding third parameter.
  
 ### Added
  
@@ -13,7 +13,7 @@ Fix hook wp_login
  
 ### Fixed
 
-- Hook wp_login
+- Hook [wp_login](https://developer.wordpress.org/reference/hooks/wp_login/) 
 
 ## [[1.0.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/1.0.0)] - 2024-12-17
  
