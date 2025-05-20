@@ -1,6 +1,18 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [[1.0.3](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/1.0.3)] - 20/05/2025
+ 
+Tested plugin up to WordPress 6.8 => 6.8.1
+ 
+### Added
+ 
+### Changed
+
+- Tested plugin up to WordPress 6.8 => 6.8.1
+
+### Fixed
+
 ## [[1.0.2](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/1.0.2)] - 20/05/2025
  
 Tested plugin up to WordPress 6.7.2 => 6.8
