@@ -7,13 +7,14 @@ $options = array(
 	'scouting_oidc_client_id',
 	'scouting_oidc_client_secret',
 	'scouting_oidc_scopes',
-    'scouting_oidc_user_display_name',
+	'scouting_oidc_user_display_name',
 	'scouting_oidc_user_birthdate',
 	'scouting_oidc_user_gender',
-    'scouting_oidc_user_scouting_id',
+	'scouting_oidc_user_scouting_id',
 	'scouting_oidc_user_name_prefix',
 	'scouting_oidc_user_auto_create',
-    'scouting_oidc_login_redirect',
+	'scouting_oidc_user_redirect',
+	'scouting_oidc_login_redirect',
 );
 
 foreach ($options as $option) {
@@ -32,6 +33,7 @@ foreach ($transients as $transient) {
 
 // Delete user meta
 $metas = array(
+	'scouting_oidc_user',
 	'scouting_oidc_id',
 	'scouting_oidc_birthdate',
 	'scouting_oidc_scopes',
