@@ -265,6 +265,7 @@ class Auth {
             $is_scouting_oidc_user = 'false';
         }
 
+        // If redirection is enabled, skip redirect for users not marked as scouting OIDC (non-SOL users)
         if (get_option('scouting_oidc_user_redirect') && $is_scouting_oidc_user === 'false') {
             return; // Default WordPress behavior
         }

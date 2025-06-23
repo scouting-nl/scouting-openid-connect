@@ -100,7 +100,7 @@ class Settings_General
             'scouting_oidc_settings_group',                                             // Settings group name
             'scouting_oidc_user_birthdate',                                             // Option name
             [
-                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as an integer
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
             ]
         );
     
@@ -109,7 +109,7 @@ class Settings_General
             'scouting_oidc_settings_group',                                             // Settings group name
             'scouting_oidc_user_gender',                                                // Option name
             [
-                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as an integer
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
             ]
         );
     
@@ -118,7 +118,7 @@ class Settings_General
             'scouting_oidc_settings_group',                                             // Settings group name
             'scouting_oidc_user_scouting_id',                                           // Option name
             [
-                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as an integer
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
             ]
         );
     
@@ -127,7 +127,7 @@ class Settings_General
             'scouting_oidc_settings_group',                                             // Settings group name
             'scouting_oidc_user_auto_create',                                           // Option name
             [
-                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as an integer
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
             ]
         );
     
@@ -145,7 +145,7 @@ class Settings_General
             'scouting_oidc_settings_group',                                             // Settings group name
             'scouting_oidc_user_redirect',                                              // Option name
             [
-                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as an integer
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
             ]
         );
 
