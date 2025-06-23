@@ -13,5 +13,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4.2.2
 
+    - name: Remove hidden files
+      run: find ./wp-content/plugins/scouting-openid-connect -name ".*" -exec rm -rf {} +
+
     - name: Run plugin check
       uses: wordpress/plugin-check-action@v1.1.2
