@@ -253,11 +253,32 @@ class Auth {
     }
 
     // Redirect after login based on settings
-    public function scouting_oidc_auth_login_redirect() {
-        if (get_option('scouting_oidc_login_redirect') == "dashboard") {
+    public function scouting_oidc_auth_login_redirect($user_login) {
+        $user = get_user_by('login', $user_login);
+        if (!$user) return;
+
+        $is_scouting_oidc_user = get_user_meta($user->ID, 'scouting_oidc_user', true);
+
+        // If the user meta is not set, it will set it to 'false'
+        if ($is_scouting_oidc_user === '') {
+            update_user_meta($user->ID, 'scouting_oidc_user', 'false');
+            $is_scouting_oidc_user = 'false';
+        }
+
+        // If redirection is enabled, skip redirect for users not marked as scouting OIDC (non-SOL users)
+        if (get_option('scouting_oidc_user_redirect') && $is_scouting_oidc_user === 'false') {
+            return; // Default WordPress behavior
+        }
+
+        $redirect_setting = get_option('scouting_oidc_login_redirect');
+        if ($redirect_setting === 'default') {
+            return; // Default WordPress behavior
+        }
+        elseif ($redirect_setting === 'dashboard') {
             wp_safe_redirect(admin_url());
             exit;
-        } else if (get_option('scouting_oidc_login_redirect') == "frontpage") {
+        }
+        elseif ($redirect_setting === 'frontpage') {
             wp_safe_redirect(home_url());
             exit;
         }

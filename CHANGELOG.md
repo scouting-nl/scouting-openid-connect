@@ -1,6 +1,18 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [[1.1.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/1.1.0)] - 23/06/2025
+ 
+Added option to redirect only SOL users in settings
+ 
+### Added
+
+- Added option to redirect only SOL users in settings
+ 
+### Changed
+
+### Fixed
+
 ## [[1.0.2](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/1.0.2)] - 20/05/2025
  
 Tested plugin up to WordPress 6.7.2 => 6.8

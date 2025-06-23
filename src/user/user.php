@@ -124,6 +124,7 @@ class User {
         update_user_meta($user_id, 'scouting_oidc_infix', $this->infix);
         update_user_meta($user_id, 'last_name', $this->familyName);
         update_user_meta($user_id, 'show_admin_bar_front', 'false');
+        update_user_meta($user_id, 'scouting_oidc_user', 'true');
 
         if (get_option('scouting_oidc_user_display_name')) {
             switch (get_option('scouting_oidc_user_display_name')) {
@@ -184,7 +185,7 @@ class User {
         else if ($user_name) {
             $user = get_user_by('login', $this->userName);
 
-            //update email
+            // Update email
             wp_update_user(array('ID' => $user->ID, 'user_email' => $this->email));
         }
         else if ($email) {

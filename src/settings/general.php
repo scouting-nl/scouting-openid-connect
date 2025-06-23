@@ -14,7 +14,7 @@ class Settings_General
             'scouting-openid-connect-settings'                  // Page slug where the section should be added
         );
     
-        // Add a settings text field
+        // Add a settings selectbox field
         add_settings_field(
             'scouting_oidc_user_display_name',                               // Field ID
             __('Set display name', 'scouting-openid-connect'),               // Field label
@@ -23,7 +23,7 @@ class Settings_General
             'scouting_oidc_general_settings'                                 // Section ID where the field should be added
         );
     
-        // Add a settings text field
+        // Add a settings checkbox field
         add_settings_field(
             'scouting_oidc_user_birthdate',                                    // Field ID
             __('Store birthdate to local profile', 'scouting-openid-connect'), // Field label
@@ -32,7 +32,7 @@ class Settings_General
             'scouting_oidc_general_settings'                                   // Section ID where the field should be added
         );
     
-        // Add a settings text field
+        // Add a settings checkbox field
         add_settings_field(
             'scouting_oidc_user_gender',                                    // Field ID
             __('Store gender to local profile', 'scouting-openid-connect'), // Field label
@@ -41,7 +41,7 @@ class Settings_General
             'scouting_oidc_general_settings'                                // Section ID where the field should be added
         );
     
-        // Add a settings text field
+        // Add a settings checkbox field
         add_settings_field(
             'scouting_oidc_user_scouting_id',                                    // Field ID
             __('Store Scouting ID to local profile', 'scouting-openid-connect'), // Field label
@@ -50,7 +50,7 @@ class Settings_General
             'scouting_oidc_general_settings'                                     // Section ID where the field should be added
         );
     
-        // Add a settings text field
+        // Add a settings checkbox field
         add_settings_field(
             'scouting_oidc_user_auto_create',                                    // Field ID
             __('Allow new user accounts', 'scouting-openid-connect'),            // Field label
@@ -67,8 +67,17 @@ class Settings_General
             'scouting-openid-connect-settings',                                       // Page slug
             'scouting_oidc_general_settings'                                          // Section ID where the field should be added
         );
+
+        // Add a settings checkbox field
+        add_settings_field(
+            'scouting_oidc_user_redirect',                                    // Field ID
+            __('Redirect only SOL users', 'scouting-openid-connect'),         // Field label
+            [$this, 'scouting_oidc_settings_general_user_redirect_callback'], // Callback to render field
+            'scouting-openid-connect-settings',                               // Page slug
+            'scouting_oidc_general_settings'                                  // Section ID where the field should be added
+        );
     
-        // Add a settings text field
+        // Add a settings selectbox field
         add_settings_field(
             'scouting_oidc_login_redirect',                                             // Field ID
             __('After a successful login redirect user to', 'scouting-openid-connect'), // Field label
@@ -91,7 +100,7 @@ class Settings_General
             'scouting_oidc_settings_group',                                             // Settings group name
             'scouting_oidc_user_birthdate',                                             // Option name
             [
-                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as an integer
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
             ]
         );
     
@@ -100,7 +109,7 @@ class Settings_General
             'scouting_oidc_settings_group',                                             // Settings group name
             'scouting_oidc_user_gender',                                                // Option name
             [
-                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as an integer
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
             ]
         );
     
@@ -109,7 +118,7 @@ class Settings_General
             'scouting_oidc_settings_group',                                             // Settings group name
             'scouting_oidc_user_scouting_id',                                           // Option name
             [
-                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as an integer
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
             ]
         );
     
@@ -118,7 +127,7 @@ class Settings_General
             'scouting_oidc_settings_group',                                             // Settings group name
             'scouting_oidc_user_auto_create',                                           // Option name
             [
-                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as an integer
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
             ]
         );
     
@@ -130,7 +139,16 @@ class Settings_General
                 'sanitize_callback' => 'sanitize_text_field' // Sanitize the input value as a text field
             ]
         );
-    
+        
+        // Register settings
+        register_setting(
+            'scouting_oidc_settings_group',                                             // Settings group name
+            'scouting_oidc_user_redirect',                                              // Option name
+            [
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
+            ]
+        );
+
         // Register settings
         register_setting(
             'scouting_oidc_settings_group',                                                    // Settings group name
@@ -167,7 +185,7 @@ class Settings_General
     // Callback to render section content
     public function scouting_oidc_settings_general_callback() {}
 
-    // Callback to render text field
+    // Callback to render selectbox field
     public function scouting_oidc_settings_general_display_name_callback() {
         $possible_values = array(
             'fullname' => __('Full name', 'scouting-openid-connect'),
@@ -187,7 +205,7 @@ class Settings_General
         echo '</select>';
     }
 
-    // Callback to render text field
+    // Callback to render checkbox field
     public function scouting_oidc_settings_general_birthdate_callback() {
         if (get_option('scouting_oidc_user_birthdate'))
             echo '<input type="checkbox" id="scouting_oidc_user_birthdate" name="scouting_oidc_user_birthdate" checked/>';
@@ -195,7 +213,7 @@ class Settings_General
             echo '<input type="checkbox" id="scouting_oidc_user_birthdate" name="scouting_oidc_user_birthdate"/>';
     }
 
-    // Callback to render text field
+    // Callback to render checkbox field
     public function scouting_oidc_settings_general_gender_callback() {
         if (get_option('scouting_oidc_user_gender'))
             echo '<input type="checkbox" id="scouting_oidc_user_gender" name="scouting_oidc_user_gender" checked/>';
@@ -203,7 +221,7 @@ class Settings_General
             echo '<input type="checkbox" id="scouting_oidc_user_gender" name="scouting_oidc_user_gender"/>';
     }
 
-    // Callback to render text field
+    // Callback to render checkbox field
     public function scouting_oidc_settings_general_scouting_id_callback() {
         if (get_option('scouting_oidc_user_scouting_id'))
             echo '<input type="checkbox" id="scouting_oidc_user_scouting_id" name="scouting_oidc_user_scouting_id" checked/>';
@@ -211,7 +229,7 @@ class Settings_General
             echo '<input type="checkbox" id="scouting_oidc_user_scouting_id" name="scouting_oidc_user_scouting_id"/>';
     }
 
-    // Callback to render text field
+    // Callback to render checkbox field
     public function scouting_oidc_settings_general_user_auto_create_callback() {
         if (get_option('scouting_oidc_user_auto_create'))
             echo '<input type="checkbox" id="scouting_oidc_user_auto_create" name="scouting_oidc_user_auto_create" checked/>';
@@ -226,7 +244,15 @@ class Settings_General
         echo '<p class="description">' . esc_html__("This prefix will be added to the username of all Scouting Nederland users", "scouting-openid-connect") . '</p>';
     }
 
-    // callback to render select field for login redirect
+    // Callback to render checkbox field
+    public function scouting_oidc_settings_general_user_redirect_callback() {
+        if (get_option('scouting_oidc_user_redirect'))
+            echo '<input type="checkbox" id="scouting_oidc_user_redirect" name="scouting_oidc_user_redirect" checked/>';
+        else
+            echo '<input type="checkbox" id="scouting_oidc_user_redirect" name="scouting_oidc_user_redirect"/>';
+    }
+
+    // Callback to render selectbox field
     public function scouting_oidc_settings_general_login_redirect_callback() {
         $possible_values = array(
             'default' => __('Default (no action)', 'scouting-openid-connect'),

@@ -3,7 +3,7 @@ Contributors: jobvk
 Tags: scouting, scouting nederland, sol, openid connect, oidc
 Requires at least: 6.4.3
 Tested up to: 6.8
-Stable tag: 1.0.2
+Stable tag: 1.1.0
 Requires PHP: 8.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -59,6 +59,9 @@ Currently not, but this is planned for a future update of this plugin.
 4. Support Page
 
 == Changelog ==
+
+= 1.1.0 =
+* Add option to redirect only SOL users.
 
 = 1.0.2 =
 * Tested plugin up to WordPress 6.7.2 => 6.8

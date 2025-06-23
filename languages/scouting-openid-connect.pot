@@ -3,9 +3,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Scouting OpenID Connect 1.0.2\n"
+"Project-Id-Version: Scouting OpenID Connect 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/issues\n"
-"POT-Creation-Date: 2025-05-20 20:02+0200\n"
+"POT-Creation-Date: 2025-06-23 20:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
@@ -144,38 +144,42 @@ msgid "Prefix for all Scouting Nederland users"
 msgstr ""
 
 #: settings/general.php:74
+msgid "Redirect only SOL users"
+msgstr ""
+
+#: settings/general.php:83
 msgid "After a successful login redirect user to"
 msgstr ""
 
-#: settings/general.php:173
+#: settings/general.php:191
 msgid "Full name"
 msgstr ""
 
-#: settings/general.php:174
+#: settings/general.php:192
 msgid "First name"
 msgstr ""
 
-#: settings/general.php:175
+#: settings/general.php:193
 msgid "Last name"
 msgstr ""
 
-#: settings/general.php:176
+#: settings/general.php:194
 msgid "Username"
 msgstr ""
 
-#: settings/general.php:226
+#: settings/general.php:244
 msgid "This prefix will be added to the username of all Scouting Nederland users"
 msgstr ""
 
-#: settings/general.php:232
+#: settings/general.php:258
 msgid "Default (no action)"
 msgstr ""
 
-#: settings/general.php:233
+#: settings/general.php:259
 msgid "Frontpage"
 msgstr ""
 
-#: settings/general.php:234
+#: settings/general.php:260
 msgid "Dashboard"
 msgstr ""
 
@@ -415,27 +419,27 @@ msgstr ""
 msgid "Birthdate"
 msgstr ""
 
-#: user/fields.php:73
+#: user/fields.php:76
 msgid "Gender"
 msgstr ""
 
-#: user/fields.php:76
+#: user/fields.php:79
 msgid "Male"
 msgstr ""
 
-#: user/fields.php:77
+#: user/fields.php:80
 msgid "Female"
 msgstr ""
 
-#: user/fields.php:78
+#: user/fields.php:81
 msgid "Other"
 msgstr ""
 
-#: user/fields.php:79
+#: user/fields.php:82
 msgid "Unknown"
 msgstr ""
 
-#: user/fields.php:95
+#: user/fields.php:98
 msgid "Infix"
 msgstr ""
 
@@ -443,10 +447,10 @@ msgstr ""
 msgid "Email scope is missing"
 msgstr ""
 
-#: user/user.php:178
+#: user/user.php:179
 msgid "Username and Email have different user ID"
 msgstr ""
 
-#: user/user.php:206
+#: user/user.php:207
 msgid "Something went wrong while trying to log in"
 msgstr ""
