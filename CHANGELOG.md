@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [[1.1.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/1.0.2)] - 23/06/2025
+## [[1.1.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/1.1.0)] - 23/06/2025
  
 Added option to redirect only SOL users in settings
  

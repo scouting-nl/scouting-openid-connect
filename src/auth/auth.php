@@ -271,13 +271,17 @@ class Auth {
         }
 
         $redirect_setting = get_option('scouting_oidc_login_redirect');
-        if ($redirect_setting === 'default')
+        if ($redirect_setting === 'default') {
             return; // Default WordPress behavior
-        elseif ($redirect_setting === 'dashboard')
+        }
+        elseif ($redirect_setting === 'dashboard') {
             wp_safe_redirect(admin_url());
-        elseif ($redirect_setting === 'frontpage')
+            exit;
+        }
+        elseif ($redirect_setting === 'frontpage') {
             wp_safe_redirect(home_url());
-        exit;
+            exit;
+        }
     }
 
     // Redirect after logout based on settings
