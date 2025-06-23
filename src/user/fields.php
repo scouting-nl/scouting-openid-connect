@@ -68,6 +68,9 @@ class Fields
      * @param WP_User $user The user object
      */
     public function scouting_oidc_fields_gender($user) {
+        if (get_the_author_meta('scouting_oidc_gender', $user->ID) == '') {
+            update_user_meta($user->ID, 'scouting_oidc_gender', 'unknown');
+        }
         ?>
         <tr>
             <th><label for="gender"><?php esc_html_e("Gender", "scouting-openid-connect"); ?></label></th>
@@ -110,7 +113,7 @@ class Fields
             'infix-field-script',                    // Handle name
             plugins_url('infix-field.js', __FILE__), // Path to the file
             array(),                                 // No dependencies
-            "1.0.2",                                 // Version number
+            "1.1.0",                                 // Version number
             array(
                 'strategy' => 'defer',               // Add the defer attribute
                 'in_footer' => true                  // Load the script in the footer

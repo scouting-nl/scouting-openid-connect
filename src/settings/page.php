@@ -67,6 +67,7 @@ class Settings
         update_option('scouting_oidc_user_scouting_id', false);
         update_option('scouting_oidc_user_name_prefix', 'sn_');
         update_option('scouting_oidc_user_auto_create', true);
+        update_option('scouting_oidc_user_redirect', true);
         update_option('scouting_oidc_login_redirect', 'frontpage');
     }
 }
