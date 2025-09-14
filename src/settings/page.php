@@ -62,9 +62,13 @@ class Settings
             'hide-field-script',                    // Handle name
             plugins_url('hide-field.js', __FILE__), // Path to the file
             array(),                                // No dependencies
-            "1.2.0"                                 // Version number
+            "1.2.0",                                // Version number
+            array(
+                'strategy' => 'defer',              // Add the defer attribute
+                'in_footer' => true                 // Load the script in the footer
+            )
         );
-    }
+    } 
 
     // Set up defaults during installation
     public function scouting_oidc_settings_install() {
