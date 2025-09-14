@@ -62,7 +62,7 @@ $scouting_oidc_fields = new Fields();
 function scouting_oidc_init()
 {
     global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode, $scouting_oidc_settings; // Declare global variables
-    
+
     // Add the OpenID Connect button to the login form
     add_action('login_form', array($scouting_oidc_auth, 'scouting_oidc_auth_login_form'));
 
