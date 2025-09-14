@@ -5,15 +5,15 @@ msgstr ""
 "Project-Id-Version: Scouting OpenID Connect 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/"
 "issues\n"
-"POT-Creation-Date: 2025-06-23 20:47+0200\n"
-"PO-Revision-Date: 2025-06-23 20:49+0200\n"
+"POT-Creation-Date: 2025-09-14 19:17+0200\n"
+"PO-Revision-Date: 2025-09-14 19:18+0200\n"
 "Last-Translator: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.7\n"
 "X-Poedit-KeywordsList: __;esc_html__;_e;esc_html_e\n"
 "X-Poedit-Basepath: ../src\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -160,40 +160,56 @@ msgstr "Alleen SOL-gebruikers omleiden"
 msgid "After a successful login redirect user to"
 msgstr "Na een succesvolle aanmelding wordt de gebruiker doorgestuurd naar"
 
-#: settings/general.php:191
+#: settings/general.php:92
+msgid "Url to custom redirect after a successful login"
+msgstr "URL voor aangepaste omleiding na een succesvolle aanmelding"
+
+#: settings/general.php:226
 msgid "Full name"
 msgstr "Volledige naam"
 
-#: settings/general.php:192
+#: settings/general.php:227
 msgid "First name"
 msgstr "Voornaam"
 
-#: settings/general.php:193
+#: settings/general.php:228
 msgid "Last name"
 msgstr "Achternaam"
 
-#: settings/general.php:194
+#: settings/general.php:229
 msgid "Username"
 msgstr "Gebruikersnaam"
 
-#: settings/general.php:244
+#: settings/general.php:279
 msgid ""
 "This prefix will be added to the username of all Scouting Nederland users"
 msgstr ""
 "Dit voorvoegsel wordt toegevoegd aan de gebruikersnaam van alle Scouting "
 "Nederland gebruikers"
 
-#: settings/general.php:258
+#: settings/general.php:293
 msgid "Default (no action)"
 msgstr "Standaard (geen actie)"
 
-#: settings/general.php:259
+#: settings/general.php:294
 msgid "Frontpage"
 msgstr "Voorpagina"
 
-#: settings/general.php:260
+#: settings/general.php:295
 msgid "Dashboard"
 msgstr "Dashboard"
+
+#: settings/general.php:296
+msgid "Custom URL"
+msgstr "Aangepaste URL"
+
+#: settings/general.php:324
+msgid ""
+"Enter the slug to append to the base URL where users should be redirected "
+"after login."
+msgstr ""
+"Voer de slug in die moet worden toegevoegd aan de basis-URL waarnaar "
+"gebruikers moeten worden doorgestuurd na het inloggen."
 
 #: settings/oidc.php:12
 msgid "OpenID Connect Settings"

@@ -55,12 +55,12 @@ class Settings
 
     // Set up defaults during installation
     public function scouting_oidc_settings_install() {
-        // set default options for OIDC
+        // Set default options for OIDC
         update_option('scouting_oidc_client_id', '');
         update_option('scouting_oidc_client_secret', '');
         update_option('scouting_oidc_scopes', 'openid email membership profile');
 
-        // set default options for general settings
+        // Set default options for general settings
         update_option('scouting_oidc_user_display_name', 'fullname');
         update_option('scouting_oidc_user_birthdate', false);
         update_option('scouting_oidc_user_gender', false);
@@ -69,6 +69,7 @@ class Settings
         update_option('scouting_oidc_user_auto_create', true);
         update_option('scouting_oidc_user_redirect', true);
         update_option('scouting_oidc_login_redirect', 'frontpage');
+        update_option('scouting_oidc_custom_redirect', '');
     }
 }
 ?>
