@@ -109,7 +109,7 @@ class Shortcode
             'live-shortcode-script',                    // Handle name
             plugins_url('live-shortcode.js', __FILE__), // Path to the file
             array(),                                    // No dependencies
-            "1.1.0",                                    // Version number
+            "1.2.0",                                    // Version number
             array(
                 'strategy' => 'defer',                  // Add the defer attribute
                 'in_footer' => true                     // Load the script in the footer

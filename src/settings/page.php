@@ -52,15 +52,32 @@ class Settings
         $scouting_oidc_settings_general = new Settings_General();
         $scouting_oidc_settings_general->scouting_oidc_settings_general();
     }
+    
+    /**
+     * This script renders JavaScript to hide the custom redirect field when not needed.
+     */
+    public function scouting_oidc_fields_enqueue_hide_field_script() {
+        // Enqueue the external JavaScript file
+        wp_enqueue_script(
+            'hide-field-script',                    // Handle name
+            plugins_url('hide-field.js', __FILE__), // Path to the file
+            array(),                                // No dependencies
+            "1.2.0",                                // Version number
+            array(
+                'strategy' => 'defer',              // Add the defer attribute
+                'in_footer' => true                 // Load the script in the footer
+            )
+        );
+    } 
 
     // Set up defaults during installation
     public function scouting_oidc_settings_install() {
-        // set default options for OIDC
+        // Set default options for OIDC
         update_option('scouting_oidc_client_id', '');
         update_option('scouting_oidc_client_secret', '');
         update_option('scouting_oidc_scopes', 'openid email membership profile');
 
-        // set default options for general settings
+        // Set default options for general settings
         update_option('scouting_oidc_user_display_name', 'fullname');
         update_option('scouting_oidc_user_birthdate', false);
         update_option('scouting_oidc_user_gender', false);
@@ -69,6 +86,7 @@ class Settings
         update_option('scouting_oidc_user_auto_create', true);
         update_option('scouting_oidc_user_redirect', true);
         update_option('scouting_oidc_login_redirect', 'frontpage');
+        update_option('scouting_oidc_custom_redirect', '');
     }
 }
 ?>
