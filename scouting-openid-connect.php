@@ -9,14 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @author     Job van Koeveringe <job.van.koeveringe@scouting.nl>
  * @copyright  2025 Scouting Nederland
  * @license    GPLv3
- * @version    1.1.0
+ * @version    1.2.0
  * @link       https://github.com/Scouting-nl/scouting-openid-connect
  *
  * @wordpress-plugin
  * Plugin Name:          Scouting OpenID Connect
  * Plugin URI:           https://github.com/Scouting-nl/scouting-openid-connect
  * Description:          WordPress plugin for logging in with Scouting Nederland OpenID Connect Server.
- * Version:              1.1.0
+ * Version:              1.2.0
  * Requires at least:    6.4.3
  * Requires PHP:         8.2
  * Author:               Job van Koeveringe
@@ -61,10 +61,7 @@ $scouting_oidc_fields = new Fields();
 // Init plugin
 function scouting_oidc_init()
 {
-    global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode; // Declare global variable
-
-    // Add translations to the plugin
-    load_plugin_textdomain('scouting-openid-connect', false, dirname(plugin_basename(__FILE__)) . '/languages');
+    global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode, $scouting_oidc_settings; // Declare global variables
 
     // Add the OpenID Connect button to the login form
     add_action('login_form', array($scouting_oidc_auth, 'scouting_oidc_auth_login_form'));
@@ -73,7 +70,7 @@ function scouting_oidc_init()
     add_shortcode('scouting_oidc_button', array($scouting_oidc_auth, 'scouting_oidc_auth_login_button_shortcode'));
     add_shortcode('scouting_oidc_link', array($scouting_oidc_auth, 'scouting_oidc_auth_login_url_shortcode'));
 
-    // Geef extra links in de plugin-overzichtspagina
+    // Provide additional links in the plugin overview page
 	add_filter('plugin_action_links_'.plugin_basename(__FILE__), [$scouting_oidc_actions, 'scouting_oidc_actions_plugin_links']);
 
     // Add scouting ID, birthday and gender to user profile 
@@ -88,6 +85,7 @@ function scouting_oidc_init()
     add_action('edit_user_profile',  [$scouting_oidc_fields, 'scouting_oidc_fields_show_infix_field']);
     add_action('admin_enqueue_scripts', [$scouting_oidc_fields, 'scouting_oidc_fields_enqueue_infix_field_script']);
     add_action('admin_enqueue_scripts', [$scouting_oidc_shortcode, 'scouting_oidc_shortcode_enqueue_live_script']);
+    add_action('admin_enqueue_scripts', [$scouting_oidc_settings, 'scouting_oidc_fields_enqueue_hide_field_script']);
 }
 add_action('plugins_loaded', 'scouting_oidc_init');
 

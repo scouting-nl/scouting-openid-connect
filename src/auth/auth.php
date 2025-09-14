@@ -282,6 +282,15 @@ class Auth {
             wp_safe_redirect(home_url());
             exit;
         }
+        elseif ($redirect_setting === 'custom') {
+            $custom_redirect = get_option('scouting_oidc_custom_redirect');
+            $safe_redirect = wp_validate_redirect($custom_redirect, home_url());
+            wp_safe_redirect($safe_redirect);
+            exit;
+        }
+        else {
+            return; // Default WordPress behavior
+        }
     }
 
     // Redirect after logout based on settings

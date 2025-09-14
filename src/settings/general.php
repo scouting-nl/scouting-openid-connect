@@ -85,6 +85,18 @@ class Settings_General
             'scouting-openid-connect-settings',                                         // Page slug
             'scouting_oidc_general_settings'                                            // Section ID where the field should be added
         );
+
+        // Add a settings text field
+        add_settings_field(
+            'scouting_oidc_custom_redirect',                                                  // Field ID
+            __('Url to custom redirect after a successful login', 'scouting-openid-connect'), // Field label
+            [$this, 'scouting_oidc_settings_general_custom_redirect_callback'],               // Callback to render field
+            'scouting-openid-connect-settings',                                               // Page slug
+            'scouting_oidc_general_settings',                                                 // Section ID where the field should be added
+            [
+                'class' => 'scouting-oidc-custom-redirect-tr'                                 // Extra args to identify the tr for JS
+            ]
+        );
     
         // Register settings
         register_setting(
@@ -157,6 +169,15 @@ class Settings_General
                 'sanitize_callback' => [$this, 'scouting_oidc_sanitize_login_redirect_option'] // Sanitize the input value as login redirect
             ]
         );
+
+        // Register settings
+        register_setting(
+            'scouting_oidc_settings_group',                                                     // Settings group name
+            'scouting_oidc_custom_redirect',                                                    // Option name
+            [
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_custom_redirect_option'] // Sanitize the input value as custom redirect
+            ]
+        );
     }
 
     // Sanitize the display name option
@@ -176,10 +197,24 @@ class Settings_General
     // Sanitize the login redirect option
     public function scouting_oidc_sanitize_login_redirect_option($input) {
         // Define allowed options
-        $valid = ['default', 'frontpage', 'dashboard'];
+        $valid = ['default', 'frontpage', 'dashboard', 'custom'];
         
         // Return the input if it’s a valid option; otherwise, default to 'default'
         return in_array($input, $valid, true) ? $input : 'default';
+    }
+
+    // Sanitize the custom redirect option
+    public function scouting_oidc_sanitize_custom_redirect_option($input) {
+        // Define your fixed base domain
+        $base_domain = home_url('/'); // automatically gets https://example.com/
+
+        // Add the base domain if it's not already present
+        if (!empty($input) && strpos($input, $base_domain) !== 0) {
+            $input = $base_domain . ltrim($input, '/');
+        }
+
+        // Sanitize the input
+        return sanitize_text_field($input);
     }
 
     // Callback to render section content
@@ -258,6 +293,7 @@ class Settings_General
             'default' => __('Default (no action)', 'scouting-openid-connect'),
             'frontpage' => __('Frontpage', 'scouting-openid-connect'),
             'dashboard' => __('Dashboard', 'scouting-openid-connect'),
+            'custom' => __('Custom URL', 'scouting-openid-connect'),
         );
         $value = get_option('scouting_oidc_login_redirect');
         
@@ -269,6 +305,23 @@ class Settings_General
                 echo '<option value="' . esc_attr($key) . '">' . esc_html($name) . '</option>';
         }
         echo '</select>';
+    }
+
+    // Callback to render text field
+    public function scouting_oidc_settings_general_custom_redirect_callback() {
+        $value = get_option('scouting_oidc_custom_redirect');
+
+        // Define your fixed base domain
+        $base_domain = home_url('/'); // automatically gets https://example.com/
+
+        // Remove base domain from stored value (so only the slug is stored/displayed)
+        $slug = '';
+        if (!empty($value) && strpos($value, $base_domain) === 0) {
+            $slug = substr($value, strlen($base_domain));
+        }
+        echo '<span style="padding: 5.675px 0px;">' . esc_html($base_domain) . '</span>';
+        echo '<input type="text" id="scouting_oidc_custom_redirect" name="scouting_oidc_custom_redirect" size="50" value="' . esc_attr($slug) . '" placeholder="' . esc_attr__("custom-page", "scouting-openid-connect") . '"/>';
+        echo '<p class="description">' . esc_html__("Enter the slug to append to the base URL where users should be redirected after login.", "scouting-openid-connect") . '</p>';
     }
 }
 ?>
