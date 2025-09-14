@@ -322,29 +322,6 @@ class Settings_General
         echo '<span style="padding: 5.675px 0px;">' . esc_html($base_domain) . '</span>';
         echo '<input type="text" id="scouting_oidc_custom_redirect" name="scouting_oidc_custom_redirect" size="50" value="' . esc_attr($slug) . '" placeholder="' . esc_attr__("custom-page", "scouting-openid-connect") . '"/>';
         echo '<p class="description">' . esc_html__("Enter the slug to append to the base URL where users should be redirected after login.", "scouting-openid-connect") . '</p>';
-
-        // Add JS to show/hide dynamically
-        ?>
-        <script>
-        (function($){
-            function toggleCustomRedirect() {
-                var $tr = $('.scouting-oidc-custom-redirect-tr');
-                if ($('#scouting_oidc_login_redirect').val() === 'custom') {
-                    $tr.show();
-                } else {
-                    $tr.hide();
-                }
-            }
-            $(document).ready(function(){
-                toggleCustomRedirect(); // initial check
-                $('#scouting_oidc_login_redirect').on('change', toggleCustomRedirect);
-            });
-        })(jQuery);
-        </script>
-        <style>
-            .scouting-oidc-custom-redirect-tr { display:none; } /* hide tr initially */
-        </style>
-        <?php
     }
 }
 ?>

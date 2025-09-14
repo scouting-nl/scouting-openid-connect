@@ -61,7 +61,7 @@ $scouting_oidc_fields = new Fields();
 // Init plugin
 function scouting_oidc_init()
 {
-    global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode; // Declare global variable
+    global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode, $scouting_oidc_settings; // Declare global variables
 
     // Add translations to the plugin
     load_plugin_textdomain('scouting-openid-connect', false, dirname(plugin_basename(__FILE__)) . '/languages');
@@ -73,7 +73,7 @@ function scouting_oidc_init()
     add_shortcode('scouting_oidc_button', array($scouting_oidc_auth, 'scouting_oidc_auth_login_button_shortcode'));
     add_shortcode('scouting_oidc_link', array($scouting_oidc_auth, 'scouting_oidc_auth_login_url_shortcode'));
 
-    // Geef extra links in de plugin-overzichtspagina
+    // Provide additional links in the plugin overview page
 	add_filter('plugin_action_links_'.plugin_basename(__FILE__), [$scouting_oidc_actions, 'scouting_oidc_actions_plugin_links']);
 
     // Add scouting ID, birthday and gender to user profile 
@@ -88,6 +88,7 @@ function scouting_oidc_init()
     add_action('edit_user_profile',  [$scouting_oidc_fields, 'scouting_oidc_fields_show_infix_field']);
     add_action('admin_enqueue_scripts', [$scouting_oidc_fields, 'scouting_oidc_fields_enqueue_infix_field_script']);
     add_action('admin_enqueue_scripts', [$scouting_oidc_shortcode, 'scouting_oidc_shortcode_enqueue_live_script']);
+    add_action('admin_enqueue_scripts', [$scouting_oidc_settings, 'scouting_oidc_fields_enqueue_hide_field_script']);
 }
 add_action('plugins_loaded', 'scouting_oidc_init');
 

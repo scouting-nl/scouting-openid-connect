@@ -52,6 +52,19 @@ class Settings
         $scouting_oidc_settings_general = new Settings_General();
         $scouting_oidc_settings_general->scouting_oidc_settings_general();
     }
+    
+    /**
+     * This script renders JavaScript to hide the custom redirect field when not needed.
+     */
+    public function scouting_oidc_fields_enqueue_hide_field_script() {
+        // Enqueue the external JavaScript file
+        wp_enqueue_script(
+            'hide-field-script',                    // Handle name
+            plugins_url('hide-field.js', __FILE__), // Path to the file
+            array(),                                // No dependencies
+            "1.2.0"                                 // Version number
+        );
+    }
 
     // Set up defaults during installation
     public function scouting_oidc_settings_install() {
