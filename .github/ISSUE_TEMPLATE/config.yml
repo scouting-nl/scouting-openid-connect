@@ -7,8 +7,8 @@ contact_links:
     url: https://github.com/scouting-nl/scouting-openid-connect/discussions/categories/ideas
     about: Show your feature request or idea to our community.
   - name: Offical Scouting Nederland website
-    url: https://www.scouting.nl/
+    url: https://www.scouting.nl
     about: Find more information about Scouting Nederland.
   - name: Offical Scouting Nederland OpenID Connect website
-    url: https://login.scouting.nl/
+    url: https://login.scouting.nl
     about: Find more information about Scouting Nederland OpenID Connect.
