@@ -38,7 +38,6 @@ $metas = array(
 	'scouting_oidc_id',
 	'scouting_oidc_birthdate',
 	'scouting_oidc_scopes',
-	'scouting_oidc_infix',
 );
 $users = get_users();
 

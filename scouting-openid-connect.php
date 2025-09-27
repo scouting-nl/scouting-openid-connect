@@ -80,10 +80,7 @@ function scouting_oidc_init()
 		add_action('edit_user_profile', [$scouting_oidc_fields, 'scouting_oidc_fields_user_profile']);
 	}
 
-    // Add infix field to user profile
-    add_action('show_user_profile',  [$scouting_oidc_fields, 'scouting_oidc_fields_show_infix_field']);
-    add_action('edit_user_profile',  [$scouting_oidc_fields, 'scouting_oidc_fields_show_infix_field']);
-    add_action('admin_enqueue_scripts', [$scouting_oidc_fields, 'scouting_oidc_fields_enqueue_infix_field_script']);
+    // Enqueue scripts for admin pages
     add_action('admin_enqueue_scripts', [$scouting_oidc_shortcode, 'scouting_oidc_shortcode_enqueue_live_script']);
     add_action('admin_enqueue_scripts', [$scouting_oidc_settings, 'scouting_oidc_fields_enqueue_hide_field_script']);
 }
