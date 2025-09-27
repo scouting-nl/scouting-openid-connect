@@ -81,8 +81,6 @@ class Settings
         update_option('scouting_oidc_user_display_name', 'fullname');
         update_option('scouting_oidc_user_birthdate', false);
         update_option('scouting_oidc_user_gender', false);
-        update_option('scouting_oidc_user_scouting_id', false);
-        update_option('scouting_oidc_user_name_prefix', 'sn_');
         update_option('scouting_oidc_user_auto_create', true);
         update_option('scouting_oidc_user_redirect', true);
         update_option('scouting_oidc_login_redirect', 'frontpage');

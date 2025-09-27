@@ -16,9 +16,6 @@ class Fields
 
         <table class="form-table" role="presentation">
             <?php
-            if (get_option('scouting_oidc_user_scouting_id')) {
-                $this->scouting_oidc_fields_scouting_id($user);
-            }
             if (get_option('scouting_oidc_user_birthdate')) {
                 $this->scouting_oidc_fields_birthdate($user);
             }
@@ -27,22 +24,6 @@ class Fields
             }
             ?>
         </table>
-        <?php
-    }
-
-    /**
-     * Display the Scouting ID field
-     * 
-     * @param WP_User $user The user object
-     */
-    public function scouting_oidc_fields_scouting_id($user) {
-        ?>
-        <tr>
-            <th><label for="scouting_id"><?php esc_html_e('Scouting ID', 'scouting-openid-connect'); ?></label></th>
-            <td>
-                <input type="text" name="scouting_id" id="scouting_id" value="<?php echo esc_attr(get_the_author_meta('scouting_oidc_id', $user->ID)); ?>" class="regular-text" readonly disabled/>
-            </td>
-        </tr>
         <?php
     }
 

@@ -32,7 +32,7 @@ class Support
                 <li><?php esc_html_e('Add the name of your group/website.', 'scouting-openid-connect'); ?></li>
                 <li><?php esc_html_e('Add the Redirect URI:', 'scouting-openid-connect'); ?> <code><?php echo esc_url(home_url('/')); ?></code></li>
                 <li><?php esc_html_e('Add the Post Logout Redirect URI:', 'scouting-openid-connect'); ?> <code><?php echo esc_url(home_url('/')); ?></code></li>
-                <li><?php esc_html_e('Select the scopes you want to use. The "email" scope is required; the "profile" and "membership" scopes are optional.', 'scouting-openid-connect'); ?></li>
+                <li><?php esc_html_e('Select the scopes you want to use. The "email" and "membership" scopes are required; the "profile" scope is optional.', 'scouting-openid-connect'); ?></li>
                 <li><?php esc_html_e('Select the organizations that can log in.', 'scouting-openid-connect'); ?>
                     <br><?php esc_html_e('If your organization has sub-organizations, you can also select "Allow suborganizations."', 'scouting-openid-connect'); ?></li>
                 <li><?php esc_html_e('Press "Add Website."', 'scouting-openid-connect'); ?></li>
@@ -40,8 +40,8 @@ class Support
                 <li><?php esc_html_e('Copy the "Client ID", "Client Secret", and the "Scopes" to the', 'scouting-openid-connect'); ?>
                     <a href="<?php echo esc_url(admin_url('admin.php?page=scouting-oidc-settings')); ?>">settings page</a>.
                 </li>
-                <li><?php esc_html_e('Fill in the OpenID Connect Settings with the copied data. Make sure the required scopes, "openid" and "email", are present.', 'scouting-openid-connect'); ?></li>
-                <li><?php esc_html_e('Fill in the General Settings. If you want to store the name, birthdate, or gender, use the scope "profile". If you also want the SOL ID, use the scope "membership".', 'scouting-openid-connect'); ?></li>
+                <li><?php esc_html_e('Fill in the OpenID Connect Settings with the copied data. Make sure the required scopes, "openid" , "email" and "membership", are present.', 'scouting-openid-connect'); ?></li>
+                <li><?php esc_html_e('Fill in the General Settings. If you want to store the birthdate, or gender, use the scope "profile".', 'scouting-openid-connect'); ?></li>
                 <li><?php esc_html_e('Press "Save Settings"', 'scouting-openid-connect'); ?>.</li>
                 <li><?php esc_html_e('Log out and try to log in with the Scouts Login button.', 'scouting-openid-connect'); ?></li>
             </ol>

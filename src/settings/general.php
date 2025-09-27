@@ -43,29 +43,11 @@ class Settings_General
     
         // Add a settings checkbox field
         add_settings_field(
-            'scouting_oidc_user_scouting_id',                                    // Field ID
-            __('Store Scouting ID to local profile', 'scouting-openid-connect'), // Field label
-            [$this, 'scouting_oidc_settings_general_scouting_id_callback'],      // Callback to render field
-            'scouting-openid-connect-settings',                                  // Page slug
-            'scouting_oidc_general_settings'                                     // Section ID where the field should be added
-        );
-    
-        // Add a settings checkbox field
-        add_settings_field(
             'scouting_oidc_user_auto_create',                                    // Field ID
             __('Allow new user accounts', 'scouting-openid-connect'),            // Field label
             [$this, 'scouting_oidc_settings_general_user_auto_create_callback'], // Callback to render field
             'scouting-openid-connect-settings',                                  // Page slug
             'scouting_oidc_general_settings'                                     // Section ID where the field should be added
-        );
-        
-        // Add a settings text field
-        add_settings_field(
-            'scouting_oidc_user_name_prefix',                                         // Field ID
-            __('Prefix for all Scouting Nederland users', 'scouting-openid-connect'), // Field label
-            [$this, 'scouting_oidc_settings_general_user_name_prefix_callback'],      // Callback to render field
-            'scouting-openid-connect-settings',                                       // Page slug
-            'scouting_oidc_general_settings'                                          // Section ID where the field should be added
         );
 
         // Add a settings checkbox field
@@ -128,27 +110,9 @@ class Settings_General
         // Register settings
         register_setting(
             'scouting_oidc_settings_group',                                             // Settings group name
-            'scouting_oidc_user_scouting_id',                                           // Option name
-            [
-                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
-            ]
-        );
-    
-        // Register settings
-        register_setting(
-            'scouting_oidc_settings_group',                                             // Settings group name
             'scouting_oidc_user_auto_create',                                           // Option name
             [
                 'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
-            ]
-        );
-    
-        // Register settings
-        register_setting(
-            'scouting_oidc_settings_group',                  // Settings group name
-            'scouting_oidc_user_name_prefix',                // Option name
-            [
-                'sanitize_callback' => 'sanitize_text_field' // Sanitize the input value as a text field
             ]
         );
         
@@ -183,7 +147,7 @@ class Settings_General
     // Sanitize the display name option
     public function scouting_oidc_sanitize_display_name_option($input) {
         // Define allowed options
-        $valid = ['fullname', 'firstname', 'lastname', 'username'];
+        $valid = ['fullname', 'firstname', 'lastname'];
         
         // Return the input if it’s a valid option; otherwise, default to 'fullname'
         return in_array($input, $valid, true) ? $input : 'fullname';
@@ -206,7 +170,7 @@ class Settings_General
     // Sanitize the custom redirect option
     public function scouting_oidc_sanitize_custom_redirect_option($input) {
         // Define your fixed base domain
-        $base_domain = home_url('/'); // automatically gets https://example.com/
+        $base_domain = home_url('/');
 
         // Add the base domain if it's not already present
         if (!empty($input) && strpos($input, $base_domain) !== 0) {
@@ -226,7 +190,6 @@ class Settings_General
             'fullname' => __('Full name', 'scouting-openid-connect'),
             'firstname' => __('First name', 'scouting-openid-connect'),
             'lastname' => __('Last name', 'scouting-openid-connect'),
-            'username' => __('Username', 'scouting-openid-connect'),
         );
         $value = get_option('scouting_oidc_user_display_name');
         
@@ -257,26 +220,11 @@ class Settings_General
     }
 
     // Callback to render checkbox field
-    public function scouting_oidc_settings_general_scouting_id_callback() {
-        if (get_option('scouting_oidc_user_scouting_id'))
-            echo '<input type="checkbox" id="scouting_oidc_user_scouting_id" name="scouting_oidc_user_scouting_id" checked/>';
-        else
-            echo '<input type="checkbox" id="scouting_oidc_user_scouting_id" name="scouting_oidc_user_scouting_id"/>';
-    }
-
-    // Callback to render checkbox field
     public function scouting_oidc_settings_general_user_auto_create_callback() {
         if (get_option('scouting_oidc_user_auto_create'))
             echo '<input type="checkbox" id="scouting_oidc_user_auto_create" name="scouting_oidc_user_auto_create" checked/>';
         else
             echo '<input type="checkbox" id="scouting_oidc_user_auto_create" name="scouting_oidc_user_auto_create"/>';
-    }
-
-    // Callback to render text field
-    public function scouting_oidc_settings_general_user_name_prefix_callback() {
-        $value = get_option('scouting_oidc_user_name_prefix');
-        echo '<input type="text" id="scouting_oidc_user_name_prefix" name="scouting_oidc_user_name_prefix" placeholder="Prefix Username" value="' . esc_attr($value) . '" size="20" />';
-        echo '<p class="description">' . esc_html__("This prefix will be added to the username of all Scouting Nederland users", "scouting-openid-connect") . '</p>';
     }
 
     // Callback to render checkbox field
