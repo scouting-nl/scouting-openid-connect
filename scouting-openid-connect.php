@@ -9,14 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @author     Job van Koeveringe <job.van.koeveringe@scouting.nl>
  * @copyright  2025 Scouting Nederland
  * @license    GPLv3
- * @version    1.2.0
+ * @version    2.0.0
  * @link       https://github.com/Scouting-nl/scouting-openid-connect
  *
  * @wordpress-plugin
  * Plugin Name:          Scouting OpenID Connect
  * Plugin URI:           https://github.com/Scouting-nl/scouting-openid-connect
  * Description:          WordPress plugin for logging in with Scouting Nederland OpenID Connect Server.
- * Version:              1.2.0
+ * Version:              2.0.0
  * Requires at least:    6.4.3
  * Requires PHP:         8.2
  * Author:               Job van Koeveringe
@@ -73,8 +73,8 @@ function scouting_oidc_init()
     // Provide additional links in the plugin overview page
 	add_filter('plugin_action_links_'.plugin_basename(__FILE__), [$scouting_oidc_actions, 'scouting_oidc_actions_plugin_links']);
 
-    // Add scouting ID, birthday and gender to user profile 
-	if (get_option('scouting_oidc_user_scouting_id') || get_option('scouting_oidc_user_birthday') || get_option('scouting_oidc_user_gender'))
+    // Add birthday and gender to user profile
+	if (get_option('scouting_oidc_user_birthday') || get_option('scouting_oidc_user_gender'))
 	{
 		add_action('show_user_profile', [$scouting_oidc_fields, 'scouting_oidc_fields_user_profile']);
 		add_action('edit_user_profile', [$scouting_oidc_fields, 'scouting_oidc_fields_user_profile']);

@@ -3,7 +3,7 @@ Contributors: jobvk
 Tags: scouting, scouting nederland, sol, openid connect, oidc
 Requires at least: 6.4.3
 Tested up to: 6.8
-Stable tag: 1.2.0
+Stable tag: 2.0.0
 Requires PHP: 8.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -20,7 +20,7 @@ With this plugin, users can seamlessly integrate their Scouting Nederland accoun
 
 == Installation ==
 
-Make sure you have the role `webmaster` in [sol.scouting.nl](https://sol.scouting.nl).
+Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scouting.nl).
 
 1. Go to [https://login.scouting.nl](https://login.scouting.nl), click on `Managed websites` and click on `Add OpenID Connect connection`.
 2. Add the name of your group/website.
@@ -60,6 +60,18 @@ Currently not, but this is planned for a future update of this plugin.
 
 == Changelog ==
 
+= 2.0.0 =
+
+Importent: 
+* `membership` scope is now required to obtain the SOL Member ID.
+* `infix` is removed from user this was conflicting with WooCommerce, the infix is now added before the last name.
+
+Other changes:
+* Removed the `prefix` field from the general settings.
+* Removed the SOL ID field profile this is now the UserName of the WordPress User. 
+* Improved error messages and redirects for missing or invalid user data or OIDC scopes.
+* Updated setup and support documentation to reflect the new identification model.
+
 = 1.2.0 =
 * Add custom redirect option for successful login.
 
@@ -67,7 +79,7 @@ Currently not, but this is planned for a future update of this plugin.
 * Add option to redirect only SOL users.
 
 = 1.0.2 =
-* Tested plugin up to WordPress 6.7.2 => 6.8
+* Tested plugin up to WordPress 6.7.2 => 6.8.0
 
 = 1.0.1 =
 * Fixed hook wp_login
@@ -77,6 +89,12 @@ Currently not, but this is planned for a future update of this plugin.
 * Initial release
 
 == Upgrade Notice ==
+
+= 2.0.0 =
+⚠️ **Breaking Changes**
+
+This release introduces a major change in how WordPress users are identified.  
+The WordPress **UserName** now uses the **SOL ID** instead of the **SOL UserName**.
 
 = 1.0.0 =
 * Initial release
