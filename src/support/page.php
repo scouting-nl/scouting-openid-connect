@@ -23,7 +23,7 @@ class Support
         <div class="wrap">
             <h1><?php esc_html_e('Support', 'scouting-openid-connect'); ?></h1>
             <p><?php esc_html_e('Before you start make sure you have the role "webmaster" in', 'scouting-openid-connect'); ?> 
-                <a href="https://sol.scouting.nl" target="_blank">sol.scouting.nl</a>.
+                <a href="https://mijn.scouting.nl" target="_blank">mijn.scouting.nl</a>.
             </p>
     
             <h2><?php esc_html_e('Setting up OpenID Connect', 'scouting-openid-connect'); ?></h2>

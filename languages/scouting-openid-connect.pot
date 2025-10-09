@@ -3,9 +3,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Scouting OpenID Connect 1.1.0\n"
+"Project-Id-Version: Scouting OpenID Connect 2.0.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/issues\n"
-"POT-Creation-Date: 2025-09-14 19:18+0200\n"
+"POT-Creation-Date: 2025-10-09 21:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
@@ -132,66 +132,50 @@ msgid "Store gender to local profile"
 msgstr ""
 
 #: settings/general.php:47
-msgid "Store Scouting ID to local profile"
-msgstr ""
-
-#: settings/general.php:56
 msgid "Allow new user accounts"
 msgstr ""
 
-#: settings/general.php:65
-msgid "Prefix for all Scouting Nederland users"
-msgstr ""
-
-#: settings/general.php:74
+#: settings/general.php:56
 msgid "Redirect only SOL users"
 msgstr ""
 
-#: settings/general.php:83
+#: settings/general.php:65
 msgid "After a successful login redirect user to"
 msgstr ""
 
-#: settings/general.php:92
+#: settings/general.php:74
 msgid "Url to custom redirect after a successful login"
 msgstr ""
 
-#: settings/general.php:226
+#: settings/general.php:190
 msgid "Full name"
 msgstr ""
 
-#: settings/general.php:227
+#: settings/general.php:191
 msgid "First name"
 msgstr ""
 
-#: settings/general.php:228
+#: settings/general.php:192
 msgid "Last name"
 msgstr ""
 
-#: settings/general.php:229
-msgid "Username"
-msgstr ""
-
-#: settings/general.php:279
-msgid "This prefix will be added to the username of all Scouting Nederland users"
-msgstr ""
-
-#: settings/general.php:293
+#: settings/general.php:241
 msgid "Default (no action)"
 msgstr ""
 
-#: settings/general.php:294
+#: settings/general.php:242
 msgid "Frontpage"
 msgstr ""
 
-#: settings/general.php:295
+#: settings/general.php:243
 msgid "Dashboard"
 msgstr ""
 
-#: settings/general.php:296
+#: settings/general.php:244
 msgid "Custom URL"
 msgstr ""
 
-#: settings/general.php:324
+#: settings/general.php:272
 msgid "Enter the slug to append to the base URL where users should be redirected after login."
 msgstr ""
 
@@ -372,7 +356,7 @@ msgid "Add the Post Logout Redirect URI:"
 msgstr ""
 
 #: support/page.php:35
-msgid "Select the scopes you want to use. The \"email\" scope is required; the \"profile\" and \"membership\" scopes are optional."
+msgid "Select the scopes you want to use. The \"email\" and \"membership\" scopes are required; the \"profile\" scope is optional."
 msgstr ""
 
 #: support/page.php:36
@@ -396,11 +380,11 @@ msgid "Copy the \"Client ID\", \"Client Secret\", and the \"Scopes\" to the"
 msgstr ""
 
 #: support/page.php:43
-msgid "Fill in the OpenID Connect Settings with the copied data. Make sure the required scopes, \"openid\" and \"email\", are present."
+msgid "Fill in the OpenID Connect Settings with the copied data. Make sure the required scopes, \"openid\" , \"email\" and \"membership\", are present."
 msgstr ""
 
 #: support/page.php:44
-msgid "Fill in the General Settings. If you want to store the name, birthdate, or gender, use the scope \"profile\". If you also want the SOL ID, use the scope \"membership\"."
+msgid "Fill in the General Settings. If you want to store the birthdate, or gender, use the scope \"profile\"."
 msgstr ""
 
 #: support/page.php:45
@@ -423,46 +407,46 @@ msgstr ""
 msgid "Scouts Online (SOL) Profile Information"
 msgstr ""
 
-#: user/fields.php:41
-msgid "Scouting ID"
-msgstr ""
-
-#: user/fields.php:57
+#: user/fields.php:38
 msgid "Birthdate"
 msgstr ""
 
-#: user/fields.php:76
+#: user/fields.php:57
 msgid "Gender"
 msgstr ""
 
-#: user/fields.php:79
+#: user/fields.php:60
 msgid "Male"
 msgstr ""
 
-#: user/fields.php:80
+#: user/fields.php:61
 msgid "Female"
 msgstr ""
 
-#: user/fields.php:81
+#: user/fields.php:62
 msgid "Other"
 msgstr ""
 
-#: user/fields.php:82
+#: user/fields.php:63
 msgid "Unknown"
 msgstr ""
 
-#: user/fields.php:98
-msgid "Infix"
+#: user/user.php:68
+msgid "SOL ID is missing, make sure the \"membership\" scope is enabled."
 msgstr ""
 
-#: user/user.php:74
-msgid "Email scope is missing"
+#: user/user.php:75
+msgid "Email is missing, make sure the \"email\" scope is enabled."
 msgstr ""
 
-#: user/user.php:179
-msgid "Username and Email have different user ID"
+#: user/user.php:131
+msgid "SOL ID and Email have different user ID"
 msgstr ""
 
-#: user/user.php:207
+#: user/user.php:148
+msgid "Email address is already in use by another account"
+msgstr ""
+
+#: user/user.php:162
 msgid "Something went wrong while trying to log in"
 msgstr ""
