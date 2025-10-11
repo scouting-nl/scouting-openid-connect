@@ -7,7 +7,7 @@
 **Contributors:** [jobvk](https://github.com/jobvk) \
 **Requires at least:** 6.4.3 \
 **Tested up to:** 6.8 \
-**Stable tag:** 1.2.0 \
+**Stable tag:** 2.0.0 \
 **Tags:** scouting, scouting nederland, sol, openid connect, oidc \
 **License:** GPLv3 \
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html
@@ -62,7 +62,7 @@ Bugs and feature-requests can go to: [GitHub](https://github.com/Scouting-nl/sco
 
 ## Configuration
 
-Make sure you have the role `webmaster` in [sol.scouting.nl](https://sol.scouting.nl).
+Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scouting.nl).
 
 1. Go to [login.scouting.nl](https://login.scouting.nl), click on `Managed websites` and click on `Add OpenID Connect connection`.
 2. Add the name of your group/website.

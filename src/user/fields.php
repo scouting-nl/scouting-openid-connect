@@ -16,9 +16,6 @@ class Fields
 
         <table class="form-table" role="presentation">
             <?php
-            if (get_option('scouting_oidc_user_scouting_id')) {
-                $this->scouting_oidc_fields_scouting_id($user);
-            }
             if (get_option('scouting_oidc_user_birthdate')) {
                 $this->scouting_oidc_fields_birthdate($user);
             }
@@ -27,22 +24,6 @@ class Fields
             }
             ?>
         </table>
-        <?php
-    }
-
-    /**
-     * Display the Scouting ID field
-     * 
-     * @param WP_User $user The user object
-     */
-    public function scouting_oidc_fields_scouting_id($user) {
-        ?>
-        <tr>
-            <th><label for="scouting_id"><?php esc_html_e('Scouting ID', 'scouting-openid-connect'); ?></label></th>
-            <td>
-                <input type="text" name="scouting_id" id="scouting_id" value="<?php echo esc_attr(get_the_author_meta('scouting_oidc_id', $user->ID)); ?>" class="regular-text" readonly disabled/>
-            </td>
-        </tr>
         <?php
     }
 
@@ -84,41 +65,6 @@ class Fields
             </td>
         </tr>
         <?php
-    }
-
-    /**
-     * Render the HTML for the infix field
-     * 
-     * @param WP_User $user The user object
-     */
-    public function scouting_oidc_fields_show_infix_field($user) {
-        ?>
-        <table class="user-infix-table">
-            <tr class="user-infix-name-wrap">
-                <th><label for="infix"><?php esc_html_e('Infix', 'scouting-openid-connect'); ?></label></th>
-                <td>
-                    <input type="text" name="infix" id="infix" value="<?php echo esc_attr(get_the_author_meta('scouting_oidc_infix', $user->ID)); ?>" class="regular-text" />
-                </td>
-            </tr>
-        </table>
-        <?php
-    }
-
-    /**
-     * This script renders JavaScript to move the infix field between the first and last name fields.
-     */
-    public function scouting_oidc_fields_enqueue_infix_field_script() {
-        // Enqueue the external JavaScript file with the defer attribute
-        wp_enqueue_script(
-            'infix-field-script',                    // Handle name
-            plugins_url('infix-field.js', __FILE__), // Path to the file
-            array(),                                 // No dependencies
-            "1.2.0",                                 // Version number
-            array(
-                'strategy' => 'defer',               // Add the defer attribute
-                'in_footer' => true                  // Load the script in the footer
-            )
-        );
     }
 }
 ?>
