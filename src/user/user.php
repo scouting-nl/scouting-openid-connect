@@ -54,8 +54,8 @@ class User {
      * @param array $user_json_decoded User information from the OpenID Connect server
      */
     public function __construct(array $user_json_decoded) {
-        $this->sol_id = sanitize_user($user_json_decoded['member_id']) ?? null;
-        $this->email = sanitize_email($user_json_decoded['email']) ?? null;
+        $this->sol_id = sanitize_user($user_json_decoded['member_id'] ?? null);
+        $this->email = sanitize_email($user_json_decoded['email'] ?? null);
         $this->emailVerified = rest_sanitize_boolean($user_json_decoded['email_verified'] ?? false);
         $this->fullName = $user_json_decoded['name'] ?? "";
         $this->firstName = $user_json_decoded['given_name'] ?? "";
