@@ -61,7 +61,7 @@ Currently not, but this is planned for a future update of this plugin.
 == Changelog ==
 
 = 2.0.1 =
-* Make upgrading from `1.2.0` to `2.0.0` backwords compatible.
+* Make upgrading from `1.2.0` to `2.0.0` backwards compatible.
 
 = 2.0.0 =
 * Use version `2.0.1` instead for backward compatibility with version `1.2.0`.
