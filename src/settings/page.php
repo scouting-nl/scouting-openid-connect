@@ -62,7 +62,7 @@ class Settings
             'hide-field-script',                    // Handle name
             plugins_url('hide-field.js', __FILE__), // Path to the file
             array(),                                // No dependencies
-            "2.0.0",                                // Version number
+            "2.0.1",                                // Version number
             array(
                 'strategy' => 'defer',              // Add the defer attribute
                 'in_footer' => true                 // Load the script in the footer
