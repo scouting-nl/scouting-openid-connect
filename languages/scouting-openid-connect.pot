@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Scouting OpenID Connect 2.0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/issues\n"
-"POT-Creation-Date: 2025-10-22 23:41+0200\n"
+"POT-Creation-Date: 2025-10-23 00:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
@@ -439,14 +439,18 @@ msgstr ""
 msgid "Email is missing, make sure the \"email\" scope is enabled."
 msgstr ""
 
-#: user/user.php:142
+#: user/user.php:101
+msgid "Something went wrong while trying to update the username."
+msgstr ""
+
+#: user/user.php:150
 msgid "SOL ID and Email have different user IDs"
 msgstr ""
 
-#: user/user.php:159
+#: user/user.php:167
 msgid "Email address is already in use by another account"
 msgstr ""
 
-#: user/user.php:173
+#: user/user.php:181
 msgid "Something went wrong while trying to log in"
 msgstr ""

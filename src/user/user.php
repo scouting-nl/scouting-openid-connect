@@ -91,11 +91,19 @@ class User {
             $email_user_id = email_exists($this->email);
             if ($email_user_id) {
                 global $wpdb;
-                $wpdb->update(
+                $result = $wpdb->update(
                     $wpdb->users,
                     ['user_login' => $this->sol_id],
                     ['ID' => $email_user_id]
                 );
+
+                if ($result === false) {
+                    $hint = rawurlencode(__('Something went wrong while trying to update the username.', 'scouting-openid-connect'));
+                    $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=username_update_failed");
+                    wp_safe_redirect($redirect_url);
+                    exit;
+                }
+
                 return true;
             }
 
