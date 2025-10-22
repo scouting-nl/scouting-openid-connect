@@ -11,7 +11,7 @@ use ScoutingOIDC\Session;
  * @category   Scouting OpenID Connect
  * @package    OpenIDConnectClient
  * @author     Job van Koeveringe <job.van.koeveringe@scouting.nl>
- * @copyright  2024 Scouting Nederland
+ * @copyright  2025 Scouting Nederland
  * @license    GPLv3
  *
  */
