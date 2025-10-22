@@ -1,12 +1,12 @@
-# Copyright (C) 2024 Scouting Nederland
+# Copyright (C) 2025 Scouting Nederland
 # This file is distributed under the same license as the Scouting OpenID Connect plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Scouting OpenID Connect 2.0.0\n"
+"Project-Id-Version: Scouting OpenID Connect 2.0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/"
 "issues\n"
-"POT-Creation-Date: 2025-10-09 21:19+0200\n"
-"PO-Revision-Date: 2025-10-09 21:25+0200\n"
+"POT-Creation-Date: 2025-10-22 23:30+0200\n"
+"PO-Revision-Date: 2025-10-22 23:41+0200\n"
 "Last-Translator: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language: nl_NL\n"
@@ -519,21 +519,21 @@ msgstr "Onbekend"
 #: user/user.php:68
 msgid "SOL ID is missing, make sure the \"membership\" scope is enabled."
 msgstr ""
-"SOL ID ontbreekt, controleer of de scope \"lidmaatschap\" is ingeschakeld."
+"SOL ID ontbreekt, controleer of de scope \"membership\" is ingeschakeld."
 
 #: user/user.php:75
 msgid "Email is missing, make sure the \"email\" scope is enabled."
 msgstr "E-mail ontbreekt, controleer of de scope \"email\" is ingeschakeld."
 
-#: user/user.php:131
-msgid "SOL ID and Email have different user ID"
-msgstr "Gebruikersnaam en Email hebben verschillende gebruikers-ID"
+#: user/user.php:142
+msgid "SOL ID and Email have different user IDs"
+msgstr "SOL ID en e-mail hebben verschillende gebruikers-ID's"
 
-#: user/user.php:148
+#: user/user.php:159
 msgid "Email address is already in use by another account"
 msgstr "Het e-mailadres wordt al gebruikt door een andere account"
 
-#: user/user.php:162
+#: user/user.php:173
 msgid "Something went wrong while trying to log in"
 msgstr "Er is iets misgegaan tijdens het inloggen"
 

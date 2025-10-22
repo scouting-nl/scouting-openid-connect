@@ -3,7 +3,7 @@ Contributors: jobvk
 Tags: scouting, scouting nederland, sol, openid connect, oidc
 Requires at least: 6.4.3
 Tested up to: 6.8
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 Requires PHP: 8.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -26,13 +26,13 @@ Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scout
 2. Add the name of your group/website.
 3. Add the Redirect URI, for example: https://example.com/.
 4. Add the Post Logout Redirect URI, for example: https://example.com/.
-5. Select the scopes you want to use. The `email` scope is required; the `profile` and `membership` scopes are optional.
+5. Select the scopes you want to use. The "email" and "membership" scopes are required; the "profile" scope is optional.
 6. Select the organizations that can log in. If your organization has sub-organizations, you can also select `Allow suborganizations.`
 7. Press `Add Website.`
 8. Find the website you just created and click on ⓘ.
 9. Copy the client ID, client secret, and the scopes to your website.
-10. Fill in the OpenID Connect Settings with the copied data. Make sure the required scopes, `openid` and `email`, are present.
-11. Fill in the General Settings. If you want to store the name, birthdate, or gender, use the scope `profile`. If you also want the SOL ID, use the scope `membership`.
+10. Fill in the OpenID Connect Settings with the copied data. Make sure the required scopes, "openid" , "email" and "membership", are present.
+11. Fill in the General Settings. If you want to store the birthdate, or gender, use the scope "profile".
 12. Press `Save Settings.`
 13. Log out and try to log in with the Scouts Login button.
 
@@ -60,13 +60,12 @@ Currently not, but this is planned for a future update of this plugin.
 
 == Changelog ==
 
-= 2.0.0 =
+= 2.0.1 =
+* Make upgrading from `1.2.0` to `2.0.0` backwords compatible.
 
-Importent: 
+= 2.0.0 =
 * `membership` scope is now required to obtain the SOL Member ID.
 * `infix` is removed from user this was conflicting with WooCommerce, the infix is now added before the last name.
-
-Other changes:
 * Removed the `prefix` field from the general settings.
 * Removed the SOL ID field profile this is now the UserName of the WordPress User. 
 * Improved error messages and redirects for missing or invalid user data or OIDC scopes.
@@ -91,10 +90,12 @@ Other changes:
 == Upgrade Notice ==
 
 = 2.0.0 =
-⚠️ **Breaking Changes**
+⚠️ `Breaking Changes`
 
 This release introduces a major change in how WordPress users are identified.  
-The WordPress **UserName** now uses the **SOL ID** instead of the **SOL UserName**.
+The WordPress `UserName` now uses the `SOL ID` instead of the `SOL UserName`.
+
+Use version `2.0.1` for backward compatibility with version `1.2.0`.
 
 = 1.0.0 =
 * Initial release

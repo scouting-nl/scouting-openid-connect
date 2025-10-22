@@ -54,9 +54,9 @@ class User {
      * @param array $user_json_decoded User information from the OpenID Connect server
      */
     public function __construct(array $user_json_decoded) {
-        $this->sol_id = $user_json_decoded['member_id'] ?? null;
-        $this->email = $user_json_decoded['email'] ?? null;
-        $this->emailVerified = $user_json_decoded['email_verified'] ?? false;
+        $this->sol_id = sanitize_user($user_json_decoded['member_id']) ?? null;
+        $this->email = sanitize_email($user_json_decoded['email']) ?? null;
+        $this->emailVerified = rest_sanitize_boolean($user_json_decoded['email_verified'] ?? false);
         $this->fullName = $user_json_decoded['name'] ?? "";
         $this->firstName = $user_json_decoded['given_name'] ?? "";
         $this->infix = $user_json_decoded['infix'] ?? "";
@@ -88,6 +88,17 @@ class User {
         $user_id = username_exists($this->sol_id);
 
         if (!$user_id) {
+            $email_user_id = email_exists($this->email);
+            if ($email_user_id) {
+                global $wpdb;
+                $wpdb->update(
+                    $wpdb->users,
+                    ['user_login' => $this->sol_id],
+                    ['ID' => $email_user_id]
+                );
+                return true;
+            }
+
             return false;
         }
 
@@ -128,7 +139,7 @@ class User {
 				$this->scouting_oidc_user_update_meta($user->ID);
             }
             else {
-                $hint = rawurlencode(__('SOL ID and Email have different user ID', 'scouting-openid-connect'));
+                $hint = rawurlencode(__('SOL ID and Email have different user IDs', 'scouting-openid-connect'));
                 $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=login_email_mismatch");
                 wp_safe_redirect($redirect_url);
                 exit;

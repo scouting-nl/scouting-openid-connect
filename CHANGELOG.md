@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [[2.0.1](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.0.1)] - 22/10/2025
+
+- Make upgrading from `1.2.0` to `2.0.0` backwards compatible.
+
 ## [[2.0.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.0.0)] - 10/10/2025
 
 ⚠️ Breaking Changes
