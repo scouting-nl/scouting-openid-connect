@@ -64,6 +64,7 @@ Currently not, but this is planned for a future update of this plugin.
 * Make upgrading from `1.2.0` to `2.0.0` backwords compatible.
 
 = 2.0.0 =
+* Use version `2.0.1` instead for backward compatibility with version `1.2.0`.
 * `membership` scope is now required to obtain the SOL Member ID.
 * `infix` is removed from user this was conflicting with WooCommerce, the infix is now added before the last name.
 * Removed the `prefix` field from the general settings.

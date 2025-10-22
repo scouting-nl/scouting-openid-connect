@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file.
 
 ⚠️ Breaking Changes
 
+For backward compatibility with version `1.2.0`, use version `2.0.1` instead.
+
 This release introduces a major change in how WordPress users are identified.
 The WordPress `UserName` now uses the `SOL ID` instead of the `SOL UserName`.
 This change was made because SOL usernames can be changed, which caused issues with Scout-In 2025.
