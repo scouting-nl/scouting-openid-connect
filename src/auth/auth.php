@@ -296,7 +296,21 @@ class Auth {
     // Redirect after logout based on settings
     public function scouting_oidc_auth_logout_redirect() {
         $logout_url = esc_url_raw($this->oidc_client->getLogoutUrl());
-        wp_redirect($logout_url);
+
+        // Make sure the external logout host is allowed for safe redirects.
+        // wp_safe_redirect() checks the host against the 'allowed_redirect_hosts' filter,
+        // so we add the logout host here to avoid blocking a trusted external logout URL.
+        $host = wp_parse_url($logout_url, PHP_URL_HOST);
+        if (!empty($host)) {
+            add_filter('allowed_redirect_hosts', function ($hosts) use ($host) {
+                if (!in_array($host, $hosts, true)) {
+                    $hosts[] = $host;
+                }
+                return $hosts;
+            });
+        }
+
+        wp_safe_redirect($logout_url);
         exit;
     }
 
