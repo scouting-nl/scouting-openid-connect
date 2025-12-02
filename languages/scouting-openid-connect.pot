@@ -3,16 +3,16 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Scouting OpenID Connect 2.0.1\n"
+"Project-Id-Version: Scouting OpenID Connect 2.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/issues\n"
-"POT-Creation-Date: 2025-10-23 00:25+0200\n"
+"POT-Creation-Date: 2025-12-02 22:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.7\n"
+"X-Generator: Poedit 3.8\n"
 "X-Poedit-KeywordsList: __;esc_html__;_e;esc_html_e\n"
 "X-Poedit-Basepath: ../src\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -439,18 +439,18 @@ msgstr ""
 msgid "Email is missing, make sure the \"email\" scope is enabled."
 msgstr ""
 
-#: user/user.php:101
+#: user/user.php:103
 msgid "Something went wrong while trying to update the username."
 msgstr ""
 
-#: user/user.php:150
+#: user/user.php:157
 msgid "SOL ID and Email have different user IDs"
 msgstr ""
 
-#: user/user.php:167
+#: user/user.php:174
 msgid "Email address is already in use by another account"
 msgstr ""
 
-#: user/user.php:181
+#: user/user.php:188
 msgid "Something went wrong while trying to log in"
 msgstr ""
