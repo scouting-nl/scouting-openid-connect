@@ -3,7 +3,7 @@
 if (!defined('WP_UNINSTALL_PLUGIN')) exit;
 
 // Delete options
-$options = array(
+$scouting_oidc_options = array(
 	'scouting_oidc_client_id',
 	'scouting_oidc_client_secret',
 	'scouting_oidc_scopes',
@@ -16,31 +16,31 @@ $options = array(
 	'scouting_oidc_custom_redirect',
 );
 
-foreach ($options as $option) {
-	if (get_option($option)) delete_option($option);
+foreach ($scouting_oidc_options as $scouting_oidc_option) {
+	if (get_option($scouting_oidc_option)) delete_option($scouting_oidc_option);
 }
 
 // Delete transients
-$transients = array(
+$scouting_oidc_transients = array(
 	'scouting_oidc_well_known_data',
 	'scouting_oidc_jwks_data',
 );
 
-foreach ($transients as $transient) {
-	if (get_transient($transient)) delete_transient($transient);
+foreach ($scouting_oidc_transients as $scouting_oidc_transient) {
+	if (get_transient($scouting_oidc_transient)) delete_transient($scouting_oidc_transient);
 }
 
 // Delete user meta
-$metas = array(
+$scouting_oidc_metas = array(
 	'scouting_oidc_user',
 	'scouting_oidc_birthdate',
 	'scouting_oidc_gender',
 );
-$users = get_users();
+$scouting_oidc_users = get_users();
 
-foreach ($users as $user) {
-	foreach ($metas as $meta) {
-		if (get_user_meta($user->ID, $meta)) delete_user_meta($user->ID, $meta);
+foreach ($scouting_oidc_users as $scouting_oidc_user) {
+	foreach ($scouting_oidc_metas as $scouting_oidc_meta) {
+		if (get_user_meta($scouting_oidc_user->ID, $scouting_oidc_meta)) delete_user_meta($scouting_oidc_user->ID, $scouting_oidc_meta);
 	}
 }
 ?>

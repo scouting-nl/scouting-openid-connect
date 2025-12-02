@@ -5,9 +5,9 @@
 [![Wordpress-Active-Installs](https://img.shields.io/wordpress/plugin/installs/scouting-openid-connect.svg)](https://wordpress.org/plugins/scouting-openid-connect/)
 
 **Contributors:** [jobvk](https://github.com/jobvk) \
-**Requires at least:** 6.4.3 \
-**Tested up to:** 6.8 \
-**Stable tag:** 2.0.1 \
+**Requires at least:** 6.6.0 \
+**Tested up to:** 6.9 \
+**Stable tag:** 2.1.0 \
 **Tags:** scouting, scouting nederland, sol, openid connect, oidc \
 **License:** GPLv3 \
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html

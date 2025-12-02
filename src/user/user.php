@@ -91,6 +91,8 @@ class User {
             $email_user_id = email_exists($this->email);
             if ($email_user_id) {
                 global $wpdb;
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+                // Intentionally using direct DB update to set user_login in legacy flows. Suppress PHPCS DB and caching warnings.
                 $result = $wpdb->update(
                     $wpdb->users,
                     ['user_login' => $this->sol_id],
@@ -102,6 +104,11 @@ class User {
                     $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=username_update_failed");
                     wp_safe_redirect($redirect_url);
                     exit;
+                }
+
+                // Clear any cached user data
+                if (function_exists('clean_user_cache')) {
+                    clean_user_cache($email_user_id);
                 }
 
                 return true;
@@ -185,8 +192,21 @@ class User {
         }
 
         wp_set_current_user($user->ID, $user->user_login);
-        wp_set_auth_cookie($user->ID);
+        wp_set_auth_cookie($user->ID, true);
+
+        // Intentionally trigger the core WordPress 'wp_login' action so other plugins
+        // that rely on the core login hook are notified when we programmatically log in.
+        //
+        // PHPCS: The WordPress.NamingConventions.PrefixAllGlobals sniff expects custom
+        // hook names to be prefixed. In this case 'wp_login' is a core hook and
+        // triggering it intentionally is required for compatibility, so we suppress
+        // the sniff for this line.
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
         do_action('wp_login', $user->user_login, $user);
+
+        // Also fire a plugin-prefixed action so consumers can hook into this plugin
+        // specifically without relying on the generic core hook.
+        do_action('scouting_oidc_wp_login', $user->user_login, $user);
     }
 
     /**

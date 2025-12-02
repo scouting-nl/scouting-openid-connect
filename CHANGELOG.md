@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [[2.1.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.1.0)] - 02/12/2025
+
+- Tested up to: 6.9
+- Add logout redirect host allowlist handling in `scouting_oidc_auth_logout_redirect()` to permit external logout URLs.
+- Clear user cache after username updates (`clean_user_cache`) to avoid stale user data.
+- Trigger core `wp_login` and plugin-specific `scouting_oidc_wp_login` actions when programmatically logging in.
+
 ## [[2.0.1](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.0.1)] - 22/10/2025
 
 - Make upgrading from `1.2.0` to `2.0.0` backwards compatible.
