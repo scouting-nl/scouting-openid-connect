@@ -43,6 +43,24 @@ class Settings_General
     
         // Add a settings checkbox field
         add_settings_field(
+            'scouting_oidc_user_phone',                                    // Field ID
+            __('Store phone number to local profile', 'scouting-openid-connect'), // Field label
+            [$this, 'scouting_oidc_settings_general_phone_callback'],      // Callback to render field
+            'scouting-openid-connect-settings',                            // Page slug
+            'scouting_oidc_general_settings'                               // Section ID where the field should be added
+        );
+    
+        // Add a settings checkbox field
+        add_settings_field(
+            'scouting_oidc_user_address',                                  // Field ID
+            __('Store address to local profile', 'scouting-openid-connect'), // Field label
+            [$this, 'scouting_oidc_settings_general_address_callback'],    // Callback to render field
+            'scouting-openid-connect-settings',                            // Page slug
+            'scouting_oidc_general_settings'                               // Section ID where the field should be added
+        );
+    
+        // Add a settings checkbox field
+        add_settings_field(
             'scouting_oidc_user_auto_create',                                    // Field ID
             __('Allow new user accounts', 'scouting-openid-connect'),            // Field label
             [$this, 'scouting_oidc_settings_general_user_auto_create_callback'], // Callback to render field
@@ -102,6 +120,24 @@ class Settings_General
         register_setting(
             'scouting_oidc_settings_group',                                             // Settings group name
             'scouting_oidc_user_gender',                                                // Option name
+            [
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
+            ]
+        );
+    
+        // Register settings
+        register_setting(
+            'scouting_oidc_settings_group',                                             // Settings group name
+            'scouting_oidc_user_phone',                                                 // Option name
+            [
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
+            ]
+        );
+    
+        // Register settings
+        register_setting(
+            'scouting_oidc_settings_group',                                             // Settings group name
+            'scouting_oidc_user_address',                                               // Option name
             [
                 'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
             ]
@@ -217,6 +253,22 @@ class Settings_General
             echo '<input type="checkbox" id="scouting_oidc_user_gender" name="scouting_oidc_user_gender" checked/>';
         else 
             echo '<input type="checkbox" id="scouting_oidc_user_gender" name="scouting_oidc_user_gender"/>';
+    }
+
+    // Callback to render checkbox field
+    public function scouting_oidc_settings_general_phone_callback() {
+        if (get_option('scouting_oidc_user_phone'))
+            echo '<input type="checkbox" id="scouting_oidc_user_phone" name="scouting_oidc_user_phone" checked/>';
+        else 
+            echo '<input type="checkbox" id="scouting_oidc_user_phone" name="scouting_oidc_user_phone"/>';
+    }
+
+    // Callback to render checkbox field
+    public function scouting_oidc_settings_general_address_callback() {
+        if (get_option('scouting_oidc_user_address'))
+            echo '<input type="checkbox" id="scouting_oidc_user_address" name="scouting_oidc_user_address" checked/>';
+        else 
+            echo '<input type="checkbox" id="scouting_oidc_user_address" name="scouting_oidc_user_address"/>';
     }
 
     // Callback to render checkbox field

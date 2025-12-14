@@ -73,8 +73,8 @@ function scouting_oidc_init()
     // Provide additional links in the plugin overview page
 	add_filter('plugin_action_links_'.plugin_basename(__FILE__), [$scouting_oidc_actions, 'scouting_oidc_actions_plugin_links']);
 
-    // Add birthday and gender to user profile
-	if (get_option('scouting_oidc_user_birthday') || get_option('scouting_oidc_user_gender'))
+    // Add user profile fields if any option is enabled
+	if (get_option('scouting_oidc_user_birthdate') || get_option('scouting_oidc_user_gender') || get_option('scouting_oidc_user_phone') || get_option('scouting_oidc_user_address'))
 	{
 		add_action('show_user_profile', [$scouting_oidc_fields, 'scouting_oidc_fields_user_profile']);
 		add_action('edit_user_profile', [$scouting_oidc_fields, 'scouting_oidc_fields_user_profile']);

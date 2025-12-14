@@ -78,6 +78,8 @@ Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scout
     Make sure the required scopes, `openid`, `email` and `membership`, are present.
 11. Fill in the General Settings. \
     If you want to store the birthdate, or gender, use the scope `profile`.
+    If you want to store the phone number, use the scope `phone`.
+    If you want to store the address, use the scope `address`.
 12. Press `Save Settings`.
 13. Log out and try to log in with the Scouts Login button.
 

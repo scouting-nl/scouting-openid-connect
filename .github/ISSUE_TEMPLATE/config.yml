@@ -10,5 +10,5 @@ contact_links:
     url: https://www.scouting.nl/
     about: Find more information about Scouting Nederland.
   - name: Offical Scouting Nederland OpenID Connect website
-    url: https://login-staging.scouting.nl/
+    url: https://login.scouting.nl/
     about: Find more information about Scouting Nederland OpenID Connect.

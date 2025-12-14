@@ -51,6 +51,41 @@ class User {
     private $birthdate;
 
     /**
+     * @var string Phone number
+     */
+    private $phoneNumber;
+
+    /**
+     * @var string Phone number verified
+     */
+    private $phoneNumberVerified;
+
+    /**
+     * @var string Street name
+     */
+    private $street;
+
+    /**
+     * @var string House number
+     */
+    private $houseNumber;
+
+    /**
+     * @var string Postal code
+     */
+    private $postalCode;
+
+    /**
+     * @var string City/Locality
+     */
+    private $locality;
+
+    /**
+     * @var string Country code
+     */
+    private $countryCode;
+
+    /**
      * @param array $user_json_decoded User information from the OpenID Connect server
      */
     public function __construct(array $user_json_decoded) {
@@ -63,6 +98,26 @@ class User {
         $this->familyName = $user_json_decoded['family_name'] ?? "";
         $this->gender = $user_json_decoded['gender'] ?? "unknown";
         $this->birthdate = $user_json_decoded['birthdate'] ?? "";
+
+        // Phone scope data
+        $this->phoneNumber = $user_json_decoded['phone_number'] ?? "";
+        $this->phoneNumberVerified = rest_sanitize_boolean($user_json_decoded['phone_number_verified'] ?? false);
+
+        // Address scope data - using actual structure from provider
+        if (isset($user_json_decoded['address']) && is_array($user_json_decoded['address'])) {
+            $address = $user_json_decoded['address'];
+            $this->street = sanitize_text_field($address['street'] ?? "");
+            $this->houseNumber = sanitize_text_field($address['house_number'] ?? "");
+            $this->postalCode = sanitize_text_field($address['postal_code'] ?? "");
+            $this->locality = sanitize_text_field($address['locality'] ?? "");
+            $this->countryCode = sanitize_text_field($address['country_code'] ?? "");
+        } else {
+            $this->street = "";
+            $this->houseNumber = "";
+            $this->postalCode = "";
+            $this->locality = "";
+            $this->countryCode = "";
+        }
 
         if ($this->sol_id == null) {
             $hint = rawurlencode(__('SOL ID is missing, make sure the "membership" scope is enabled.', 'scouting-openid-connect'));
@@ -244,6 +299,21 @@ class User {
 
         if (get_option('scouting_oidc_user_birthdate')) {
             update_user_meta($user_id, 'scouting_oidc_birthdate', $this->birthdate);
+        }
+
+        // Store phone number if available and setting is enabled
+        if (get_option('scouting_oidc_user_phone') && !empty($this->phoneNumber)) {
+            update_user_meta($user_id, 'scouting_oidc_phone_number', $this->phoneNumber);
+            update_user_meta($user_id, 'scouting_oidc_phone_number_verified', $this->phoneNumberVerified ? 'true' : 'false');
+        }
+
+        // Store address data if available and setting is enabled
+        if (get_option('scouting_oidc_user_address') && (!empty($this->street) || !empty($this->postalCode))) {
+            update_user_meta($user_id, 'scouting_oidc_street', $this->street);
+            update_user_meta($user_id, 'scouting_oidc_house_number', $this->houseNumber);
+            update_user_meta($user_id, 'scouting_oidc_postal_code', $this->postalCode);
+            update_user_meta($user_id, 'scouting_oidc_locality', $this->locality);
+            update_user_meta($user_id, 'scouting_oidc_country_code', $this->countryCode);
         }
     }
 }

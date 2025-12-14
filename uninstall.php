@@ -10,6 +10,8 @@ $scouting_oidc_options = array(
 	'scouting_oidc_user_display_name',
 	'scouting_oidc_user_birthdate',
 	'scouting_oidc_user_gender',
+	'scouting_oidc_user_phone',
+	'scouting_oidc_user_address',
 	'scouting_oidc_user_auto_create',
 	'scouting_oidc_user_redirect',
 	'scouting_oidc_login_redirect',
@@ -35,6 +37,13 @@ $scouting_oidc_metas = array(
 	'scouting_oidc_user',
 	'scouting_oidc_birthdate',
 	'scouting_oidc_gender',
+	'scouting_oidc_phone_number',
+	'scouting_oidc_phone_number_verified',
+	'scouting_oidc_street',
+	'scouting_oidc_house_number',
+	'scouting_oidc_postal_code',
+	'scouting_oidc_locality',
+	'scouting_oidc_country_code',
 );
 $scouting_oidc_users = get_users();
 
