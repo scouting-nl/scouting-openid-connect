@@ -303,13 +303,13 @@ class User {
         }
 
         // Store phone number if available and setting is enabled
-        if (get_option('scouting_oidc_user_phone') && !empty($this->phoneNumber)) {
+        if (get_option('scouting_oidc_user_phone')) {
             update_user_meta($user_id, 'scouting_oidc_phone_number', $this->phoneNumber);
             update_user_meta($user_id, 'scouting_oidc_phone_number_verified', $this->phoneNumberVerified ? 'true' : 'false');
         }
 
         // Store address data if available and setting is enabled
-        if (get_option('scouting_oidc_user_address') && (!empty($this->street) || !empty($this->postalCode))) {
+        if (get_option('scouting_oidc_user_address')) {
             update_user_meta($user_id, 'scouting_oidc_street', $this->street);
             update_user_meta($user_id, 'scouting_oidc_house_number', $this->houseNumber);
             update_user_meta($user_id, 'scouting_oidc_postal_code', $this->postalCode);
@@ -317,8 +317,10 @@ class User {
             update_user_meta($user_id, 'scouting_oidc_country_code', $this->countryCode);
         }
 
-        // Sync to WooCommerce customer data if applicable
-        $this->scouting_oidc_user_sync_to_woocommerce($user_id);
+        // Sync the user data to the fields used by WooCommerce if enabled
+        if (get_option('scouting_oidc_user_address_sync')) {
+            $this->scouting_oidc_user_sync_to_woocommerce($user_id);
+        }
     }
 
     /**

@@ -1,21 +1,28 @@
-// Get the input elements
-const scoutingOIDCWidthInput = document.getElementById('scoutingOIDCWidthInput');
-const scoutingOIDCHeightInput = document.getElementById('scoutingOIDCHeightInput');
-const scoutingOIDCBackgroundColorInput = document.getElementById('scoutingOIDCBackgroundColorInput');
-const scoutingOIDCTextColorInput = document.getElementById('scoutingOIDCTextColorInput');
+document.addEventListener('DOMContentLoaded', () => {
+    // Get the input elements
+    const scoutingOIDCWidthInput = document.getElementById('scoutingOIDCWidthInput');
+    const scoutingOIDCHeightInput = document.getElementById('scoutingOIDCHeightInput');
+    const scoutingOIDCBackgroundColorInput = document.getElementById('scoutingOIDCBackgroundColorInput');
+    const scoutingOIDCTextColorInput = document.getElementById('scoutingOIDCTextColorInput');
 
-// Get the shortcode text element
-const scoutingOIDCButtonShortCode = document.getElementById('scoutingOIDCButtonShortCode');
+    // Get the shortcode text element
+    const scoutingOIDCButtonShortCode = document.getElementById('scoutingOIDCButtonShortCode');
 
-// Get the button element and the image element
-const scoutingOIDCButton = document.getElementById('scouting-oidc-login-div');
-const scoutingOIDCLoginImg = document.getElementById('scouting-oidc-login-img');
-const scoutingOIDCLoginLink = document.getElementById('scouting-oidc-login-link');
+    // Get the button element and the image element
+    const scoutingOIDCButton = document.getElementById('scouting-oidc-login-div');
+    const scoutingOIDCLoginImg = document.getElementById('scouting-oidc-login-img');
+    const scoutingOIDCLoginLink = document.getElementById('scouting-oidc-login-link');
 
-// Variable to hold a backup of the image element
-let scoutingOIDCLoginImgBackup = null;
+    // Check if all required elements are present
+    if (!scoutingOIDCWidthInput || !scoutingOIDCHeightInput || !scoutingOIDCBackgroundColorInput || !scoutingOIDCTextColorInput || !scoutingOIDCButtonShortCode || !scoutingOIDCButton || !scoutingOIDCLoginLink) {
+        // Required elements are missing, exit the script
+        return;
+    }
 
-const updateValueWidth = (event) => {
+    // Variable to hold a backup of the image element
+    let scoutingOIDCLoginImgBackup = null;
+
+    const updateValueWidth = (event) => {
     // Get the current shortcode text
     let currentText = scoutingOIDCButtonShortCode.textContent;
 
@@ -54,9 +61,9 @@ const updateValueWidth = (event) => {
             scoutingOIDCLoginImgBackup = null; // Clear the backup after restoring
         }
     }
-};
+    };
 
-const updateValueHeight = (event) => {
+    const updateValueHeight = (event) => {
     // Get the current shortcode text
     let currentText = scoutingOIDCButtonShortCode.textContent;
 
@@ -78,9 +85,9 @@ const updateValueHeight = (event) => {
 
     // Update button height
     scoutingOIDCButton.style.height = `${newHeight}px`;
-};
+    };
 
-const updateValueBackgroundColor = (event) => {
+    const updateValueBackgroundColor = (event) => {
     // Get the current shortcode text
     let currentText = scoutingOIDCButtonShortCode.textContent;
 
@@ -102,9 +109,9 @@ const updateValueBackgroundColor = (event) => {
 
     // Update button background color
     scoutingOIDCLoginLink.style.backgroundColor = newBackgroundColor;
-}
+    }
 
-const updateValueTextColor = (event) => {
+    const updateValueTextColor = (event) => {
     // Get the current shortcode text
     let currentText = scoutingOIDCButtonShortCode.textContent;
 
@@ -126,12 +133,13 @@ const updateValueTextColor = (event) => {
 
     // Update button text color
     scoutingOIDCLoginLink.style.color = newTextColor;
-}
+    }
 
-scoutingOIDCWidthInput.addEventListener('input', updateValueWidth);
-scoutingOIDCHeightInput.addEventListener('input', updateValueHeight);
-scoutingOIDCBackgroundColorInput.addEventListener('input', updateValueBackgroundColor);
-scoutingOIDCTextColorInput.addEventListener('input', updateValueTextColor);
+    scoutingOIDCWidthInput.addEventListener('input', updateValueWidth);
+    scoutingOIDCHeightInput.addEventListener('input', updateValueHeight);
+    scoutingOIDCBackgroundColorInput.addEventListener('input', updateValueBackgroundColor);
+    scoutingOIDCTextColorInput.addEventListener('input', updateValueTextColor);
 
-// Remove href attribute from the link
-scoutingOIDCLoginLink.removeAttribute('href');
+    // Remove href attribute from the link
+    scoutingOIDCLoginLink.removeAttribute('href');
+});

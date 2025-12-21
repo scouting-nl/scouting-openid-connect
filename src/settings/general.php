@@ -58,6 +58,20 @@ class Settings_General
             'scouting-openid-connect-settings',                              // Page slug
             'scouting_oidc_general_settings'                                 // Section ID where the field should be added
         );
+
+        if (class_exists('WooCommerce')) {
+            // Add a settings checkbox field when WooCommerce is available
+            add_settings_field(
+                'scouting_oidc_user_address_sync',                               // Field ID
+                __('Use WooCommerce phone number and address fields', 'scouting-openid-connect'), // Field label
+                [$this, 'scouting_oidc_settings_general_address_sync_callback'], // Callback to render field
+                'scouting-openid-connect-settings',                              // Page slug
+                'scouting_oidc_general_settings',                                // Section ID where the field should be added
+                [
+                    'class' => 'scouting-oidc-user-address-sync-tr'              // Extra args to identify the tr for JS
+                ]
+            );
+        }
     
         // Add a settings checkbox field
         add_settings_field(
@@ -142,6 +156,17 @@ class Settings_General
                 'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
             ]
         );
+
+        if (class_exists('WooCommerce')) {
+            // Register WooCommerce-specific setting only when available
+            register_setting(
+                'scouting_oidc_settings_group',                                             // Settings group name
+                'scouting_oidc_user_address_sync',                                          // Option name
+                [
+                    'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
+                ]
+            );
+        }
     
         // Register settings
         register_setting(
@@ -269,6 +294,14 @@ class Settings_General
             echo '<input type="checkbox" id="scouting_oidc_user_address" name="scouting_oidc_user_address" checked/>';
         else 
             echo '<input type="checkbox" id="scouting_oidc_user_address" name="scouting_oidc_user_address"/>';
+    }
+
+    // Callback to render checkbox field
+    public function scouting_oidc_settings_general_address_sync_callback() {
+        if (get_option('scouting_oidc_user_address_sync'))
+            echo '<input type="checkbox" id="scouting_oidc_user_address_sync" name="scouting_oidc_user_address_sync" checked/>';
+        else 
+            echo '<input type="checkbox" id="scouting_oidc_user_address_sync" name="scouting_oidc_user_address_sync"/>';
     }
 
     // Callback to render checkbox field
