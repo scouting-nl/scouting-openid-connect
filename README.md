@@ -7,7 +7,7 @@
 **Contributors:** [jobvk](https://github.com/jobvk) \
 **Requires at least:** 6.6.0 \
 **Tested up to:** 6.9 \
-**Stable tag:** 2.1.0 \
+**Stable tag:** 2.2.0 \
 **Tags:** scouting, scouting nederland, sol, openid connect, oidc \
 **License:** GPLv3 \
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html

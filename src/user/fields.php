@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Fields
 {
     /**
-     * Show the user profile fields in the user profile and edit user profile pages
+     * Show the user profile fields in the user profile and edit user profile pages, exept when WooCommerce is active (because WooCommerce has its own fields for address and phone number)
      * 
      * @param WP_User $user The user object
      */
@@ -22,11 +22,15 @@ class Fields
             if (get_option('scouting_oidc_user_gender')) {
                 $this->scouting_oidc_fields_gender($user);
             }
-            if (get_option('scouting_oidc_user_phone')) {
+            if (get_option('scouting_oidc_user_phone') && !class_exists('WooCommerce')) {
                 $this->scouting_oidc_fields_phone($user);
             }
-            if (get_option('scouting_oidc_user_address')) {
-                $this->scouting_oidc_fields_address($user);
+            if (get_option('scouting_oidc_user_address') && !class_exists('WooCommerce')) {
+                $this->scouting_oidc_fields_address_street($user);
+                $this->scouting_oidc_fields_address_house_number($user);
+                $this->scouting_oidc_fields_address_postal_code($user);
+                $this->scouting_oidc_fields_address_locality($user);
+                $this->scouting_oidc_fields_address_country_code($user);
             }
             ?>
         </table>
@@ -43,7 +47,7 @@ class Fields
         <tr>
             <th><label for="birthdate"><?php esc_html_e('Birthdate', 'scouting-openid-connect'); ?></label></th>
             <td>
-                <input type="date" name="birthdate" id="birthdate" value="<?php echo esc_attr(get_the_author_meta('scouting_oidc_birthdate', $user->ID)); ?>" class="regular-text" readonly disabled/>
+                <input type="date" name="birthdate" id="birthdate" value="<?php echo esc_attr(get_the_author_meta('scouting_oidc_birthdate', $user->ID)); ?>" class="regular-text" readonly/>
             </td>
         </tr>
         <?php
@@ -62,7 +66,7 @@ class Fields
         <tr>
             <th><label for="gender"><?php esc_html_e("Gender", "scouting-openid-connect"); ?></label></th>
             <td>
-                <select name="gender" id="gender" style="width: 15em;" disabled>
+                <select name="gender" id="gender" style="width: 15em;" aria-readonly="true">
                     <option value="male" <?php selected(get_the_author_meta('scouting_oidc_gender', $user->ID), 'male'); ?>><?php esc_html_e('Male', 'scouting-openid-connect'); ?></option>
                     <option value="female" <?php selected(get_the_author_meta('scouting_oidc_gender', $user->ID), 'female'); ?>><?php esc_html_e('Female', 'scouting-openid-connect'); ?></option>
                     <option value="other" <?php selected(get_the_author_meta('scouting_oidc_gender', $user->ID), 'other'); ?>><?php esc_html_e('Other', 'scouting-openid-connect'); ?></option>
@@ -74,64 +78,97 @@ class Fields
     }
 
     /**
-     * Display the Phone field
+     * Display the Phone Number field
      * 
      * @param WP_User $user The user object
      */
     public function scouting_oidc_fields_phone($user) {
-        $phone_number = get_the_author_meta('scouting_oidc_phone_number', $user->ID);
-        $phone_verified = get_the_author_meta('scouting_oidc_phone_number_verified', $user->ID);
         ?>
         <tr>
             <th><label for="phone_number"><?php esc_html_e('Phone Number', 'scouting-openid-connect'); ?></label></th>
             <td>
-                <input type="tel" name="phone_number" id="phone_number" value="<?php echo esc_attr($phone_number); ?>" class="regular-text" readonly disabled/>
-                <?php if ($phone_verified === 'true'): ?>
-                    <span style="color: green;">✓ <?php esc_html_e('Verified', 'scouting-openid-connect'); ?></span>
-                <?php endif; ?>
+                <input type="tel" name="phone_number" id="phone_number" value="<?php echo esc_attr(get_the_author_meta('scouting_oidc_phone_number', $user->ID)); ?>" class="regular-text" readonly/>
+            </td>
+        </tr>
+        <?php
+    }
+
+
+    /**
+     * Display the Street field
+     * 
+     * @param WP_User $user The user object
+     */
+    public function scouting_oidc_fields_address_street($user) {
+        ?>
+        <tr>
+            <th><label for="street"><?php esc_html_e('Street', 'scouting-openid-connect'); ?></label></th>
+            <td>
+                <input type="text" name="street" id="street" value="<?php echo esc_attr(get_the_author_meta('scouting_oidc_street', $user->ID)); ?>" class="regular-text" readonly/>
             </td>
         </tr>
         <?php
     }
 
     /**
-     * Display the Address fields
+     * Display the House Number field
      * 
      * @param WP_User $user The user object
      */
-    public function scouting_oidc_fields_address($user) {
-        $street = get_the_author_meta('scouting_oidc_street', $user->ID);
-        $house_number = get_the_author_meta('scouting_oidc_house_number', $user->ID);
-        $postal_code = get_the_author_meta('scouting_oidc_postal_code', $user->ID);
-        $locality = get_the_author_meta('scouting_oidc_locality', $user->ID);
-        $country_code = get_the_author_meta('scouting_oidc_country_code', $user->ID);
+    public function scouting_oidc_fields_address_house_number($user) {
         ?>
         <tr>
-            <th><label for="address"><?php esc_html_e('Address', 'scouting-openid-connect'); ?></label></th>
+            <th><label for="house_number"><?php esc_html_e('House Number', 'scouting-openid-connect'); ?></label></th>
             <td>
-                <fieldset>
-                    <legend class="screen-reader-text"><span><?php esc_html_e('Address', 'scouting-openid-connect'); ?></span></legend>
-                    <p>
-                        <label for="street"><?php esc_html_e('Street', 'scouting-openid-connect'); ?></label><br>
-                        <input type="text" name="street" id="street" value="<?php echo esc_attr($street); ?>" class="regular-text" readonly disabled/>
-                    </p>
-                    <p>
-                        <label for="house_number"><?php esc_html_e('House Number', 'scouting-openid-connect'); ?></label><br>
-                        <input type="text" name="house_number" id="house_number" value="<?php echo esc_attr($house_number); ?>" class="regular-text" readonly disabled/>
-                    </p>
-                    <p>
-                        <label for="postal_code"><?php esc_html_e('Postal Code', 'scouting-openid-connect'); ?></label><br>
-                        <input type="text" name="postal_code" id="postal_code" value="<?php echo esc_attr($postal_code); ?>" class="regular-text" readonly disabled/>
-                    </p>
-                    <p>
-                        <label for="locality"><?php esc_html_e('City', 'scouting-openid-connect'); ?></label><br>
-                        <input type="text" name="locality" id="locality" value="<?php echo esc_attr($locality); ?>" class="regular-text" readonly disabled/>
-                    </p>
-                    <p>
-                        <label for="country_code"><?php esc_html_e('Country Code', 'scouting-openid-connect'); ?></label><br>
-                        <input type="text" name="country_code" id="country_code" value="<?php echo esc_attr($country_code); ?>" class="regular-text" readonly disabled/>
-                    </p>
-                </fieldset>
+                <input type="text" name="house_number" id="house_number" value="<?php echo esc_attr(get_the_author_meta('scouting_oidc_house_number', $user->ID)); ?>" class="regular-text" readonly/>
+            </td>
+        </tr>
+        <?php
+    }
+
+    /**
+     * Display the Postal Code field
+     * 
+     * @param WP_User $user The user object
+     */
+    public function scouting_oidc_fields_address_postal_code($user) {
+        ?>
+        <tr>
+            <th><label for="postal_code"><?php esc_html_e('Postal Code', 'scouting-openid-connect'); ?></label></th>
+            <td>
+                <input type="text" name="postal_code" id="postal_code" value="<?php echo esc_attr(get_the_author_meta('scouting_oidc_postal_code', $user->ID)); ?>" class="regular-text" readonly/>
+            </td>
+        </tr>
+        <?php
+    }
+
+    /**
+     * Display the Locality field
+     * 
+     * @param WP_User $user The user object
+     */
+    public function scouting_oidc_fields_address_locality($user) {
+        ?>
+        <tr>
+            <th><label for="locality"><?php esc_html_e('City', 'scouting-openid-connect'); ?></label></th>
+            <td>
+                <input type="text" name="locality" id="locality" value="<?php echo esc_attr(get_the_author_meta('scouting_oidc_locality', $user->ID)); ?>" class="regular-text" readonly/>
+            </td>
+        </tr>
+        <?php
+    }
+
+    /**
+     * Display the Country Code field
+     * 
+     * @param WP_User $user The user object
+     */
+    public function scouting_oidc_fields_address_country_code($user) {
+        ?>
+        <tr>
+            <th><label for="country_code"><?php esc_html_e('Country Code', 'scouting-openid-connect'); ?></label></th>
+            <td>
+                <input type="text" name="country_code" id="country_code" value="<?php echo esc_attr(get_the_author_meta('scouting_oidc_country_code', $user->ID)); ?>" class="regular-text" readonly/>
             </td>
         </tr>
         <?php

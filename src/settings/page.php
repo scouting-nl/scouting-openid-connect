@@ -62,7 +62,7 @@ class Settings
             'hide-field-script',                    // Handle name
             plugins_url('hide-field.js', __FILE__), // Path to the file
             array(),                                // No dependencies
-            "2.1.0",                                // Version number
+            "2.2.0",                                // Version number
             array(
                 'strategy' => 'defer',              // Add the defer attribute
                 'in_footer' => true                 // Load the script in the footer
@@ -75,7 +75,7 @@ class Settings
         // Set default options for OIDC
         update_option('scouting_oidc_client_id', '');
         update_option('scouting_oidc_client_secret', '');
-        update_option('scouting_oidc_scopes', 'openid email membership profile');
+        update_option('scouting_oidc_scopes', 'openid membership profile email address phone');
 
         // Set default options for general settings
         update_option('scouting_oidc_user_display_name', 'fullname');

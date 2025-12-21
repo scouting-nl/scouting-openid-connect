@@ -1,6 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [[2.2.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.2.0)] - 14/01/2026
+
+- Add support for `address` and `phone` scopes to store address data and phone number in user profiles.
+- Update default scopes to include `address` and `phone` in addition to existing scopes.
+- Add WooCommerce integration to automatically sync user data (name, phone, address) to WooCommerce billing and shipping fields.
+- Hide phone and address fields from user profile when WooCommerce is active to prevent duplication.
+- Improve user profile field rendering with `readonly` instead of `disabled` for better accessibility.
+
 ## [[2.1.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.1.0)] - 02/12/2025
 
 - Tested up to: 6.9

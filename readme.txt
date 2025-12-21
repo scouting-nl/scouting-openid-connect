@@ -3,7 +3,7 @@ Contributors: jobvk
 Tags: scouting, scouting nederland, sol, openid connect, oidc
 Requires at least: 6.6.0
 Tested up to: 6.9
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 Requires PHP: 8.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -59,6 +59,13 @@ Currently not, but this is planned for a future update of this plugin.
 4. Support Page
 
 == Changelog ==
+
+= 2.2.0 =
+* Add support for `phone` and `address` scopes to store phone number and address data in user profiles.
+* Update default scopes to include `address` and `phone` in addition to existing scopes.
+* Add WooCommerce integration to automatically sync user data (name, phone, address) to WooCommerce billing and shipping fields.
+* Hide phone and address fields from user profile when WooCommerce is active to prevent duplication.
+* Improve user profile field rendering with `readonly` instead of `disabled` for better accessibility.
 
 = 2.1.0 =
 * Tested up to: `6.9`

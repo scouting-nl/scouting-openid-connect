@@ -32,7 +32,7 @@ class Support
                 <li><?php esc_html_e('Add the name of your group/website.', 'scouting-openid-connect'); ?></li>
                 <li><?php esc_html_e('Add the Redirect URI:', 'scouting-openid-connect'); ?> <code><?php echo esc_url(home_url('/')); ?></code></li>
                 <li><?php esc_html_e('Add the Post Logout Redirect URI:', 'scouting-openid-connect'); ?> <code><?php echo esc_url(home_url('/')); ?></code></li>
-                <li><?php esc_html_e('Select the scopes you want to use. The "openid", "email" and "membership" scopes are required; the "profile", "address" and "phone" scopes are optional.', 'scouting-openid-connect'); ?></li>
+                <li><?php esc_html_e('Select the scopes you want to use. The "email" and "membership" scopes are required; the "profile", "address" and "phone" scopes are optional.', 'scouting-openid-connect'); ?></li>
                 <li><?php esc_html_e('Select the organizations that can log in.', 'scouting-openid-connect'); ?>
                     <br><?php esc_html_e('If your organization has sub-organizations, you can also select "Allow suborganizations."', 'scouting-openid-connect'); ?></li>
                 <li><?php esc_html_e('Press "Add Website."', 'scouting-openid-connect'); ?></li>

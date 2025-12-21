@@ -43,20 +43,20 @@ class Settings_General
     
         // Add a settings checkbox field
         add_settings_field(
-            'scouting_oidc_user_phone',                                    // Field ID
+            'scouting_oidc_user_phone',                                           // Field ID
             __('Store phone number to local profile', 'scouting-openid-connect'), // Field label
-            [$this, 'scouting_oidc_settings_general_phone_callback'],      // Callback to render field
-            'scouting-openid-connect-settings',                            // Page slug
-            'scouting_oidc_general_settings'                               // Section ID where the field should be added
+            [$this, 'scouting_oidc_settings_general_phone_callback'],             // Callback to render field
+            'scouting-openid-connect-settings',                                   // Page slug
+            'scouting_oidc_general_settings'                                      // Section ID where the field should be added
         );
     
         // Add a settings checkbox field
         add_settings_field(
-            'scouting_oidc_user_address',                                  // Field ID
+            'scouting_oidc_user_address',                                    // Field ID
             __('Store address to local profile', 'scouting-openid-connect'), // Field label
-            [$this, 'scouting_oidc_settings_general_address_callback'],    // Callback to render field
-            'scouting-openid-connect-settings',                            // Page slug
-            'scouting_oidc_general_settings'                               // Section ID where the field should be added
+            [$this, 'scouting_oidc_settings_general_address_callback'],      // Callback to render field
+            'scouting-openid-connect-settings',                              // Page slug
+            'scouting_oidc_general_settings'                                 // Section ID where the field should be added
         );
     
         // Add a settings checkbox field
