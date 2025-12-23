@@ -41,8 +41,16 @@ class Session {
         $session_id = $this->scouting_oidc_session_get_cookie();
         if ($session_id === null) {
             $session_id = bin2hex(random_bytes(16));
+            
+            setcookie('scouting_oidc_session', $session_id, [
+                'expires' => time() + 3600,
+                'path' => '/',
+                'domain' => parse_url(home_url('/'))['host'],
+                'secure' => is_ssl(),
+                'httponly' => true,
+                'samesite' => 'Lax'
+            ]);
         }
-        setcookie('scouting_oidc_session', $session_id, time() + 60*60*1);
     }
 
     /**

@@ -12,7 +12,7 @@ $scouting_oidc_options = array(
 	'scouting_oidc_user_gender',
 	'scouting_oidc_user_phone',
 	'scouting_oidc_user_address',
-	'scouting_oidc_user_address_sync',
+	'scouting_oidc_user_woocommerce_sync',
 	'scouting_oidc_user_auto_create',
 	'scouting_oidc_user_redirect',
 	'scouting_oidc_login_redirect',

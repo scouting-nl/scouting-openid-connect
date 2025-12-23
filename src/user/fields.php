@@ -22,10 +22,10 @@ class Fields
             if (get_option('scouting_oidc_user_gender')) {
                 $this->scouting_oidc_fields_gender($user);
             }
-            if (get_option('scouting_oidc_user_phone') && !class_exists('WooCommerce')) {
+            if (get_option('scouting_oidc_user_phone') && !get_option('scouting_oidc_user_woocommerce_sync')) {
                 $this->scouting_oidc_fields_phone($user);
             }
-            if (get_option('scouting_oidc_user_address') && !class_exists('WooCommerce')) {
+            if (get_option('scouting_oidc_user_address') && !get_option('scouting_oidc_user_woocommerce_sync')) {
                 $this->scouting_oidc_fields_address_street($user);
                 $this->scouting_oidc_fields_address_house_number($user);
                 $this->scouting_oidc_fields_address_postal_code($user);
@@ -66,7 +66,7 @@ class Fields
         <tr>
             <th><label for="gender"><?php esc_html_e("Gender", "scouting-openid-connect"); ?></label></th>
             <td>
-                <select name="gender" id="gender" style="width: 15em;" aria-readonly="true">
+                <select name="gender" id="gender" style="width: 15em; background-color: #f0f0f1;" aria-readonly="true">
                     <option value="male" <?php selected(get_the_author_meta('scouting_oidc_gender', $user->ID), 'male'); ?>><?php esc_html_e('Male', 'scouting-openid-connect'); ?></option>
                     <option value="female" <?php selected(get_the_author_meta('scouting_oidc_gender', $user->ID), 'female'); ?>><?php esc_html_e('Female', 'scouting-openid-connect'); ?></option>
                     <option value="other" <?php selected(get_the_author_meta('scouting_oidc_gender', $user->ID), 'other'); ?>><?php esc_html_e('Other', 'scouting-openid-connect'); ?></option>

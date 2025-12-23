@@ -318,7 +318,7 @@ class User {
         }
 
         // Sync the user data to the fields used by WooCommerce if enabled
-        if (get_option('scouting_oidc_user_address_sync')) {
+        if (get_option('scouting_oidc_user_woocommerce_sync')) {
             $this->scouting_oidc_user_sync_to_woocommerce($user_id);
         }
     }

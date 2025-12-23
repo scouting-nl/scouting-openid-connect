@@ -62,7 +62,7 @@ class Settings
             'hide-field-script',                    // Handle name
             plugins_url('hide-field.js', __FILE__), // Path to the file
             array(),                                // No dependencies
-            "2.2.0",                                // Version number
+            false,                                  // Version number
             array(
                 'strategy' => 'defer',              // Add the defer attribute
                 'in_footer' => true                 // Load the script in the footer
@@ -83,7 +83,7 @@ class Settings
         update_option('scouting_oidc_user_gender', false);
         update_option('scouting_oidc_user_phone', false);
         update_option('scouting_oidc_user_address', false);
-        update_option('scouting_oidc_user_address_sync', false);
+        update_option('scouting_oidc_user_woocommerce_sync', false);
         update_option('scouting_oidc_user_auto_create', true);
         update_option('scouting_oidc_user_redirect', true);
         update_option('scouting_oidc_login_redirect', 'frontpage');

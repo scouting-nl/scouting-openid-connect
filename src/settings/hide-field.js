@@ -37,11 +37,11 @@ document.addEventListener('DOMContentLoaded', function() {
         return; // Select or checkbox element not found
     }
 
-    showField('.scouting-oidc-user-address-sync-tr', 'scouting_oidc_user_address');
+    showField('.scouting-oidc-user-woocommerce-sync-tr', 'scouting_oidc_user_address');
     toggleCustomRedirect();
 
     select.addEventListener('change', toggleCustomRedirect);
     checkBox.addEventListener('change', function() {
-        showField('.scouting-oidc-user-address-sync-tr', 'scouting_oidc_user_address');
+        showField('.scouting-oidc-user-woocommerce-sync-tr', 'scouting_oidc_user_address');
     });
 });
