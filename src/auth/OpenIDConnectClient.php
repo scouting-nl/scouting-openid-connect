@@ -82,7 +82,7 @@ class OpenIDConnectClient
 
         // Load session to store tokens if needed
         $this->session = new Session();
-        $this->session->scouting_oidc_session_set_cookie();
+        $this->session->scouting_oidc_session_set_session_id();
     }
 
     /**

@@ -13,35 +13,40 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function showField(fieldTrClass, conditionFieldId) {
-        // Get the condition value input checkbox
-        var conditionField = document.getElementById(conditionFieldId);
-        
+    function showField(fieldTrClass, conditionFieldIds) {
+        // Support single id or array of ids
+        var ids = Array.isArray(conditionFieldIds) ? conditionFieldIds : [conditionFieldIds];
+
         // Get the field row to hide/show
         var fieldRow = document.querySelector(fieldTrClass);
         if (fieldRow === null) {
             return; // Field row not found
         }
 
-        // Show or hide based on the condition field's checked status
-        if (conditionField.checked) {
-            fieldRow.style.display = ''; // show
-        } else {
-            fieldRow.style.display = 'none'; // hide
-        }
+        // Show if any condition field is checked
+        var shouldShow = ids.some(function(id) {
+            var field = document.getElementById(id);
+            return field && field.checked;
+        });
+
+        fieldRow.style.display = shouldShow ? '' : 'none';
     }
 
     var select = document.getElementById('scouting_oidc_login_redirect');
-    var checkBox = document.getElementById('scouting_oidc_user_address');
-    if (select === null || checkBox === null) {
+    var checkBox1 = document.getElementById('scouting_oidc_user_address');
+    var checkBox2 = document.getElementById('scouting_oidc_user_phone');
+    if (select === null || checkBox1 === null || checkBox2 === null) {
         return; // Select or checkbox element not found
     }
 
-    showField('.scouting-oidc-user-woocommerce-sync-tr', 'scouting_oidc_user_address');
+    showField('.scouting-oidc-user-woocommerce-sync-tr', ['scouting_oidc_user_phone', 'scouting_oidc_user_address']);
     toggleCustomRedirect();
 
     select.addEventListener('change', toggleCustomRedirect);
-    checkBox.addEventListener('change', function() {
-        showField('.scouting-oidc-user-woocommerce-sync-tr', 'scouting_oidc_user_address');
+    checkBox1.addEventListener('change', function() {
+        showField('.scouting-oidc-user-woocommerce-sync-tr', ['scouting_oidc_user_phone', 'scouting_oidc_user_address']);
+    });
+    checkBox2.addEventListener('change', function() {
+        showField('.scouting-oidc-user-woocommerce-sync-tr', ['scouting_oidc_user_phone', 'scouting_oidc_user_address']);
     });
 });
