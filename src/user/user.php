@@ -94,9 +94,6 @@ class User {
      * @param array $user_json_decoded User information from the OpenID Connect server
      */
     public function __construct(array $user_json_decoded) {
-        // log all received user data for debugging
-        error_log('Scouting OIDC User Data: ' . print_r($user_json_decoded, true));
-
         // Required scopes data
         // Membership scope data
         $this->sol_id = sanitize_user($user_json_decoded['member_id'] ?? null);
