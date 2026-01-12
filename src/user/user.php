@@ -21,6 +21,11 @@ class User {
     private $emailVerified;
 
     /**
+     * @var string Language preference
+     */
+    private $language;
+
+    /**
      * @var string Full name
      */
     private $fullName;
@@ -89,6 +94,9 @@ class User {
      * @param array $user_json_decoded User information from the OpenID Connect server
      */
     public function __construct(array $user_json_decoded) {
+        // log all received user data for debugging
+        error_log('Scouting OIDC User Data: ' . print_r($user_json_decoded, true));
+
         // Required scopes data
         // Membership scope data
         $this->sol_id = sanitize_user($user_json_decoded['member_id'] ?? null);
@@ -104,6 +112,15 @@ class User {
         $this->familyName = $user_json_decoded['family_name'] ?? "";
         $this->gender = $user_json_decoded['gender'] ?? "unknown";
         $this->birthdate = $user_json_decoded['birthdate'] ?? "";
+
+        // Profile scope - Language preference
+        if ($user_json_decoded['locale'] == "nl") {
+            $this->language = "nl_NL";
+        } else if ($user_json_decoded['locale'] == "en") {
+            $this->language = "en_US";
+        } else {
+            $this->language = ""; // Use default WordPress language
+        }
 
         // Optional scopes data
         // Phone scope data
@@ -273,6 +290,7 @@ class User {
     private function scouting_oidc_user_update_meta(int $user_id) {
         update_user_meta($user_id, 'first_name', $this->firstName);
         update_user_meta($user_id, 'last_name', $this->infix . ' ' . $this->familyName);
+        update_user_meta($user_id, 'locale', $this->language);
         update_user_meta($user_id, 'show_admin_bar_front', 'false');
         update_user_meta($user_id, 'scouting_oidc_user', 'true');
 
