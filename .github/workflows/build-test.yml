@@ -19,6 +19,7 @@ jobs:
         exclude-files: |
           .gitignore
           .gitattributes
+          .wp-env.json
           CHANGELOG.md
           README.md
         exclude-directories: |
