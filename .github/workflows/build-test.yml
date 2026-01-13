@@ -13,8 +13,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v6.0.1
 
-    - name: Remove hidden files
-      run: find . \( -path './.git' -o -path './.github' \) -prune -o -type f -name '.*' -not -name '.gitignore' -not -name '.git' -exec rm -f {} +
-
+    - name: Remove non-production files
+      run: |
+        rm -rf .github
+        rm -rf .git
+        rm -f .gitignore
+        rm -f .gitattributes
+        rm -f CHANGELOG.md
+        rm -f README.md
+      
     - name: Run plugin check
       uses: wordpress/plugin-check-action@v1.1.4
