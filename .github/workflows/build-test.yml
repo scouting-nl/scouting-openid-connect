@@ -24,3 +24,7 @@ jobs:
       
     - name: Run plugin check
       uses: wordpress/plugin-check-action@v1.1.4
+
+    - name: Cleanup wp-env files
+      run: |
+        rm -f .wp-env.json
