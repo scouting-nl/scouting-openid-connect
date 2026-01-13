@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v6.0.0
+      uses: actions/checkout@v6.0.1
 
     - name: Remove hidden files
-      run: find . -type f -name '.*' -not -name '.gitignore' -not -name '.git' -exec rm -f {} +
+      run: find . \( -path './.git' -o -path './.github' \) -prune -o -type f -name '.*' -not -name '.gitignore' -not -name '.git' -exec rm -f {} +
 
     - name: Run plugin check
       uses: wordpress/plugin-check-action@v1.1.4
