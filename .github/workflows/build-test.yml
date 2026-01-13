@@ -13,18 +13,13 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v6.0.1
 
-    - name: Remove non-production files
-      run: |
-        rm -rf .github
-        rm -rf .git
-        rm -f .gitignore
-        rm -f .gitattributes
-        rm -f CHANGELOG.md
-        rm -f README.md
-      
     - name: Run plugin check
       uses: wordpress/plugin-check-action@v1.1.4
-
-    - name: Cleanup wp-env files
-      run: |
-        rm -f .wp-env.json
+      with:
+        exclude-files: |
+          .gitignore
+          .gitattributes
+          CHANGELOG.md
+          README.md
+        exclude-directories: |
+          .github
