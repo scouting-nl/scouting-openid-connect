@@ -68,18 +68,20 @@ Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scout
 2. Add the name of your group/website.
 3. Add the Redirect URI, for example: https://example.com/.
 4. Add the Post Logout Redirect URI, for example: https://example.com/.
-5. Select the scopes you want to use. The `email` and `membership` scopes are required; the `profile` scope is optional.
+5. Select the scopes you want to use. The `Email`, `Personal` and `Membership` scopes are required; The `Address`, `Phone number` scope is optional. Currently the `Parents/guardians` scope is not supported.
 6. Select the organizations that can log in. \
     If your organization has sub-organizations, you can also select `Allow suborganizations.`
 7. Press `Add Website.`
 8. Find the website you just created and click on ⓘ.
-9. Copy the client ID, client secret, and the scopes to your website.
-10. Fill in the OpenID Connect Settings with the copied data. \
-    Make sure the required scopes, `openid`, `email` and `membership`, are present.
-11. Fill in the General Settings. \
-    If you want to store the birthdate, or gender, use the scope `profile`.
-    If you want to store the phone number, use the scope `phone`.
-    If you want to store the address, use the scope `address`.
+9. Copy the Client ID, Client secret, and the scopes to your website.
+10. Fill in the OpenID Connect Settings with the copied data, Make sure the required scopes are present:
+    - `openid`
+    - `membership`
+    - `profile`
+    - `email`
+11. Fill in the General Settings.
+    - If you want to store the phone number, use the scope `phone`.
+    - If you want to store the address, use the scope `address`.
 12. Press `Save Settings`.
 13. Log out and try to log in with the Scouts Login button.
 
@@ -106,6 +108,10 @@ Yes, the OpenID Connect server is used to identify people and only allows access
 Yes, there is a settings page where you can set up a redirect after login, configure the name the user gets in their profile, and enforce that.
 
 ### Can roles also be imported into WordPress from SOL?
+
+Currently not, but this is planned for a future update of this plugin.
+
+### Can my parents or guardian also sign in?
 
 Currently not, but this is planned for a future update of this plugin.
 
