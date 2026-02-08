@@ -20,7 +20,7 @@ class Auth {
         $this->oidc_client = new OpenIDConnectClient(
             sanitize_text_field(get_option('scouting_oidc_client_id')),
             sanitize_text_field(get_option('scouting_oidc_client_secret')),
-            get_site_url(),
+            home_url(),
             'https://login-new.scouting.nl'  // Trusted external URL
        );
     }

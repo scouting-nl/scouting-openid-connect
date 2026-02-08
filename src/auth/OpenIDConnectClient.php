@@ -77,7 +77,7 @@ class OpenIDConnectClient
     public function __construct(string $client_id, string $client_secret, string $redirect_uri, string $scouting_issuer) {
         $this->clientID = $client_id;
         $this->clientSecret = $client_secret;
-        $this->redirectURL = $redirect_uri . '/';
+        $this->redirectURL = trailingslashit($redirect_uri);
         $this->issuer = $scouting_issuer;
 
         // Load session to store tokens if needed
