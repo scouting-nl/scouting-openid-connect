@@ -216,6 +216,7 @@ class OpenIDConnectClient
             $body_raw = wp_remote_retrieve_body($response);
             $body_decoded = json_decode($body_raw, true);
             $error_detail = $body_decoded['error_description'] ?? $body_decoded['error'] ?? $body_raw;
+            // translators: 1: HTTP status code returned by the token endpoint. 2: Error detail from the token endpoint response.
             $hint = rawurlencode(sprintf(__('Token endpoint error %1$s: %2$s', 'scouting-openid-connect'), $status_code, $error_detail));
             $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=get_tokens_failed");
             wp_safe_redirect($redirect_url);
