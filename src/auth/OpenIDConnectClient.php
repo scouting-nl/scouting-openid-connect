@@ -11,7 +11,7 @@ use ScoutingOIDC\Session;
  * @category   Scouting OpenID Connect
  * @package    OpenIDConnectClient
  * @author     Job van Koeveringe <job.van.koeveringe@scouting.nl>
- * @copyright  2025 Scouting Nederland
+ * @copyright  2026 Scouting Nederland
  * @license    GPLv3
  *
  */
@@ -77,12 +77,12 @@ class OpenIDConnectClient
     public function __construct(string $client_id, string $client_secret, string $redirect_uri, string $scouting_issuer) {
         $this->clientID = $client_id;
         $this->clientSecret = $client_secret;
-        $this->redirectURL = $redirect_uri . '/';
+        $this->redirectURL = trailingslashit($redirect_uri);
         $this->issuer = $scouting_issuer;
 
         // Load session to store tokens if needed
         $this->session = new Session();
-        $this->session->scouting_oidc_session_set_cookie();
+        $this->session->scouting_oidc_session_set_session_id();
     }
 
     /**
@@ -95,6 +95,14 @@ class OpenIDConnectClient
     public function getAuthenticationURL($response_type, $scopes_array) {
         $this->getWellKnownData();
         $this->getJWKSData();
+
+        // Ensure PKCE with S256 is supported by the identity provider
+        if (isset($this->wellKnownData->code_challenge_methods_supported) && !in_array('S256', $this->wellKnownData->code_challenge_methods_supported, true)) {
+            $hint = rawurlencode(__('The identity provider does not support the required S256 code challenge method for PKCE.', 'scouting-openid-connect'));
+            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=init&hint={$hint}&message=pkce_not_supported");
+            wp_safe_redirect($redirect_url);
+            exit;
+        }
 
         // Check if authorization_endpoint is available in well-known data
         if (empty($this->wellKnownData->authorization_endpoint)) {
@@ -126,6 +134,14 @@ class OpenIDConnectClient
         // State essentially acts as a session key for OIDC
         $state = $this->setState($this->generateToken(32));
 
+        // PKCE: generate and store a code verifier bound to this state, then derive the S256 challenge
+        $code_verifier = $this->generateCodeVerifier();
+        $this->setCodeVerifierForState($state, $code_verifier);
+        $code_challenge = $this->generateCodeChallenge($code_verifier);
+
+        // Persist the redirect URI so the token request reuses the exact same value
+        $this->session->scouting_oidc_session_set('scouting_oidc_redirect_uri', $this->redirectURL);
+
         $auth_params = [
             'client_id' => $this->clientID,
             'redirect_uri' => $this->redirectURL,
@@ -133,6 +149,8 @@ class OpenIDConnectClient
             'response_type' => $response_type,
             'nonce' => $nonce,
             'state' => $state,
+            'code_challenge' => $code_challenge,
+            'code_challenge_method' => 'S256',
         ];
 
         return $this->wellKnownData->authorization_endpoint . '?' . http_build_query($auth_params, '', '&', PHP_QUERY_RFC1738);
@@ -143,9 +161,15 @@ class OpenIDConnectClient
      * 
      * @param string $code the code from the authorization server
      */
-    public function retrieveTokens($code) {
+    public function retrieveTokens($code, ?string $state = null) {
         $this->getWellKnownData();
         $this->getJWKSData();
+
+        // Reuse the redirect URI from the authorization request to avoid invalid_grant on the token endpoint
+        $saved_redirect = $this->session->scouting_oidc_session_get('scouting_oidc_redirect_uri');
+        if (is_string($saved_redirect) && !empty($saved_redirect)) {
+            $this->redirectURL = $saved_redirect;
+        }
 
         // Check if token_endpoint is available in well-known data
         if (!isset($this->wellKnownData->token_endpoint)) {
@@ -158,12 +182,22 @@ class OpenIDConnectClient
         // Set the grant type to authorization_code
         $grant_type = 'authorization_code';
 
+        // Fetch the stored PKCE verifier; state is mandatory to find the correct verifier
+        $code_verifier = ($state !== null) ? $this->getCodeVerifierForState($state) : null;
+        if (empty($code_verifier)) {
+            $hint = rawurlencode(__('The code_verifier for PKCE is missing from the session.', 'scouting-openid-connect'));
+            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=code_verifier_missing");
+            wp_safe_redirect($redirect_url);
+            exit;
+        }
+
         $data = array(
             'grant_type' => $grant_type,
             'client_id' => $this->clientID,
             'client_secret' => $this->clientSecret,
             'redirect_uri' => $this->redirectURL,
-            'code' => $code
+            'code' => $code,
+            'code_verifier' => $code_verifier
        );
 
         // Set the arguments for the POST request
@@ -186,8 +220,14 @@ class OpenIDConnectClient
         } 
         
         // Check if response code is 200 and response message is OK
-        if (wp_remote_retrieve_response_code($response) !== 200 || wp_remote_retrieve_response_message($response) !== 'OK') {
-            $hint = rawurlencode(wp_remote_retrieve_response_message($response));
+        $status_code = wp_remote_retrieve_response_code($response);
+        $response_message = wp_remote_retrieve_response_message($response);
+        if ($status_code !== 200 || $response_message !== 'OK') {
+            $body_raw = wp_remote_retrieve_body($response);
+            $body_decoded = json_decode($body_raw, true);
+            $error_detail = $body_decoded['error_description'] ?? $body_decoded['error'] ?? $body_raw;
+            // translators: 1: HTTP status code returned by the token endpoint. 2: Error detail from the token endpoint response.
+            $hint = rawurlencode(sprintf(__('Token endpoint error %1$s: %2$s', 'scouting-openid-connect'), $status_code, $error_detail));
             $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=get_tokens_failed");
             wp_safe_redirect($redirect_url);
             exit;
@@ -206,6 +246,7 @@ class OpenIDConnectClient
     public function unsetStatesAndNonce() {
         $this->session->scouting_oidc_session_delete('scouting_oidc_states');
         $this->session->scouting_oidc_session_delete('scouting_oidc_nonce');
+        $this->session->scouting_oidc_session_delete('scouting_oidc_code_verifiers');
     }
 
     /**
@@ -461,6 +502,35 @@ class OpenIDConnectClient
     }
 
     /**
+     * Generates a PKCE code_verifier
+     *
+     * @param int $length desired length between 43 and 128 characters
+     * @return string the code verifier
+     */
+    private function generateCodeVerifier(int $length = 64): string {
+        $min_length = 43;
+        $max_length = 128;
+        $length = max($min_length, min($length, $max_length));
+
+        $verifier = '';
+        while (strlen($verifier) < $length) {
+            $verifier .= $this->base64UrlEncode(random_bytes(32));
+        }
+
+        return substr($verifier, 0, $length);
+    }
+
+    /**
+     * Generates a PKCE code_challenge from the verifier
+     *
+     * @param string $code_verifier the code verifier
+     * @return string the code challenge
+     */
+    private function generateCodeChallenge(string $code_verifier): string {
+        return $this->base64UrlEncode(hash('sha256', $code_verifier, true));
+    }
+
+    /**
      * Stores nonce
      * 
      * @return string the nonce
@@ -505,6 +575,40 @@ class OpenIDConnectClient
     }
 
     /**
+     * Stores the PKCE code_verifier in the session, keyed by state
+     *
+     * @param string $state the OIDC state value
+     * @param string $code_verifier the generated code verifier
+     * @return string the stored code verifier
+     */
+    private function setCodeVerifierForState(string $state, string $code_verifier): string {
+        $verifiers = $this->session->scouting_oidc_session_get('scouting_oidc_code_verifiers') ?? [];
+        if (!is_array($verifiers)) {
+            $verifiers = [];
+        }
+        $verifiers[$state] = $code_verifier;
+        $this->session->scouting_oidc_session_set('scouting_oidc_code_verifiers', $verifiers);
+
+        return $code_verifier;
+    }
+
+    /**
+     * Gets the stored PKCE code_verifier for a given state from the session
+     *
+     * @param string $state the OIDC state value
+     * @return string|null
+     */
+    private function getCodeVerifierForState(string $state): ?string {
+        $verifiers = $this->session->scouting_oidc_session_get('scouting_oidc_code_verifiers');
+        if (!is_array($verifiers)) {
+            return null;
+        }
+
+        $code_verifier = $verifiers[$state] ?? null;
+        return is_string($code_verifier) ? $code_verifier : null;
+    }
+
+    /**
      * Check if a specific state exists in the stored array.
      *
      * @param string $state The state to search for
@@ -519,6 +623,16 @@ class OpenIDConnectClient
         }
 
         return in_array($state, $states, true);
+    }
+
+    /**
+     * Encodes data as base64url without padding
+     *
+     * @param string $input
+     * @return string
+     */
+    private function base64UrlEncode($input) {
+        return rtrim(strtr(base64_encode($input), '+/', '-_'), '=');
     }
 
     /**

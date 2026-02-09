@@ -3,9 +3,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Scouting OpenID Connect 2.1.0\n"
+"Project-Id-Version: Scouting OpenID Connect 2.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/issues\n"
-"POT-Creation-Date: 2025-12-02 22:13+0100\n"
+"POT-Creation-Date: 2026-02-09 23:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
@@ -19,63 +19,76 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 
 #: auth/OpenIDConnectClient.php:101
+msgid "The identity provider does not support the required S256 code challenge method for PKCE."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:109
 msgid "The authorization_endpoint is not available in the well-known data."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:117
+#: auth/OpenIDConnectClient.php:125
 msgid "The following scopes are not supported:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:117
+#: auth/OpenIDConnectClient.php:125
 msgid "The supported scopes are:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:152
+#: auth/OpenIDConnectClient.php:176
 msgid "The token_endpoint is not available in the well-known data."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:222
-msgid "The ID token is not available in the tokens."
+#: auth/OpenIDConnectClient.php:188
+msgid "The code_verifier for PKCE is missing from the session."
 msgstr ""
 
 #: auth/OpenIDConnectClient.php:230
+#, php-format
+msgid "Token endpoint error %1$s: %2$s"
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:263
+msgid "The ID token is not available in the tokens."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:271
 msgid "The JSON Web Key Set (JWKS) is not available."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:255
+#: auth/OpenIDConnectClient.php:296
 msgid "The certificate chain (x5c) for the key ID (kid) specified in the header was not found."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:268
+#: auth/OpenIDConnectClient.php:309
 msgid "The signature in the ID token is not valid."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:344 auth/OpenIDConnectClient.php:403
+#: auth/OpenIDConnectClient.php:385 auth/OpenIDConnectClient.php:444
 msgid "No additional details provided."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:345
+#: auth/OpenIDConnectClient.php:386
 msgid "When retrieving well-known data, the status code was:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:345 auth/OpenIDConnectClient.php:379
-#: auth/OpenIDConnectClient.php:404 auth/auth.php:240
+#: auth/OpenIDConnectClient.php:386 auth/OpenIDConnectClient.php:420
+#: auth/OpenIDConnectClient.php:445 auth/auth.php:243
 msgid "Details:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:371
+#: auth/OpenIDConnectClient.php:412
 msgid "The jwks_uri is not available in the well-known data."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:379
+#: auth/OpenIDConnectClient.php:420
 msgid "The jwks_uri is not a valid URL."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:379
+#: auth/OpenIDConnectClient.php:420
 msgid "The jwks_uri is not valid:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:404
+#: auth/OpenIDConnectClient.php:445
 msgid "When retrieving JWKS data, the status code was:"
 msgstr ""
 
@@ -91,19 +104,19 @@ msgstr ""
 msgid "Nonce is invalid"
 msgstr ""
 
-#: auth/auth.php:169
+#: auth/auth.php:172
 msgid "State is invalid"
 msgstr ""
 
-#: auth/auth.php:180
+#: auth/auth.php:183
 msgid "Code is missing"
 msgstr ""
 
-#: auth/auth.php:205
+#: auth/auth.php:208
 msgid "Webmaster disabled creation of new accounts"
 msgstr ""
 
-#: auth/auth.php:236
+#: auth/auth.php:239
 msgid "The user denied the request"
 msgstr ""
 
@@ -132,50 +145,62 @@ msgid "Store gender to local profile"
 msgstr ""
 
 #: settings/general.php:47
-msgid "Allow new user accounts"
+msgid "Store phone number to local profile"
 msgstr ""
 
 #: settings/general.php:56
+msgid "Store address to local profile"
+msgstr ""
+
+#: settings/general.php:66
+msgid "Use WooCommerce phone number and address fields"
+msgstr ""
+
+#: settings/general.php:79
+msgid "Allow new user accounts"
+msgstr ""
+
+#: settings/general.php:88
 msgid "Redirect only SOL users"
 msgstr ""
 
-#: settings/general.php:65
+#: settings/general.php:97
 msgid "After a successful login redirect user to"
 msgstr ""
 
-#: settings/general.php:74
+#: settings/general.php:106
 msgid "Url to custom redirect after a successful login"
 msgstr ""
 
-#: settings/general.php:190
+#: settings/general.php:251
 msgid "Full name"
 msgstr ""
 
-#: settings/general.php:191
+#: settings/general.php:252
 msgid "First name"
 msgstr ""
 
-#: settings/general.php:192
+#: settings/general.php:253
 msgid "Last name"
 msgstr ""
 
-#: settings/general.php:241
+#: settings/general.php:326
 msgid "Default (no action)"
 msgstr ""
 
-#: settings/general.php:242
+#: settings/general.php:327
 msgid "Frontpage"
 msgstr ""
 
-#: settings/general.php:243
+#: settings/general.php:328
 msgid "Dashboard"
 msgstr ""
 
-#: settings/general.php:244
+#: settings/general.php:329
 msgid "Custom URL"
 msgstr ""
 
-#: settings/general.php:272
+#: settings/general.php:357
 msgid "Enter the slug to append to the base URL where users should be redirected after login."
 msgstr ""
 
@@ -323,7 +348,7 @@ msgstr ""
 msgid "Note: Do not copy this link, it will not work. This is just an example of how the link will look like."
 msgstr ""
 
-#: support/page.php:24 support/page.php:49
+#: support/page.php:24 support/page.php:66
 msgid "Support"
 msgstr ""
 
@@ -356,50 +381,94 @@ msgid "Add the Post Logout Redirect URI:"
 msgstr ""
 
 #: support/page.php:35
-msgid "Select the scopes you want to use. The \"email\" and \"membership\" scopes are required; the \"profile\" scope is optional."
+msgid "Select the scopes you want to use. The `Email`, `Personal` and `Membership` scopes are required;"
 msgstr ""
 
 #: support/page.php:36
-msgid "Select the organizations that can log in."
+msgid "The `Address`, `Phone number` scope is optional."
 msgstr ""
 
 #: support/page.php:37
-msgid "If your organization has sub-organizations, you can also select \"Allow suborganizations.\""
+msgid "Currently the `Parents/guardians` scope is not supported."
 msgstr ""
 
 #: support/page.php:38
-msgid "Press \"Add Website.\""
+msgid "Select the organizations that can log in."
 msgstr ""
 
 #: support/page.php:39
-msgid "Find the website you just created and click on ⓘ."
+msgid "If your organization has sub-organizations, you can also select \"Allow suborganizations\"."
 msgstr ""
 
 #: support/page.php:40
-msgid "Copy the \"Client ID\", \"Client Secret\", and the \"Scopes\" to the"
+msgid "Select to use the PKCE (code challenge)."
+msgstr ""
+
+#: support/page.php:41
+msgid "Press \"Add Website\"."
+msgstr ""
+
+#: support/page.php:42
+msgid "Find the website you just created and click on ⓘ."
 msgstr ""
 
 #: support/page.php:43
-msgid "Fill in the OpenID Connect Settings with the copied data. Make sure the required scopes, \"openid\" , \"email\" and \"membership\", are present."
+msgid "Copy the \"Client ID\", \"Client Secret\", and the \"Scopes\" to the"
 msgstr ""
 
-#: support/page.php:44
-msgid "Fill in the General Settings. If you want to store the birthdate, or gender, use the scope \"profile\"."
+#: support/page.php:47
+msgid "Fill in the OpenID Connect Settings with the copied data."
 msgstr ""
 
-#: support/page.php:45
-msgid "Press \"Save Settings\""
-msgstr ""
-
-#: support/page.php:46
-msgid "Log out and try to log in with the Scouts Login button."
+#: support/page.php:48
+msgid "Required scopes:"
 msgstr ""
 
 #: support/page.php:50
-msgid "If you need help, please contact"
+msgid "openid"
+msgstr ""
+
+#: support/page.php:51
+msgid "membership"
 msgstr ""
 
 #: support/page.php:52
+msgid "profile"
+msgstr ""
+
+#: support/page.php:53
+msgid "email"
+msgstr ""
+
+#: support/page.php:55
+msgid "Optional scopes:"
+msgstr ""
+
+#: support/page.php:57
+msgid "address"
+msgstr ""
+
+#: support/page.php:58
+msgid "phone"
+msgstr ""
+
+#: support/page.php:61
+msgid "Fill in the General Settings."
+msgstr ""
+
+#: support/page.php:62
+msgid "Press \"Save Settings\""
+msgstr ""
+
+#: support/page.php:63
+msgid "Log out and try to log in with the Scouts Login button."
+msgstr ""
+
+#: support/page.php:67
+msgid "If you need help, please contact"
+msgstr ""
+
+#: support/page.php:69
 msgid "(developer of the plugin)"
 msgstr ""
 
@@ -407,50 +476,74 @@ msgstr ""
 msgid "Scouts Online (SOL) Profile Information"
 msgstr ""
 
-#: user/fields.php:38
+#: user/fields.php:48
 msgid "Birthdate"
 msgstr ""
 
-#: user/fields.php:57
+#: user/fields.php:67
 msgid "Gender"
 msgstr ""
 
-#: user/fields.php:60
+#: user/fields.php:70
 msgid "Male"
 msgstr ""
 
-#: user/fields.php:61
+#: user/fields.php:71
 msgid "Female"
 msgstr ""
 
-#: user/fields.php:62
+#: user/fields.php:72
 msgid "Other"
 msgstr ""
 
-#: user/fields.php:63
+#: user/fields.php:73
 msgid "Unknown"
 msgstr ""
 
-#: user/user.php:68
+#: user/fields.php:88
+msgid "Phone Number"
+msgstr ""
+
+#: user/fields.php:105
+msgid "Street"
+msgstr ""
+
+#: user/fields.php:121
+msgid "House Number"
+msgstr ""
+
+#: user/fields.php:137
+msgid "Postal Code"
+msgstr ""
+
+#: user/fields.php:153
+msgid "City"
+msgstr ""
+
+#: user/fields.php:169
+msgid "Country Code"
+msgstr ""
+
+#: user/user.php:137
 msgid "SOL ID is missing, make sure the \"membership\" scope is enabled."
 msgstr ""
 
-#: user/user.php:75
+#: user/user.php:145
 msgid "Email is missing, make sure the \"email\" scope is enabled."
 msgstr ""
 
-#: user/user.php:103
+#: user/user.php:173
 msgid "Something went wrong while trying to update the username."
 msgstr ""
 
-#: user/user.php:157
+#: user/user.php:227
 msgid "SOL ID and Email have different user IDs"
 msgstr ""
 
-#: user/user.php:174
+#: user/user.php:244
 msgid "Email address is already in use by another account"
 msgstr ""
 
-#: user/user.php:188
+#: user/user.php:258
 msgid "Something went wrong while trying to log in"
 msgstr ""
