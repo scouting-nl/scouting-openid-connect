@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [[2.2.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.2.0)] - 14/01/2026
 
 - Add support for `address` and `phone` scopes to store address data and phone number in user profiles.
+- Require PKCE (Proof Key for Code Exchange) to be configured in OIDC.
 - Update default scopes to include `address` and `phone` in addition to existing scopes.
 - Add WooCommerce integration to automatically sync user data (name, phone, address) to WooCommerce billing and shipping fields.
 - Hide phone and address fields from user profile when WooCommerce is active to prevent duplication.

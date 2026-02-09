@@ -26,21 +26,25 @@ Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scout
 2. Add the name of your group/website.
 3. Add the Redirect URI, for example: https://example.com/.
 4. Add the Post Logout Redirect URI, for example: https://example.com/.
-5. Select the scopes you want to use. The `Email`, `Personal` and `Membership` scopes are required; The `Address`, `Phone number` scope is optional. Currently the `Parents/guardians` scope is not supported.
-6. Select the organizations that can log in. If your organization has sub-organizations, you can also select `Allow suborganizations`.
-7. Press `Add Website`.
-8. Find the website you just created and click on ⓘ.
-9. Copy the Client ID, Client secret, and the scopes to your website.
-10. Fill in the OpenID Connect Settings with the copied data, Make sure the required scopes are present:
-    - `openid`
-    - `membership`
-    - `profile`
-    - `email`
-11. Fill in the General Settings.
-    - If you want to store the phone number, use the scope `phone`.
-    - If you want to store the address, use the scope `address`.
-12. Press `Save Settings`.
-13. Log out and try to log in with the Scouts Login button.
+5. Select the scopes you want to use. The `Email`, `Personal` and `Membership` scopes are required; \
+    The `Address`, `Phone number` scope is optional. \
+    Currently the `Parents/guardians` scope is not supported.
+6. Select the organizations that can log in. \
+    If your organization has sub-organizations, you can also select `Allow suborganizations.`
+7. Select to use the PKCE (code challenge).
+8. Press `Add Website`.
+9. Find the website you just created and click on ⓘ.
+10. Copy the Client ID, Client secret, and the scopes to your website.
+11. Fill in the OpenID Connect Settings with the copied data, Make sure the required scopes are present:
+    - `openid` (Required)
+    - `membership` (Required)
+    - `profile` (Required)
+    - `email` (Required)
+    - `address` (Optional)
+    - `phone` (Optional)
+12. Fill in the General Settings.
+13. Press `Save Settings`.
+14. Log out and try to log in with the Scouts Login button.
 
 == Frequently Asked Questions ==
 
@@ -72,6 +76,7 @@ Currently not, but this is planned for a future update of this plugin.
 
 = 2.2.0 =
 * Add support for `phone` and `address` scopes to store phone number and address data in user profiles.
+* Require PKCE (Proof Key for Code Exchange) to be configured in OIDC.
 * Update default scopes to include `address` and `phone` in addition to existing scopes.
 * Add WooCommerce integration to automatically sync user data (name, phone, address) to WooCommerce billing and shipping fields.
 * Hide phone and address fields from user profile when WooCommerce is active to prevent duplication.
