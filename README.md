@@ -7,7 +7,7 @@
 **Contributors:** [jobvk](https://github.com/jobvk) \
 **Requires at least:** 6.6.0 \
 **Tested up to:** 6.9 \
-**Stable tag:** 2.1.0 \
+**Stable tag:** 2.2.0 \
 **Tags:** scouting, scouting nederland, sol, openid connect, oidc \
 **License:** GPLv3 \
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.html
@@ -68,18 +68,25 @@ Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scout
 2. Add the name of your group/website.
 3. Add the Redirect URI, for example: https://example.com/.
 4. Add the Post Logout Redirect URI, for example: https://example.com/.
-5. Select the scopes you want to use. The `email` and `membership` scopes are required; the `profile` scope is optional.
+5. Select the scopes you want to use. The `Email`, `Personal` and `Membership` scopes are required; \
+    The `Address`, `Phone number` scope is optional. \
+    Currently the `Parents/guardians` scope is not supported.
 6. Select the organizations that can log in. \
     If your organization has sub-organizations, you can also select `Allow suborganizations.`
-7. Press `Add Website.`
-8. Find the website you just created and click on ⓘ.
-9. Copy the client ID, client secret, and the scopes to your website.
-10. Fill in the OpenID Connect Settings with the copied data. \
-    Make sure the required scopes, `openid`, `email` and `membership`, are present.
-11. Fill in the General Settings. \
-    If you want to store the birthdate, or gender, use the scope `profile`.
-12. Press `Save Settings`.
-13. Log out and try to log in with the Scouts Login button.
+7. Select to use the PKCE (code challenge).
+8. Press `Add Website`.
+9. Find the website you just created and click on ⓘ.
+10. Copy the Client ID, Client secret, and the scopes to your website.
+11. Fill in the OpenID Connect Settings with the copied data. Make sure the required scopes are present:
+    - `openid` (Required)
+    - `membership` (Required)
+    - `profile` (Required)
+    - `email` (Required)
+    - `address` (Optional)
+    - `phone` (Optional)
+12. Fill in the General Settings.
+13. Press `Save Settings`.
+14. Log out and try to log in with the Scouts Login button.
 
 ## Shortcodes
 
@@ -104,6 +111,10 @@ Yes, the OpenID Connect server is used to identify people and only allows access
 Yes, there is a settings page where you can set up a redirect after login, configure the name the user gets in their profile, and enforce that.
 
 ### Can roles also be imported into WordPress from SOL?
+
+Currently not, but this is planned for a future update of this plugin.
+
+### Can my parents or guardian also sign in?
 
 Currently not, but this is planned for a future update of this plugin.
 

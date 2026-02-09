@@ -32,16 +32,33 @@ class Support
                 <li><?php esc_html_e('Add the name of your group/website.', 'scouting-openid-connect'); ?></li>
                 <li><?php esc_html_e('Add the Redirect URI:', 'scouting-openid-connect'); ?> <code><?php echo esc_url(home_url('/')); ?></code></li>
                 <li><?php esc_html_e('Add the Post Logout Redirect URI:', 'scouting-openid-connect'); ?> <code><?php echo esc_url(home_url('/')); ?></code></li>
-                <li><?php esc_html_e('Select the scopes you want to use. The "email" and "membership" scopes are required; the "profile" scope is optional.', 'scouting-openid-connect'); ?></li>
+                <li><?php esc_html_e('Select the scopes you want to use. The `Email`, `Personal` and `Membership` scopes are required;', 'scouting-openid-connect'); ?>
+                    <br><?php esc_html_e('The `Address`, `Phone number` scope is optional.', 'scouting-openid-connect'); ?>
+                    <br><?php esc_html_e('Currently the `Parents/guardians` scope is not supported.', 'scouting-openid-connect'); ?></li>
                 <li><?php esc_html_e('Select the organizations that can log in.', 'scouting-openid-connect'); ?>
-                    <br><?php esc_html_e('If your organization has sub-organizations, you can also select "Allow suborganizations."', 'scouting-openid-connect'); ?></li>
-                <li><?php esc_html_e('Press "Add Website."', 'scouting-openid-connect'); ?></li>
+                    <br><?php esc_html_e('If your organization has sub-organizations, you can also select "Allow suborganizations".', 'scouting-openid-connect'); ?></li>
+                <li><?php esc_html_e('Select to use the PKCE (code challenge).', 'scouting-openid-connect'); ?></li>
+                <li><?php esc_html_e('Press "Add Website".', 'scouting-openid-connect'); ?></li>
                 <li><?php esc_html_e('Find the website you just created and click on ⓘ.', 'scouting-openid-connect'); ?></li>
                 <li><?php esc_html_e('Copy the "Client ID", "Client Secret", and the "Scopes" to the', 'scouting-openid-connect'); ?>
                     <a href="<?php echo esc_url(admin_url('admin.php?page=scouting-oidc-settings')); ?>">settings page</a>.
                 </li>
-                <li><?php esc_html_e('Fill in the OpenID Connect Settings with the copied data. Make sure the required scopes, "openid" , "email" and "membership", are present.', 'scouting-openid-connect'); ?></li>
-                <li><?php esc_html_e('Fill in the General Settings. If you want to store the birthdate, or gender, use the scope "profile".', 'scouting-openid-connect'); ?></li>
+                <li>
+                    <?php esc_html_e('Fill in the OpenID Connect Settings with the copied data.', 'scouting-openid-connect'); ?>
+                    <br><?php esc_html_e('Required scopes:', 'scouting-openid-connect'); ?>
+                    <ul style="list-style: disc; margin-left: 20px;">
+                        <li><?php esc_html_e('openid', 'scouting-openid-connect'); ?></li>
+                        <li><?php esc_html_e('membership', 'scouting-openid-connect'); ?></li>
+                        <li><?php esc_html_e('profile', 'scouting-openid-connect'); ?></li>
+                        <li><?php esc_html_e('email', 'scouting-openid-connect'); ?></li>
+                    </ul>
+                    <?php esc_html_e('Optional scopes:', 'scouting-openid-connect'); ?>
+                    <ul style="list-style: disc; margin-left: 20px;">
+                        <li><?php esc_html_e('address', 'scouting-openid-connect'); ?></li>
+                        <li><?php esc_html_e('phone', 'scouting-openid-connect'); ?></li>
+                    </ul>
+                </li>
+                <li><?php esc_html_e('Fill in the General Settings.', 'scouting-openid-connect'); ?></li>
                 <li><?php esc_html_e('Press "Save Settings"', 'scouting-openid-connect'); ?>.</li>
                 <li><?php esc_html_e('Log out and try to log in with the Scouts Login button.', 'scouting-openid-connect'); ?></li>
             </ol>

@@ -35,7 +35,7 @@ class Shortcode
             </p>
 
             <h2 id="shortcodes"><?php esc_html_e('Shortcodes for OpenID Connect', 'scouting-openid-connect'); ?></h2>
-
+            <hr class="scouting-oidc-divider" style="border-top: 2px solid #8c8f94; border-radius: 4px; margin: 20px 0px;"/>
             <h3 id="openid-button"><?php esc_html_e('OpenID Connect Button', 'scouting-openid-connect'); ?></h3>
             <div style='content: ""; display: table; clear: both;'>
                 <div style="float: left; width: 50%; padding-right: 10px; border-right: 2px solid #8c8f94; box-sizing: border-box;">
@@ -84,7 +84,7 @@ class Shortcode
                 <p><strong><?php esc_html_e('Note: The button is not interactive in this preview.', 'scouting-openid-connect'); ?></strong></p>
             </div>
 
-            <hr id="scouding-oidc-divider" style="border-top: 2px solid #8c8f94; border-radius: 4px; margin: 20px 0px;"/>
+            <hr class="scouting-oidc-divider" style="border-top: 2px solid #8c8f94; border-radius: 4px; margin: 20px 0px;"/>
 
             <h3 id="openid-link"><?php esc_html_e('OpenID Connect Link', 'scouting-openid-connect'); ?></h3>
             <p>
@@ -109,7 +109,7 @@ class Shortcode
             'live-shortcode-script',                    // Handle name
             plugins_url('live-shortcode.js', __FILE__), // Path to the file
             array(),                                    // No dependencies
-            "2.1.0",                                    // Version number
+            "2.2.0",                                    // Version number
             array(
                 'strategy' => 'defer',                  // Add the defer attribute
                 'in_footer' => true                     // Load the script in the footer

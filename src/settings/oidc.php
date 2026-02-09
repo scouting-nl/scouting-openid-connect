@@ -75,7 +75,7 @@ class Settings_Oidc
     // Callback to render text field
     function scouting_oidc_settings_oidc_client_id_callback() {
         $value = get_option('scouting_oidc_client_id');
-        echo '<input type="text" id="scouting_oidc_client_id" name="scouting_oidc_client_id" placeholder="'. esc_attr__("Client ID", "scouting-openid-connect") .'" value="' . esc_attr($value) . '" size="50" required>';
+        echo '<input type="text" id="scouting_oidc_client_id" name="scouting_oidc_client_id" placeholder="'. esc_attr__("Client ID", "scouting-openid-connect") .'" value="' . esc_attr($value) . '" size="55" required>';
     }
 
     // Callback to render text field
@@ -87,7 +87,7 @@ class Settings_Oidc
     // Callback to render text field
     function scouting_oidc_settings_oidc_scopes_callback() {
         $value = get_option('scouting_oidc_scopes');
-        echo '<input type="text" id="scouting_oidc_scopes" name="scouting_oidc_scopes" placeholder="'. esc_attr__("Scopes", "scouting-openid-connect") .'" value="' . esc_attr($value) . '" size="50" required>';
+        echo '<input type="text" id="scouting_oidc_scopes" name="scouting_oidc_scopes" placeholder="'. esc_attr__("Scopes", "scouting-openid-connect") .'" value="' . esc_attr($value) . '" size="55" required>';
     }
 }
 ?>

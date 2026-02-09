@@ -21,6 +21,11 @@ class User {
     private $emailVerified;
 
     /**
+     * @var string Language preference
+     */
+    private $language;
+
+    /**
      * @var string Full name
      */
     private $fullName;
@@ -51,12 +56,53 @@ class User {
     private $birthdate;
 
     /**
+     * @var string Phone number
+     */
+    private $phoneNumber;
+
+    /**
+     * @var bool Phone number verified
+     */
+    private $phoneNumberVerified;
+
+    /**
+     * @var string Street name
+     */
+    private $street;
+
+    /**
+     * @var string House number
+     */
+    private $houseNumber;
+
+    /**
+     * @var string Postal code
+     */
+    private $postalCode;
+
+    /**
+     * @var string City/Locality
+     */
+    private $locality;
+
+    /**
+     * @var string Country code
+     */
+    private $countryCode;
+
+    /**
      * @param array $user_json_decoded User information from the OpenID Connect server
      */
     public function __construct(array $user_json_decoded) {
+        // Required scopes data
+        // Membership scope data
         $this->sol_id = sanitize_user($user_json_decoded['member_id'] ?? null);
+
+        // Email scope data
         $this->email = sanitize_email($user_json_decoded['email'] ?? null);
         $this->emailVerified = rest_sanitize_boolean($user_json_decoded['email_verified'] ?? false);
+
+        // Profile scope data
         $this->fullName = $user_json_decoded['name'] ?? "";
         $this->firstName = $user_json_decoded['given_name'] ?? "";
         $this->infix = $user_json_decoded['infix'] ?? "";
@@ -64,6 +110,31 @@ class User {
         $this->gender = $user_json_decoded['gender'] ?? "unknown";
         $this->birthdate = $user_json_decoded['birthdate'] ?? "";
 
+        // Profile scope - Language preference
+        $locale = $user_json_decoded['locale'] ?? '';
+        $normalized_locale = strtolower(str_replace('-', '_', $locale));
+        if ($normalized_locale === 'nl' || strpos($normalized_locale, 'nl_') === 0) {
+            $this->language = 'nl_NL';
+        } else if ($normalized_locale === 'en' || strpos($normalized_locale, 'en_') === 0) {
+            $this->language = 'en_US';
+        } else {
+            $this->language = ''; // Use default WordPress language
+        }
+
+        // Optional scopes data
+        // Phone scope data
+        $this->phoneNumber = $user_json_decoded['phone_number'] ?? "";
+        $this->phoneNumberVerified = rest_sanitize_boolean($user_json_decoded['phone_number_verified'] ?? false);
+
+        // Address scope data
+        $address = is_array($user_json_decoded['address'] ?? null) ? $user_json_decoded['address'] : [];
+        $this->street = $address['street'] ?? "";
+        $this->houseNumber = $address['house_number'] ?? "";
+        $this->postalCode = $address['postal_code'] ?? "";
+        $this->locality = $address['locality'] ?? "";
+        $this->countryCode = $address['country_code'] ?? "";
+
+        // Validate SOL ID is present
         if ($this->sol_id == null) {
             $hint = rawurlencode(__('SOL ID is missing, make sure the "membership" scope is enabled.', 'scouting-openid-connect'));
             $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=sol_id_is_missing");
@@ -71,6 +142,7 @@ class User {
             exit;
         }
 
+        // Validate email is present
         if ($this->email == null) {
             $hint = rawurlencode(__('Email is missing, make sure the "email" scope is enabled.', 'scouting-openid-connect'));
             $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=email_is_missing");
@@ -217,6 +289,7 @@ class User {
     private function scouting_oidc_user_update_meta(int $user_id) {
         update_user_meta($user_id, 'first_name', $this->firstName);
         update_user_meta($user_id, 'last_name', $this->infix . ' ' . $this->familyName);
+        update_user_meta($user_id, 'locale', $this->language);
         update_user_meta($user_id, 'show_admin_bar_front', 'false');
         update_user_meta($user_id, 'scouting_oidc_user', 'true');
 
@@ -244,6 +317,83 @@ class User {
 
         if (get_option('scouting_oidc_user_birthdate')) {
             update_user_meta($user_id, 'scouting_oidc_birthdate', $this->birthdate);
+        }
+
+        // Store phone number if available and setting is enabled
+        if (get_option('scouting_oidc_user_phone')) {
+            update_user_meta($user_id, 'scouting_oidc_phone_number', $this->phoneNumber);
+            update_user_meta($user_id, 'scouting_oidc_phone_number_verified', $this->phoneNumberVerified ? 'true' : 'false');
+        }
+
+        // Store address data if available and setting is enabled
+        if (get_option('scouting_oidc_user_address')) {
+            update_user_meta($user_id, 'scouting_oidc_street', $this->street);
+            update_user_meta($user_id, 'scouting_oidc_house_number', $this->houseNumber);
+            update_user_meta($user_id, 'scouting_oidc_postal_code', $this->postalCode);
+            update_user_meta($user_id, 'scouting_oidc_locality', $this->locality);
+            update_user_meta($user_id, 'scouting_oidc_country_code', $this->countryCode);
+        }
+
+        // Sync the user data to the fields used by WooCommerce if enabled
+        if (get_option('scouting_oidc_user_woocommerce_sync')) {
+            $this->scouting_oidc_user_sync_to_woocommerce($user_id);
+        }
+    }
+
+    /**
+     * Sync Scouting OIDC user data to WooCommerce customer data
+     * 
+     * @param int $user_id User ID
+     */
+    private function scouting_oidc_user_sync_to_woocommerce(int $user_id) {
+        // Only run when WooCommerce is active and we have a WP_User instance
+        if (!class_exists('WooCommerce') || !($user = get_user_by('ID', $user_id))) {
+            return;
+        }
+
+        // Map First and Last name
+        $first_name = get_user_meta($user_id, 'first_name', true);
+        $last_name = get_user_meta($user_id, 'last_name', true);
+        if (!empty($first_name)) {
+            update_user_meta($user_id, 'billing_first_name', $first_name);
+            update_user_meta($user_id, 'shipping_first_name', $first_name);
+        }
+        if (!empty($last_name)) {
+            update_user_meta($user_id, 'billing_last_name', $last_name);
+            update_user_meta($user_id, 'shipping_last_name', $last_name);
+        }
+
+        // Map phone number
+        $phone = get_user_meta($user_id, 'scouting_oidc_phone_number', true);
+        if (!empty($phone)) {
+            update_user_meta($user_id, 'billing_phone', $phone);
+            update_user_meta($user_id, 'shipping_phone', $phone);
+        }
+
+        // Map address components
+        $street       = get_user_meta($user_id, 'scouting_oidc_street', true);
+        $house_number = get_user_meta($user_id, 'scouting_oidc_house_number', true);
+        $postal_code  = get_user_meta($user_id, 'scouting_oidc_postal_code', true);
+        $city         = get_user_meta($user_id, 'scouting_oidc_locality', true);
+        $country      = get_user_meta($user_id, 'scouting_oidc_country_code', true);
+
+        // Combine street and house number
+        $address_line1 = trim($street . ' ' . $house_number);
+
+        // Update billing fields when any address data is present
+        if ($address_line1 || $postal_code || $city || $country) {
+            update_user_meta($user_id, 'billing_address_1', $address_line1);
+            update_user_meta($user_id, 'billing_postcode', $postal_code);
+            update_user_meta($user_id, 'billing_city', $city);
+            update_user_meta($user_id, 'billing_country', $country);
+        }
+
+        // Mirror to shipping fields so checkout auto-fills
+        if ($address_line1 || $postal_code || $city || $country) {
+            update_user_meta($user_id, 'shipping_address_1', $address_line1);
+            update_user_meta($user_id, 'shipping_postcode', $postal_code);
+            update_user_meta($user_id, 'shipping_city', $city);
+            update_user_meta($user_id, 'shipping_country', $country);
         }
     }
 }
