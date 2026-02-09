@@ -110,7 +110,7 @@ Currently not, but this is planned for a future update of this plugin.
 * Tested plugin up to WordPress 6.7.2 => 6.8.0
 
 = 1.0.1 =
-* Fixed hook wp_loginte of
+* Fixed hook wp_login
 * Tested plugin up to WordPress 6.7.1 => 6.7.2
 
 = 1.0.0 =
