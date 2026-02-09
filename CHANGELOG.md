@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [[2.2.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.2.0)] - 14/01/2026
+## [[2.2.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.2.0)] - 10/02/2026
 
 - Add support for `address` and `phone` scopes to store address data and phone number in user profiles.
 - Require PKCE (Proof Key for Code Exchange) to be configured in OIDC.
