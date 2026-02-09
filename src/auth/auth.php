@@ -21,7 +21,7 @@ class Auth {
             sanitize_text_field(get_option('scouting_oidc_client_id')),
             sanitize_text_field(get_option('scouting_oidc_client_secret')),
             home_url(),
-            'https://login-new.scouting.nl'  // Trusted external URL
+            'https://login.scouting.nl'  // Trusted external URL
        );
     }
 
