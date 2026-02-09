@@ -61,7 +61,7 @@ class User {
     private $phoneNumber;
 
     /**
-     * @var string Phone number verified
+     * @var bool Phone number verified
      */
     private $phoneNumberVerified;
 
@@ -111,12 +111,14 @@ class User {
         $this->birthdate = $user_json_decoded['birthdate'] ?? "";
 
         // Profile scope - Language preference
-        if ($user_json_decoded['locale'] == "nl") {
-            $this->language = "nl_NL";
-        } else if ($user_json_decoded['locale'] == "en") {
-            $this->language = "en_US";
+        $locale = $user_json_decoded['locale'] ?? '';
+        $normalized_locale = strtolower(str_replace('-', '_', $locale));
+        if ($normalized_locale === 'nl' || strpos($normalized_locale, 'nl_') === 0) {
+            $this->language = 'nl_NL';
+        } else if ($normalized_locale === 'en' || strpos($normalized_locale, 'en_') === 0) {
+            $this->language = 'en_US';
         } else {
-            $this->language = ""; // Use default WordPress language
+            $this->language = ''; // Use default WordPress language
         }
 
         // Optional scopes data

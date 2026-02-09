@@ -40,7 +40,7 @@ class Auth {
         }
 
         // Add divider to the login form to separate the default login form from the OpenID Connect button
-        echo '<hr id="scouding-oidc-divider" style="border-top: 2px solid #8c8f94; border-radius: 4px;"/>';
+        echo '<hr id="scouting-oidc-divider" style="border-top: 2px solid #8c8f94; border-radius: 4px;"/>';
 
         // Button style
         $button_style = "display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex; justify-content: center; align-items: center; background-color: #4CAF50; color: #ffffff; border: none; border-radius: 4px; text-decoration: none; font-weight: bold; width: 100%; height: 100%; text-align: center;";

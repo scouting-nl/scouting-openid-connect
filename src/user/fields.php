@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Fields
 {
     /**
-     * Show the user profile fields in the user profile and edit user profile pages, exept when WooCommerce is active (because WooCommerce has its own fields for address and phone number)
+     * Show the user profile fields in the user profile and edit user profile pages, except when WooCommerce WooCommerce synchronization is enabled (because WooCommerce has its own fields for address and phone number)
      * 
      * @param WP_User $user The user object
      */
