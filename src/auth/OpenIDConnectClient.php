@@ -134,9 +134,13 @@ class OpenIDConnectClient
         // State essentially acts as a session key for OIDC
         $state = $this->setState($this->generateToken(32));
 
-        // PKCE: generate and store a code verifier, then derive the S256 challenge
-        $code_verifier = $this->setCodeVerifier($this->generateCodeVerifier());
+        // PKCE: generate and store a code verifier bound to this state, then derive the S256 challenge
+        $code_verifier = $this->generateCodeVerifier();
+        $this->setCodeVerifierForState($state, $code_verifier);
         $code_challenge = $this->generateCodeChallenge($code_verifier);
+
+        // Persist the redirect URI so the token request reuses the exact same value
+        $this->session->scouting_oidc_session_set('scouting_oidc_redirect_uri', $this->redirectURL);
 
         $auth_params = [
             'client_id' => $this->clientID,
@@ -157,9 +161,15 @@ class OpenIDConnectClient
      * 
      * @param string $code the code from the authorization server
      */
-    public function retrieveTokens($code) {
+    public function retrieveTokens($code, ?string $state = null) {
         $this->getWellKnownData();
         $this->getJWKSData();
+
+        // Reuse the redirect URI from the authorization request to avoid invalid_grant on the token endpoint
+        $saved_redirect = $this->session->scouting_oidc_session_get('scouting_oidc_redirect_uri');
+        if (is_string($saved_redirect) && !empty($saved_redirect)) {
+            $this->redirectURL = $saved_redirect;
+        }
 
         // Check if token_endpoint is available in well-known data
         if (!isset($this->wellKnownData->token_endpoint)) {
@@ -172,8 +182,8 @@ class OpenIDConnectClient
         // Set the grant type to authorization_code
         $grant_type = 'authorization_code';
 
-        // Fetch the stored PKCE verifier
-        $code_verifier = $this->getCodeVerifier();
+        // Fetch the stored PKCE verifier; state is mandatory to find the correct verifier
+        $code_verifier = ($state !== null) ? $this->getCodeVerifierForState($state) : null;
         if (empty($code_verifier)) {
             $hint = rawurlencode(__('The code_verifier for PKCE is missing from the session.', 'scouting-openid-connect'));
             $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=code_verifier_missing");
@@ -236,7 +246,7 @@ class OpenIDConnectClient
     public function unsetStatesAndNonce() {
         $this->session->scouting_oidc_session_delete('scouting_oidc_states');
         $this->session->scouting_oidc_session_delete('scouting_oidc_nonce');
-        $this->session->scouting_oidc_session_delete('scouting_oidc_code_verifier');
+        $this->session->scouting_oidc_session_delete('scouting_oidc_code_verifiers');
     }
 
     /**
@@ -565,23 +575,36 @@ class OpenIDConnectClient
     }
 
     /**
-     * Stores the PKCE code_verifier in the session
+     * Stores the PKCE code_verifier in the session, keyed by state
      *
+     * @param string $state the OIDC state value
      * @param string $code_verifier the generated code verifier
      * @return string the stored code verifier
      */
-    private function setCodeVerifier(string $code_verifier): string {
-        $this->session->scouting_oidc_session_set('scouting_oidc_code_verifier', $code_verifier);
+    private function setCodeVerifierForState(string $state, string $code_verifier): string {
+        $verifiers = $this->session->scouting_oidc_session_get('scouting_oidc_code_verifiers') ?? [];
+        if (!is_array($verifiers)) {
+            $verifiers = [];
+        }
+        $verifiers[$state] = $code_verifier;
+        $this->session->scouting_oidc_session_set('scouting_oidc_code_verifiers', $verifiers);
+
         return $code_verifier;
     }
 
     /**
-     * Gets the stored PKCE code_verifier from the session
+     * Gets the stored PKCE code_verifier for a given state from the session
      *
+     * @param string $state the OIDC state value
      * @return string|null
      */
-    private function getCodeVerifier(): ?string {
-        $code_verifier = $this->session->scouting_oidc_session_get('scouting_oidc_code_verifier');
+    private function getCodeVerifierForState(string $state): ?string {
+        $verifiers = $this->session->scouting_oidc_session_get('scouting_oidc_code_verifiers');
+        if (!is_array($verifiers)) {
+            return null;
+        }
+
+        $code_verifier = $verifiers[$state] ?? null;
         return is_string($code_verifier) ? $code_verifier : null;
     }
 

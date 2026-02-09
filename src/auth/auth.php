@@ -163,7 +163,10 @@ class Auth {
         }
 
         // Verify state parameter for security
-        if (!$this->oidc_client->hasstate(sanitize_text_field(wp_unslash($_GET['state'])))) {
+        $state = sanitize_text_field(wp_unslash($_GET['state']));
+
+        // If the state is invalid, unset states and nonce, then redirect to login page with an error message
+        if (!$this->oidc_client->hasState($state)) {
             $this->oidc_client->unsetStatesAndNonce();
 
             $hint = rawurlencode(__('State is invalid', 'scouting-openid-connect'));
@@ -185,7 +188,7 @@ class Auth {
         }
 
         // Retrieve tokens from the OpenID Connect server and sanitize the 'code' parameter
-        $this->oidc_client->retrieveTokens(sanitize_text_field(wp_unslash($_GET['code'])));
+        $this->oidc_client->retrieveTokens(sanitize_text_field(wp_unslash($_GET['code'])), $state);
 
         // Validate the ID token
         $user_json_encoded = $this->oidc_client->validateTokens();
