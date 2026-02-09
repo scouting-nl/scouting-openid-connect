@@ -2,11 +2,11 @@
 # This file is distributed under the same license as the Scouting OpenID Connect plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Scouting OpenID Connect 2.1.0\n"
+"Project-Id-Version: Scouting OpenID Connect 2.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/"
 "issues\n"
-"POT-Creation-Date: 2025-12-02 22:12+0100\n"
-"PO-Revision-Date: 2025-12-02 22:12+0100\n"
+"POT-Creation-Date: 2026-02-09 23:24+0100\n"
+"PO-Revision-Date: 2026-02-09 23:32+0100\n"
 "Last-Translator: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language: nl_NL\n"
@@ -20,30 +20,45 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 
 #: auth/OpenIDConnectClient.php:101
+msgid ""
+"The identity provider does not support the required S256 code challenge "
+"method for PKCE."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:109
 msgid "The authorization_endpoint is not available in the well-known data."
 msgstr "Het authorization_endpoint is niet beschikbaar in de well-known data."
 
-#: auth/OpenIDConnectClient.php:117
+#: auth/OpenIDConnectClient.php:125
 msgid "The following scopes are not supported:"
 msgstr "De volgende scopes worden niet ondersteund:"
 
-#: auth/OpenIDConnectClient.php:117
+#: auth/OpenIDConnectClient.php:125
 msgid "The supported scopes are:"
 msgstr "De ondersteunde scopes zijn:"
 
-#: auth/OpenIDConnectClient.php:152
+#: auth/OpenIDConnectClient.php:176
 msgid "The token_endpoint is not available in the well-known data."
 msgstr "Het token_endpoint is niet beschikbaar in de well-known data."
 
-#: auth/OpenIDConnectClient.php:222
+#: auth/OpenIDConnectClient.php:188
+msgid "The code_verifier for PKCE is missing from the session."
+msgstr "De code_verifier voor PKCE ontbreekt in de sessie."
+
+#: auth/OpenIDConnectClient.php:230
+#, php-format
+msgid "Token endpoint error %1$s: %2$s"
+msgstr "Token-eindpuntfout %1$s: %2$s"
+
+#: auth/OpenIDConnectClient.php:263
 msgid "The ID token is not available in the tokens."
 msgstr "Het ID-token is niet beschikbaar in de tokens."
 
-#: auth/OpenIDConnectClient.php:230
+#: auth/OpenIDConnectClient.php:271
 msgid "The JSON Web Key Set (JWKS) is not available."
 msgstr "De JSON Web Key Set (JWKS) is niet beschikbaar."
 
-#: auth/OpenIDConnectClient.php:255
+#: auth/OpenIDConnectClient.php:296
 msgid ""
 "The certificate chain (x5c) for the key ID (kid) specified in the header was "
 "not found."
@@ -51,36 +66,36 @@ msgstr ""
 "De certificaatketen (x5c) voor de sleutel-ID (kid) in de koptekst is niet "
 "gevonden."
 
-#: auth/OpenIDConnectClient.php:268
+#: auth/OpenIDConnectClient.php:309
 msgid "The signature in the ID token is not valid."
 msgstr "De handtekening in het ID-token is niet geldig."
 
-#: auth/OpenIDConnectClient.php:344 auth/OpenIDConnectClient.php:403
+#: auth/OpenIDConnectClient.php:385 auth/OpenIDConnectClient.php:444
 msgid "No additional details provided."
 msgstr "Geen aanvullende details verstrekt."
 
-#: auth/OpenIDConnectClient.php:345
+#: auth/OpenIDConnectClient.php:386
 msgid "When retrieving well-known data, the status code was:"
 msgstr "Bij het ophalen van well-known data was de statuscode:"
 
-#: auth/OpenIDConnectClient.php:345 auth/OpenIDConnectClient.php:379
-#: auth/OpenIDConnectClient.php:404 auth/auth.php:240
+#: auth/OpenIDConnectClient.php:386 auth/OpenIDConnectClient.php:420
+#: auth/OpenIDConnectClient.php:445 auth/auth.php:243
 msgid "Details:"
 msgstr "Details:"
 
-#: auth/OpenIDConnectClient.php:371
+#: auth/OpenIDConnectClient.php:412
 msgid "The jwks_uri is not available in the well-known data."
 msgstr "De jwks_uri is niet beschikbaar in de well-known data."
 
-#: auth/OpenIDConnectClient.php:379
+#: auth/OpenIDConnectClient.php:420
 msgid "The jwks_uri is not a valid URL."
 msgstr "De jwks_uri is geen geldige URL."
 
-#: auth/OpenIDConnectClient.php:379
+#: auth/OpenIDConnectClient.php:420
 msgid "The jwks_uri is not valid:"
 msgstr "De jwks_uri is niet geldig:"
 
-#: auth/OpenIDConnectClient.php:404
+#: auth/OpenIDConnectClient.php:445
 msgid "When retrieving JWKS data, the status code was:"
 msgstr "Bij het ophalen van JWKS-gegevens was de statuscode:"
 
@@ -96,19 +111,19 @@ msgstr "Client-ID of Client Secret ontbreekt in de configuratie"
 msgid "Nonce is invalid"
 msgstr "Nonce is ongeldig"
 
-#: auth/auth.php:169
+#: auth/auth.php:172
 msgid "State is invalid"
 msgstr "State is ongeldig"
 
-#: auth/auth.php:180
+#: auth/auth.php:183
 msgid "Code is missing"
 msgstr "Code ontbreekt"
 
-#: auth/auth.php:205
+#: auth/auth.php:208
 msgid "Webmaster disabled creation of new accounts"
 msgstr "Webmaster heeft het aanmaken van nieuwe accounts uitgeschakeld"
 
-#: auth/auth.php:236
+#: auth/auth.php:239
 msgid "The user denied the request"
 msgstr "De gebruiker heeft het verzoek geweigerd"
 
@@ -141,50 +156,62 @@ msgid "Store gender to local profile"
 msgstr "Geslacht opslaan in lokaal profiel"
 
 #: settings/general.php:47
+msgid "Store phone number to local profile"
+msgstr "Telefoonnummer opslaan in lokaal profiel"
+
+#: settings/general.php:56
+msgid "Store address to local profile"
+msgstr "Adres opslaan in lokaal profiel"
+
+#: settings/general.php:66
+msgid "Use WooCommerce phone number and address fields"
+msgstr "Gebruik de velden voor telefoonnummer en adres van WooCommerce"
+
+#: settings/general.php:79
 msgid "Allow new user accounts"
 msgstr "Sta nieuwe gebruikers accounts toe"
 
-#: settings/general.php:56
+#: settings/general.php:88
 msgid "Redirect only SOL users"
 msgstr "Alleen SOL-gebruikers omleiden"
 
-#: settings/general.php:65
+#: settings/general.php:97
 msgid "After a successful login redirect user to"
 msgstr "Na een succesvolle aanmelding wordt de gebruiker doorgestuurd naar"
 
-#: settings/general.php:74
+#: settings/general.php:106
 msgid "Url to custom redirect after a successful login"
 msgstr "URL voor aangepaste omleiding na een succesvolle aanmelding"
 
-#: settings/general.php:190
+#: settings/general.php:251
 msgid "Full name"
 msgstr "Volledige naam"
 
-#: settings/general.php:191
+#: settings/general.php:252
 msgid "First name"
 msgstr "Voornaam"
 
-#: settings/general.php:192
+#: settings/general.php:253
 msgid "Last name"
 msgstr "Achternaam"
 
-#: settings/general.php:241
+#: settings/general.php:326
 msgid "Default (no action)"
 msgstr "Standaard (geen actie)"
 
-#: settings/general.php:242
+#: settings/general.php:327
 msgid "Frontpage"
 msgstr "Voorpagina"
 
-#: settings/general.php:243
+#: settings/general.php:328
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: settings/general.php:244
+#: settings/general.php:329
 msgid "Custom URL"
 msgstr "Aangepaste URL"
 
-#: settings/general.php:272
+#: settings/general.php:357
 msgid ""
 "Enter the slug to append to the base URL where users should be redirected "
 "after login."
@@ -387,7 +414,7 @@ msgstr ""
 "Opmerking: Kopieer deze link niet, deze zal niet werken. Dit is slechts een "
 "voorbeeld van hoe de link eruit zal zien."
 
-#: support/page.php:24 support/page.php:49
+#: support/page.php:24 support/page.php:66
 msgid "Support"
 msgstr "Support"
 
@@ -425,66 +452,101 @@ msgstr "Voeg de Post Logout Redirect URI toe:"
 
 #: support/page.php:35
 msgid ""
-"Select the scopes you want to use. The \"email\" and \"membership\" scopes "
-"are required; the \"profile\" scope is optional."
+"Select the scopes you want to use. The `Email`, `Personal` and `Membership` "
+"scopes are required;"
 msgstr ""
-"Selecteer de scopes die je wilt gebruiken. De scopes \"email\" en "
-"\"membership\" zijn verplicht; de \"profile\" scope is optioneel."
+"Selecteer de scopes die u wilt gebruiken. De scopes `E-mail`, `Persoonlijk` "
+"en `Lidmaatschap` zijn verplicht;"
 
 #: support/page.php:36
+msgid "The `Address`, `Phone number` scope is optional."
+msgstr "Het bereik `Adres`, `Telefoonnummer` is optioneel."
+
+#: support/page.php:37
+msgid "Currently the `Parents/guardians` scope is not supported."
+msgstr "Momenteel wordt het bereik `Ouders/voogden` niet ondersteund."
+
+#: support/page.php:38
 msgid "Select the organizations that can log in."
 msgstr "Selecteer de organisaties die kunnen inloggen."
 
-#: support/page.php:37
+#: support/page.php:39
 msgid ""
 "If your organization has sub-organizations, you can also select \"Allow "
-"suborganizations.\""
+"suborganizations\"."
 msgstr ""
 "Als je organisatie onderliggende organisaties heeft, kun je ook \"Inclusief "
 "onderliggende organisaties\" selecteren."
 
-#: support/page.php:38
-msgid "Press \"Add Website.\""
+#: support/page.php:40
+msgid "Select to use the PKCE (code challenge)."
+msgstr "Selecteer om PKCE (code challenge) te gebruiken."
+
+#: support/page.php:41
+msgid "Press \"Add Website\"."
 msgstr "Druk op \"Website toevoegen\"."
 
-#: support/page.php:39
+#: support/page.php:42
 msgid "Find the website you just created and click on ⓘ."
 msgstr "Zoek de website die je net hebt gemaakt en klik op ⓘ."
 
-#: support/page.php:40
+#: support/page.php:43
 msgid "Copy the \"Client ID\", \"Client Secret\", and the \"Scopes\" to the"
 msgstr "Kopieer de \"Client ID\", \"Client Secret\" en de \"Scopes\" naar de"
 
-#: support/page.php:43
-msgid ""
-"Fill in the OpenID Connect Settings with the copied data. Make sure the "
-"required scopes, \"openid\" , \"email\" and \"membership\", are present."
-msgstr ""
-"Vul de OpenID Connect Settings in met de gekopieerde gegevens. Zorg ervoor "
-"dat de vereiste scopes, \"openid\", \"email\" en \"membership\", aanwezig "
-"zijn."
+#: support/page.php:47
+msgid "Fill in the OpenID Connect Settings with the copied data."
+msgstr "Vul de OpenID Connect instellingen in met de gekopieerde gegevens."
 
-#: support/page.php:44
-msgid ""
-"Fill in the General Settings. If you want to store the birthdate, or gender, "
-"use the scope \"profile\"."
-msgstr ""
-"Vul de algemene instellingen in. Als u de geboortedatum of het geslacht wilt "
-"opslaan, gebruikt u de scope \"profile\"."
+#: support/page.php:48
+msgid "Required scopes:"
+msgstr "Vereiste scopes:"
 
-#: support/page.php:45
+#: support/page.php:50
+msgid "openid"
+msgstr "openid"
+
+#: support/page.php:51
+msgid "membership"
+msgstr "membership"
+
+#: support/page.php:52
+msgid "profile"
+msgstr "profile"
+
+#: support/page.php:53
+msgid "email"
+msgstr "email"
+
+#: support/page.php:55
+msgid "Optional scopes:"
+msgstr "Optionele scopes:"
+
+#: support/page.php:57
+msgid "address"
+msgstr "address"
+
+#: support/page.php:58
+msgid "phone"
+msgstr "phone"
+
+#: support/page.php:61
+msgid "Fill in the General Settings."
+msgstr "Vul de Algemene Instellingen in."
+
+#: support/page.php:62
 msgid "Press \"Save Settings\""
 msgstr "Druk op \"Save Settings\""
 
-#: support/page.php:46
+#: support/page.php:63
 msgid "Log out and try to log in with the Scouts Login button."
 msgstr "Log uit en probeer in te loggen met de knop Scouts Login."
 
-#: support/page.php:50
+#: support/page.php:67
 msgid "If you need help, please contact"
 msgstr "Als je hulp nodig hebt, neem dan contact op met"
 
-#: support/page.php:52
+#: support/page.php:69
 msgid "(developer of the plugin)"
 msgstr "(ontwikkelaar van de plugin)"
 
@@ -492,54 +554,94 @@ msgstr "(ontwikkelaar van de plugin)"
 msgid "Scouts Online (SOL) Profile Information"
 msgstr "Scouts Online (SOL) Profiel Informatie"
 
-#: user/fields.php:38
+#: user/fields.php:48
 msgid "Birthdate"
 msgstr "Geboortedatum"
 
-#: user/fields.php:57
+#: user/fields.php:67
 msgid "Gender"
 msgstr "Geslacht"
 
-#: user/fields.php:60
+#: user/fields.php:70
 msgid "Male"
 msgstr "Man"
 
-#: user/fields.php:61
+#: user/fields.php:71
 msgid "Female"
 msgstr "Vrouw"
 
-#: user/fields.php:62
+#: user/fields.php:72
 msgid "Other"
 msgstr "Overige"
 
-#: user/fields.php:63
+#: user/fields.php:73
 msgid "Unknown"
 msgstr "Onbekend"
 
-#: user/user.php:68
+#: user/fields.php:88
+msgid "Phone Number"
+msgstr "Telefoonnummer"
+
+#: user/fields.php:105
+msgid "Street"
+msgstr "Straat"
+
+#: user/fields.php:121
+msgid "House Number"
+msgstr "Huisnummer"
+
+#: user/fields.php:137
+msgid "Postal Code"
+msgstr "Postcode"
+
+#: user/fields.php:153
+msgid "City"
+msgstr "Plaats"
+
+#: user/fields.php:169
+msgid "Country Code"
+msgstr "Landcode"
+
+#: user/user.php:137
 msgid "SOL ID is missing, make sure the \"membership\" scope is enabled."
 msgstr ""
 "SOL ID ontbreekt, controleer of de scope \"membership\" is ingeschakeld."
 
-#: user/user.php:75
+#: user/user.php:145
 msgid "Email is missing, make sure the \"email\" scope is enabled."
 msgstr "E-mail ontbreekt, controleer of de scope \"email\" is ingeschakeld."
 
-#: user/user.php:103
+#: user/user.php:173
 msgid "Something went wrong while trying to update the username."
 msgstr "Er is iets misgegaan bij het bijwerken van de gebruikersnaam."
 
-#: user/user.php:157
+#: user/user.php:227
 msgid "SOL ID and Email have different user IDs"
 msgstr "SOL ID en e-mail hebben verschillende gebruikers-ID's"
 
-#: user/user.php:174
+#: user/user.php:244
 msgid "Email address is already in use by another account"
 msgstr "Het e-mailadres wordt al gebruikt door een andere account"
 
-#: user/user.php:188
+#: user/user.php:258
 msgid "Something went wrong while trying to log in"
 msgstr "Er is iets misgegaan tijdens het inloggen"
+
+#~ msgid ""
+#~ "Fill in the General Settings. Optional scopes: use \"profile\" for "
+#~ "birthdate and gender, \"phone\" for phone number, and \"address\" for "
+#~ "address information."
+#~ msgstr ""
+#~ "Vul de Algemene Instellingen in. Optionele scopes: gebruik “profile” voor "
+#~ "geboortedatum en geslacht, ‘phone’ voor telefoonnummer en “address” voor "
+#~ "adresgegevens."
+
+#~ msgid ""
+#~ "Fill in the General Settings. If you want to store the birthdate, or "
+#~ "gender, use the scope \"profile\"."
+#~ msgstr ""
+#~ "Vul de algemene instellingen in. Als u de geboortedatum of het geslacht "
+#~ "wilt opslaan, gebruikt u de scope \"profile\"."
 
 #~ msgid "Store Scouting ID to local profile"
 #~ msgstr "Scouting ID opslaan in lokaal profiel"

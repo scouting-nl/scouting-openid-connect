@@ -77,7 +77,7 @@ Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scout
 8. Press `Add Website`.
 9. Find the website you just created and click on ⓘ.
 10. Copy the Client ID, Client secret, and the scopes to your website.
-11. Fill in the OpenID Connect Settings with the copied data, Make sure the required scopes are present:
+11. Fill in the OpenID Connect Settings with the copied data. Make sure the required scopes are present:
     - `openid` (Required)
     - `membership` (Required)
     - `profile` (Required)
