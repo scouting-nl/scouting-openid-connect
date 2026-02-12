@@ -547,7 +547,9 @@ class OpenIDConnectClient
      * @return string the nonce from the session
      */
     public function getNonce(): string {
-        return $this->session->scouting_oidc_session_get('scouting_oidc_nonce');
+        $nonce = $this->session->scouting_oidc_session_get('scouting_oidc_nonce');
+
+        return is_string($nonce) ? $nonce : '';
     }
 
     /**
