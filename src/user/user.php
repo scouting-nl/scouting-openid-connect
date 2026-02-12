@@ -175,10 +175,10 @@ class User {
                 $plusAddressEmail = "{$localPart}+{$this->sol_id}@{$domain}";
 
                 // Check if the plus-addressed email is already in use by another account to avoid conflicts
-                $user_id_by_plus_address_email = email_exists($plusAddressEmail);
+                $user_id_by_email = email_exists($plusAddressEmail);
 
                 // If the plus-addressed email is already in use by another account that is not the current user, redirect with an error message
-                if ($user_id_by_plus_address_email && $user_id_by_plus_address_email !== username_exists($this->sol_id)) {
+                if ($user_id_by_email && $user_id_by_email !== username_exists($this->sol_id)) {
                     $hint = rawurlencode(__('Email address is already in use by another account', 'scouting-openid-connect'));
                     $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=login_email_mismatch");
                     wp_safe_redirect($redirect_url);
@@ -186,9 +186,9 @@ class User {
                 }
 
                 // Try creating the user again with the plus-addressed email
-                $user_id = wp_create_user($this->sol_id, wp_generate_password(18, true, true), $plusAddressEmail);
-                if (is_wp_error($user_id)) {
-                    $hint = rawurlencode(__('Email address is already in use by another account', 'scouting-openid-connect'));
+                $user_id_by_plus_address_email = wp_create_user($this->sol_id, wp_generate_password(18, true, true), $plusAddressEmail);
+                if (is_wp_error($user_id_by_plus_address_email)) {
+                    $hint = rawurlencode($user_id_by_plus_address_email->get_error_message());
                     $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=login_email_mismatch");
                     wp_safe_redirect($redirect_url);
                     exit;
