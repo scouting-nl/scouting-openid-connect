@@ -168,7 +168,7 @@ class User {
 
         // If user creation failed because the email address is already in use, append the SOL ID to the email (email+sol_id@example.com)
         if (is_wp_error($user_id) && $user_id->get_error_code() === 'existing_user_email') {
-            if (get_option('scouting_oidc_user_duplicate_email') === 'plus_addressing') {
+            if (get_option('scouting_oidc_user_duplicate_email', 'plus_addressing') === 'plus_addressing') {
 
                 // Generate a plus-addressed email using the SOL ID
                 list($localPart, $domain) = explode('@', $this->email, 2);
