@@ -454,7 +454,7 @@ class OpenIDConnectClient
      * Sets the scopes
      * 
      * @param array $scopes_array an array of scopes
-     * @return mixed true if the scopes are set, or an array of invalid scopes if any
+     * @return bool|array true if the scopes are set, or an array of invalid scopes if any
      */
     private function setScopes(array $scopes_array): bool|array {
         // Check if $scopes_array is not a valid array or is empty
