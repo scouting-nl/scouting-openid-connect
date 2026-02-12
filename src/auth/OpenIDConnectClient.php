@@ -531,7 +531,7 @@ class OpenIDConnectClient
     }
 
     /**
-     * Stores nonce
+     * Generates and stores a nonce in the session
      * 
      * @return string the nonce
      */
@@ -542,11 +542,11 @@ class OpenIDConnectClient
     }
 
     /**
-     * Get stored nonce
+     * Get stored nonce from the session
      *
-     * @return string|null
+     * @return string the nonce from the session
      */
-    public function getNonce(): ?string {
+    public function getNonce(): string {
         return $this->session->scouting_oidc_session_get('scouting_oidc_nonce');
     }
 

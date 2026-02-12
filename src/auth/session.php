@@ -39,7 +39,7 @@ class Session {
      */
     public function scouting_oidc_session_set_session_id(): void {
         $session_id = $this->scouting_oidc_session_get_session_id();
-        if ($session_id === null) {
+        if (empty($session_id)) {
             $session_id = bin2hex(random_bytes(16));
 
             // Get the domain for the cookie
@@ -65,17 +65,17 @@ class Session {
     /**
      * Get the scouting_oidc_session session ID value
      * 
-     * @return string|null the session ID value or null if the session ID does not exist
+     * @return string the session ID value or an empty string if the session ID does not exist
      */
-    private function scouting_oidc_session_get_session_id(): ?string {
+    private function scouting_oidc_session_get_session_id(): string {
         // Check if the cookie exists
         if (isset($_COOKIE['scouting_oidc_session'])) {
             // Unslash the cookie value and sanitize it
             return sanitize_text_field(wp_unslash($_COOKIE['scouting_oidc_session']));
         }
         
-        // Return null or a default value if the session ID does not exist
-        return null;
+        // Return empty string if the cookie does not exist
+        return '';
     }
 }
 ?>

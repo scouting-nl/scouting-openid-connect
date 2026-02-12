@@ -54,17 +54,17 @@ class Auth {
     }
 
     // Create shortcode with a login button
-    public function scouting_oidc_auth_login_button_shortcode(array $atts): ?string {
+    public function scouting_oidc_auth_login_button_shortcode(array $atts): string {
         // Check if the client ID and client secret are empty 
         if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
-            return;
+            return '';
         }
 
         $login_url = $this->scouting_oidc_auth_login_url();
 
         // Check if the login URL starts with 'init_error'
         if (substr($login_url, 0, 10) == 'init_error') {
-            return;
+            return '';
         }
 
         // Extract shortcode attributes (if any)
@@ -214,10 +214,10 @@ class Auth {
     }
 
     // Callback after failed login
-    public function scouting_oidc_auth_login_failed(string $message): ?string {
+    public function scouting_oidc_auth_login_failed(string $message): string {
         // Check if user is logged in
         if (!is_login()) {
-            return;
+            return $message;
         }
 
         // Check if nonce is valid
@@ -227,7 +227,7 @@ class Auth {
 
         // Check if error_description, hint, and message are set in the URL
         if (!isset($_GET['error_description'], $_GET['hint'], $_GET['message'])) {
-            return;
+            return $message;
         }
 
         $error_description = sanitize_text_field(wp_unslash($_GET['error_description']));
@@ -318,7 +318,7 @@ class Auth {
     }
 
     // Helper function to get the icon URL
-    private function scouting_oidc_auth_icon(): ?string {
+    private function scouting_oidc_auth_icon(): string {
         // Define the path to the SVG file
         $svg_file_path = SCOUTING_OIDC_PATH . 'assets/icon.svg';
 
@@ -338,6 +338,7 @@ class Auth {
             // Return the SVG content
             return $svg_content;
         }
+        return '';
     }
 
     // Helper function to get the allowed SVG tags
