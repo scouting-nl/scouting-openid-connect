@@ -166,7 +166,7 @@ class User {
     public function scouting_oidc_user_create() {
         $user_id = wp_create_user($this->sol_id, wp_generate_password(18, true, true), $this->email);
 
-        // If user creation failed because of some reason email address is already in use then add add sol_id to email email+sol_id@example.com
+        // If user creation failed because the email address is already in use, append the SOL ID to the email (email+sol_id@example.com)
         if (is_wp_error($user_id) && $user_id->get_error_code() === 'existing_user_email') {
             if (get_option('scouting_oidc_user_duplicate_email') === 'plus_addressing') {
 
