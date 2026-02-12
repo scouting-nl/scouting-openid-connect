@@ -85,6 +85,7 @@ class Settings
         update_option('scouting_oidc_user_address', false);
         update_option('scouting_oidc_user_woocommerce_sync', false);
         update_option('scouting_oidc_user_auto_create', true);
+        update_option('scouting_oidc_user_duplicate_email', 'plus_addressing');
         update_option('scouting_oidc_user_redirect', true);
         update_option('scouting_oidc_login_redirect', 'frontpage');
         update_option('scouting_oidc_custom_redirect', '');
