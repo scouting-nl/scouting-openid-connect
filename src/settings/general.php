@@ -345,7 +345,7 @@ class Settings_General
             'plus_addressing' => __('Add plus addressing to email', 'scouting-openid-connect'),
             'error' => __('Stop creation of user with an error', 'scouting-openid-connect'),
         );
-        $value = get_option('scouting_oidc_user_duplicate_email');
+        $value = get_option('scouting_oidc_user_duplicate_email', 'plus_addressing');
 
         echo '<select id="scouting_oidc_user_duplicate_email" name="scouting_oidc_user_duplicate_email" style="width: 310px;">';
         foreach ($possible_values as $key => $name) {
