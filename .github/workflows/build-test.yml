@@ -1,10 +1,8 @@
 name: 'build-test'
+
 on: 
-  pull_request: # Triggers on pull requests
-  push:         # Triggers on pushes to specified branches
-    branches:
-      - main
-      - development
+  pull_request:
+  push:
 
 jobs:
   plugin-check:
