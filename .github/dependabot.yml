@@ -1,0 +1,15 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    target-branch: "development"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    reviewers:
+      - "jobvk"
+      - "copilot"
+    assignees:
+      - "jobvk"
+    schedule:
+      interval: "weekly"
