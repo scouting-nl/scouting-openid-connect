@@ -22,10 +22,10 @@ class Fields
             if (get_option('scouting_oidc_user_gender')) {
                 $this->scouting_oidc_fields_gender($user);
             }
-            if (get_option('scouting_oidc_user_phone') && !get_option('scouting_oidc_user_woocommerce_sync')) {
+            if (get_option('scouting_oidc_user_phone') && (!get_option('scouting_oidc_user_woocommerce_sync') || !class_exists('WooCommerce'))) {
                 $this->scouting_oidc_fields_phone($user);
             }
-            if (get_option('scouting_oidc_user_address') && !get_option('scouting_oidc_user_woocommerce_sync')) {
+            if (get_option('scouting_oidc_user_address') && (!get_option('scouting_oidc_user_woocommerce_sync') || !class_exists('WooCommerce'))) {
                 $this->scouting_oidc_fields_address_street($user);
                 $this->scouting_oidc_fields_address_house_number($user);
                 $this->scouting_oidc_fields_address_postal_code($user);
