@@ -105,7 +105,7 @@ add_filter('login_message', [$scouting_oidc_auth, 'scouting_oidc_auth_login_fail
 add_filter('all_plugins', [$scouting_oidc_description, 'scouting_oidc_description_modify_plugin']);
 
 // Add display to safe style css for user profile fields
-add_filter('safe_style_css', function($styles): array {
+add_filter('safe_style_css', function(array $styles): array {
     $styles[] = 'display';
     return $styles;
 });
