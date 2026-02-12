@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Shortcode
 {
-    public function scouting_oidc_shortcode_submenu_page() {
+    public function scouting_oidc_shortcode_submenu_page(): void {
         add_submenu_page(
             'scouting-oidc-settings',                         // Parent slug (matches the main menu slug)
             'Shortcode',                                      // Page title
@@ -18,7 +18,7 @@ class Shortcode
     }
 
     // Callback to render support page content
-    public function scouting_oidc_shortcode_page_callback() {
+    public function scouting_oidc_shortcode_page_callback(): void {
         ?>
         <div class="wrap">
             <h1><?php esc_html_e('Shortcode', 'scouting-openid-connect'); ?></h1>
@@ -103,7 +103,7 @@ class Shortcode
     /**
      * This script renders JavaScript to live preview the shortcode with custom attributes
      */
-    public function scouting_oidc_shortcode_enqueue_live_script() {
+    public function scouting_oidc_shortcode_enqueue_live_script(): void {
         // Enqueue the external JavaScript file with the defer attribute
         wp_enqueue_script(
             'live-shortcode-script',                    // Handle name

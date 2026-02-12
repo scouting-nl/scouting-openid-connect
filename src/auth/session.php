@@ -10,7 +10,7 @@ class Session {
      * @param string $key the key to set in the transient session
      * @param mixed $value the value to set in the transient session
      */
-    public function scouting_oidc_session_set(string $key, mixed $value) {
+    public function scouting_oidc_session_set(string $key, mixed $value): void {
         set_transient('scouting_oidc_session_'.$this->scouting_oidc_session_get_session_id().'_'.$key, $value, 60*60*1);
     }
 
@@ -20,7 +20,7 @@ class Session {
      * @param string $key the key to get from the transient session
      * @return mixed the value from the transient session
      */
-    public function scouting_oidc_session_get(string $key) {
+    public function scouting_oidc_session_get(string $key): mixed {
         $value = get_transient('scouting_oidc_session_'.$this->scouting_oidc_session_get_session_id().'_'.$key);
         return $value;
     }
@@ -30,14 +30,14 @@ class Session {
      * 
      * @param string $key the key to delete from the transient session
      */
-    public function scouting_oidc_session_delete(string $key) {
+    public function scouting_oidc_session_delete(string $key): void {
         delete_transient('scouting_oidc_session_'.$this->scouting_oidc_session_get_session_id().'_'.$key);
     }
 
     /**
      * Set a user unique session ID named 'scouting_oidc_session' with a 1 hour expiration time
      */
-    public function scouting_oidc_session_set_session_id() {
+    public function scouting_oidc_session_set_session_id(): void {
         $session_id = $this->scouting_oidc_session_get_session_id();
         if ($session_id === null) {
             $session_id = bin2hex(random_bytes(16));
@@ -67,7 +67,7 @@ class Session {
      * 
      * @return string|null the session ID value or null if the session ID does not exist
      */
-    private function scouting_oidc_session_get_session_id() {
+    private function scouting_oidc_session_get_session_id(): ?string {
         // Check if the cookie exists
         if (isset($_COOKIE['scouting_oidc_session'])) {
             // Unslash the cookie value and sanitize it

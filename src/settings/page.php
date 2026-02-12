@@ -11,7 +11,7 @@ use ScoutingOIDC\Settings_General;
 
 class Settings
 {
-    public function scouting_oidc_settings_submenu_page() {
+    public function scouting_oidc_settings_submenu_page(): void {
         add_submenu_page(
             'scouting-oidc-settings',                        // Parent slug (matches the main menu slug)
             'Settings',                                      // Page title
@@ -24,7 +24,7 @@ class Settings
     }
 
     // Callback to render settings page content
-    public function scouting_oidc_settings_page_callback() {
+    public function scouting_oidc_settings_page_callback(): void {
         ?>
         <div class="wrap">
             <h1><?php esc_html_e('Settings', 'scouting-openid-connect'); ?></h1>
@@ -45,7 +45,7 @@ class Settings
     }
 
     // Add the OpenID Connect settings page to the admin menu
-    public function scouting_oidc_settings_page_init() {
+    public function scouting_oidc_settings_page_init(): void {
         $scouting_oidc_settings_oidc = new Settings_Oidc();
         $scouting_oidc_settings_oidc->scouting_oidc_settings_oidc();
 
@@ -56,7 +56,7 @@ class Settings
     /**
      * This script renders JavaScript to hide the custom redirect field when not needed.
      */
-    public function scouting_oidc_fields_enqueue_hide_field_script() {
+    public function scouting_oidc_fields_enqueue_hide_field_script(): void {
         // Enqueue the external JavaScript file
         wp_enqueue_script(
             'hide-field-script',                    // Handle name
@@ -71,7 +71,7 @@ class Settings
     } 
 
     // Set up defaults during installation
-    public function scouting_oidc_settings_install() {
+    public function scouting_oidc_settings_install(): void {
         // Set default options for OIDC
         update_option('scouting_oidc_client_id', '');
         update_option('scouting_oidc_client_secret', '');

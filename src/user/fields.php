@@ -10,7 +10,7 @@ class Fields
      * 
      * @param WP_User $user The user object
      */
-    public function scouting_oidc_fields_user_profile($user) {
+    public function scouting_oidc_fields_user_profile(\WP_User $user): void {
         ?>
         <h2><?php esc_html_e('Scouts Online (SOL) Profile Information', 'scouting-openid-connect'); ?></h2>
 
@@ -42,7 +42,7 @@ class Fields
      * 
      * @param WP_User $user The user object
      */
-    public function scouting_oidc_fields_birthdate($user) {
+    public function scouting_oidc_fields_birthdate(\WP_User $user): void {
         ?>
         <tr>
             <th><label for="birthdate"><?php esc_html_e('Birthdate', 'scouting-openid-connect'); ?></label></th>
@@ -58,7 +58,7 @@ class Fields
      * 
      * @param WP_User $user The user object
      */
-    public function scouting_oidc_fields_gender($user) {
+    public function scouting_oidc_fields_gender(\WP_User $user): void {
         if (get_the_author_meta('scouting_oidc_gender', $user->ID) == '') {
             update_user_meta($user->ID, 'scouting_oidc_gender', 'unknown');
         }
@@ -82,7 +82,7 @@ class Fields
      * 
      * @param WP_User $user The user object
      */
-    public function scouting_oidc_fields_phone($user) {
+    public function scouting_oidc_fields_phone(\WP_User $user): void {
         ?>
         <tr>
             <th><label for="phone_number"><?php esc_html_e('Phone Number', 'scouting-openid-connect'); ?></label></th>
@@ -99,7 +99,7 @@ class Fields
      * 
      * @param WP_User $user The user object
      */
-    public function scouting_oidc_fields_address_street($user) {
+    public function scouting_oidc_fields_address_street(\WP_User $user): void {
         ?>
         <tr>
             <th><label for="street"><?php esc_html_e('Street', 'scouting-openid-connect'); ?></label></th>
@@ -115,7 +115,7 @@ class Fields
      * 
      * @param WP_User $user The user object
      */
-    public function scouting_oidc_fields_address_house_number($user) {
+    public function scouting_oidc_fields_address_house_number(\WP_User $user): void {
         ?>
         <tr>
             <th><label for="house_number"><?php esc_html_e('House Number', 'scouting-openid-connect'); ?></label></th>
@@ -131,7 +131,7 @@ class Fields
      * 
      * @param WP_User $user The user object
      */
-    public function scouting_oidc_fields_address_postal_code($user) {
+    public function scouting_oidc_fields_address_postal_code(\WP_User $user): void {
         ?>
         <tr>
             <th><label for="postal_code"><?php esc_html_e('Postal Code', 'scouting-openid-connect'); ?></label></th>
@@ -147,7 +147,7 @@ class Fields
      * 
      * @param WP_User $user The user object
      */
-    public function scouting_oidc_fields_address_locality($user) {
+    public function scouting_oidc_fields_address_locality(\WP_User $user): void {
         ?>
         <tr>
             <th><label for="locality"><?php esc_html_e('City', 'scouting-openid-connect'); ?></label></th>
@@ -163,7 +163,7 @@ class Fields
      * 
      * @param WP_User $user The user object
      */
-    public function scouting_oidc_fields_address_country_code($user) {
+    public function scouting_oidc_fields_address_country_code(\WP_User $user): void {
         ?>
         <tr>
             <th><label for="country_code"><?php esc_html_e('Country Code', 'scouting-openid-connect'); ?></label></th>

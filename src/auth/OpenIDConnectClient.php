@@ -92,7 +92,7 @@ class OpenIDConnectClient
      * @param array $scopes_array an array of scopes
      * @return string the authentication URL
      */
-    public function getAuthenticationURL($response_type, $scopes_array) {
+    public function getAuthenticationURL(string $response_type, array $scopes_array): string {
         $this->getWellKnownData();
         $this->getJWKSData();
 
@@ -161,7 +161,7 @@ class OpenIDConnectClient
      * 
      * @param string $code the code from the authorization server
      */
-    public function retrieveTokens($code, ?string $state = null) {
+    public function retrieveTokens(string $code, ?string $state = null): void {
         $this->getWellKnownData();
         $this->getJWKSData();
 
@@ -243,7 +243,7 @@ class OpenIDConnectClient
     /**
      * Function to unset the state and nonce
      */
-    public function unsetStatesAndNonce() {
+    public function unsetStatesAndNonce(): void {
         $this->session->scouting_oidc_session_delete('scouting_oidc_states');
         $this->session->scouting_oidc_session_delete('scouting_oidc_nonce');
         $this->session->scouting_oidc_session_delete('scouting_oidc_code_verifiers');
@@ -254,7 +254,7 @@ class OpenIDConnectClient
      * 
      * @return array returns the payload 
      */
-    public function validateTokens() {
+    public function validateTokens(): array {
         $this->getWellKnownData();
         $this->getJWKSData();
 
@@ -321,7 +321,7 @@ class OpenIDConnectClient
      * 
      * @return string returns the logout URL
      */
-    public function getLogoutUrl() {
+    public function getLogoutUrl(): string {
         $this->getWellKnownData();
         $this->getJWKSData();
 
@@ -350,7 +350,7 @@ class OpenIDConnectClient
     /**
      * Gets anything that we need configuration wise including endpoints, and other values
      */
-    public function getWellKnownData() {
+    public function getWellKnownData(): void {
         // Define a transient key for caching the well-known data
         $transient_key = 'scouting_oidc_well_known_data';
 
@@ -394,7 +394,7 @@ class OpenIDConnectClient
     /**
      * Gets the JSON Web Key Set (JWKS) from the jwks_uri
      */
-    public function getJWKSData() {
+    public function getJWKSData(): void {
         // Define a transient key for caching the JWKS data
         $transient_key = 'scouting_oidc_jwks_data';
     
@@ -456,7 +456,7 @@ class OpenIDConnectClient
      * @param array $scopes_array an array of scopes
      * @return mixed true if the scopes are set, or an array of invalid scopes if any
      */
-    private function setScopes(array $scopes_array): mixed {
+    private function setScopes(array $scopes_array): bool|array {
         // Check if $scopes_array is not a valid array or is empty
         if (!is_array($scopes_array) || empty($scopes_array)) {
             return false;
@@ -484,7 +484,7 @@ class OpenIDConnectClient
      * @param int $length the length of the token
      * @return string the token
      */
-    private function generateToken($length) {
+    private function generateToken(int $length): string {
         //set up random characters
         $chars='1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
         // Get the length of the random characters
@@ -535,7 +535,7 @@ class OpenIDConnectClient
      * 
      * @return string the nonce
      */
-    private function setNonce() {
+    private function setNonce(): string {
         $nonce = wp_create_nonce('scouting_oidc_nonce');
         $this->session->scouting_oidc_session_set('scouting_oidc_nonce', $nonce);
         return $nonce;
@@ -546,7 +546,7 @@ class OpenIDConnectClient
      *
      * @return string|null
      */
-    public function getNonce() {
+    public function getNonce(): ?string {
         return $this->session->scouting_oidc_session_get('scouting_oidc_nonce');
     }
 
@@ -556,7 +556,7 @@ class OpenIDConnectClient
      * @param string $state the state to store
      * @return string the state
      */
-    private function setState(string $state) {
+    private function setState(string $state): string {
         // Retrieve the current array of states, or initialize as empty
         $states = $this->session->scouting_oidc_session_get('scouting_oidc_states') ?? [];
 
@@ -631,7 +631,7 @@ class OpenIDConnectClient
      * @param string $input
      * @return string
      */
-    private function base64UrlEncode($input) {
+    private function base64UrlEncode(string $input): string {
         return rtrim(strtr(base64_encode($input), '+/', '-_'), '=');
     }
 
@@ -641,7 +641,7 @@ class OpenIDConnectClient
      * @param string $input
      * @return string the decoded string
      */
-    private function base64UrlDecode($input) {
+    private function base64UrlDecode(string $input): string {
         return base64_decode(strtr($input, '-_', '+/'));
     }
 }

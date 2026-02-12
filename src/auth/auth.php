@@ -26,7 +26,7 @@ class Auth {
     }
 
     // Add the OpenID Connect button to the login form
-    public function scouting_oidc_auth_login_form() {
+    public function scouting_oidc_auth_login_form(): void {
         // Check if the client ID and client secret are empty 
         if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
             return;
@@ -54,7 +54,7 @@ class Auth {
     }
 
     // Create shortcode with a login button
-    public function scouting_oidc_auth_login_button_shortcode($atts) {
+    public function scouting_oidc_auth_login_button_shortcode(array $atts): ?string {
         // Check if the client ID and client secret are empty 
         if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
             return;
@@ -101,7 +101,7 @@ class Auth {
     }
 
     // Create shortcode with the OpenID Authentication URL
-    public function scouting_oidc_auth_login_url_shortcode() {
+    public function scouting_oidc_auth_login_url_shortcode(): string {
         // Check if the client ID and client secret are empty 
         if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
             $hint = rawurlencode(__('Client ID or Client Secret are missing in the configuration', 'scouting-openid-connect'));
@@ -122,7 +122,7 @@ class Auth {
     }
 
     // Callback to login with OpenID Connect
-    public function scouting_oidc_auth_callback() {
+    public function scouting_oidc_auth_callback(): void {
         // Check if we're on the front page
         if (!is_front_page()) {
             return;
@@ -214,7 +214,7 @@ class Auth {
     }
 
     // Callback after failed login
-    public function scouting_oidc_auth_login_failed($message) {
+    public function scouting_oidc_auth_login_failed(string $message): ?string {
         // Check if user is logged in
         if (!is_login()) {
             return;
@@ -256,7 +256,7 @@ class Auth {
     }
 
     // Redirect after login based on settings
-    public function scouting_oidc_auth_login_redirect($user_login) {
+    public function scouting_oidc_auth_login_redirect(string $user_login): void {
         $user = get_user_by('login', $user_login);
         if (!$user) return;
 
@@ -297,7 +297,7 @@ class Auth {
     }
 
     // Redirect after logout based on settings
-    public function scouting_oidc_auth_logout_redirect() {
+    public function scouting_oidc_auth_logout_redirect(): void {
         $logout_url = esc_url_raw($this->oidc_client->getLogoutUrl());
 
         // Make sure the external logout host is allowed for safe redirects.
@@ -305,7 +305,7 @@ class Auth {
         // so we add the logout host here to avoid blocking a trusted external logout URL.
         $host = wp_parse_url($logout_url, PHP_URL_HOST);
         if (!empty($host)) {
-            add_filter('allowed_redirect_hosts', function ($hosts) use ($host) {
+            add_filter('allowed_redirect_hosts', function (array $hosts) use ($host): array {
                 if (!in_array($host, $hosts, true)) {
                     $hosts[] = $host;
                 }
@@ -318,7 +318,7 @@ class Auth {
     }
 
     // Helper function to get the icon URL
-    private function scouting_oidc_auth_icon() {
+    private function scouting_oidc_auth_icon(): ?string {
         // Define the path to the SVG file
         $svg_file_path = SCOUTING_OIDC_PATH . 'assets/icon.svg';
 
@@ -341,7 +341,7 @@ class Auth {
     }
 
     // Helper function to get the allowed SVG tags
-    private function scouting_oidc_auth_icon_wp_kses_allowed_svg () {
+    private function scouting_oidc_auth_icon_wp_kses_allowed_svg (): array {
         return array(
             'svg' => array(
                 'version' => true,
@@ -366,7 +366,7 @@ class Auth {
     }
 
     // Helper function to get the login URL
-    private function scouting_oidc_auth_login_url() {
+    private function scouting_oidc_auth_login_url(): string {
         $response_type = 'code';
         $scopes = array_map('sanitize_text_field', explode(" ", get_option('scouting_oidc_scopes')));
 

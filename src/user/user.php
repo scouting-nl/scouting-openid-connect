@@ -156,14 +156,14 @@ class User {
      * 
      * @return bool True if user exists, false otherwise
      */
-    public function scouting_oidc_user_check_if_exist() {
+    public function scouting_oidc_user_check_if_exist(): bool {
         return (bool) username_exists($this->sol_id);
     }
 
     /**
      * Create a new user
      */
-    public function scouting_oidc_user_create() {
+    public function scouting_oidc_user_create(): void {
         $user_id = wp_create_user($this->sol_id, wp_generate_password(18, true, true), $this->email);
 
         // If user creation failed because the email address is already in use, append the SOL ID to the email (email+sol_id@example.com)
@@ -219,7 +219,7 @@ class User {
     /**
      * Update user data if user already exists
      */
-    public function scouting_oidc_user_update() {
+    public function scouting_oidc_user_update(): void {
         $user_id_by_sol_id = username_exists($this->sol_id);
         $user_id_by_email = email_exists($this->email);
 
@@ -279,7 +279,7 @@ class User {
     /**
      * Login user
      */	
-    public function scouting_oidc_user_login() {
+    public function scouting_oidc_user_login(): void {
         $user = get_user_by('login', $this->sol_id);
 
         if (!$user) {
@@ -312,7 +312,7 @@ class User {
      * 
      * @param int $user_id User ID
      */
-    private function scouting_oidc_user_update_meta(int $user_id) {
+    private function scouting_oidc_user_update_meta(int $user_id): void {
         update_user_meta($user_id, 'first_name', $this->firstName);
         update_user_meta($user_id, 'last_name', $this->infix . ' ' . $this->familyName);
         update_user_meta($user_id, 'locale', $this->language);
@@ -371,7 +371,7 @@ class User {
      * 
      * @param int $user_id User ID
      */
-    private function scouting_oidc_user_sync_to_woocommerce(int $user_id) {
+    private function scouting_oidc_user_sync_to_woocommerce(int $user_id): void {
         // Only run when WooCommerce is active and we have a WP_User instance
         if (!class_exists('WooCommerce') || !($user = get_user_by('ID', $user_id))) {
             return;
