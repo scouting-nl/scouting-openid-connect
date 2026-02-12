@@ -639,9 +639,9 @@ class OpenIDConnectClient
      * Decodes a base64url encoded string
      *
      * @param string $input
-     * @return string the decoded string
+     * @return string|false the decoded string or false on failure
      */
-    private function base64UrlDecode(string $input): string {
+    private function base64UrlDecode(string $input): string|false {
         return base64_decode(strtr($input, '-_', '+/'));
     }
 }
