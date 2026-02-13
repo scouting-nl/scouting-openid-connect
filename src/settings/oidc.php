@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Settings_Oidc
 {
-    function scouting_oidc_settings_oidc() {
+    function scouting_oidc_settings_oidc(): void {
         // Add settings sections
         add_settings_section(
             'scouting_oidc_settings',                                 // ID
@@ -70,22 +70,22 @@ class Settings_Oidc
     }
 
     // Callback to render section content
-    function scouting_oidc_settings_oidc_callback() {}
+    function scouting_oidc_settings_oidc_callback(): void {}
 
     // Callback to render text field
-    function scouting_oidc_settings_oidc_client_id_callback() {
+    function scouting_oidc_settings_oidc_client_id_callback(): void {
         $value = get_option('scouting_oidc_client_id');
         echo '<input type="text" id="scouting_oidc_client_id" name="scouting_oidc_client_id" placeholder="'. esc_attr__("Client ID", "scouting-openid-connect") .'" value="' . esc_attr($value) . '" size="55" required>';
     }
 
     // Callback to render text field
-    function scouting_oidc_settings_oidc_client_secret_callback() {
+    function scouting_oidc_settings_oidc_client_secret_callback(): void {
         $value = get_option('scouting_oidc_client_secret');
         echo '<input type="text" id="scouting_oidc_client_secret" name="scouting_oidc_client_secret" placeholder="'. esc_attr__("Client Secret", "scouting-openid-connect") .'" value="' . esc_attr($value) . '" size="150" required>';
     }
 
     // Callback to render text field
-    function scouting_oidc_settings_oidc_scopes_callback() {
+    function scouting_oidc_settings_oidc_scopes_callback(): void {
         $value = get_option('scouting_oidc_scopes');
         echo '<input type="text" id="scouting_oidc_scopes" name="scouting_oidc_scopes" placeholder="'. esc_attr__("Scopes", "scouting-openid-connect") .'" value="' . esc_attr($value) . '" size="55" required>';
     }

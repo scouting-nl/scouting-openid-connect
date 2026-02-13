@@ -59,7 +59,7 @@ $scouting_oidc_support = new Support();
 $scouting_oidc_fields = new Fields();
 
 // Init plugin
-function scouting_oidc_init()
+function scouting_oidc_init(): void
 {
     global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode, $scouting_oidc_settings; // Declare global variables
 
@@ -105,7 +105,7 @@ add_filter('login_message', [$scouting_oidc_auth, 'scouting_oidc_auth_login_fail
 add_filter('all_plugins', [$scouting_oidc_description, 'scouting_oidc_description_modify_plugin']);
 
 // Add display to safe style css for user profile fields
-add_filter('safe_style_css', function( $styles ) {
+add_filter('safe_style_css', function(array $styles): array {
     $styles[] = 'display';
     return $styles;
 });

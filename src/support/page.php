@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Support
 {
-    public function scouting_oidc_support_submenu_page() {
+    public function scouting_oidc_support_submenu_page(): void {
         add_submenu_page(
             'scouting-oidc-settings',                       // Parent slug (matches the main menu slug)
             'Support',                                      // Page title
@@ -18,7 +18,7 @@ class Support
     }
 
     // Callback to render support page content
-    public function scouting_oidc_support_page_callback() {
+    public function scouting_oidc_support_page_callback(): void {
         ?>
         <div class="wrap">
             <h1><?php esc_html_e('Support', 'scouting-openid-connect'); ?></h1>

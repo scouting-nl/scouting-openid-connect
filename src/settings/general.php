@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Settings_General
 {
-    public function scouting_oidc_settings_general() {
+    public function scouting_oidc_settings_general(): void {
         // Add settings sections
         add_settings_section(
             'scouting_oidc_general_settings',                   // ID
@@ -224,7 +224,7 @@ class Settings_General
     }
 
     // Sanitize the display name option
-    public function scouting_oidc_sanitize_display_name_option($input) {
+    public function scouting_oidc_sanitize_display_name_option(mixed $input): string {
         // Define allowed options
         $valid = ['fullname', 'firstname', 'lastname'];
         
@@ -233,12 +233,12 @@ class Settings_General
     }
 
     // Sanitize the input value as boolean
-    public function scouting_oidc_sanitize_boolean_option($input) {
+    public function scouting_oidc_sanitize_boolean_option(mixed $input): int {
         return $input ? 1 : 0;
     }
 
     // Sanitize the duplicate email option
-    public function scouting_oidc_sanitize_duplicate_email_option($input) {
+    public function scouting_oidc_sanitize_duplicate_email_option(mixed $input): string {
         // Define allowed options
         $valid = ['plus_addressing', 'error'];
 
@@ -247,7 +247,7 @@ class Settings_General
     }
 
     // Sanitize the login redirect option
-    public function scouting_oidc_sanitize_login_redirect_option($input) {
+    public function scouting_oidc_sanitize_login_redirect_option(mixed $input): string {
         // Define allowed options
         $valid = ['default', 'frontpage', 'dashboard', 'custom'];
         
@@ -256,7 +256,7 @@ class Settings_General
     }
 
     // Sanitize the custom redirect option
-    public function scouting_oidc_sanitize_custom_redirect_option($input) {
+    public function scouting_oidc_sanitize_custom_redirect_option(mixed $input): string {
         // Define your fixed base domain
         $base_domain = home_url('/');
 
@@ -270,10 +270,10 @@ class Settings_General
     }
 
     // Callback to render section content
-    public function scouting_oidc_settings_general_callback() {}
+    public function scouting_oidc_settings_general_callback(): void {}
 
     // Callback to render selectbox field
-    public function scouting_oidc_settings_general_display_name_callback() {
+    public function scouting_oidc_settings_general_display_name_callback(): void {
         $possible_values = array(
             'fullname' => __('Full name', 'scouting-openid-connect'),
             'firstname' => __('First name', 'scouting-openid-connect'),
@@ -292,7 +292,7 @@ class Settings_General
     }
 
     // Callback to render checkbox field
-    public function scouting_oidc_settings_general_birthdate_callback() {
+    public function scouting_oidc_settings_general_birthdate_callback(): void {
         if (get_option('scouting_oidc_user_birthdate'))
             echo '<input type="checkbox" id="scouting_oidc_user_birthdate" name="scouting_oidc_user_birthdate" checked/>';
         else
@@ -300,7 +300,7 @@ class Settings_General
     }
 
     // Callback to render checkbox field
-    public function scouting_oidc_settings_general_gender_callback() {
+    public function scouting_oidc_settings_general_gender_callback(): void {
         if (get_option('scouting_oidc_user_gender'))
             echo '<input type="checkbox" id="scouting_oidc_user_gender" name="scouting_oidc_user_gender" checked/>';
         else 
@@ -308,7 +308,7 @@ class Settings_General
     }
 
     // Callback to render checkbox field
-    public function scouting_oidc_settings_general_phone_callback() {
+    public function scouting_oidc_settings_general_phone_callback(): void {
         if (get_option('scouting_oidc_user_phone'))
             echo '<input type="checkbox" id="scouting_oidc_user_phone" name="scouting_oidc_user_phone" checked/>';
         else 
@@ -316,7 +316,7 @@ class Settings_General
     }
 
     // Callback to render checkbox field
-    public function scouting_oidc_settings_general_address_callback() {
+    public function scouting_oidc_settings_general_address_callback(): void {
         if (get_option('scouting_oidc_user_address'))
             echo '<input type="checkbox" id="scouting_oidc_user_address" name="scouting_oidc_user_address" checked/>';
         else 
@@ -324,7 +324,7 @@ class Settings_General
     }
 
     // Callback to render checkbox field
-    public function scouting_oidc_settings_general_woocommerce_sync_callback() {
+    public function scouting_oidc_settings_general_woocommerce_sync_callback(): void {
         if (get_option('scouting_oidc_user_woocommerce_sync'))
             echo '<input type="checkbox" id="scouting_oidc_user_woocommerce_sync" name="scouting_oidc_user_woocommerce_sync" checked/>';
         else 
@@ -332,7 +332,7 @@ class Settings_General
     }
 
     // Callback to render checkbox field
-    public function scouting_oidc_settings_general_user_auto_create_callback() {
+    public function scouting_oidc_settings_general_user_auto_create_callback(): void {
         if (get_option('scouting_oidc_user_auto_create'))
             echo '<input type="checkbox" id="scouting_oidc_user_auto_create" name="scouting_oidc_user_auto_create" checked/>';
         else
@@ -340,7 +340,7 @@ class Settings_General
     }
 
     // Callback to render selectbox field
-    public function scouting_oidc_settings_general_duplicate_email_callback() {
+    public function scouting_oidc_settings_general_duplicate_email_callback(): void {
         $possible_values = array(
             'plus_addressing' => __('Add plus addressing to email', 'scouting-openid-connect'),
             'error' => __('Stop creation of user with an error', 'scouting-openid-connect'),
@@ -358,7 +358,7 @@ class Settings_General
     }
 
     // Callback to render checkbox field
-    public function scouting_oidc_settings_general_user_redirect_callback() {
+    public function scouting_oidc_settings_general_user_redirect_callback(): void {
         if (get_option('scouting_oidc_user_redirect'))
             echo '<input type="checkbox" id="scouting_oidc_user_redirect" name="scouting_oidc_user_redirect" checked/>';
         else
@@ -366,7 +366,7 @@ class Settings_General
     }
 
     // Callback to render selectbox field
-    public function scouting_oidc_settings_general_login_redirect_callback() {
+    public function scouting_oidc_settings_general_login_redirect_callback(): void {
         $possible_values = array(
             'default' => __('Default (no action)', 'scouting-openid-connect'),
             'frontpage' => __('Frontpage', 'scouting-openid-connect'),
@@ -386,7 +386,7 @@ class Settings_General
     }
 
     // Callback to render text field
-    public function scouting_oidc_settings_general_custom_redirect_callback() {
+    public function scouting_oidc_settings_general_custom_redirect_callback(): void {
         $value = get_option('scouting_oidc_custom_redirect');
 
         // Define your fixed base domain
