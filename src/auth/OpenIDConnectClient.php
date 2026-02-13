@@ -275,42 +275,17 @@ class OpenIDConnectClient
         }
 
         // Split the token into header, payload and signature
-        $token_parts = explode('.', $this->tokens->id_token);
-        if (count($token_parts) !== 3) {
-            $hint = rawurlencode(__('The ID token format is invalid. Expected 3 JWT segments.', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=id_token_invalid_format");
-            wp_safe_redirect($redirect_url);
-            exit;
-        }
-
-        list($headerEncoded, $payloadEncoded, $signatureEncoded) = $token_parts;
-
+        list($headerEncoded, $payloadEncoded, $signatureEncoded) = explode('.', $this->tokens->id_token);
+        
         // Decode the header, payload and signature
-        $headerDecoded = $this->base64UrlDecode($headerEncoded);
-        $payloadDecoded = $this->base64UrlDecode($payloadEncoded);
+        $header = json_decode($this->base64UrlDecode($headerEncoded), true);
+        $payload = json_decode($this->base64UrlDecode($payloadEncoded), true);
         $signature = $this->base64UrlDecode($signatureEncoded);
-
-        if ($headerDecoded === false || $payloadDecoded === false || $signature === false) {
-            $hint = rawurlencode(__('The ID token could not be base64url-decoded.', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=id_token_decode_failed");
-            wp_safe_redirect($redirect_url);
-            exit;
-        }
-
-        $header = json_decode($headerDecoded, true);
-        $payload = json_decode($payloadDecoded, true);
-
-        if (!is_array($header) || !is_array($payload)) {
-            $hint = rawurlencode(__('The ID token contains invalid JSON in the JWT header or payload.', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=id_token_json_invalid");
-            wp_safe_redirect($redirect_url);
-            exit;
-        }
 
         // Loop through the keys in the JSON Web Key Set (JWKS) to find the certificate chain (x5c) for the key ID (kid) specified in the header
         $x5c = null;
         foreach ($this->jwks->keys as $key) {
-            if (isset($header['kid']) && $key->kid === $header['kid']) {
+            if ($key->kid === $header['kid']) {
                 $x5c = $key->x5c[0];
                 break;
             }
@@ -329,13 +304,6 @@ class OpenIDConnectClient
 
         // Check if the signature is valid
         $publicKey = openssl_pkey_get_public($public_key_certificate);
-        if ($publicKey === false) {
-            $hint = rawurlencode(__('The public key from the certificate chain (x5c) is invalid.', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=public_key_invalid");
-            wp_safe_redirect($redirect_url);
-            exit;
-        }
-
         $signatureValid = openssl_verify($headerEncoded . '.' . $payloadEncoded, $signature, $publicKey, OPENSSL_ALGO_SHA256);
         if ($signatureValid !== 1) {
             $hint = rawurlencode(__('The signature in the ID token is not valid.', 'scouting-openid-connect'));
@@ -676,14 +644,7 @@ class OpenIDConnectClient
      * @return string|false the decoded string or false on failure
      */
     private function base64UrlDecode(string $input): string|false {
-        $normalized = strtr($input, '-_', '+/');
-        $padding = strlen($normalized) % 4;
-
-        if ($padding > 0) {
-            $normalized .= str_repeat('=', 4 - $padding);
-        }
-
-        return base64_decode($normalized, true);
+        return base64_decode(strtr($input, '-_', '+/'));
     }
 }
 ?>

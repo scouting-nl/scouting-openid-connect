@@ -55,6 +55,7 @@ class Auth {
 
     // Create shortcode with a login button
     public function scouting_oidc_auth_login_button_shortcode(array $atts = array()): string {
+    public function scouting_oidc_auth_login_button_shortcode(array $atts): string {
         // Check if the client ID and client secret are empty 
         if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
             return '';
@@ -134,7 +135,7 @@ class Auth {
         }
 
         // Check if nonce is valid with wp_verify_nonce
-        if (wp_verify_nonce($this->oidc_client->getNonce(), 'scouting_oidc_nonce')) {
+        if (wp_verify_nonce($this->oidc_client->getNonce())) {
             $this->oidc_client->unsetStatesAndNonce();
 
             $hint = rawurlencode(__('Nonce is invalid', 'scouting-openid-connect'));
@@ -221,7 +222,7 @@ class Auth {
         }
 
         // Check if nonce is valid
-        if (wp_verify_nonce($this->oidc_client->getNonce(), 'scouting_oidc_nonce')) {
+        if (wp_verify_nonce($this->oidc_client->getNonce())) {
             $this->oidc_client->unsetStatesAndNonce();
         }
 
@@ -372,7 +373,7 @@ class Auth {
         $scopes = array_map('sanitize_text_field', explode(" ", get_option('scouting_oidc_scopes')));
 
         // Check if nonce is valid
-        if (wp_verify_nonce($this->oidc_client->getNonce(), 'scouting_oidc_nonce')) {
+        if (wp_verify_nonce($this->oidc_client->getNonce())) {
             $this->oidc_client->unsetStatesAndNonce();
         }
         
