@@ -140,15 +140,20 @@ class Auth {
             ErrorHandler::redirect_to_login_error('error', __('Nonce is invalid', 'scouting-openid-connect'), 'nonce_invalid');
         }
 
-        // Check if eror_description, hint, and message are set in the URL and sanitize them before redirecting
-        if (isset($_GET['error_description'], $_GET['hint'], $_GET['message'])) {
+        // Handle error callback parameters and forward them to wp-login.
+        if (isset($_GET['error_description'], $_GET['hint'])) {
             $this->oidc_client->unsetStatesAndNonce();
 
             $error_description = sanitize_text_field(wp_unslash($_GET['error_description']));
             $hint = sanitize_text_field(wp_unslash($_GET['hint']));
-            $message = sanitize_text_field(wp_unslash($_GET['message']));
+            $error = isset($_GET['error'])
+                ? sanitize_text_field(wp_unslash($_GET['error']))
+                : null;
+            $message = isset($_GET['message'])
+                ? sanitize_text_field(wp_unslash($_GET['message']))
+                : ($error ?? 'error');
 
-            ErrorHandler::redirect_to_login_error($error_description, $hint, $message);
+            ErrorHandler::redirect_to_login_error($error_description, $hint, $message, $error);
         }
 
         // Check if 'state' parameter is set in the URL
