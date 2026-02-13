@@ -55,7 +55,6 @@ class Auth {
 
     // Create shortcode with a login button
     public function scouting_oidc_auth_login_button_shortcode(array $atts = array()): string {
-    public function scouting_oidc_auth_login_button_shortcode(array $atts): string {
         // Check if the client ID and client secret are empty 
         if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
             return '';
