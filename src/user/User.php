@@ -3,6 +3,10 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+require_once plugin_dir_path(__FILE__) . '../../src/utilities/ErrorHandler.php';
+
+use ScoutingOIDC\ErrorHandler;
+
 class User {
 
     /**
@@ -136,18 +140,12 @@ class User {
 
         // Validate SOL ID is present
         if ($this->sol_id == null) {
-            $hint = rawurlencode(__('SOL ID is missing, make sure the "membership" scope is enabled.', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=sol_id_is_missing");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', __('SOL ID is missing, make sure the "membership" scope is enabled.', 'scouting-openid-connect'), 'sol_id_is_missing');
         }
 
         // Validate email is present
         if ($this->email == null) {
-            $hint = rawurlencode(__('Email is missing, make sure the "email" scope is enabled.', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=email_is_missing");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', __('Email is missing, make sure the "email" scope is enabled.', 'scouting-openid-connect'), 'email_is_missing');
         }
     }
 
@@ -179,35 +177,23 @@ class User {
 
                 // If the plus-addressed email is already in use by another account that is not the current user, redirect with an error message
                 if ($user_id_by_email && $user_id_by_email !== username_exists($this->sol_id)) {
-                    $hint = rawurlencode(__('Email address is already in use by another account', 'scouting-openid-connect'));
-                    $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=login_email_mismatch");
-                    wp_safe_redirect($redirect_url);
-                    exit;
+                    ErrorHandler::redirect_to_login_error('error', __('Email address is already in use by another account', 'scouting-openid-connect'), 'login_email_mismatch');
                 }
 
                 // Try creating the user again with the plus-addressed email
                 $user_id_by_plus_address_email = wp_create_user($this->sol_id, wp_generate_password(18, true, true), $plusAddressEmail);
                 if (is_wp_error($user_id_by_plus_address_email)) {
-                    $hint = rawurlencode($user_id_by_plus_address_email->get_error_message());
-                    $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=login_email_mismatch");
-                    wp_safe_redirect($redirect_url);
-                    exit;
+                    ErrorHandler::redirect_to_login_error('error', $user_id_by_plus_address_email->get_error_message(), 'login_email_mismatch');
                 }
 
             } else {
-                $hint = rawurlencode(__('Email address is already in use by another account', 'scouting-openid-connect'));
-                $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=login_email_mismatch");
-                wp_safe_redirect($redirect_url);
-                exit;
+                ErrorHandler::redirect_to_login_error('error', __('Email address is already in use by another account', 'scouting-openid-connect'), 'login_email_mismatch');
             }
         }
 
         // If user creation failed because of some other reason than email address is already in use then redirect with error message
         if (is_wp_error($user_id)) {
-            $hint = rawurlencode($user_id->get_error_message());
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=user_creation_failed");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', $user_id->get_error_message(), 'user_creation_failed');
         }
 
         // Trigger hook after user creation so other plugins can hook into it
@@ -241,20 +227,14 @@ class User {
 
                 // If the plus-addressed email is already in use by another account that is not the current user, redirect with an error message
                 if ($user_id_by_plus_address_email && $user_id_by_plus_address_email !== $user_id_by_sol_id) {
-                    $hint = rawurlencode(__('Email address is already in use by another account', 'scouting-openid-connect'));
-                    $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=login_email_mismatch");
-                    wp_safe_redirect($redirect_url);
-                    exit;
+                    ErrorHandler::redirect_to_login_error('error', __('Email address is already in use by another account', 'scouting-openid-connect'), 'login_email_mismatch');
                 }
 
                 // Plus-addressed email is not in use by another account, safe to update the email to the plus-addressed version
                 wp_update_user(array('ID' => $user_id_by_sol_id, 'user_email' => $plusAddressEmail));
             }
             else {
-                $hint = rawurlencode(__('Email address is already in use by another account', 'scouting-openid-connect'));
-                $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=login_email_mismatch");
-                wp_safe_redirect($redirect_url);
-                exit;
+                ErrorHandler::redirect_to_login_error('error', __('Email address is already in use by another account', 'scouting-openid-connect'), 'login_email_mismatch');
             }
 
             // Update meta data
@@ -269,10 +249,7 @@ class User {
         }
         // User not found by either SOL ID or email
         else {
-            $hint = rawurlencode(__('User not found for update', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=user_not_found_for_update");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', __('User not found for update', 'scouting-openid-connect'), 'user_not_found_for_update');
         }
     }
 
@@ -283,10 +260,7 @@ class User {
         $user = get_user_by('login', $this->sol_id);
 
         if (!$user) {
-            $hint = rawurlencode(__('Something went wrong while trying to log in', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=login_email_mismatch");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', __('Something went wrong while trying to log in', 'scouting-openid-connect'), 'login_email_mismatch');
         }
 
         wp_set_current_user($user->ID, $user->user_login);

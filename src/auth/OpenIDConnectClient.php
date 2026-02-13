@@ -3,7 +3,11 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+require_once plugin_dir_path(__FILE__) . 'Session.php';
+require_once plugin_dir_path(__FILE__) . '../../src/utilities/ErrorHandler.php';
+
 use ScoutingOIDC\Session;
+use ScoutingOIDC\ErrorHandler;
 
 /**
  * OpenIDConnectClient for Scouting OpenID Connect
@@ -98,18 +102,12 @@ class OpenIDConnectClient
 
         // Ensure PKCE with S256 is supported by the identity provider
         if (isset($this->wellKnownData->code_challenge_methods_supported) && !in_array('S256', $this->wellKnownData->code_challenge_methods_supported, true)) {
-            $hint = rawurlencode(__('The identity provider does not support the required S256 code challenge method for PKCE.', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=init&hint={$hint}&message=pkce_not_supported");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('init', __('The identity provider does not support the required S256 code challenge method for PKCE.', 'scouting-openid-connect'), 'pkce_not_supported');
         }
 
         // Check if authorization_endpoint is available in well-known data
         if (empty($this->wellKnownData->authorization_endpoint)) {
-            $hint = rawurlencode(__('The authorization_endpoint is not available in the well-known data.', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=init&hint={$hint}&message=authorization_endpoint_is_missing");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('init', __('The authorization_endpoint is not available in the well-known data.', 'scouting-openid-connect'), 'authorization_endpoint_is_missing');
         }
 
         // Set the scopes check if true or false
@@ -122,10 +120,8 @@ class OpenIDConnectClient
             $supported_scopes_list = implode(', ', $this->wellKnownData->scopes_supported);
 
             // Generate a hint with the invalid scopes and the supported scopes
-            $hint = rawurlencode(__('The following scopes are not supported:', 'scouting-openid-connect') . " " . $invalid_scopes_list . '. ' . __('The supported scopes are:', 'scouting-openid-connect') . " " . $supported_scopes_list);
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=init&hint={$hint}&message=scopes_not_saved");
-            wp_safe_redirect($redirect_url);
-            exit;
+            $hint = __('The following scopes are not supported:', 'scouting-openid-connect') . " " . $invalid_scopes_list . '. ' . __('The supported scopes are:', 'scouting-openid-connect') . " " . $supported_scopes_list;
+            ErrorHandler::redirect_to_login_error('init', $hint, 'scopes_not_saved');
         }
 
         // Generate and store a nonce in the session
@@ -173,10 +169,7 @@ class OpenIDConnectClient
 
         // Check if token_endpoint is available in well-known data
         if (!isset($this->wellKnownData->token_endpoint)) {
-            $hint = rawurlencode(__('The token_endpoint is not available in the well-known data.', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=token_endpoint_is_missing");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', __('The token_endpoint is not available in the well-known data.', 'scouting-openid-connect'), 'token_endpoint_is_missing');
         }
 
         // Set the grant type to authorization_code
@@ -185,10 +178,7 @@ class OpenIDConnectClient
         // Fetch the stored PKCE verifier; state is mandatory to find the correct verifier
         $code_verifier = ($state !== null) ? $this->getCodeVerifierForState($state) : null;
         if (empty($code_verifier)) {
-            $hint = rawurlencode(__('The code_verifier for PKCE is missing from the session.', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=code_verifier_missing");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', __('The code_verifier for PKCE is missing from the session.', 'scouting-openid-connect'), 'code_verifier_missing');
         }
 
         $data = array(
@@ -213,10 +203,7 @@ class OpenIDConnectClient
 
         $response = wp_remote_post($this->wellKnownData->token_endpoint, $args);
         if (is_wp_error($response)) {
-            $hint = rawurlencode($response->get_error_message());
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=get_tokens_failed");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', $response->get_error_message(), 'get_tokens_failed');
         } 
         
         // Check if response code is 200 and response message is OK
@@ -227,10 +214,8 @@ class OpenIDConnectClient
             $body_decoded = json_decode($body_raw, true);
             $error_detail = $body_decoded['error_description'] ?? $body_decoded['error'] ?? $body_raw;
             // translators: 1: HTTP status code returned by the token endpoint. 2: Error detail from the token endpoint response.
-            $hint = rawurlencode(sprintf(__('Token endpoint error %1$s: %2$s', 'scouting-openid-connect'), $status_code, $error_detail));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=get_tokens_failed");
-            wp_safe_redirect($redirect_url);
-            exit;
+            $hint = sprintf(__('Token endpoint error %1$s: %2$s', 'scouting-openid-connect'), $status_code, $error_detail);
+            ErrorHandler::redirect_to_login_error('error', $hint, 'get_tokens_failed');
         }
 
         // Store the tokens
@@ -260,18 +245,12 @@ class OpenIDConnectClient
 
         // Check if id_token is available in tokens
         if (!isset($this->tokens->id_token)) {
-            $hint = rawurlencode(__('The ID token is not available in the tokens.', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=id_token_is_missing");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', __('The ID token is not available in the tokens.', 'scouting-openid-connect'), 'id_token_is_missing');
         }
 
         // Check if jwks is available
         if (empty($this->jwks)) {
-            $hint = rawurlencode(__('The JSON Web Key Set (JWKS) is not available.', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=jwks_is_missing");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', __('The JSON Web Key Set (JWKS) is not available.', 'scouting-openid-connect'), 'jwks_is_missing');
         }
 
         // Split the token into header, payload and signature
@@ -293,10 +272,7 @@ class OpenIDConnectClient
 
         // Check if the certificate chain (x5c) was found
         if ($x5c === null) {
-            $hint = rawurlencode(__('The certificate chain (x5c) for the key ID (kid) specified in the header was not found.', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=jwks_is_missing");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', __('The certificate chain (x5c) for the key ID (kid) specified in the header was not found.', 'scouting-openid-connect'), 'jwks_is_missing');
         }
 
         // Convert the certificate chain (x5c) to a public key certificate
@@ -306,10 +282,7 @@ class OpenIDConnectClient
         $publicKey = openssl_pkey_get_public($public_key_certificate);
         $signatureValid = openssl_verify($headerEncoded . '.' . $payloadEncoded, $signature, $publicKey, OPENSSL_ALGO_SHA256);
         if ($signatureValid !== 1) {
-            $hint = rawurlencode(__('The signature in the ID token is not valid.', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=jwks_is_missing");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', __('The signature in the ID token is not valid.', 'scouting-openid-connect'), 'jwks_is_missing');
         }
         else {
             return $payload;
@@ -368,10 +341,7 @@ class OpenIDConnectClient
         // Get the well-known configuration from the issuer
         $response = wp_remote_get($well_known_config_url);
         if (is_wp_error($response)) {
-            $hint = rawurlencode($response->get_error_message());
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=init&hint={$hint}&message=get_well_known_data_failed");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('init', $response->get_error_message(), 'get_well_known_data_failed');
         } else {
             $status_code = wp_remote_retrieve_response_code($response);
             if ($status_code === 200) {
@@ -383,10 +353,8 @@ class OpenIDConnectClient
                 // Extract additional error information if available
                 $response_body = wp_remote_retrieve_body($response);
                 $error_details = !empty($response_body) ? $response_body : __('No additional details provided.', 'scouting-openid-connect');
-                $hint = rawurlencode(__('When retrieving well-known data, the status code was:', 'scouting-openid-connect') . " " . $status_code . "." . __('Details:', 'scouting-openid-connect') . " " . $error_details);
-                $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=init&hint={$hint}&message=unexpected_response");
-                wp_safe_redirect($redirect_url);
-                exit;
+                $hint = __('When retrieving well-known data, the status code was:', 'scouting-openid-connect') . " " . $status_code . "." . __('Details:', 'scouting-openid-connect') . " " . $error_details;
+                ErrorHandler::redirect_to_login_error('init', $hint, 'unexpected_response');
             }
         }
     }
@@ -409,27 +377,19 @@ class OpenIDConnectClient
     
         // Check if jwks_uri is available in the well-known data
         if (empty($this->wellKnownData->jwks_uri)) {
-            $hint = rawurlencode(__('The jwks_uri is not available in the well-known data.', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=init&hint={$hint}&message=jwks_uri_is_missing");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('init', __('The jwks_uri is not available in the well-known data.', 'scouting-openid-connect'), 'jwks_uri_is_missing');
         }
     
         // Check if jwks_uri is a valid URL
         if (!filter_var($this->wellKnownData->jwks_uri, FILTER_VALIDATE_URL)) {
-            $hint = rawurlencode(__('The jwks_uri is not a valid URL.', 'scouting-openid-connect') . __('Details:', 'scouting-openid-connect') . " " . __('The jwks_uri is not valid:', 'scouting-openid-connect') . " " . $this->wellKnownData->jwks_uri);
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=init&hint={$hint}&message=jwks_uri_is_invalid");
-            wp_safe_redirect($redirect_url);
-            exit;
+            $hint = __('The jwks_uri is not a valid URL.', 'scouting-openid-connect') . __('Details:', 'scouting-openid-connect') . " " . __('The jwks_uri is not valid:', 'scouting-openid-connect') . " " . $this->wellKnownData->jwks_uri;
+            ErrorHandler::redirect_to_login_error('init', $hint, 'jwks_uri_is_invalid');
         }
     
         // Get the JSON Web Key Set (JWKS) from the jwks_uri
         $response = wp_remote_get($this->wellKnownData->jwks_uri);
         if (is_wp_error($response)) {
-            $hint = rawurlencode($response->get_error_message());
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=init&hint={$hint}&message=get_jwks_data_failed");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('init', $response->get_error_message(), 'get_jwks_data_failed');
         } else {
             $status_code = wp_remote_retrieve_response_code($response);
         
@@ -442,10 +402,8 @@ class OpenIDConnectClient
                 // Extract additional error information if available
                 $response_body = wp_remote_retrieve_body($response);
                 $error_details = !empty($response_body) ? $response_body : __('No additional details provided.', 'scouting-openid-connect');
-                $hint = rawurlencode(__('When retrieving JWKS data, the status code was:', 'scouting-openid-connect') . " " . $status_code . "." . __('Details:', 'scouting-openid-connect') . " " . $error_details);
-                $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=init&hint={$hint}&message=unexpected_response");
-                wp_safe_redirect($redirect_url);
-                exit;
+                $hint = __('When retrieving JWKS data, the status code was:', 'scouting-openid-connect') . " " . $status_code . "." . __('Details:', 'scouting-openid-connect') . " " . $error_details;
+                ErrorHandler::redirect_to_login_error('init', $hint, 'unexpected_response');
             }
         }
     }

@@ -4,11 +4,13 @@ namespace ScoutingOIDC;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 require_once plugin_dir_path(__FILE__) .'OpenIDConnectClient.php';
-require_once plugin_dir_path(__FILE__) . '../../src/user/user.php';
+require_once plugin_dir_path(__FILE__) . '../../src/user/User.php';
+require_once plugin_dir_path(__FILE__) . '../../src/utilities/ErrorHandler.php';
 require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
 require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
 
 use ScoutingOIDC\User;
+use ScoutingOIDC\ErrorHandler;
 
 class Auth {
     /**
@@ -104,8 +106,7 @@ class Auth {
     public function scouting_oidc_auth_login_url_shortcode(): string {
         // Check if the client ID and client secret are empty 
         if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
-            $hint = rawurlencode(__('Client ID or Client Secret are missing in the configuration', 'scouting-openid-connect'));
-            return esc_url_raw(wp_login_url() . '?login=failed&error_description=init&hint=' . $hint . '&message=init_error');
+            return ErrorHandler::login_error_url('init', __('Client ID or Client Secret are missing in the configuration', 'scouting-openid-connect'), 'init_error');
         }
 
         $login_url = $this->scouting_oidc_auth_login_url();
@@ -116,7 +117,7 @@ class Auth {
             $hint = substr($login_url, 12);
 
             // Return login URL with hint
-            return esc_url_raw(wp_login_url() . '?login=failed&error_description=init&hint=' . $hint . '&message=init_error');
+            return ErrorHandler::login_error_url('init', $hint, 'init_error');
         }
         return esc_url($this->scouting_oidc_auth_login_url());
     }
@@ -136,25 +137,23 @@ class Auth {
         // Check if nonce is valid with wp_verify_nonce
         if (wp_verify_nonce($this->oidc_client->getNonce())) {
             $this->oidc_client->unsetStatesAndNonce();
-
-            $hint = rawurlencode(__('Nonce is invalid', 'scouting-openid-connect'));
-
-            $redirect_url = esc_url_raw(wp_login_url() . '?login=failed&error_description=error&hint=' . $hint . '&message=nonce_invalid');
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', __('Nonce is invalid', 'scouting-openid-connect'), 'nonce_invalid');
         }
 
-        // Check if eror_description, hint, and message are set in the URL and sanitize them before redirecting
-        if (isset($_GET['error_description'], $_GET['hint'], $_GET['message'])) {
+        // Handle error callback parameters and forward them to wp-login.
+        if (isset($_GET['error_description'], $_GET['hint'])) {
             $this->oidc_client->unsetStatesAndNonce();
 
-            $error_description = rawurlencode(sanitize_text_field(wp_unslash($_GET['error_description'])));
-            $hint = rawurlencode(sanitize_text_field(wp_unslash($_GET['hint'])));
-            $message = rawurlencode(sanitize_text_field(wp_unslash($_GET['message'])));
+            $error_description = sanitize_text_field(wp_unslash($_GET['error_description']));
+            $hint = sanitize_text_field(wp_unslash($_GET['hint']));
+            $error = isset($_GET['error'])
+                ? sanitize_text_field(wp_unslash($_GET['error']))
+                : null;
+            $message = isset($_GET['message'])
+                ? sanitize_text_field(wp_unslash($_GET['message']))
+                : ($error ?? 'error');
 
-            $redirect_url = esc_url_raw(wp_login_url() . '?login=failed&error_description=' . $error_description . '&hint=' . $hint . '&message=' . $message);
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error($error_description, $hint, $message, $error);
         }
 
         // Check if 'state' parameter is set in the URL
@@ -168,23 +167,13 @@ class Auth {
         // If the state is invalid, unset states and nonce, then redirect to login page with an error message
         if (!$this->oidc_client->hasState($state)) {
             $this->oidc_client->unsetStatesAndNonce();
-
-            $hint = rawurlencode(__('State is invalid', 'scouting-openid-connect'));
-
-            $redirect_url = esc_url_raw(wp_login_url() . '?login=failed&error_description=error&hint=' . $hint . '&message=state_invalid');
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', __('State is invalid', 'scouting-openid-connect'), 'state_invalid');
         }
 
         // Check if 'code' parameter is set in the URL
         if (!isset($_GET['code'])) {
             $this->oidc_client->unsetStatesAndNonce();
-
-            $hint = rawurlencode(__('Code is missing', 'scouting-openid-connect'));
-
-            $redirect_url = esc_url_raw(wp_login_url() . '?login=failed&error_description=error&hint=' . $hint . '&message=code_missing');
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', __('Code is missing', 'scouting-openid-connect'), 'code_missing');
         }
 
         // Retrieve tokens from the OpenID Connect server and sanitize the 'code' parameter
@@ -205,10 +194,7 @@ class Auth {
                 $user->scouting_oidc_user_create();
                 $user->scouting_oidc_user_login();
             } else {
-                $hint = rawurlencode(__('Webmaster disabled creation of new accounts', 'scouting-openid-connect'));
-                $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=disabled_auto_create");
-                wp_safe_redirect($redirect_url);
-                exit;
+                ErrorHandler::redirect_to_login_error('error', __('Webmaster disabled creation of new accounts', 'scouting-openid-connect'), 'disabled_auto_create');
             }
         }
     }
