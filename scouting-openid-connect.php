@@ -76,7 +76,7 @@ function scouting_oidc_init(): void
 	add_filter('plugin_action_links_'.plugin_basename(__FILE__), [$scouting_oidc_actions, 'scouting_oidc_actions_plugin_links']);
 
     // Normalize plus-addressed Scouting OIDC recipient aliases in outgoing mail
-    add_filter('wp_mail', [Mail::class, 'scouting_oidc_mail_filter_wp_mail']);
+    add_filter('wp_mail', [Mail::class, 'scouting_oidc_mail_filter_wp_mail'], 20);
 
     // Add user profile fields if any option is enabled
 	if (get_option('scouting_oidc_user_birthdate') || get_option('scouting_oidc_user_gender') || get_option('scouting_oidc_user_phone') || get_option('scouting_oidc_user_address'))
