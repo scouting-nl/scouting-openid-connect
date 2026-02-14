@@ -41,7 +41,79 @@ class Mail {
         // Define the recipient fields to normalize
         $supported_fields = ['to', 'cc', 'bcc'];
 
-        // Look for recipients in 'to', 'cc', and 'bcc' fields and normalize them
+        // Skip normalization work when no plus-addressing markers are present
+        if (!self::scouting_oidc_mail_value_contains_plus($args, $supported_fields)) {
+            return $args;
+        }
+
+        // Normalize recipient fields (to/cc/bcc) in wp_mail arguments
+        $args = self::scouting_oidc_mail_normalize_recipient_fields($args, $supported_fields);
+
+        // Normalize email addresses found in headers as well
+        if (!empty($args['headers'])) {
+            $args['headers'] = self::scouting_oidc_mail_normalize_headers($args['headers']);
+        }
+
+        // Return the modified arguments
+        return $args;
+    }
+
+    /**
+     * Determine whether any relevant wp_mail field contains a plus sign used by plus-addressing.
+     *
+     * @param array $args wp_mail arguments
+     * @param array $supported_fields Recipient fields to inspect
+     * @return bool True when a '+' appears in recipients or headers
+     */
+    private static function scouting_oidc_mail_value_contains_plus(array $args, array $supported_fields): bool {
+        // Check recipient fields for plus signs
+        foreach ($supported_fields as $field) {
+            if (empty($args[$field])) {
+                continue;
+            }
+
+            $value = $args[$field];
+            if (is_string($value) && str_contains($value, '+')) {
+                return true;
+            }
+
+            if (is_array($value)) {
+                foreach ($value as $item) {
+                    if (is_string($item) && str_contains($item, '+')) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        // Check headers for plus signs as well, since they can contain recipient-like values
+        if (!empty($args['headers'])) {
+            $headers = $args['headers'];
+            if (is_string($headers) && str_contains($headers, '+')) {
+                return true;
+            }
+
+            if (is_array($headers)) {
+                foreach ($headers as $header_item) {
+                    if (is_string($header_item) && str_contains($header_item, '+')) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Normalize recipient fields (to/cc/bcc) in wp_mail arguments.
+     *
+     * @param array $args wp_mail arguments
+     * @param array $supported_fields Recipient fields to inspect and normalize
+     * @return array Modified wp_mail arguments
+     */
+    private static function scouting_oidc_mail_normalize_recipient_fields(array $args, array $supported_fields): array {
+        // Normalize each supported recipient field (to/cc/bcc) if it exists in the arguments
         foreach ($supported_fields as $field) {
             // Skip if the field is not set or empty
             if (empty($args[$field])) {
@@ -61,11 +133,6 @@ class Mail {
             $args[$field] = $original_is_array ? $normalized_recipients : implode(', ', $normalized_recipients);
         }
 
-        // Normalize email addresses found in headers as well
-        if (!empty($args['headers'])) {
-            $args['headers'] = self::scouting_oidc_mail_normalize_headers($args['headers']);
-        }
-
         // Return the modified arguments
         return $args;
     }
@@ -82,7 +149,7 @@ class Mail {
         // Define supported recipient-like headers for normalization
         $supported_headers = ['to', 'cc', 'bcc', 'from', 'reply-to'];
 
-        // If headers are in array format, normalize each header line
+        // If headers are in array format, normalize only supported recipient-like headers and return the modified array
         if (is_array($headers)) {
             foreach ($headers as $key => $value) {
                 // Check if the header key is a supported recipient-like header (case-insensitive)
@@ -91,7 +158,7 @@ class Mail {
                     continue;
                 }
 
-                // If the header value is a string and the header key is not a supported recipient-like header, we can still check if the value contains recipient-like content to normalize
+                // Other headers are left untouched to avoid unintended normalization of non-recipient values.
                 if (is_string($value)) {
                     $headers[$key] = self::scouting_oidc_mail_normalize_header_line($value, $supported_headers);
                 }
@@ -120,7 +187,7 @@ class Mail {
      * Normalize a single header line if it is a supported recipient-like header.
      *
      * @param string $line Header line in the format "Header-Name: value"
-     * @param array<int, string> $supported_headers Supported lowercase header names
+     * @param array $supported_headers Supported lowercase header names
      * @return string Normalized or original header line
      */
     private static function scouting_oidc_mail_normalize_header_line(string $line, array $supported_headers): string {
