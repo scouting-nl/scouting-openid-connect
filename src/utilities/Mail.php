@@ -30,7 +30,7 @@ class Mail {
      * @param array $args wp_mail arguments
      * @return array Modified wp_mail arguments with normalized recipients
      */
-    public function scouting_oidc_mail_filter_wp_mail(array $args): array {
+    public static function scouting_oidc_mail_filter_wp_mail(array $args): array {
         // Look for recipients in 'to', 'cc', and 'bcc' fields and normalize them
         foreach (['to', 'cc', 'bcc'] as $field) {
             // Skip if the field is not set or empty
