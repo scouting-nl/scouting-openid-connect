@@ -97,6 +97,10 @@ class Mail {
             return $recipient;
         }
 
+        // Validate SOL_ID format (e.g., ensure it is numeric) before performing user lookup
+        if (!ctype_digit($possible_sol_id)) {
+            return $recipient;
+        }
         // Check if the SOL_ID belongs to a Scouting OIDC user
         if (!self::scouting_oidc_mail_is_sol_oidc_user($possible_sol_id)) {
             return $recipient;
