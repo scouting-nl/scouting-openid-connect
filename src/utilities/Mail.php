@@ -38,8 +38,11 @@ class Mail {
      * @return array Modified wp_mail arguments with normalized recipients
      */
     public static function scouting_oidc_mail_filter_wp_mail(array $args): array {
+        // Define the recipient fields to normalize
+        $supported_fields = ['to', 'cc', 'bcc'];
+
         // Look for recipients in 'to', 'cc', and 'bcc' fields and normalize them
-        foreach (['to', 'cc', 'bcc'] as $field) {
+        foreach ($supported_fields as $field) {
             // Skip if the field is not set or empty
             if (empty($args[$field])) {
                 continue;
@@ -58,8 +61,106 @@ class Mail {
             $args[$field] = $original_is_array ? $normalized_recipients : implode(', ', $normalized_recipients);
         }
 
+        // Normalize email addresses found in headers as well
+        if (!empty($args['headers'])) {
+            $args['headers'] = self::scouting_oidc_mail_normalize_headers($args['headers']);
+        }
+
         // Return the modified arguments
         return $args;
+    }
+
+    /**
+     * Normalize recipient-like headers in wp_mail arguments.
+     *
+     * Supports string and array header formats.
+     *
+     * @param string|array $headers wp_mail headers
+     * @return string|array Normalized headers
+     */
+    private static function scouting_oidc_mail_normalize_headers(string|array $headers): string|array {
+        // Define supported recipient-like headers for normalization
+        $supported_headers = ['to', 'cc', 'bcc', 'from', 'reply-to'];
+
+        // If headers are in array format, normalize each header line
+        if (is_array($headers)) {
+            foreach ($headers as $key => $value) {
+                // Check if the header key is a supported recipient-like header (case-insensitive)
+                if (is_string($key) && in_array(strtolower($key), $supported_headers, true)) {
+                    $headers[$key] = self::scouting_oidc_mail_normalize_header_value((string) $value);
+                    continue;
+                }
+
+                // If the header value is a string and the header key is not a supported recipient-like header, we can still check if the value contains recipient-like content to normalize
+                if (is_string($value)) {
+                    $headers[$key] = self::scouting_oidc_mail_normalize_header_line($value, $supported_headers);
+                }
+            }
+
+            return $headers;
+        }
+
+        // If headers are in string format, split into lines and normalize each line
+        $header_lines = preg_split('/\r\n|\r|\n/', $headers);
+        if (!is_array($header_lines)) {
+            return $headers;
+        }
+
+        // Normalize each header line and reconstruct the headers string
+        $normalized_lines = array_map(
+            static fn(string $line): string => self::scouting_oidc_mail_normalize_header_line($line, $supported_headers),
+            $header_lines
+        );
+
+        // Reconstruct the headers string with normalized lines
+        return implode("\r\n", $normalized_lines);
+    }
+
+    /**
+     * Normalize a single header line if it is a supported recipient-like header.
+     *
+     * @param string $line Header line in the format "Header-Name: value"
+     * @param array<int, string> $supported_headers Supported lowercase header names
+     * @return string Normalized or original header line
+     */
+    private static function scouting_oidc_mail_normalize_header_line(string $line, array $supported_headers): string {
+        // Skip lines that are empty, contain only whitespace, or do not match the "Header-Name: value" format
+        if ($line === '' || preg_match('/^\s+/', $line)) {
+            return $line;
+        }
+
+        // Parse the header line into name and value
+        if (!preg_match('/^([A-Za-z0-9-]+)\s*:(.*)$/', $line, $matches)) {
+            return $line;
+        }
+
+        // Check if the header name is in the list of supported headers for normalization
+        $name = $matches[1];
+        $value = $matches[2];
+        $normalized_name = strtolower($name);
+        if (!in_array($normalized_name, $supported_headers, true)) {
+            return $line;
+        }
+
+        // Normalize the header value and reconstruct the header line
+        return $name . ': ' . self::scouting_oidc_mail_normalize_header_value($value);
+    }
+
+    /**
+     * Normalize one header value containing one or more recipients.
+     *
+     * @param string $value Header value
+     * @return string Normalized header value
+     */
+    private static function scouting_oidc_mail_normalize_header_value(string $value): string {
+        // Parse the header value as a list of recipients and normalize each one
+        $recipients = wp_parse_list($value);
+
+        // Strip +SOL_ID from each recipient if it belongs to a Scouting OIDC user
+        $normalized_recipients = array_map([self::class, 'scouting_oidc_mail_strip_sol_alias_from_recipient'], $recipients);
+
+        // Return the normalized recipients as a comma-separated string
+        return implode(', ', $normalized_recipients);
     }
 
     /**
@@ -73,14 +174,9 @@ class Mail {
      * @return string Recipient with +SOL_ID stripped if it belongs to a Scouting OIDC user, otherwise original recipient
      */
     private static function scouting_oidc_mail_strip_sol_alias_from_recipient(string $recipient): string {
-        // Extract the email address from the recipient string (handles "Name <email>" format)
-        if (!preg_match('/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i', $recipient, $matches)) {
-            return $recipient;
-        }
-
-        // Validate the extracted email address
-        $email = $matches[0];
-        if (!is_email($email)) {
+        // Extract and validate email address from recipient string
+        $email = self::scouting_oidc_mail_extract_valid_email_from_recipient($recipient);
+        if ($email === null) {
             return $recipient;
         }
 
@@ -111,6 +207,42 @@ class Mail {
 
         // Replace the original email in the recipient string with the normalized email
         return str_replace($email, $normalized_email, $recipient);
+    }
+
+    /**
+     * Extract a valid email address from recipient text.
+     *
+     * Supports common formats like "email@example.com" and "Name <email@example.com>".
+     * Returns null when no valid email can be extracted.
+     *
+     * @param string $recipient Mail recipient value
+     * @return string|null Extracted email when valid, otherwise null
+     */
+    private static function scouting_oidc_mail_extract_valid_email_from_recipient(string $recipient): ?string {
+        // First, prefer the angle-bracket format: Name <email@example.com>
+        if (preg_match('/<([^<>]+)>/', $recipient, $matches)) {
+            $candidate = trim($matches[1]);
+            if (is_email($candidate)) {
+                return $candidate;
+            }
+        }
+
+        // Then parse simple recipient lists and validate each candidate with WordPress
+        $tokens = wp_parse_list($recipient);
+        foreach ($tokens as $token) {
+            $candidate = trim((string) $token, " \t\n\r\0\x0B\"'<>();");
+            if (is_email($candidate)) {
+                return $candidate;
+            }
+        }
+
+        // Finally, allow direct single-value recipients that are already clean
+        $recipient_trimmed = trim($recipient);
+        if (is_email($recipient_trimmed)) {
+            return $recipient_trimmed;
+        }
+
+        return null;
     }
 
     /**
