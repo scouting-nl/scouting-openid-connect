@@ -65,6 +65,10 @@ class Mail {
     /**
      * Strip +SOL_ID from recipient email when SOL_ID belongs to a Scouting OIDC user.
      *
+     * The parser uses the rightmost '+' in the local-part as delimiter for SOL_ID.
+     * Example: user+group+123456@example.com => SOL_ID is interpreted as 123456,
+     * and the normalized address becomes user+group@example.com when valid.
+     *
      * @param string $recipient Mail recipient (email or "Name <email>")
      * @return string Recipient with +SOL_ID stripped if it belongs to a Scouting OIDC user, otherwise original recipient
      */
@@ -87,7 +91,7 @@ class Mail {
             return $recipient;
         }
 
-        // Extract the possible SOL_ID from the local part
+        // Extract the possible SOL_ID from the local part (after the rightmost '+')
         $possible_sol_id = substr($local_part, $plus_position + 1);
         if ($possible_sol_id === '') {
             return $recipient;
