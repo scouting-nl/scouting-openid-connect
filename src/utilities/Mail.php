@@ -5,6 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Mail {
     /**
+     * In-memory cache for SOL user checks during a single request.
+     *
+     * @var array<string, bool>
+     */
+    private static array $scouting_oidc_mail_sol_user_cache = [];
+
+    /**
      * Create a plus-addressed email (name+SOL_ID@example.com).
      *
      * Returns the original email when input is invalid.
@@ -87,8 +94,7 @@ class Mail {
         }
 
         // Check if the SOL_ID belongs to a Scouting OIDC user
-        $user = get_user_by('login', $possible_sol_id);
-        if (!$user || get_user_meta($user->ID, 'scouting_oidc_user', true) !== 'true') {
+        if (!self::scouting_oidc_mail_is_sol_oidc_user($possible_sol_id)) {
             return $recipient;
         }
 
@@ -97,6 +103,25 @@ class Mail {
 
         // Replace the original email in the recipient string with the normalized email
         return str_replace($email, $normalized_email, $recipient);
+    }
+
+    /**
+     * Determine whether a SOL ID belongs to a Scouting OIDC user, with request-level cache.
+     *
+     * @param string $sol_id SOL ID
+     * @return bool True when SOL ID exists and is marked as scouting_oidc_user=true
+     */
+    private static function scouting_oidc_mail_is_sol_oidc_user(string $sol_id): bool {
+        if (isset(self::$scouting_oidc_mail_sol_user_cache[$sol_id])) {
+            return self::$scouting_oidc_mail_sol_user_cache[$sol_id];
+        }
+
+        $user = get_user_by('login', $sol_id);
+        $is_sol_oidc_user = $user && get_user_meta($user->ID, 'scouting_oidc_user', true) === 'true';
+
+        self::$scouting_oidc_mail_sol_user_cache[$sol_id] = $is_sol_oidc_user;
+
+        return $is_sol_oidc_user;
     }
 }
 ?>
