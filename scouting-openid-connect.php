@@ -37,6 +37,7 @@ require_once SCOUTING_OIDC_PATH . 'src/support/Page.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/Actions.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/Description.php';
 require_once SCOUTING_OIDC_PATH . 'src/user/Fields.php';
+require_once SCOUTING_OIDC_PATH . 'src/utilities/Mail.php';
 
 use ScoutingOIDC\Auth;
 use ScoutingOIDC\Session;
@@ -47,6 +48,7 @@ use ScoutingOIDC\Settings;
 use ScoutingOIDC\Shortcode;
 use ScoutingOIDC\Support;
 use ScoutingOIDC\Fields;
+use ScoutingOIDC\Mail;
 
 $scouting_oidc_auth = new Auth();
 $scouting_oidc_session = new Session();
@@ -57,11 +59,12 @@ $scouting_oidc_settings = new Settings();
 $scouting_oidc_shortcode = new Shortcode();
 $scouting_oidc_support = new Support();
 $scouting_oidc_fields = new Fields();
+$scouting_oidc_mail = new Mail();
 
 // Init plugin
 function scouting_oidc_init(): void
 {
-    global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode, $scouting_oidc_settings; // Declare global variables
+    global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode, $scouting_oidc_settings, $scouting_oidc_mail; // Declare global variables
 
     // Add the OpenID Connect button to the login form
     add_action('login_form', array($scouting_oidc_auth, 'scouting_oidc_auth_login_form'));
@@ -72,6 +75,9 @@ function scouting_oidc_init(): void
 
     // Provide additional links in the plugin overview page
 	add_filter('plugin_action_links_'.plugin_basename(__FILE__), [$scouting_oidc_actions, 'scouting_oidc_actions_plugin_links']);
+
+    // Normalize plus-addressed Scouting OIDC recipient aliases in outgoing mail
+    add_filter('wp_mail', [$scouting_oidc_mail, 'scouting_oidc_mail_filter_wp_mail']);
 
     // Add user profile fields if any option is enabled
 	if (get_option('scouting_oidc_user_birthdate') || get_option('scouting_oidc_user_gender') || get_option('scouting_oidc_user_phone') || get_option('scouting_oidc_user_address'))
