@@ -13,7 +13,7 @@ class Mail {
      * @param string $sol_id SOL member ID
      * @return string Plus-addressed email or original email on invalid input
      */
-    public function scouting_oidc_mail_create_plus_address(string $email, string $sol_id): string {
+    public static function scouting_oidc_mail_create_plus_address(string $email, string $sol_id): string {
         if (!is_email($email) || $sol_id === '') {
             return $email;
         }
@@ -45,7 +45,7 @@ class Mail {
             $recipients = $original_is_array ? $args[$field] : wp_parse_list((string) $args[$field]);
 
             // Strip +SOL_ID from each recipient if it belongs to a Scouting OIDC user
-            $normalized_recipients = array_map([$this, 'scouting_oidc_mail_strip_sol_alias_from_recipient'], $recipients);
+            $normalized_recipients = array_map([self::class, 'scouting_oidc_mail_strip_sol_alias_from_recipient'], $recipients);
 
             // Convert back to original format (array or comma-separated string)
             $args[$field] = $original_is_array ? $normalized_recipients : implode(', ', $normalized_recipients);
@@ -61,7 +61,7 @@ class Mail {
      * @param string $recipient Mail recipient (email or "Name <email>")
      * @return string Recipient with +SOL_ID stripped if it belongs to a Scouting OIDC user, otherwise original recipient
      */
-    private function scouting_oidc_mail_strip_sol_alias_from_recipient(string $recipient): string {
+    private static function scouting_oidc_mail_strip_sol_alias_from_recipient(string $recipient): string {
         // Extract the email address from the recipient string (handles "Name <email>" format)
         if (!preg_match('/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i', $recipient, $matches)) {
             return $recipient;
