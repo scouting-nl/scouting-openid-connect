@@ -4,8 +4,10 @@ namespace ScoutingOIDC;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 require_once plugin_dir_path(__FILE__) . '../../src/utilities/ErrorHandler.php';
+require_once plugin_dir_path(__FILE__) . '../../src/utilities/Mail.php';
 
 use ScoutingOIDC\ErrorHandler;
+use ScoutingOIDC\Mail;
 
 class User {
 
@@ -169,8 +171,7 @@ class User {
             if (get_option('scouting_oidc_user_duplicate_email', 'plus_addressing') === 'plus_addressing') {
 
                 // Generate a plus-addressed email using the SOL ID
-                list($localPart, $domain) = explode('@', $this->email, 2);
-                $plusAddressEmail = "{$localPart}+{$this->sol_id}@{$domain}";
+                $plusAddressEmail = Mail::scouting_oidc_mail_create_plus_address($this->email, $this->sol_id);
 
                 // Check if the plus-addressed email is already in use by another account to avoid conflicts
                 $user_id_by_email = email_exists($plusAddressEmail);
@@ -219,8 +220,7 @@ class User {
             /// Handle email conflict based on the setting
             if (get_option('scouting_oidc_user_duplicate_email') === 'plus_addressing') {
                 // Generate a plus-addressed email using the SOL ID
-                list($localPart, $domain) = explode('@', $this->email, 2);
-                $plusAddressEmail = "{$localPart}+{$this->sol_id}@{$domain}";
+                $plusAddressEmail = Mail::scouting_oidc_mail_create_plus_address($this->email, $this->sol_id);
 
                 // Check if the plus-addressed email is already in use by another account to avoid conflicts
                 $user_id_by_plus_address_email = email_exists($plusAddressEmail);
