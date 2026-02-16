@@ -3,7 +3,7 @@ Contributors: jobvk
 Tags: scouting, scouting nederland, sol, openid connect, oidc
 Requires at least: 6.6.0
 Tested up to: 6.9
-Stable tag: 2.2.0
+Stable tag: 2.3.0
 Requires PHP: 8.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -73,6 +73,12 @@ Currently not, but this is planned for a future update of this plugin.
 4. Support Page
 
 == Changelog ==
+
+= 2.3.0 =
+* Added a settings option to define how duplicated emails should be handled: plus addressing or return an error.
+* When sending an email via WordPress, the plus addressing is removed so the user does not see it.
+* Fixed fallback conditions for phone and address fields in WooCommerce.
+* Added a custom hook for new user registration: `scouting_oidc_user_register`.
 
 = 2.2.0 =
 * Add support for `phone` and `address` scopes to store phone number and address data in user profiles.

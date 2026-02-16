@@ -9,14 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @author     Job van Koeveringe <job.van.koeveringe@scouting.nl>
  * @copyright  2026 Scouting Nederland
  * @license    GPLv3
- * @version    2.2.0
+ * @version    2.3.0
  * @link       https://github.com/Scouting-nl/scouting-openid-connect
  *
  * @wordpress-plugin
  * Plugin Name:          Scouting OpenID Connect
  * Plugin URI:           https://github.com/Scouting-nl/scouting-openid-connect
  * Description:          WordPress plugin for logging in with Scouting Nederland OpenID Connect Server.
- * Version:              2.2.0
+ * Version:              2.3.0
  * Requires at least:    6.6.0
  * Requires PHP:         8.2
  * Author:               Job van Koeveringe
@@ -28,15 +28,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  **/
 
 define('SCOUTING_OIDC_PATH', plugin_dir_path( __FILE__ ));
-require_once SCOUTING_OIDC_PATH . 'src/auth/auth.php';
-require_once SCOUTING_OIDC_PATH . 'src/auth/session.php';
-require_once SCOUTING_OIDC_PATH . 'src/menu/menu.php';
-require_once SCOUTING_OIDC_PATH . 'src/settings/page.php';
-require_once SCOUTING_OIDC_PATH . 'src/shortcode/page.php';
-require_once SCOUTING_OIDC_PATH . 'src/support/page.php';
-require_once SCOUTING_OIDC_PATH . 'src/plugin/actions.php';
-require_once SCOUTING_OIDC_PATH . 'src/plugin/description.php';
-require_once SCOUTING_OIDC_PATH . 'src/user/fields.php';
+require_once SCOUTING_OIDC_PATH . 'src/auth/Auth.php';
+require_once SCOUTING_OIDC_PATH . 'src/auth/Session.php';
+require_once SCOUTING_OIDC_PATH . 'src/menu/Menu.php';
+require_once SCOUTING_OIDC_PATH . 'src/settings/Page.php';
+require_once SCOUTING_OIDC_PATH . 'src/shortcode/Page.php';
+require_once SCOUTING_OIDC_PATH . 'src/support/Page.php';
+require_once SCOUTING_OIDC_PATH . 'src/plugin/Actions.php';
+require_once SCOUTING_OIDC_PATH . 'src/plugin/Description.php';
+require_once SCOUTING_OIDC_PATH . 'src/user/Fields.php';
+require_once SCOUTING_OIDC_PATH . 'src/utilities/Mail.php';
 
 use ScoutingOIDC\Auth;
 use ScoutingOIDC\Session;
@@ -47,6 +48,7 @@ use ScoutingOIDC\Settings;
 use ScoutingOIDC\Shortcode;
 use ScoutingOIDC\Support;
 use ScoutingOIDC\Fields;
+use ScoutingOIDC\Mail;
 
 $scouting_oidc_auth = new Auth();
 $scouting_oidc_session = new Session();
@@ -59,7 +61,7 @@ $scouting_oidc_support = new Support();
 $scouting_oidc_fields = new Fields();
 
 // Init plugin
-function scouting_oidc_init()
+function scouting_oidc_init(): void
 {
     global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode, $scouting_oidc_settings; // Declare global variables
 
@@ -72,6 +74,9 @@ function scouting_oidc_init()
 
     // Provide additional links in the plugin overview page
 	add_filter('plugin_action_links_'.plugin_basename(__FILE__), [$scouting_oidc_actions, 'scouting_oidc_actions_plugin_links']);
+
+    // Normalize plus-addressed Scouting OIDC recipient aliases in outgoing mail
+    add_filter('wp_mail', [Mail::class, 'scouting_oidc_mail_filter_wp_mail'], 20);
 
     // Add user profile fields if any option is enabled
 	if (get_option('scouting_oidc_user_birthdate') || get_option('scouting_oidc_user_gender') || get_option('scouting_oidc_user_phone') || get_option('scouting_oidc_user_address'))
@@ -105,7 +110,7 @@ add_filter('login_message', [$scouting_oidc_auth, 'scouting_oidc_auth_login_fail
 add_filter('all_plugins', [$scouting_oidc_description, 'scouting_oidc_description_modify_plugin']);
 
 // Add display to safe style css for user profile fields
-add_filter('safe_style_css', function( $styles ) {
+add_filter('safe_style_css', function(array $styles): array {
     $styles[] = 'display';
     return $styles;
 });

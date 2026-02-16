@@ -3,6 +3,12 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+require_once plugin_dir_path(__FILE__) . '../../src/utilities/ErrorHandler.php';
+require_once plugin_dir_path(__FILE__) . '../../src/utilities/Mail.php';
+
+use ScoutingOIDC\ErrorHandler;
+use ScoutingOIDC\Mail;
+
 class User {
 
     /**
@@ -136,18 +142,12 @@ class User {
 
         // Validate SOL ID is present
         if ($this->sol_id == null) {
-            $hint = rawurlencode(__('SOL ID is missing, make sure the "membership" scope is enabled.', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=sol_id_is_missing");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', __('SOL ID is missing, make sure the "membership" scope is enabled.', 'scouting-openid-connect'), 'sol_id_is_missing');
         }
 
         // Validate email is present
         if ($this->email == null) {
-            $hint = rawurlencode(__('Email is missing, make sure the "email" scope is enabled.', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=email_is_missing");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', __('Email is missing, make sure the "email" scope is enabled.', 'scouting-openid-connect'), 'email_is_missing');
         }
     }
 
@@ -156,54 +156,49 @@ class User {
      * 
      * @return bool True if user exists, false otherwise
      */
-    public function scouting_oidc_user_check_if_exist() {
-        $user_id = username_exists($this->sol_id);
-
-        if (!$user_id) {
-            $email_user_id = email_exists($this->email);
-            if ($email_user_id) {
-                global $wpdb;
-                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-                // Intentionally using direct DB update to set user_login in legacy flows. Suppress PHPCS DB and caching warnings.
-                $result = $wpdb->update(
-                    $wpdb->users,
-                    ['user_login' => $this->sol_id],
-                    ['ID' => $email_user_id]
-                );
-
-                if ($result === false) {
-                    $hint = rawurlencode(__('Something went wrong while trying to update the username.', 'scouting-openid-connect'));
-                    $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=username_update_failed");
-                    wp_safe_redirect($redirect_url);
-                    exit;
-                }
-
-                // Clear any cached user data
-                if (function_exists('clean_user_cache')) {
-                    clean_user_cache($email_user_id);
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-
-        return true;
+    public function scouting_oidc_user_check_if_exist(): bool {
+        return (bool) username_exists($this->sol_id);
     }
 
     /**
      * Create a new user
      */
-    public function scouting_oidc_user_create() {
+    public function scouting_oidc_user_create(): void {
         $user_id = wp_create_user($this->sol_id, wp_generate_password(18, true, true), $this->email);
 
-        if (is_wp_error($user_id)) {
-            $hint = rawurlencode($user_id->get_error_message());
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=user_creation_failed");
-            wp_safe_redirect($redirect_url);
-            exit;
+        // If user creation failed because the email address is already in use, append the SOL ID to the email (email+sol_id@example.com)
+        if (is_wp_error($user_id) && $user_id->get_error_code() === 'existing_user_email') {
+            if (get_option('scouting_oidc_user_duplicate_email', 'plus_addressing') === 'plus_addressing') {
+
+                // Generate a plus-addressed email using the SOL ID
+                $plusAddressEmail = Mail::scouting_oidc_mail_create_plus_address($this->email, $this->sol_id);
+
+                // Check if the plus-addressed email is already in use by another account to avoid conflicts
+                $user_id_by_email = email_exists($plusAddressEmail);
+
+                // If the plus-addressed email is already in use by another account that is not the current user, redirect with an error message
+                if ($user_id_by_email && $user_id_by_email !== username_exists($this->sol_id)) {
+                    ErrorHandler::redirect_to_login_error('error', __('Email address is already in use by another account', 'scouting-openid-connect'), 'login_email_mismatch');
+                }
+
+                // Try creating the user again with the plus-addressed email
+                $user_id_by_plus_address_email = wp_create_user($this->sol_id, wp_generate_password(18, true, true), $plusAddressEmail);
+                if (is_wp_error($user_id_by_plus_address_email)) {
+                    ErrorHandler::redirect_to_login_error('error', $user_id_by_plus_address_email->get_error_message(), 'login_email_mismatch');
+                }
+
+            } else {
+                ErrorHandler::redirect_to_login_error('error', __('Email address is already in use by another account', 'scouting-openid-connect'), 'login_email_mismatch');
+            }
         }
+
+        // If user creation failed because of some other reason than email address is already in use then redirect with error message
+        if (is_wp_error($user_id)) {
+            ErrorHandler::redirect_to_login_error('error', $user_id->get_error_message(), 'user_creation_failed');
+        }
+
+        // Trigger hook after user creation so other plugins can hook into it
+        do_action('scouting_oidc_user_register', $user_id, $this->sol_id, $this->email);
 
         $this->scouting_oidc_user_update_meta($user_id);
     }
@@ -211,56 +206,61 @@ class User {
     /**
      * Update user data if user already exists
      */
-    public function scouting_oidc_user_update() {
+    public function scouting_oidc_user_update(): void {
         $user_id_by_sol_id = username_exists($this->sol_id);
         $user_id_by_email = email_exists($this->email);
 
-        // Check if both user IDs exist
-        if ($user_id_by_sol_id && $user_id_by_email)
-        {
-            $user_by_id = get_user_by('login', $this->sol_id);
-            $user_by_email = get_user_by('email', $this->email);
+        // User exists by SOL ID and email, and both point to the same account
+        if ($user_id_by_sol_id && $user_id_by_email && $user_id_by_sol_id === $user_id_by_email) {
+            // Update meta data
+            $this->scouting_oidc_user_update_meta($user_id_by_sol_id);
+        }
+        // User exists by SOL ID and email, but the email belongs to another account
+        else if ($user_id_by_sol_id && $user_id_by_email && $user_id_by_sol_id !== $user_id_by_email) {
+            /// Handle email conflict based on the setting
+            if (get_option('scouting_oidc_user_duplicate_email') === 'plus_addressing') {
+                // Generate a plus-addressed email using the SOL ID
+                $plusAddressEmail = Mail::scouting_oidc_mail_create_plus_address($this->email, $this->sol_id);
 
-            if ($user_by_id->ID == $user_by_email->ID) {
-                $user = $user_by_id;
-				$this->scouting_oidc_user_update_meta($user->ID);
+                // Check if the plus-addressed email is already in use by another account to avoid conflicts
+                $user_id_by_plus_address_email = email_exists($plusAddressEmail);
+
+                // If the plus-addressed email is already in use by another account that is not the current user, redirect with an error message
+                if ($user_id_by_plus_address_email && $user_id_by_plus_address_email !== $user_id_by_sol_id) {
+                    ErrorHandler::redirect_to_login_error('error', __('Email address is already in use by another account', 'scouting-openid-connect'), 'login_email_mismatch');
+                }
+
+                // Plus-addressed email is not in use by another account, safe to update the email to the plus-addressed version
+                wp_update_user(array('ID' => $user_id_by_sol_id, 'user_email' => $plusAddressEmail));
             }
             else {
-                $hint = rawurlencode(__('SOL ID and Email have different user IDs', 'scouting-openid-connect'));
-                $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=login_email_mismatch");
-                wp_safe_redirect($redirect_url);
-                exit;
+                ErrorHandler::redirect_to_login_error('error', __('Email address is already in use by another account', 'scouting-openid-connect'), 'login_email_mismatch');
             }
-        }
-        else if ($user_id_by_sol_id) {
-            // User exists, but email doesn't match, update email
-            $user_by_id = get_user_by('login', $this->sol_id);
 
+            // Update meta data
+            $this->scouting_oidc_user_update_meta($user_id_by_sol_id);
+        }
+        // User exists by SOL ID but email is not associated with any account, update email and meta data
+        else if ($user_id_by_sol_id && !$user_id_by_email) {
             // Update email
-            wp_update_user(array('ID' => $user_by_id->ID, 'user_email' => $this->email));
-
-            // Update other meta
-			$this->scouting_oidc_user_update_meta($user_by_id->ID);
+            wp_update_user(array('ID' => $user_id_by_sol_id, 'user_email' => $this->email));
+            // Update meta data
+            $this->scouting_oidc_user_update_meta($user_id_by_sol_id);
         }
-        else if ($user_id_by_email) {
-        	$hint = rawurlencode(__('Email address is already in use by another account', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=login_email_mismatch");
-            wp_safe_redirect($redirect_url);
-            exit;
+        // User not found by either SOL ID or email
+        else {
+            ErrorHandler::redirect_to_login_error('error', __('User not found for update', 'scouting-openid-connect'), 'user_not_found_for_update');
         }
     }
 
     /**
      * Login user
      */	
-    public function scouting_oidc_user_login() {
+    public function scouting_oidc_user_login(): void {
         $user = get_user_by('login', $this->sol_id);
 
         if (!$user) {
-            $hint = rawurlencode(__('Something went wrong while trying to log in', 'scouting-openid-connect'));
-            $redirect_url = esc_url_raw(wp_login_url() . "?login=failed&error_description=error&hint={$hint}&message=login_email_mismatch");
-            wp_safe_redirect($redirect_url);
-            exit;
+            ErrorHandler::redirect_to_login_error('error', __('Something went wrong while trying to log in', 'scouting-openid-connect'), 'login_email_mismatch');
         }
 
         wp_set_current_user($user->ID, $user->user_login);
@@ -286,7 +286,7 @@ class User {
      * 
      * @param int $user_id User ID
      */
-    private function scouting_oidc_user_update_meta(int $user_id) {
+    private function scouting_oidc_user_update_meta(int $user_id): void {
         update_user_meta($user_id, 'first_name', $this->firstName);
         update_user_meta($user_id, 'last_name', $this->infix . ' ' . $this->familyName);
         update_user_meta($user_id, 'locale', $this->language);
@@ -345,7 +345,7 @@ class User {
      * 
      * @param int $user_id User ID
      */
-    private function scouting_oidc_user_sync_to_woocommerce(int $user_id) {
+    private function scouting_oidc_user_sync_to_woocommerce(int $user_id): void {
         // Only run when WooCommerce is active and we have a WP_User instance
         if (!class_exists('WooCommerce') || !($user = get_user_by('ID', $user_id))) {
             return;

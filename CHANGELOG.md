@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [[2.3.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.3.0)] - 16/02/2026
+
+- Added a settings option to define how duplicated emails should be handled: plus addressing or return an error.
+- When sending an email via WordPress, the plus addressing is removed so the user does not see it.
+- Fixed fallback conditions for phone and address fields in WooCommerce.
+- Added a custom hook for new user registration: `scouting_oidc_user_register`.
+
 ## [[2.2.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.2.0)] - 10/02/2026
 
 - Add support for `address` and `phone` scopes to store address data and phone number in user profiles.

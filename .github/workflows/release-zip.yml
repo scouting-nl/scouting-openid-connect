@@ -1,0 +1,56 @@
+name: 'release-zip'
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  package:
+    name: Build plugin zip
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Build zip archive
+        run: |
+          set -euo pipefail
+          PLUGIN_SLUG="scouting-openid-connect"
+          VERSION="${GITHUB_REF_NAME#v}"
+          BUILD_ROOT="${RUNNER_TEMP}/build"
+          STAGING="${BUILD_ROOT}/${PLUGIN_SLUG}"
+
+          mkdir -p "${STAGING}"
+          rsync -av . "${STAGING}" \
+            --exclude ".git" \
+            --exclude ".github" \
+            --exclude ".gitattributes" \
+            --exclude "CHANGELOG.md" \
+            --exclude "README.md" \
+            --include "assets/" \
+            --include "assets/icon.svg" \
+            --exclude "assets/*"
+
+          cd "${BUILD_ROOT}"
+          ZIP_NAME="${PLUGIN_SLUG}.${VERSION}.zip"
+          zip -r "${ZIP_NAME}" "${PLUGIN_SLUG}"
+          echo "ZIP_PATH=${BUILD_ROOT}/${ZIP_NAME}" >> "${GITHUB_ENV}"
+          echo "ZIP_NAME=${ZIP_NAME}" >> "${GITHUB_ENV}"
+
+      - name: Upload zip as artifact
+        uses: actions/upload-artifact@v6.0.0
+        with:
+          name: ${{ env.ZIP_NAME }}
+          path: ${{ env.ZIP_PATH }}
+          if-no-files-found: error
+
+      - name: Attach zip to release
+        uses: softprops/action-gh-release@v2.5.0
+        with:
+          files: ${{ env.ZIP_PATH }}
+          generate_release_notes: true
