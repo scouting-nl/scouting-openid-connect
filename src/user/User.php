@@ -198,7 +198,7 @@ class User {
         }
 
         // Trigger hook after user creation so other plugins can hook into it
-        do_action('scouting_oidc_user_created', $user_id, $this->sol_id, $this->email);
+        do_action('scouting_oidc_user_register', $user_id, $this->sol_id, $this->email);
 
         $this->scouting_oidc_user_update_meta($user_id);
     }
