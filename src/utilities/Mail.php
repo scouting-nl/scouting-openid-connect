@@ -41,16 +41,21 @@ class Mail {
         // Define the recipient fields to normalize
         $supported_fields = ['to', 'cc', 'bcc'];
 
+        // Check for plus-addressing markers in recipients and headers
+        [$recipient_has_plus, $headers_has_plus] = self::scouting_oidc_mail_value_contains_plus($args, $supported_fields);
+
         // Skip normalization work when no plus-addressing markers are present
-        if (!self::scouting_oidc_mail_value_contains_plus($args, $supported_fields)) {
+        if (!$recipient_has_plus && !$headers_has_plus) {
             return $args;
         }
 
-        // Normalize recipient fields (to/cc/bcc) in wp_mail arguments
-        $args = self::scouting_oidc_mail_normalize_recipient_fields($args, $supported_fields);
+        // Normalize recipient fields (to/cc/bcc) in wp_mail arguments if needed
+        if ($recipient_has_plus) {
+            $args = self::scouting_oidc_mail_normalize_recipient_fields($args, $supported_fields);
+        }
 
-        // Normalize email addresses found in headers as well
-        if (!empty($args['headers'])) {
+        // Normalize email addresses found in headers as well if needed
+        if ($headers_has_plus && !empty($args['headers'])) {
             $args['headers'] = self::scouting_oidc_mail_normalize_headers($args['headers']);
         }
 
@@ -63,9 +68,14 @@ class Mail {
      *
      * @param array $args wp_mail arguments
      * @param array $supported_fields Recipient fields to inspect
-     * @return bool True when a '+' appears in recipients or headers
+     * @return array{0: bool, 1: bool} [recipient_has_plus, headers_has_plus]
+     *         recipient_has_plus: True if a '+' appears in any recipient field (to, cc, bcc)
+     *         headers_has_plus: True if a '+' appears in any header value
      */
-    private static function scouting_oidc_mail_value_contains_plus(array $args, array $supported_fields): bool {
+    private static function scouting_oidc_mail_value_contains_plus(array $args, array $supported_fields): array {
+        $recipient_has_plus = false;
+        $headers_has_plus = false;
+
         // Check recipient fields for plus signs
         foreach ($supported_fields as $field) {
             if (empty($args[$field])) {
@@ -74,13 +84,15 @@ class Mail {
 
             $value = $args[$field];
             if (is_string($value) && str_contains($value, '+')) {
-                return true;
+                $recipient_has_plus = true;
+                break;
             }
 
             if (is_array($value)) {
                 foreach ($value as $item) {
                     if (is_string($item) && str_contains($item, '+')) {
-                        return true;
+                        $recipient_has_plus = true;
+                        break 2;
                     }
                 }
             }
@@ -90,19 +102,18 @@ class Mail {
         if (!empty($args['headers'])) {
             $headers = $args['headers'];
             if (is_string($headers) && str_contains($headers, '+')) {
-                return true;
-            }
-
-            if (is_array($headers)) {
+                $headers_has_plus = true;
+            } elseif (is_array($headers)) {
                 foreach ($headers as $header_item) {
                     if (is_string($header_item) && str_contains($header_item, '+')) {
-                        return true;
+                        $headers_has_plus = true;
+                        break;
                     }
                 }
             }
         }
 
-        return false;
+        return [$recipient_has_plus, $headers_has_plus];
     }
 
     /**
