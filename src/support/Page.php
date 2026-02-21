@@ -47,15 +47,15 @@ class Support
                     <?php esc_html_e('Fill in the OpenID Connect Settings with the copied data.', 'scouting-openid-connect'); ?>
                     <br><?php esc_html_e('Required scopes:', 'scouting-openid-connect'); ?>
                     <ul style="list-style: disc; margin-left: 20px;">
-                        <li><?php esc_html_e('openid', 'scouting-openid-connect'); ?></li>
-                        <li><?php esc_html_e('membership', 'scouting-openid-connect'); ?></li>
-                        <li><?php esc_html_e('profile', 'scouting-openid-connect'); ?></li>
-                        <li><?php esc_html_e('email', 'scouting-openid-connect'); ?></li>
+                        <li>openid</li>
+                        <li>membership</li>
+                        <li>profile</li>
+                        <li>email</li>
                     </ul>
                     <?php esc_html_e('Optional scopes:', 'scouting-openid-connect'); ?>
                     <ul style="list-style: disc; margin-left: 20px;">
-                        <li><?php esc_html_e('address', 'scouting-openid-connect'); ?></li>
-                        <li><?php esc_html_e('phone', 'scouting-openid-connect'); ?></li>
+                        <li>address</li>
+                        <li>phone</li>
                     </ul>
                 </li>
                 <li><?php esc_html_e('Fill in the General Settings.', 'scouting-openid-connect'); ?></li>
