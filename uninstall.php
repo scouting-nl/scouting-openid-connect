@@ -53,4 +53,9 @@ foreach ($scouting_oidc_users as $scouting_oidc_user) {
 		if (get_user_meta($scouting_oidc_user->ID, $scouting_oidc_meta)) delete_user_meta($scouting_oidc_user->ID, $scouting_oidc_meta);
 	}
 }
+
+// Delete logs table
+global $wpdb;
+$table_name = $wpdb->prefix . 'scouting_oidc_logs';
+$wpdb->query("DROP TABLE IF EXISTS {$table_name}");
 ?>

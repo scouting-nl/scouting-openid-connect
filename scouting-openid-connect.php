@@ -49,6 +49,7 @@ use ScoutingOIDC\Shortcode;
 use ScoutingOIDC\Support;
 use ScoutingOIDC\Fields;
 use ScoutingOIDC\Mail;
+use ScoutingOIDC\Logger;
 
 $scouting_oidc_auth = new Auth();
 $scouting_oidc_session = new Session();
@@ -59,11 +60,12 @@ $scouting_oidc_settings = new Settings();
 $scouting_oidc_shortcode = new Shortcode();
 $scouting_oidc_support = new Support();
 $scouting_oidc_fields = new Fields();
+$scouting_oidc_logger = new Logger();
 
 // Init plugin
 function scouting_oidc_init(): void
 {
-    global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode, $scouting_oidc_settings; // Declare global variables
+    global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode, $scouting_oidc_settings, $scouting_oidc_logger; // Declare global variables
 
     // Add the OpenID Connect button to the login form
     add_action('login_form', array($scouting_oidc_auth, 'scouting_oidc_auth_login_form'));
@@ -123,4 +125,5 @@ add_action('wp_logout', [$scouting_oidc_auth, 'scouting_oidc_auth_logout_redirec
 
 // Setup defaults during installation
 register_activation_hook(__FILE__, [$scouting_oidc_settings, 'scouting_oidc_settings_install']);
+register_activation_hook(__FILE__, [$scouting_oidc_logger, 'scouting_oidc_logger_install']);
 ?>
