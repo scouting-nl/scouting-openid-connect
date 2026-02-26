@@ -3,6 +3,11 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+// Define WordPress constant if not defined.
+if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
+	define( 'HOUR_IN_SECONDS', 3600 );
+}
+
 class Session {
     /**
      * Sets value in a transient session for 1 hour
@@ -11,7 +16,7 @@ class Session {
      * @param mixed $value the value to set in the transient session
      */
     public function scouting_oidc_session_set(string $key, mixed $value): void {
-        set_transient('scouting_oidc_session_'.$this->scouting_oidc_session_get_session_id().'_'.$key, $value, 60*60*1);
+        set_transient('scouting_oidc_session_'.$this->scouting_oidc_session_get_session_id().'_'.$key, $value, HOUR_IN_SECONDS);
     }
 
     /**
@@ -49,7 +54,7 @@ class Session {
             }
 
             setcookie('scouting_oidc_session', $session_id, [
-                'expires' => time() + 3600,
+                'expires' => time() + HOUR_IN_SECONDS,
                 'path' => '/',
                 'domain' => $domain,
                 'secure' => is_ssl(),
