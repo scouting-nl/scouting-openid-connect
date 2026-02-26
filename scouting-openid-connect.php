@@ -37,6 +37,7 @@ require_once SCOUTING_OIDC_PATH . 'src/support/Page.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/Actions.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/Description.php';
 require_once SCOUTING_OIDC_PATH . 'src/user/Fields.php';
+require_once SCOUTING_OIDC_PATH . 'src/utilities/Logger.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/Mail.php';
 
 use ScoutingOIDC\Auth;
