@@ -246,7 +246,7 @@ class Settings_General
             return;
         }
 
-        Logger::info(LogType::ERROR_HANDLER, sprintf('Setting "%s" changed: %s -> %s', $option, $old, $new));
+        Logger::info(LogType::SETTINGS, "Setting {$option} changed: {$old} -> {$new}");
     }
 
     /**
