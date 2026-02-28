@@ -221,6 +221,56 @@ class Settings_General
                 'sanitize_callback' => [$this, 'scouting_oidc_sanitize_custom_redirect_option'] // Sanitize the input value as custom redirect
             ]
         );
+
+        // Log settings changes for options that belong to this plugin
+        add_action('updated_option', [$this, 'handle_option_update'], 10, 3);
+    }
+
+    /**
+     * Handle option updates and log changes for scouting_oidc_ options.
+     *
+     * @param string $option
+     * @param mixed $old_value
+     * @param mixed $value
+     * @return void
+     */
+    public function handle_option_update(string $option, $old_value, $value): void {
+        if (strpos($option, 'scouting_oidc_') !== 0) {
+            return;
+        }
+
+        $old = $this->format_setting_value($old_value);
+        $new = $this->format_setting_value($value);
+
+        if ($old === $new) {
+            return;
+        }
+
+        Logger::info(LogType::ERROR_HANDLER, sprintf('Setting "%s" changed: %s -> %s', $option, $old, $new));
+    }
+
+    /**
+     * Convert a setting value to a short, safe string for logging.
+     */
+    private function format_setting_value(mixed $val): string {
+        if (is_null($val)) {
+            return 'null';
+        }
+
+        if (is_bool($val)) {
+            return $val ? '1' : '0';
+        }
+
+        if (is_scalar($val)) {
+            return (string) $val;
+        }
+
+        $json = json_encode($val, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR);
+        if ($json !== false) {
+            return $json;
+        }
+
+        return print_r($val, true);
     }
 
     // Sanitize the display name option

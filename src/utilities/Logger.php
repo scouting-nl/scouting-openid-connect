@@ -30,6 +30,7 @@ enum LogLevel: string {
 enum LogType: string {
     case MAIL = 'mail';
     case ERROR_HANDLER = 'error_handler';
+    case SETTINGS = 'settings';
 }
 
 /**
