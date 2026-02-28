@@ -6,16 +6,19 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 use WP_Error;
 
 /**
- * Log levels for the logging system.
+ * Log levels for the logging system (PSR-3 compatible).
  *
- * This enum lists the supported severity levels stored in the database.
+ * This enum lists the supported severity levels (PSR-3) stored in the database.
  */
 enum LogLevel: string {
-    case DEBUG = 'debug';
-    case INFO = 'info';
-    case WARNING = 'warning';
-    case ERROR = 'error';
-    case CRITICAL = 'critical';
+    case EMERGENCY = 'emergency';
+    case ALERT     = 'alert';
+    case CRITICAL  = 'critical';
+    case ERROR     = 'error';
+    case WARNING   = 'warning';
+    case NOTICE    = 'notice';
+    case INFO      = 'info';
+    case DEBUG     = 'debug';
 }
 
 /**
@@ -25,7 +28,8 @@ enum LogLevel: string {
  */
 
 enum LogType: string {
-    case MAIL = 'MAIL'; 
+    case MAIL = 'mail';
+    case ERROR_HANDLER = 'error_handler';
 }
 
 /**
@@ -166,42 +170,92 @@ class Logger {
     }
 
     /**
-     * Log a debug-level message.
+     * Log a WP_Error object at the error level, including all error codes and messages in the log entry.
      *
+     * @param WP_Error $wp_error The WP_Error object to log.
      * @param LogType $type Category/type for this log entry.
-     * @param string $message Debug message.
-     * @param int|null $user_id Optional WP user ID to associate with this message.
-     * @param string|null $sol_id Optional SOL identifier to associate with this message.
+     * @param LogLevel $level Severity level for this log entry.
+     * @param int|null $user_id Optional WP user ID to associate with this error.
+     * @param string|null $sol_id Optional SOL identifier to associate with this error.
      * @return void
      */
-    public static function debug(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
-        self::log($type, LogLevel::DEBUG, $message, $user_id, $sol_id);
+    public static function log_wp_error(WP_Error $wp_error, LogType $type, LogLevel $level = LogLevel::ERROR, ?int $user_id = null, ?string $sol_id = null): void {
+        $codes = $wp_error->get_error_codes();
+
+        // Normalize to a codes array so we have a single processing path.
+        if (empty($codes)) {
+            $codes = ['generic'];
+        }
+
+        // Build log lines for each error code, including the generic message if no specific codes are present.
+        $lines = array_map(function ($code) use ($wp_error) {
+            if ($code === 'generic') {
+                $message = $wp_error->get_error_message();
+                $data = $wp_error->get_error_data();
+                $line = $message;
+            } else {
+                $message = $wp_error->get_error_message($code);
+                $data = $wp_error->get_error_data($code);
+                $line = "[{$code}] {$message}";
+            }
+
+            if ($data !== null) {
+                $line .= "\nData: " . self::encode_log_data($data);
+            }
+
+            return $line;
+        }, $codes);
+
+        // Combine all lines into a single log entry with new line separation.
+        $combined = implode("\n\n", $lines);
+
+        // Prevent extremely large log entries from overwhelming the DB.
+        $max = 65535; // safe default for TEXT fields
+        if (strlen($combined) > $max) {
+            $combined = substr($combined, 0, $max - 24) . "\n\n...truncated...";
+        }
+
+        self::log($type, $level, $combined, $user_id, $sol_id);
     }
 
     /**
-     * Log an informational message.
+     * Log an emergency-level message.
+     *
+     * @param LogType $type
+     * @param string $message
+     * @param int|null $user_id
+     * @param string|null $sol_id
+     * @return void
+     */
+    public static function emergency(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
+        self::log($type, LogLevel::EMERGENCY, $message, $user_id, $sol_id);
+    }
+
+    /**
+     * Log an alert-level message.
+     *
+     * @param LogType $type
+     * @param string $message
+     * @param int|null $user_id
+     * @param string|null $sol_id
+     * @return void
+     */
+    public static function alert(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
+        self::log($type, LogLevel::ALERT, $message, $user_id, $sol_id);
+    }
+
+
+    /**
+     * Log a critical-level message.
      *
      * @param LogType $type Category/type for this log entry.
-     * @param string $message Informational message.
+     * @param string $message Critical message.
      * @param int|null $user_id Optional WP user ID.
      * @param string|null $sol_id Optional SOL identifier.
      * @return void
      */
-    public static function info(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
-        self::log($type, LogLevel::INFO, $message, $user_id, $sol_id);
-    }
-
-    /**
-     * Log a warning-level message.
-     *
-     * @param LogType $type Category/type for this log entry.
-     * @param string $message Warning message.
-     * @param int|null $user_id Optional WP user ID.
-     * @param string|null $sol_id Optional SOL identifier.
-     * @return void
-     */
-    public static function warning(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
-        self::log($type, LogLevel::WARNING, $message, $user_id, $sol_id);
+    public static function critical(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
+        self::log($type, LogLevel::CRITICAL, $message, $user_id, $sol_id);
     }
 
     /**
@@ -218,15 +272,74 @@ class Logger {
     }
 
     /**
-     * Log a critical-level message.
+     * Log a warning-level message.
      *
      * @param LogType $type Category/type for this log entry.
-     * @param string $message Critical message.
+     * @param string $message Warning message.
      * @param int|null $user_id Optional WP user ID.
      * @param string|null $sol_id Optional SOL identifier.
      * @return void
      */
-    public static function critical(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
-        self::log($type, LogLevel::CRITICAL, $message, $user_id, $sol_id);
+    public static function warning(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
+        self::log($type, LogLevel::WARNING, $message, $user_id, $sol_id);
+    }
+
+    /**
+     * Log a notice-level message.
+     *
+     * @param LogType $type
+     * @param string $message
+     * @param int|null $user_id
+     * @param string|null $sol_id
+     * @return void
+     */
+    public static function notice(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
+        self::log($type, LogLevel::NOTICE, $message, $user_id, $sol_id);
+    }
+
+    /**
+     * Log an informational message.
+     *
+     * @param LogType $type Category/type for this log entry.
+     * @param string $message Informational message.
+     * @param int|null $user_id Optional WP user ID.
+     * @param string|null $sol_id Optional SOL identifier.
+     * @return void
+     */
+    public static function info(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
+        self::log($type, LogLevel::INFO, $message, $user_id, $sol_id);
+    }
+
+
+    /**
+     * Log a debug-level message.
+     *
+     * @param LogType $type Category/type for this log entry.
+     * @param string $message Debug message.
+     * @param int|null $user_id Optional WP user ID to associate with this message.
+     * @param string|null $sol_id Optional SOL identifier to associate with this message.
+     * @return void
+     */
+    public static function debug(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
+        self::log($type, LogLevel::DEBUG, $message, $user_id, $sol_id);
+    }
+
+    /**
+     * Safely encode log data.
+     */
+    private static function encode_log_data(mixed $data): string
+    {
+        $json = json_encode(
+            $data,
+            JSON_UNESCAPED_SLASHES
+            | JSON_UNESCAPED_UNICODE
+            | JSON_PARTIAL_OUTPUT_ON_ERROR
+        );
+
+        if ($json !== false) {
+            return $json;
+        }
+
+        return print_r($data, true);
     }
 }
