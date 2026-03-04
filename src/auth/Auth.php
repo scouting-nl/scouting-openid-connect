@@ -27,10 +27,15 @@ class Auth {
        );
     }
 
-    // Add the OpenID Connect button to the login form
+    /**
+     * Add the OpenID Connect button to the login form
+     * 
+     * @return void
+     */
     public function scouting_oidc_auth_login_form(): void {
         // Check if the client ID and client secret are empty 
         if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
+            Logger::warning(LogType::AUTH, "Client ID or Client Secret are missing in the configuration, login button will not be rendered on the login form");
             return;
         }
 
@@ -38,6 +43,7 @@ class Auth {
 
         // Check if the login URL starts with 'init_error'
         if (substr($login_url, 0, 10) == 'init_error') {
+            Logger::warning(LogType::AUTH, "Failed to generate OIDC login URL, login button will not be rendered on the login form");
             return;
         }
 
@@ -55,10 +61,16 @@ class Auth {
         echo '</a></div>';
     }
 
-    // Create shortcode with a login button
+    /**
+     * Create shortcode with a login button
+     * 
+     * @param array $atts the shortcode attributes for customizing the button (width, height, background_color, text_color)
+     * @return string the HTML for the login button or an empty string if the button cannot be rendered due to missing configuration or errors
+     */
     public function scouting_oidc_auth_login_button_shortcode(array $atts = array()): string {
         // Check if the client ID and client secret are empty 
         if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
+            Logger::critical(LogType::AUTH, "Client ID or Client Secret are missing in the configuration, shortcode button will not be rendered");
             return '';
         }
 
@@ -66,6 +78,7 @@ class Auth {
 
         // Check if the login URL starts with 'init_error'
         if (substr($login_url, 0, 10) == 'init_error') {
+            Logger::error(LogType::AUTH, "Failed to generate OIDC login URL, shortcode button will not be rendered");
             return '';
         }
 
@@ -102,10 +115,15 @@ class Auth {
         return $button_html;
     }
 
-    // Create shortcode with the OpenID Authentication URL
+    /**
+     * Create shortcode with the OpenID Authentication URL
+     * 
+     * @return string the HTML for the login URL or an error URL if the login URL cannot be generated
+     */
     public function scouting_oidc_auth_login_url_shortcode(): string {
         // Check if the client ID and client secret are empty 
         if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
+            Logger::critical(LogType::AUTH, "Client ID or Client Secret are missing in the configuration, shortcode login URL will be rendered as an login error URL");
             return ErrorHandler::login_error_url('init', __('Client ID or Client Secret are missing in the configuration', 'scouting-openid-connect'), 'init_error');
         }
 
@@ -116,13 +134,19 @@ class Auth {
             // Get hint from the URL
             $hint = substr($login_url, 12);
 
+            Logger::critical(LogType::AUTH, "Failed to generate OIDC login URL, shortcode login URL will be rendered as an login error URL");
+
             // Return login URL with hint
             return ErrorHandler::login_error_url('init', $hint, 'init_error');
         }
         return esc_url($this->scouting_oidc_auth_login_url());
     }
 
-    // Callback to login with OpenID Connect
+    /**
+     * Callback to login with OpenID Connect
+     * 
+     * @return void
+     */
     public function scouting_oidc_auth_callback(): void {
         // Check if we're on the front page
         if (!is_front_page()) {
@@ -199,7 +223,12 @@ class Auth {
         }
     }
 
-    // Callback after failed login
+    /**
+     * Callback after failed login
+     * 
+     * @param string $message the error message
+     * @return string the HTML for the error message or an empty string if the user is not logged in
+     */
     public function scouting_oidc_auth_login_failed(string $message): string {
         // Check if user is logged in
         if (!is_login()) {
@@ -222,6 +251,7 @@ class Auth {
 
         // If the error equals `The user denied the request`, show a translated message
         if ($hint == 'The user denied the request') {
+            logger::debug(LogType::AUTH, "User cancelled the OIDC authentication request");
             $hint = __("The user denied the request", "scouting-openid-connect");
         }
 
@@ -241,7 +271,12 @@ class Auth {
         return '<div id="login_error" class="notice notice-error"><p><strong>Error: </strong>' . esc_html($hint) . '</p></div>';
     }
 
-    // Redirect after login based on settings
+    /**
+     * Redirect after login based on settings
+     * 
+     * @param string $user_login the username of the user logging in
+     * @return void
+     */
     public function scouting_oidc_auth_login_redirect(string $user_login): void {
         $user = get_user_by('login', $user_login);
         if (!$user) return;
@@ -282,7 +317,11 @@ class Auth {
         }
     }
 
-    // Redirect after logout based on settings
+    /**
+     * Redirect after logout based on settings
+     * 
+     * @return void
+     */
     public function scouting_oidc_auth_logout_redirect(): void {
         $logout_url = esc_url_raw($this->oidc_client->getLogoutUrl());
 
@@ -299,11 +338,18 @@ class Auth {
             });
         }
 
+        $user = wp_get_current_user();
+        Logger::info(LogType::USER, "User '{$user->display_name}' logged out", $user->ID, $user->user_login);
+
         wp_safe_redirect($logout_url);
         exit;
     }
 
-    // Helper function to get the icon URL
+    /**
+     * Helper function to get the icon URL
+     * 
+     * @return string the HTML for the SVG icon or an empty string if the icon cannot be loaded
+     */
     private function scouting_oidc_auth_icon(): string {
         // Define the path to the SVG file
         $svg_file_path = SCOUTING_OIDC_PATH . 'assets/icon.svg';
@@ -324,10 +370,15 @@ class Auth {
             // Return the SVG content
             return $svg_content;
         }
+        Logger::error(LogType::ASSETS, "Failed to load scouting SVG icon from path: {$svg_file_path}");
         return '';
     }
 
-    // Helper function to get the allowed SVG tags
+    /**
+     * Helper function to get the allowed SVG tags
+     * 
+     * @return array the array of allowed SVG tags
+     */
     private function scouting_oidc_auth_icon_wp_kses_allowed_svg (): array {
         return array(
             'svg' => array(
@@ -352,7 +403,11 @@ class Auth {
         );
     }
 
-    // Helper function to get the login URL
+    /**
+     * Helper function to get the login URL
+     * 
+     * @return string the login URL
+     */
     private function scouting_oidc_auth_login_url(): string {
         $response_type = 'code';
         $scopes = array_map('sanitize_text_field', explode(" ", get_option('scouting_oidc_scopes')));
@@ -366,8 +421,10 @@ class Auth {
         if (isset($_GET['error_description'], $_GET['hint'])) {
             $error_description = sanitize_text_field(wp_unslash($_GET['error_description']));
             $hint = sanitize_text_field(wp_unslash($_GET['hint']));
-            if ($error_description == 'init')
+            if ($error_description == 'init') {
+                Logger::error(LogType::AUTH, "OIDC login URL builder returning init error: {$hint}");
                 return "init_error:" . $hint;
+            }
         }
 
         return $this->oidc_client->getAuthenticationURL($response_type, $scopes);
