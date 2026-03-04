@@ -4,9 +4,11 @@ namespace ScoutingOIDC;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 require_once plugin_dir_path(__FILE__) . '../../src/utilities/ErrorHandler.php';
+require_once plugin_dir_path(__FILE__) . '../../src/utilities/Logger.php';
 require_once plugin_dir_path(__FILE__) . '../../src/utilities/Mail.php';
 
 use ScoutingOIDC\ErrorHandler;
+use ScoutingOIDC\Logger;
 use ScoutingOIDC\Mail;
 
 class User {
@@ -142,11 +144,13 @@ class User {
 
         // Validate SOL ID is present
         if ($this->sol_id == null) {
+            Logger::error(LogType::USER, "Construction of User object failed: SOL ID is missing in the user data received from the OpenID Connect server. User data: " . json_encode($user_json_decoded));
             ErrorHandler::redirect_to_login_error('error', __('SOL ID is missing, make sure the "membership" scope is enabled.', 'scouting-openid-connect'), 'sol_id_is_missing');
         }
 
         // Validate email is present
         if ($this->email == null) {
+            Logger::error(LogType::USER, "Construction of User object failed: Email is missing in the user data received from the OpenID Connect server. User data: " . json_encode($user_json_decoded), null, $this->sol_id);
             ErrorHandler::redirect_to_login_error('error', __('Email is missing, make sure the "email" scope is enabled.', 'scouting-openid-connect'), 'email_is_missing');
         }
     }
@@ -157,18 +161,23 @@ class User {
      * @return bool True if user exists, false otherwise
      */
     public function scouting_oidc_user_check_if_exist(): bool {
-        return (bool) username_exists($this->sol_id);
+        return username_exists($this->sol_id) !== false;
     }
 
     /**
      * Create a new user
+     * 
+     * @return void
      */
     public function scouting_oidc_user_create(): void {
+        Logger::info(LogType::USER, "Creating a account for user '{$this->fullName}'", null, $this->sol_id);
         $user_id = wp_create_user($this->sol_id, wp_generate_password(18, true, true), $this->email);
 
         // If user creation failed because the email address is already in use, append the SOL ID to the email (email+sol_id@example.com)
         if (is_wp_error($user_id) && $user_id->get_error_code() === 'existing_user_email') {
+            Logger::warning(LogType::USER, "Creating user '{$this->fullName}' failed due to email conflict for '{$this->email}'", null, $this->sol_id);
             if (get_option('scouting_oidc_user_duplicate_email', 'plus_addressing') === 'plus_addressing') {
+                 Logger::info(LogType::USER, "Creating user '{$this->fullName}' with plus-addressing strategy to resolve email conflict", null, $this->sol_id);
 
                 // Generate a plus-addressed email using the SOL ID
                 $plusAddressEmail = Mail::scouting_oidc_mail_create_plus_address($this->email, $this->sol_id);
@@ -178,24 +187,29 @@ class User {
 
                 // If the plus-addressed email is already in use by another account that is not the current user, redirect with an error message
                 if ($user_id_by_email && $user_id_by_email !== username_exists($this->sol_id)) {
+                    Logger::error(LogType::USER, "Creating user '{$this->fullName}' failed: plus-addressed email '{$plusAddressEmail}' is already linked to another account", null, $this->sol_id);
                     ErrorHandler::redirect_to_login_error('error', __('Email address is already in use by another account', 'scouting-openid-connect'), 'login_email_mismatch');
                 }
 
                 // Try creating the user again with the plus-addressed email
                 $user_id_by_plus_address_email = wp_create_user($this->sol_id, wp_generate_password(18, true, true), $plusAddressEmail);
                 if (is_wp_error($user_id_by_plus_address_email)) {
+                    Logger::log_wp_error(LogType::USER, LogLevel::ERROR, $user_id_by_plus_address_email, null, $this->sol_id);
                     ErrorHandler::redirect_to_login_error('error', $user_id_by_plus_address_email->get_error_message(), 'login_email_mismatch');
                 }
-
             } else {
+                Logger::error(LogType::USER, "Creating user '{$this->fullName}' failed: Email conflict for '{$this->email}' and duplicate-email strategy is not plus-addressing", null, $this->sol_id);
                 ErrorHandler::redirect_to_login_error('error', __('Email address is already in use by another account', 'scouting-openid-connect'), 'login_email_mismatch');
             }
         }
 
         // If user creation failed because of some other reason than email address is already in use then redirect with error message
         if (is_wp_error($user_id)) {
+            Logger::log_wp_error(LogType::USER, LogLevel::ERROR, $user_id, null, $this->sol_id);
             ErrorHandler::redirect_to_login_error('error', $user_id->get_error_message(), 'user_creation_failed');
         }
+
+        Logger::info(LogType::USER, "User '{$this->fullName}' created successfully", $user_id, $this->sol_id);
 
         // Trigger hook after user creation so other plugins can hook into it
         do_action('scouting_oidc_user_register', $user_id, $this->sol_id, $this->email);
@@ -205,6 +219,8 @@ class User {
 
     /**
      * Update user data if user already exists
+     * 
+     * @return void
      */
     public function scouting_oidc_user_update(): void {
         $user_id_by_sol_id = username_exists($this->sol_id);
@@ -212,13 +228,17 @@ class User {
 
         // User exists by SOL ID and email, and both point to the same account
         if ($user_id_by_sol_id && $user_id_by_email && $user_id_by_sol_id === $user_id_by_email) {
+            Logger::info(LogType::USER, "Updating user '{$this->fullName}' where SOL ID and email both match the same existing account", $user_id_by_sol_id, $this->sol_id);
             // Update meta data
             $this->scouting_oidc_user_update_meta($user_id_by_sol_id);
         }
         // User exists by SOL ID and email, but the email belongs to another account
         else if ($user_id_by_sol_id && $user_id_by_email && $user_id_by_sol_id !== $user_id_by_email) {
+            Logger::warning(LogType::USER, "Updating user '{$this->fullName}' where SOL ID matches an existing account but email '{$this->email}' is associated with a different account", $user_id_by_sol_id, $this->sol_id);
             /// Handle email conflict based on the setting
             if (get_option('scouting_oidc_user_duplicate_email') === 'plus_addressing') {
+                Logger::info(LogType::USER, "Updating user '{$this->fullName}' email address using plus-addressing strategy to resolve conflict", $user_id_by_sol_id, $this->sol_id);
+
                 // Generate a plus-addressed email using the SOL ID
                 $plusAddressEmail = Mail::scouting_oidc_mail_create_plus_address($this->email, $this->sol_id);
 
@@ -227,13 +247,21 @@ class User {
 
                 // If the plus-addressed email is already in use by another account that is not the current user, redirect with an error message
                 if ($user_id_by_plus_address_email && $user_id_by_plus_address_email !== $user_id_by_sol_id) {
+                    Logger::error(LogType::USER, "Updating user '{$this->fullName}' failed: plus-addressed email '{$plusAddressEmail}' is already linked to another account", $user_id_by_sol_id, $this->sol_id);
                     ErrorHandler::redirect_to_login_error('error', __('Email address is already in use by another account', 'scouting-openid-connect'), 'login_email_mismatch');
                 }
 
                 // Plus-addressed email is not in use by another account, safe to update the email to the plus-addressed version
-                wp_update_user(array('ID' => $user_id_by_sol_id, 'user_email' => $plusAddressEmail));
+                $result = wp_update_user(array('ID' => $user_id_by_sol_id, 'user_email' => $plusAddressEmail));
+                if (is_wp_error($result)) {
+                    Logger::log_wp_error(LogType::USER, LogLevel::ERROR, $result, $user_id_by_sol_id, $this->sol_id);
+                }
+                else {
+                    Logger::info(LogType::USER, "Updating user '{$this->fullName}' email address to plus-addressed version '{$plusAddressEmail}' succeeded", $user_id_by_sol_id, $this->sol_id);
+                }
             }
             else {
+                Logger::error(LogType::USER, "Updating user '{$this->fullName}' failed: Email conflict for '{$this->email}' and duplicate-email strategy is not plus-addressing", $user_id_by_sol_id, $this->sol_id);
                 ErrorHandler::redirect_to_login_error('error', __('Email address is already in use by another account', 'scouting-openid-connect'), 'login_email_mismatch');
             }
 
@@ -242,29 +270,47 @@ class User {
         }
         // User exists by SOL ID but email is not associated with any account, update email and meta data
         else if ($user_id_by_sol_id && !$user_id_by_email) {
+            $user = get_userdata($user_id_by_sol_id); 
+            $old_email = $user ? $user->user_email : null;
+            Logger::info(LogType::USER, "Updating user '{$this->fullName}' their email address from '{$old_email}' to '{$this->email}'", $user_id_by_sol_id, $this->sol_id);
             // Update email
-            wp_update_user(array('ID' => $user_id_by_sol_id, 'user_email' => $this->email));
+            $result = wp_update_user(array('ID' => $user_id_by_sol_id, 'user_email' => $this->email));
+            if (is_wp_error($result)) {
+                Logger::log_wp_error(LogType::USER, LogLevel::ERROR, $result, $user_id_by_sol_id, $this->sol_id);
+            }
+            else {
+                Logger::info(LogType::USER, "Updating user '{$this->fullName}' email address succeeded", $user_id_by_sol_id, $this->sol_id);
+            }
+
             // Update meta data
             $this->scouting_oidc_user_update_meta($user_id_by_sol_id);
         }
         // User not found by either SOL ID or email
         else {
+            Logger::error(LogType::USER, "Updating user '{$this->fullName}' failed: no user found for SOL ID '{$this->sol_id}' or email '{$this->email}'", null, $this->sol_id);
             ErrorHandler::redirect_to_login_error('error', __('User not found for update', 'scouting-openid-connect'), 'user_not_found_for_update');
         }
+
+        Logger::info(LogType::USER, "Updating user '{$this->fullName}' finished", $user_id_by_sol_id, $this->sol_id);
     }
 
     /**
      * Login user
+     * 
+     * @return void
      */	
     public function scouting_oidc_user_login(): void {
         $user = get_user_by('login', $this->sol_id);
 
         if (!$user) {
+            Logger::error(LogType::USER, "User '{$this->fullName}' failed to log in: no user found for SOL ID '{$this->sol_id}'", null, $this->sol_id);
             ErrorHandler::redirect_to_login_error('error', __('Something went wrong while trying to log in', 'scouting-openid-connect'), 'login_email_mismatch');
         }
 
         wp_set_current_user($user->ID, $user->user_login);
         wp_set_auth_cookie($user->ID, true);
+
+        Logger::info(LogType::USER, "User '{$this->fullName}' logged in successfully", $user->ID, $this->sol_id);
 
         // Intentionally trigger the core WordPress 'wp_login' action so other plugins
         // that rely on the core login hook are notified when we programmatically log in.
@@ -285,8 +331,10 @@ class User {
      * Update user meta data
      * 
      * @param int $user_id User ID
+     * @return void
      */
     private function scouting_oidc_user_update_meta(int $user_id): void {
+        Logger::info(LogType::USER, "Updating user '{$this->fullName}' meta data", $user_id, $this->sol_id);
         update_user_meta($user_id, 'first_name', $this->firstName);
         update_user_meta($user_id, 'last_name', $this->infix . ' ' . $this->familyName);
         update_user_meta($user_id, 'locale', $this->language);
@@ -338,18 +386,18 @@ class User {
         if (get_option('scouting_oidc_user_woocommerce_sync')) {
             $this->scouting_oidc_user_sync_to_woocommerce($user_id);
         }
+
+        Logger::info(LogType::USER, "Updating user '{$this->fullName}' meta data finished", $user_id, $this->sol_id);
     }
 
     /**
      * Sync Scouting OIDC user data to WooCommerce customer data
      * 
      * @param int $user_id User ID
+     * @return void
      */
     private function scouting_oidc_user_sync_to_woocommerce(int $user_id): void {
-        // Only run when WooCommerce is active and we have a WP_User instance
-        if (!class_exists('WooCommerce') || !($user = get_user_by('ID', $user_id))) {
-            return;
-        }
+        Logger::info(LogType::USER, "Syncing user '{$this->fullName}' data to WooCommerce", $user_id, $this->sol_id);
 
         // Map First and Last name
         $first_name = get_user_meta($user_id, 'first_name', true);
@@ -395,6 +443,8 @@ class User {
             update_user_meta($user_id, 'shipping_city', $city);
             update_user_meta($user_id, 'shipping_country', $country);
         }
+        
+        Logger::info(LogType::USER, "Syncing user '{$this->fullName}' data to WooCommerce finished", $user_id, $this->sol_id);
     }
 }
 ?>
