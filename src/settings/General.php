@@ -246,6 +246,13 @@ class Settings_General
             return;
         }
 
+        // Redact sensitive options from logs
+        $sensitive_options = array('scouting_oidc_client_secret');
+        if (in_array($option, $sensitive_options, true)) {
+            $old = $old !== '' ? '***REDACTED***' : 'null';
+            $new = $new !== '' ? '***REDACTED***' : 'null';
+        }
+
         Logger::info(LogType::SETTINGS, "Setting {$option} changed: {$old} -> {$new}");
     }
 
