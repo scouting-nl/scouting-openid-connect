@@ -28,6 +28,8 @@ enum LogLevel: string {
  */
 
 enum LogType: string {
+    case AUTH = 'auth';
+    case USER = 'user';
     case MAIL = 'mail';
     case SETTINGS = 'settings';
 }
@@ -45,7 +47,7 @@ class Logger {
      *
      * @return string Fully qualified logs table name.
      */
-    private static function get_table_name(): string {
+    public static function get_table_name(): string {
         global $wpdb;
         return $wpdb->prefix . 'scouting_oidc_logs';
     }
@@ -74,25 +76,74 @@ class Logger {
         )) . "'";
 
         // Create the logs table with appropriate columns and basic indexes.
-        // Note: `sol_id` is stored as VARCHAR(60) and is not a foreign key. This allows us to log events related to SOL identifiers that may not have a corresponding WP user (e.g. failed login attempts with invalid SOL IDs).
         $sql = "CREATE TABLE {$table_name} (
             id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             user_id BIGINT(20) UNSIGNED NULL,
             sol_id VARCHAR(60) NULL,
             type ENUM($enum_type_values) NOT NULL,
             level ENUM($enum_level_values) NOT NULL,
-            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
             message TEXT NOT NULL,
             PRIMARY KEY (id),
             KEY user_id (user_id),
             KEY sol_id (sol_id),
+            KEY type (type),
             KEY level (level),
-            KEY created_at (created_at),
-            CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES {$wpdb->users}(ID) ON DELETE CASCADE
+            KEY created_at (created_at)
         ) $charset_collate;";
 
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
         dbDelta( $sql );
+
+        // Ensure fractional-second precision for `created_at` when supported by MySQL.
+        // MySQL/MariaDB versions >= 5.6.4 support DATETIME fractional seconds.
+        $mysql_version = preg_replace('/[^0-9.].*/', '', $wpdb->get_var("SELECT VERSION()"));
+        if ( $mysql_version !== null && version_compare( $mysql_version, '5.6.4', '>=' ) ) {
+            $wpdb->query( "ALTER TABLE {$table_name} MODIFY created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)" );
+        }
+
+        // Ensure the foreign key is created separately to avoid dbDelta ALTER parsing issues.
+        // Check information_schema for an existing constraint on user_id referencing the users table.
+        // Note: `sol_id` is stored as VARCHAR(60) and is not a foreign key. This allows us to log events related to SOL identifiers that may not have a corresponding WP user (e.g. failed login attempts with invalid SOL IDs).
+        $logs_table  = $table_name;
+        $users_table = $wpdb->users;
+
+        $exists = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT CONSTRAINT_NAME
+                 FROM information_schema.KEY_COLUMN_USAGE
+                 WHERE TABLE_SCHEMA = %s
+                   AND TABLE_NAME = %s
+                   AND COLUMN_NAME = 'user_id'
+                   AND REFERENCED_TABLE_NAME = %s",
+                DB_NAME,
+                $logs_table,
+                $users_table
+            )
+        );
+
+        if ( empty( $exists ) ) {
+            // Ensure the table engine supports foreign keys (InnoDB).
+            $engine = $wpdb->get_var(
+                $wpdb->prepare(
+                    "SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s",
+                    DB_NAME,
+                    $logs_table
+                )
+            );
+
+            if ( $engine === null || strtolower( $engine ) !== 'innodb' ) {
+                // Attempt to convert to InnoDB where possible.
+                $wpdb->query( "ALTER TABLE {$logs_table} ENGINE=InnoDB" );
+            }
+
+            // Use a short constraint name to avoid length limits.
+            $fk_name = 'fk_scouting_logs_user';
+            $sql_fk = "ALTER TABLE {$logs_table} ADD CONSTRAINT {$fk_name} FOREIGN KEY (user_id) REFERENCES {$users_table}(ID) ON DELETE CASCADE";
+
+            // Run the ALTER; if it fails on some hosts, it will return false — we don't want to fatally stop activation.
+            $wpdb->query( $sql_fk );
+        }
     }
 
     /**
@@ -172,14 +223,14 @@ class Logger {
     /**
      * Log a WP_Error object at the error level, including all error codes and messages in the log entry.
      *
-     * @param WP_Error $wp_error The WP_Error object to log.
      * @param LogType $type Category/type for this log entry.
      * @param LogLevel $level Severity level for this log entry.
+     * @param WP_Error $wp_error The WP_Error object to log.
      * @param int|null $user_id Optional WP user ID to associate with this error.
      * @param string|null $sol_id Optional SOL identifier to associate with this error.
      * @return void
      */
-    public static function log_wp_error(WP_Error $wp_error, LogType $type, LogLevel $level = LogLevel::ERROR, ?int $user_id = null, ?string $sol_id = null): void {
+    public static function log_wp_error(LogType $type, LogLevel $level, WP_Error $wp_error, ?int $user_id = null, ?string $sol_id = null): void {
         $codes = $wp_error->get_error_codes();
 
         // Normalize to a codes array so we have a single processing path.
