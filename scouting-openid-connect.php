@@ -34,6 +34,7 @@ require_once SCOUTING_OIDC_PATH . 'src/menu/Menu.php';
 require_once SCOUTING_OIDC_PATH . 'src/settings/Page.php';
 require_once SCOUTING_OIDC_PATH . 'src/shortcode/Page.php';
 require_once SCOUTING_OIDC_PATH . 'src/support/Page.php';
+require_once SCOUTING_OIDC_PATH . 'src/logging/Page.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/Actions.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/Description.php';
 require_once SCOUTING_OIDC_PATH . 'src/user/Fields.php';
@@ -48,6 +49,7 @@ use ScoutingOIDC\Description;
 use ScoutingOIDC\Settings;
 use ScoutingOIDC\Shortcode;
 use ScoutingOIDC\Support;
+use ScoutingOIDC\Logging;
 use ScoutingOIDC\Fields;
 use ScoutingOIDC\Mail;
 use ScoutingOIDC\Logger;
@@ -60,6 +62,7 @@ $scouting_oidc_description = new Description();
 $scouting_oidc_settings = new Settings();
 $scouting_oidc_shortcode = new Shortcode();
 $scouting_oidc_support = new Support();
+$scouting_oidc_logging = new Logging();
 $scouting_oidc_fields = new Fields();
 $scouting_oidc_logger = new Logger();
 
@@ -99,6 +102,7 @@ add_action('admin_menu', [$scouting_oidc_menu, 'scouting_oidc_menu']);
 add_action('admin_menu', [$scouting_oidc_settings, 'scouting_oidc_settings_submenu_page']);
 add_action('admin_menu', [$scouting_oidc_shortcode, 'scouting_oidc_shortcode_submenu_page']);
 add_action('admin_menu', [$scouting_oidc_support, 'scouting_oidc_support_submenu_page']);
+add_action('admin_menu', [$scouting_oidc_logging, 'scouting_oidc_logging_submenu_page']);
 
 // Hook into admin_init to initialize settings
 add_action('admin_init', [$scouting_oidc_settings, 'scouting_oidc_settings_page_init']);
