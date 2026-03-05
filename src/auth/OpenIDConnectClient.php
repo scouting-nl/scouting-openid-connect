@@ -234,7 +234,7 @@ class OpenIDConnectClient
         // Store the tokens
         $this->tokens = json_decode(wp_remote_retrieve_body($response));
 
-        Logger::info(LogType::OIDC, 'ID token retrieved successfully from token endpoint');
+        Logger::debug(LogType::OIDC, 'ID token retrieved successfully from token endpoint');
 
         // Cleanup state and nonce
         $this->unsetStatesAndNonce();
@@ -309,7 +309,7 @@ class OpenIDConnectClient
             ErrorHandler::redirect_to_login_error('error', __('The signature in the ID token is not valid.', 'scouting-openid-connect'), 'jwks_is_missing');
         }
         else {
-            Logger::info(LogType::OIDC, 'ID token validation succeeded');
+            Logger::debug(LogType::OIDC, 'ID token validation succeeded');
             return $payload;
         }
     }
@@ -381,7 +381,7 @@ class OpenIDConnectClient
 
                 // Store the well-known data in a transient for 1 hour (3600 seconds)
                 set_transient($transient_key, $this->wellKnownData, 3600);
-                Logger::info(LogType::OIDC, 'Well-known data fetched and cached successfully');
+                Logger::debug(LogType::OIDC, 'Well-known data fetched and cached successfully');
             } else {
                 // Extract additional error information if available
                 $response_body = wp_remote_retrieve_body($response);
@@ -439,7 +439,7 @@ class OpenIDConnectClient
 
                 // Store the JWKS data in a transient for 1 hour (3600 seconds)
                 set_transient($transient_key, $this->jwks, 3600); // Cache for 1 hour
-                Logger::info(LogType::OIDC, 'JWKS data fetched and cached successfully');
+                Logger::debug(LogType::OIDC, 'JWKS data fetched and cached successfully');
             } else {
                 // Extract additional error information if available
                 $response_body = wp_remote_retrieve_body($response);
