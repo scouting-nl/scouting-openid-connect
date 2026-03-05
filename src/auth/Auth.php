@@ -208,16 +208,21 @@ class Auth {
 
         // Create a new User object
         $user = new User($user_json_encoded);
-        
+
+        Logger::info(LogType::AUTH, "User '{$user->getDisplayName()}' is being checked for login or account creation", null, $user->getUsername());
+
         // Check if user is already created
         if ($user->scouting_oidc_user_check_if_exist()) {
+            Logger::info(LogType::AUTH, "User '{$user->getDisplayName()}' has an existing account, updating user information and logging in", null, $user->getUsername());
             $user->scouting_oidc_user_update();
             $user->scouting_oidc_user_login();
         } else {
             if (get_option('scouting_oidc_user_auto_create')) {
+                Logger::info(LogType::AUTH, "User '{$user->getDisplayName()}' does not have an account, auto-creation is enabled, creating account and logging in", null, $user->getUsername());
                 $user->scouting_oidc_user_create();
                 $user->scouting_oidc_user_login();
             } else {
+                Logger::warning(LogType::AUTH, "User '{$user->getDisplayName()}' does not have an account and auto-creation is disabled, redirecting to login page with an error message", null, $user->getUsername());
                 ErrorHandler::redirect_to_login_error('error', __('Webmaster disabled creation of new accounts', 'scouting-openid-connect'), 'disabled_auto_create');
             }
         }
@@ -266,6 +271,8 @@ class Auth {
             $error .= '</p></div>';
             return $error;
         }
+
+        Logger::error(LogType::AUTH, "User failed to login with OIDC: {$error_message} - {$hint}");
 
         // Display the error message
         return '<div id="login_error" class="notice notice-error"><p><strong>Error: </strong>' . esc_html($hint) . '</p></div>';

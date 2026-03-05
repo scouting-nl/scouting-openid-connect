@@ -165,6 +165,24 @@ class User {
     }
 
     /**
+     * Get the username to be used for the WordPress user, which is the SOL ID
+     * 
+     * @return string Username
+     */
+    public function getUsername(): string {
+        return $this->sol_id;
+    }
+
+    /**
+     * Get the display name to be used for logging and error messages, which is the full name
+     * 
+     * @return string Display name
+     */
+    public function getDisplayName(): string {
+        return $this->fullName;
+    }
+
+    /**
      * Create a new user
      * 
      * @return void
