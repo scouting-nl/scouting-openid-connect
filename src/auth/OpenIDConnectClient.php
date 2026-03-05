@@ -5,9 +5,11 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 require_once plugin_dir_path(__FILE__) . 'Session.php';
 require_once plugin_dir_path(__FILE__) . '../../src/utilities/ErrorHandler.php';
+require_once plugin_dir_path(__FILE__) . '../../src/utilities/Logger.php';
 
 use ScoutingOIDC\Session;
 use ScoutingOIDC\ErrorHandler;
+use ScoutingOIDC\Logger;
 
 /**
  * OpenIDConnectClient for Scouting OpenID Connect
@@ -97,22 +99,26 @@ class OpenIDConnectClient
      * @return string the authentication URL
      */
     public function getAuthenticationURL(string $response_type, array $scopes_array): string {
+        Logger::debug(LogType::OIDC, 'Authentication URL generation started');
         $this->getWellKnownData();
         $this->getJWKSData();
 
         // Ensure PKCE with S256 is supported by the identity provider
         if (isset($this->wellKnownData->code_challenge_methods_supported) && !in_array('S256', $this->wellKnownData->code_challenge_methods_supported, true)) {
+            Logger::critical(LogType::OIDC, 'Identity provider does not support PKCE S256 code challenge method');
             ErrorHandler::redirect_to_login_error('init', __('The identity provider does not support the required S256 code challenge method for PKCE.', 'scouting-openid-connect'), 'pkce_not_supported');
         }
 
         // Check if authorization_endpoint is available in well-known data
         if (empty($this->wellKnownData->authorization_endpoint)) {
+            Logger::critical(LogType::OIDC, 'Authorization endpoint is not available in the well-known data');
             ErrorHandler::redirect_to_login_error('init', __('The authorization_endpoint is not available in the well-known data.', 'scouting-openid-connect'), 'authorization_endpoint_is_missing');
         }
 
         // Set the scopes check if true or false
         $invalid_scopes  = $this->setScopes($scopes_array);
         if ($invalid_scopes !== true) {
+            Logger::warning(LogType::OIDC, 'Configured scopes include unsupported values');
             // Convert the invalid scopes array to a comma-separated string
             $invalid_scopes_list = implode(', ', $invalid_scopes);
             
@@ -149,6 +155,8 @@ class OpenIDConnectClient
             'code_challenge_method' => 'S256',
         ];
 
+        Logger::debug(LogType::OIDC, 'Authentication URL generated successfully');
+
         return $this->wellKnownData->authorization_endpoint . '?' . http_build_query($auth_params, '', '&', PHP_QUERY_RFC1738);
     }
 
@@ -158,6 +166,7 @@ class OpenIDConnectClient
      * @param string $code the code from the authorization server
      */
     public function retrieveTokens(string $code, ?string $state = null): void {
+        Logger::debug(LogType::OIDC, 'ID token retrieval started');
         $this->getWellKnownData();
         $this->getJWKSData();
 
@@ -169,6 +178,7 @@ class OpenIDConnectClient
 
         // Check if token_endpoint is available in well-known data
         if (!isset($this->wellKnownData->token_endpoint)) {
+            Logger::error(LogType::OIDC, 'Token endpoint missing in well-known data');
             ErrorHandler::redirect_to_login_error('error', __('The token_endpoint is not available in the well-known data.', 'scouting-openid-connect'), 'token_endpoint_is_missing');
         }
 
@@ -178,6 +188,7 @@ class OpenIDConnectClient
         // Fetch the stored PKCE verifier; state is mandatory to find the correct verifier
         $code_verifier = ($state !== null) ? $this->getCodeVerifierForState($state) : null;
         if (empty($code_verifier)) {
+            Logger::error(LogType::OIDC, 'PKCE code_verifier missing from session for token exchange');
             ErrorHandler::redirect_to_login_error('error', __('The code_verifier for PKCE is missing from the session.', 'scouting-openid-connect'), 'code_verifier_missing');
         }
 
@@ -203,6 +214,7 @@ class OpenIDConnectClient
 
         $response = wp_remote_post($this->wellKnownData->token_endpoint, $args);
         if (is_wp_error($response)) {
+            Logger::log_wp_error(LogType::OIDC, LogLevel::ERROR, $response);
             ErrorHandler::redirect_to_login_error('error', $response->get_error_message(), 'get_tokens_failed');
         } 
         
@@ -210,28 +222,35 @@ class OpenIDConnectClient
         $status_code = wp_remote_retrieve_response_code($response);
         $response_message = wp_remote_retrieve_response_message($response);
         if ($status_code !== 200 || $response_message !== 'OK') {
-            $body_raw = wp_remote_retrieve_body($response);
-            $body_decoded = json_decode($body_raw, true);
-            $error_detail = $body_decoded['error_description'] ?? $body_decoded['error'] ?? $body_raw;
+            $response_body = wp_remote_retrieve_body($response);
+            $body_decoded = json_decode($response_body, true);
+            $error_detail = $body_decoded['error_description'] ?? $body_decoded['error'] ?? $response_body;
             // translators: 1: HTTP status code returned by the token endpoint. 2: Error detail from the token endpoint response.
             $hint = sprintf(__('Token endpoint error %1$s: %2$s', 'scouting-openid-connect'), $status_code, $error_detail);
+            Logger::error(LogType::OIDC, "Token endpoint retrieval failed, HTTP status '{$status_code}' and message: {$response_body}");
             ErrorHandler::redirect_to_login_error('error', $hint, 'get_tokens_failed');
         }
 
         // Store the tokens
         $this->tokens = json_decode(wp_remote_retrieve_body($response));
 
+        Logger::info(LogType::OIDC, 'ID token retrieved successfully from token endpoint');
+
         // Cleanup state and nonce
         $this->unsetStatesAndNonce();
     }
 
     /**
-     * Function to unset the state and nonce
+     * Function to unset the state and nonce and PKCE code verifiers from the session after token retrieval to prevent reuse and potential security issues
+     * 
+     * @return void
      */
     public function unsetStatesAndNonce(): void {
         $this->session->scouting_oidc_session_delete('scouting_oidc_states');
         $this->session->scouting_oidc_session_delete('scouting_oidc_nonce');
         $this->session->scouting_oidc_session_delete('scouting_oidc_code_verifiers');
+
+        Logger::debug(LogType::OIDC, 'OIDC state, nonce and PKCE verifier session data cleared');
     }
 
     /**
@@ -240,16 +259,19 @@ class OpenIDConnectClient
      * @return array returns the payload 
      */
     public function validateTokens(): array {
+        Logger::debug(LogType::OIDC, 'ID token validation started');
         $this->getWellKnownData();
         $this->getJWKSData();
 
         // Check if id_token is available in tokens
         if (!isset($this->tokens->id_token)) {
+            Logger::error(LogType::OIDC, 'ID token missing from token response');
             ErrorHandler::redirect_to_login_error('error', __('The ID token is not available in the tokens.', 'scouting-openid-connect'), 'id_token_is_missing');
         }
 
         // Check if jwks is available
         if (empty($this->jwks)) {
+            Logger::error(LogType::OIDC, 'JWKS data missing during token validation');
             ErrorHandler::redirect_to_login_error('error', __('The JSON Web Key Set (JWKS) is not available.', 'scouting-openid-connect'), 'jwks_is_missing');
         }
 
@@ -272,6 +294,7 @@ class OpenIDConnectClient
 
         // Check if the certificate chain (x5c) was found
         if ($x5c === null) {
+            Logger::error(LogType::OIDC, 'ID token validation failed: the certificate chain (x5c) for the key ID (kid) specified in the header was not found in JWKS');
             ErrorHandler::redirect_to_login_error('error', __('The certificate chain (x5c) for the key ID (kid) specified in the header was not found.', 'scouting-openid-connect'), 'jwks_is_missing');
         }
 
@@ -282,9 +305,11 @@ class OpenIDConnectClient
         $publicKey = openssl_pkey_get_public($public_key_certificate);
         $signatureValid = openssl_verify($headerEncoded . '.' . $payloadEncoded, $signature, $publicKey, OPENSSL_ALGO_SHA256);
         if ($signatureValid !== 1) {
+            Logger::error(LogType::OIDC, 'ID token signature validation failed');
             ErrorHandler::redirect_to_login_error('error', __('The signature in the ID token is not valid.', 'scouting-openid-connect'), 'jwks_is_missing');
         }
         else {
+            Logger::info(LogType::OIDC, 'ID token validation succeeded');
             return $payload;
         }
     }
@@ -300,6 +325,7 @@ class OpenIDConnectClient
 
         // Check if end_session_endpoint is available in well-known data
         if (!isset($this->wellKnownData->end_session_endpoint)) {
+            Logger::warning(LogType::OIDC, 'While constructing logout URL, end_session_endpoint was missing from well-known data, falling back to home URL');
             return home_url();
         }
 
@@ -308,6 +334,7 @@ class OpenIDConnectClient
 
         // Redirect to WordPress home URL if ID token is not available
         if (!$id_token) {
+            Logger::warning(LogType::OIDC, 'While constructing logout URL, no id_token available, falling back to home URL');
             return home_url();
         }
 
@@ -321,7 +348,10 @@ class OpenIDConnectClient
     }
 
     /**
-     * Gets anything that we need configuration wise including endpoints, and other values
+     * Gets the well-known data from the issuer and stores it in the class property.
+     * Caches the well-known data in a transient for 1 hour to reduce the number of requests to the issuer's .well-known endpoint.
+     * 
+     * @return void
      */
     public function getWellKnownData(): void {
         // Define a transient key for caching the well-known data
@@ -333,6 +363,7 @@ class OpenIDConnectClient
         // If data exists in the transient, use it
         if ($well_known_data !== false) {
             $this->wellKnownData = $well_known_data;
+            Logger::debug(LogType::OIDC, 'Well-known data loaded from transient cache');
             return; // Exit the method early as the data is already cached
         }
 
@@ -341,6 +372,7 @@ class OpenIDConnectClient
         // Get the well-known configuration from the issuer
         $response = wp_remote_get($well_known_config_url);
         if (is_wp_error($response)) {
+            Logger::log_wp_error(LogType::OIDC, LogLevel::ERROR, $response);
             ErrorHandler::redirect_to_login_error('init', $response->get_error_message(), 'get_well_known_data_failed');
         } else {
             $status_code = wp_remote_retrieve_response_code($response);
@@ -349,18 +381,23 @@ class OpenIDConnectClient
 
                 // Store the well-known data in a transient for 1 hour (3600 seconds)
                 set_transient($transient_key, $this->wellKnownData, 3600);
+                Logger::info(LogType::OIDC, 'Well-known data fetched and cached successfully');
             } else {
                 // Extract additional error information if available
                 $response_body = wp_remote_retrieve_body($response);
                 $error_details = !empty($response_body) ? $response_body : __('No additional details provided.', 'scouting-openid-connect');
                 $hint = __('When retrieving well-known data, the status code was:', 'scouting-openid-connect') . " " . $status_code . "." . __('Details:', 'scouting-openid-connect') . " " . $error_details;
+                Logger::error(LogType::OIDC, "Well-known data retrieval failed, HTTP status '{$status_code}' and message: {$response_body}");
                 ErrorHandler::redirect_to_login_error('init', $hint, 'unexpected_response');
             }
         }
     }
 
     /**
-     * Gets the JSON Web Key Set (JWKS) from the jwks_uri
+     * Gets the JSON Web Key Set (JWKS) from the jwks_uri in the well-known data and stores it in the class property.
+     * Caches the JWKS data in a transient for 1 hour to reduce the number of requests to the jwks_uri.
+     * 
+     * @return void
      */
     public function getJWKSData(): void {
         // Define a transient key for caching the JWKS data
@@ -372,16 +409,19 @@ class OpenIDConnectClient
         // If data exists in the transient, use it
         if ($jwks_data !== false) {
             $this->jwks = $jwks_data;
+            Logger::debug(LogType::OIDC, 'JWKS data loaded from transient cache');
             return; // Exit the method early as the data is already cached
         }
     
         // Check if jwks_uri is available in the well-known data
         if (empty($this->wellKnownData->jwks_uri)) {
+            Logger::critical(LogType::OIDC, 'JWKS URI missing in well-known data');
             ErrorHandler::redirect_to_login_error('init', __('The jwks_uri is not available in the well-known data.', 'scouting-openid-connect'), 'jwks_uri_is_missing');
         }
     
         // Check if jwks_uri is a valid URL
         if (!filter_var($this->wellKnownData->jwks_uri, FILTER_VALIDATE_URL)) {
+            Logger::critical(LogType::OIDC, 'JWKS URI in well-known data is not a valid URL');
             $hint = __('The jwks_uri is not a valid URL.', 'scouting-openid-connect') . __('Details:', 'scouting-openid-connect') . " " . __('The jwks_uri is not valid:', 'scouting-openid-connect') . " " . $this->wellKnownData->jwks_uri;
             ErrorHandler::redirect_to_login_error('init', $hint, 'jwks_uri_is_invalid');
         }
@@ -389,6 +429,7 @@ class OpenIDConnectClient
         // Get the JSON Web Key Set (JWKS) from the jwks_uri
         $response = wp_remote_get($this->wellKnownData->jwks_uri);
         if (is_wp_error($response)) {
+            Logger::log_wp_error(LogType::OIDC, LogLevel::ERROR, $response);
             ErrorHandler::redirect_to_login_error('init', $response->get_error_message(), 'get_jwks_data_failed');
         } else {
             $status_code = wp_remote_retrieve_response_code($response);
@@ -398,11 +439,13 @@ class OpenIDConnectClient
 
                 // Store the JWKS data in a transient for 1 hour (3600 seconds)
                 set_transient($transient_key, $this->jwks, 3600); // Cache for 1 hour
+                Logger::info(LogType::OIDC, 'JWKS data fetched and cached successfully');
             } else {
                 // Extract additional error information if available
                 $response_body = wp_remote_retrieve_body($response);
                 $error_details = !empty($response_body) ? $response_body : __('No additional details provided.', 'scouting-openid-connect');
                 $hint = __('When retrieving JWKS data, the status code was:', 'scouting-openid-connect') . " " . $status_code . "." . __('Details:', 'scouting-openid-connect') . " " . $error_details;
+                Logger::error(LogType::OIDC, "JWKS data retrieval failed, HTTP status '{$status_code}' and message: {$response_body}");
                 ErrorHandler::redirect_to_login_error('init', $hint, 'unexpected_response');
             }
         }

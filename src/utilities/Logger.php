@@ -30,6 +30,7 @@ enum LogLevel: string {
 enum LogType: string {
     case ASSETS = 'assets';
     case AUTH = 'auth';
+    case OIDC = 'oidc';
     case USER = 'user';
     case MAIL = 'mail';
     case SETTINGS = 'settings';
