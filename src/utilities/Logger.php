@@ -62,7 +62,6 @@ class Logger {
     public function scouting_oidc_logger_install(): void {
         global $wpdb;
 
-        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, PluginCheck.Security.DirectDB -- Table names cannot use placeholders; the table name is safely generated from get_table_name() and used in controlled contexts.
         $logs_table = self::get_table_name();
         $charset_collate = $wpdb->get_charset_collate();
 
@@ -99,11 +98,9 @@ class Logger {
         dbDelta( $sql );
 
         // Ensure the table engine supports foreign keys (InnoDB).
-        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB -- Table names cannot use placeholders and must be interpolated. dbDelta does not support InnoDB engine or foreign keys. Table name is safely generated from get_table_name().
         $wpdb->query( "ALTER TABLE `{$logs_table}` ENGINE=InnoDB" );
 
         // Add a foreign key constraint on user_id referencing the WP users table, with cascading deletes to maintain referential integrity. This ensures that if a user is deleted from WordPress, all their associated log entries will also be removed, preventing orphaned log records.
-        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB -- Table names cannot use placeholders and must be interpolated. dbDelta does not support foreign keys. Table names are safely generated from get_table_name() and $wpdb->users.
         $wpdb->query( "ALTER TABLE `{$logs_table}` ADD CONSTRAINT fk_scouting_logs_user FOREIGN KEY (user_id) REFERENCES `{$wpdb->users}`(ID) ON DELETE CASCADE" );
     }
 
@@ -162,6 +159,7 @@ class Logger {
         $table_name = self::get_table_name();
 
         // Insert the log entry. Format specifiers ensure proper data typing.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery - This is a direct query to insert log data, and the data is properly escaped and typed using $wpdb->insert, so it's safe in this context.
         $wpdb->insert(
             $table_name,
             [
