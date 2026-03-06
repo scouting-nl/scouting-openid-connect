@@ -277,7 +277,8 @@ class Settings_General
             return $json;
         }
 
-        return print_r($val, true);
+        // Fallback for data that cannot be JSON encoded
+        return '[' . gettype($val) . ': Unable to encode]';
     }
 
     // Sanitize the display name option
