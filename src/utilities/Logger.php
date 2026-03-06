@@ -43,17 +43,6 @@ enum LogType: string {
  * a small installer to create the underlying logs table.
  */
 class Logger {
-
-    /**
-     * Get the logs table name using the WP DB prefix.
-     *
-     * @return string Fully qualified logs table name.
-     */
-    public static function get_table_name(): string {
-        global $wpdb;
-        return $wpdb->prefix . 'scouting_oidc_logs';
-    }
-
     /**
      * Create or update the logs table during plugin activation.
      *
@@ -62,7 +51,7 @@ class Logger {
     public function scouting_oidc_logger_install(): void {
         global $wpdb;
 
-        $logs_table = self::get_table_name();
+        $logs_table = $wpdb->prefix . 'scouting_oidc_logs';
         $charset_collate = $wpdb->get_charset_collate();
 
         // Build SQL ENUM values from the LogType enum cases
@@ -98,10 +87,32 @@ class Logger {
         dbDelta( $sql );
 
         // Ensure the table engine supports foreign keys (InnoDB).
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
+        // phpcs:ignore PluginCheck.Security.DirectDB
         $wpdb->query( "ALTER TABLE `{$logs_table}` ENGINE=InnoDB" );
 
-        // Add a foreign key constraint on user_id referencing the WP users table, with cascading deletes to maintain referential integrity. This ensures that if a user is deleted from WordPress, all their associated log entries will also be removed, preventing orphaned log records.
-        $wpdb->query( "ALTER TABLE `{$logs_table}` ADD CONSTRAINT fk_scouting_logs_user FOREIGN KEY (user_id) REFERENCES `{$wpdb->users}`(ID) ON DELETE CASCADE" );
+        // Only add FK if it doesn't already exist
+        $existing_fk = $wpdb->get_var("
+            SELECT CONSTRAINT_NAME 
+            FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+            WHERE TABLE_SCHEMA = DATABASE() 
+            AND TABLE_NAME = '{$logs_table}' 
+            AND COLUMN_NAME = 'user_id' 
+            AND REFERENCED_TABLE_NAME = '{$wpdb->users}'
+        ");
+
+        if (!$existing_fk) {
+            // Add a foreign key constraint on user_id referencing the WP users table, with cascading deletes to maintain referential integrity. This ensures that if a user is deleted from WordPress, all their associated log entries will also be removed, preventing orphaned log records.
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
+            // phpcs:ignore PluginCheck.Security.DirectDB
+            $wpdb->query( "ALTER TABLE `{$logs_table}` ADD CONSTRAINT fk_scouting_logs_user FOREIGN KEY (user_id) REFERENCES `{$wpdb->users}`(ID) ON DELETE CASCADE" );
+        }
     }
 
     /**
@@ -156,12 +167,10 @@ class Logger {
             }
         }
 
-        $table_name = self::get_table_name();
-
         // Insert the log entry. Format specifiers ensure proper data typing.
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery - This is a direct query to insert log data, and the data is properly escaped and typed using $wpdb->insert, so it's safe in this context.
         $wpdb->insert(
-            $table_name,
+            $wpdb->prefix . 'scouting_oidc_logs',
             [
                 'type' => $type->value,
                 'level' => $level->value,
