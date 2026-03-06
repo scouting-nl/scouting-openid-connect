@@ -57,8 +57,8 @@ foreach ($scouting_oidc_users as $scouting_oidc_user) {
 // Delete logs table
 global $wpdb;
 $table_name = $wpdb->prefix . 'scouting_oidc_logs';
-// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB - this is a direct query to drop the table, and there are no user inputs involved, so it's safe in this context.
-$wpdb->query("DROP TABLE IF EXISTS {$table_name}");
+// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching
+$wpdb->query("DROP TABLE IF EXISTS `{$table_name}`");
 
 // Clear any related cache
 wp_cache_delete($scouting_oidc_logs_table, 'scouting_oidc');

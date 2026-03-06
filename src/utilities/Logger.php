@@ -96,9 +96,9 @@ class Logger {
             SELECT CONSTRAINT_NAME 
             FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
             WHERE TABLE_SCHEMA = DATABASE() 
-            AND TABLE_NAME = '{$logs_table}' 
+            AND TABLE_NAME = `{$logs_table}` 
             AND COLUMN_NAME = 'user_id' 
-            AND REFERENCED_TABLE_NAME = '{$wpdb->users}'
+            AND REFERENCED_TABLE_NAME = `{$wpdb->users}`
         ");
 
         if (!$existing_fk) {
@@ -161,7 +161,7 @@ class Logger {
         }
 
         // Insert the log entry. Format specifiers ensure proper data typing.
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery - This is a direct query to insert log data, and the data is properly escaped and typed using $wpdb->insert, so it's safe in this context.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
         $wpdb->insert(
             $wpdb->prefix . 'scouting_oidc_logs',
             [
