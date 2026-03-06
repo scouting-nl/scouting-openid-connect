@@ -96,9 +96,9 @@ class Logger {
             SELECT CONSTRAINT_NAME 
             FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
             WHERE TABLE_SCHEMA = DATABASE() 
-            AND TABLE_NAME = `{$logs_table}` 
+            AND TABLE_NAME = '{$logs_table}' 
             AND COLUMN_NAME = 'user_id' 
-            AND REFERENCED_TABLE_NAME = `{$wpdb->users}`
+            AND REFERENCED_TABLE_NAME = '{$wpdb->users}'
         ");
 
         if (!$existing_fk) {
