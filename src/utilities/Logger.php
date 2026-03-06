@@ -62,7 +62,7 @@ class Logger {
     public function scouting_oidc_logger_install(): void {
         global $wpdb;
 
-        $table_name = self::get_table_name();
+        $logs_table = self::get_table_name();
         $charset_collate = $wpdb->get_charset_collate();
 
         // Build SQL ENUM values from the LogType enum cases
@@ -78,7 +78,7 @@ class Logger {
         )) . "'";
 
         // Create the logs table with appropriate columns and basic indexes.
-        $sql = "CREATE TABLE {$table_name} (
+        $sql = "CREATE TABLE {$logs_table} (
             id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             user_id BIGINT(20) UNSIGNED NULL,
             sol_id VARCHAR(60) NULL,
