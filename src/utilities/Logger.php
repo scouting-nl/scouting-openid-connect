@@ -99,6 +99,8 @@ class Logger {
 
         // Ensure the table engine supports foreign keys (InnoDB).
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- We need to run a direct query here to set the engine, as dbDelta does not support specifying the engine type and some hosts default to MyISAM which does not support foreign keys.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange -- We need to run a direct query here to alter the table schema to use InnoDB, as dbDelta does not support specifying the engine type and we want to ensure our logs table supports foreign key constraints for referential integrity.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching -- This query is run during plugin activation and is not performance-sensitive, so caching is not a concern here.
         $wpdb->query( "ALTER TABLE `{$logs_table}` ENGINE=InnoDB" );
 
         // Find the WP users table name with the correct prefix
@@ -106,7 +108,8 @@ class Logger {
 
         // Add a foreign key constraint on user_id referencing the WP users table, with cascading deletes to maintain referential integrity. This ensures that if a user is deleted from WordPress, all their associated log entries will also be removed, preventing orphaned log records.
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- We need to run a direct query here to add the foreign key constraint, as dbDelta does not support adding foreign keys and we want to ensure referential integrity for the user_id column when possible.
-        $wpdb->query( "ALTER TABLE {$logs_table} ADD CONSTRAINT fk_scouting_logs_user FOREIGN KEY (user_id) REFERENCES {$users_table}(ID) ON DELETE CASCADE" );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching -- This query is run during plugin activation and is not performance-sensitive, so caching is not a concern here.
+        $wpdb->query( "ALTER TABLE `{$logs_table}` ADD CONSTRAINT fk_scouting_logs_user FOREIGN KEY (user_id) REFERENCES `{$users_table}`(ID) ON DELETE CASCADE" );
     }
 
     /**
