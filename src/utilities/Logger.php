@@ -84,7 +84,7 @@ class Logger {
             sol_id VARCHAR(60) NULL,
             type ENUM($enum_type_values) NOT NULL,
             level ENUM($enum_level_values) NOT NULL,
-            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+            created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
             message TEXT NOT NULL,
             PRIMARY KEY (id),
             KEY user_id (user_id),
@@ -97,55 +97,16 @@ class Logger {
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
         dbDelta( $sql );
 
-        // Ensure fractional-second precision for `created_at` when supported by MySQL.
-        // MySQL/MariaDB versions >= 5.6.4 support DATETIME fractional seconds.
-        $mysql_version = preg_replace('/[^0-9.].*/', '', $wpdb->get_var("SELECT VERSION()"));
-        if ( $mysql_version !== null && version_compare( $mysql_version, '5.6.4', '>=' ) ) {
-            $wpdb->query( "ALTER TABLE {$table_name} MODIFY created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)" );
-        }
+        // Ensure the table engine supports foreign keys (InnoDB).
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- We need to run a direct query here to set the engine, as dbDelta does not support specifying the engine type and some hosts default to MyISAM which does not support foreign keys.
+        $wpdb->query( "ALTER TABLE `{$logs_table}` ENGINE=InnoDB" );
 
-        // Ensure the foreign key is created separately to avoid dbDelta ALTER parsing issues.
-        // Check information_schema for an existing constraint on user_id referencing the users table.
-        // Note: `sol_id` is stored as VARCHAR(60) and is not a foreign key. This allows us to log events related to SOL identifiers that may not have a corresponding WP user (e.g. failed login attempts with invalid SOL IDs).
-        $logs_table  = $table_name;
+        // Find the WP users table name with the correct prefix
         $users_table = $wpdb->users;
 
-        $exists = $wpdb->get_var(
-            $wpdb->prepare(
-                "SELECT CONSTRAINT_NAME
-                 FROM information_schema.KEY_COLUMN_USAGE
-                 WHERE TABLE_SCHEMA = %s
-                   AND TABLE_NAME = %s
-                   AND COLUMN_NAME = 'user_id'
-                   AND REFERENCED_TABLE_NAME = %s",
-                DB_NAME,
-                $logs_table,
-                $users_table
-            )
-        );
-
-        if ( empty( $exists ) ) {
-            // Ensure the table engine supports foreign keys (InnoDB).
-            $engine = $wpdb->get_var(
-                $wpdb->prepare(
-                    "SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s",
-                    DB_NAME,
-                    $logs_table
-                )
-            );
-
-            if ( $engine === null || strtolower( $engine ) !== 'innodb' ) {
-                // Attempt to convert to InnoDB where possible.
-                $wpdb->query( "ALTER TABLE {$logs_table} ENGINE=InnoDB" );
-            }
-
-            // Use a short constraint name to avoid length limits.
-            $fk_name = 'fk_scouting_logs_user';
-            $sql_fk = "ALTER TABLE {$logs_table} ADD CONSTRAINT {$fk_name} FOREIGN KEY (user_id) REFERENCES {$users_table}(ID) ON DELETE CASCADE";
-
-            // Run the ALTER; if it fails on some hosts, it will return false — we don't want to fatally stop activation.
-            $wpdb->query( $sql_fk );
-        }
+        // Add a foreign key constraint on user_id referencing the WP users table, with cascading deletes to maintain referential integrity. This ensures that if a user is deleted from WordPress, all their associated log entries will also be removed, preventing orphaned log records.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- We need to run a direct query here to add the foreign key constraint, as dbDelta does not support adding foreign keys and we want to ensure referential integrity for the user_id column when possible.
+        $wpdb->query( "ALTER TABLE {$logs_table} ADD CONSTRAINT fk_scouting_logs_user FOREIGN KEY (user_id) REFERENCES {$users_table}(ID) ON DELETE CASCADE" );
     }
 
     /**
@@ -253,7 +214,12 @@ class Logger {
             }
 
             if ($data !== null) {
-                $line .= "\nData: " . self::encode_log_data($data);
+                $json = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR);
+                if ($json !== false) {
+                    $line .= "\nData: " . $json;
+                } else {
+                    $line .= "\nData: [" . gettype($data) . ": Unable to encode]";
+                }
             }
 
             return $line;
@@ -375,24 +341,5 @@ class Logger {
      */
     public static function debug(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
         self::log($type, LogLevel::DEBUG, $message, $user_id, $sol_id);
-    }
-
-    /**
-     * Safely encode log data.
-     */
-    private static function encode_log_data(mixed $data): string
-    {
-        $json = json_encode(
-            $data,
-            JSON_UNESCAPED_SLASHES
-            | JSON_UNESCAPED_UNICODE
-            | JSON_PARTIAL_OUTPUT_ON_ERROR
-        );
-
-        if ($json !== false) {
-            return $json;
-        }
-
-        return print_r($data, true);
     }
 }
