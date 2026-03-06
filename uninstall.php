@@ -64,5 +64,6 @@ $scouting_oidc_logs_table = $wpdb->prefix . 'scouting_oidc_logs';
 $scouting_oidc_logs_table_escaped = esc_sql( $scouting_oidc_logs_table );
 
 // Drop the logs table if it exists
+// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching
 $wpdb->query("DROP TABLE IF EXISTS `{$scouting_oidc_logs_table_escaped}`");
 ?>

@@ -91,15 +91,22 @@ class Logger {
         $wpdb->query( "ALTER TABLE `{$logs_table}` ENGINE=InnoDB" );
 
         // Only add FK if it doesn't already exist
-        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching
-        $existing_fk = $wpdb->get_var("
-            SELECT CONSTRAINT_NAME 
-            FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
-            WHERE TABLE_SCHEMA = DATABASE() 
-            AND TABLE_NAME = '{$logs_table}' 
-            AND COLUMN_NAME = 'user_id' 
-            AND REFERENCED_TABLE_NAME = '{$wpdb->users}'
-        ");
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $existing_fk = $wpdb->get_var(
+            $wpdb->prepare(
+                "
+                SELECT CONSTRAINT_NAME 
+                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+                WHERE TABLE_SCHEMA = DATABASE() 
+                AND TABLE_NAME = %s
+                AND COLUMN_NAME = %s
+                AND REFERENCED_TABLE_NAME = %s
+                ",
+                $logs_table,
+                'user_id',
+                $wpdb->users
+            )
+        );
 
         if (!$existing_fk) {
             // Add a foreign key constraint on user_id referencing the WP users table, with cascading deletes to maintain referential integrity. This ensures that if a user is deleted from WordPress, all their associated log entries will also be removed, preventing orphaned log records.
