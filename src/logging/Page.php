@@ -248,19 +248,24 @@ class Logging
              * @return string
              */
             public function column_default($item, $column_name): string {
+                // Custom rendering for specific columns
                 if ($column_name === 'created_at') {
+                    // Display the created_at column with milliseconds, formatted as "dd-mm-yyyy hh:mm:ss.fff"
                     return esc_html(substr((string) ($item['created_at_with_ms'] ?? ''), 0, 23));
                 }
 
                 if ($column_name === 'type' || $column_name === 'level') {
-                    return esc_html(strtoupper((string) ($item[$column_name] ?? '')));
+                    // Display type and level in uppercase for better readability
+                    return esc_html(strtoupper((string) ($item[$column_name] ?? '—')));
                 }
 
                 if ($column_name === 'message') {
-                    return '<pre style="margin:0; white-space:pre-wrap;">' . esc_html((string) ($item['message'] ?? '')) . '</pre>';
+                    // Display the message column in a preformatted block to preserve formatting and allow line breaks
+                    return '<pre style="margin:0; white-space:pre-wrap;">' . esc_html((string) ($item['message'] ?? '—')) . '</pre>';
                 }
 
-                return esc_html((string) ($item[$column_name] ?? ''));
+                // Default rendering for other columns
+                return esc_html((string) ($item[$column_name] ?? '—'));
             }
 
             /**
@@ -346,7 +351,11 @@ class Logging
         $sql = "SELECT COUNT(*) FROM {$scouting_oidc_logs_table} WHERE {$where_sql}";
 
         if (!empty($values)) {
-            $sql = $wpdb->prepare($sql, $values);
+            $prepared_sql = $wpdb->prepare($sql, $values);
+            if (!is_string($prepared_sql) || $prepared_sql === '') {
+                return 0;
+            }
+            $sql = $prepared_sql;
         }
 
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
@@ -364,7 +373,7 @@ class Logging
      * @param int $offset
      * @return array<int, array<string, mixed>>
      */
-    public function get_logs(array $filters, array $sorting, int $limit = 500, int $offset = 0): array {
+    public function get_logs(array $filters, array $sorting, int $limit = 999, int $offset = 0): array {
         global $wpdb;
 
         $values = [];
@@ -376,21 +385,28 @@ class Logging
             : 'created_at';
         $order = (isset($sorting['order']) && $sorting['order'] === 'ASC') ? 'ASC' : 'DESC';
 
-        $limit = max(1, $limit);
+        // Limit should be between 1 and 999
+        $limit = max(1, min(999, $limit));
+
+        // Offset should be zero or positive
         $offset = max(0, $offset);
 
         $scouting_oidc_logs_table = esc_sql($wpdb->prefix . 'scouting_oidc_logs');
         $order_by_sql = $orderby === 'created_at'
             ? "created_at {$order}, id {$order}"
             : "id {$order}";
-        $sql = "SELECT id, created_at, DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s.%f') AS created_at_with_ms, type, level, user_id, sol_id, message
+        $sql = "SELECT id, created_at, DATE_FORMAT(created_at, '%%d-%%m-%%Y %%H:%%i:%%s.%%f') AS created_at_with_ms, type, level, user_id, sol_id, message
                 FROM {$scouting_oidc_logs_table}
                 WHERE {$where_sql}
-            ORDER BY {$order_by_sql}
+                ORDER BY {$order_by_sql}
                 LIMIT {$limit} OFFSET {$offset}";
 
         if (!empty($values)) {
-            $sql = $wpdb->prepare($sql, $values);
+            $prepared_sql = $wpdb->prepare($sql, $values);
+            if (!is_string($prepared_sql) || $prepared_sql === '') {
+                return [];
+            }
+            $sql = $prepared_sql;
         }
 
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
