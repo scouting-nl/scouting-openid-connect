@@ -6,19 +6,24 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class LoggingSettings
 {
     /**
+     * Register screen-option persistence filter early in the request lifecycle.
+     */
+    public function __construct() {
+        add_filter('set-screen-option', [$this, 'scouting_oidc_logs_set_screen_option'], 10, 3);
+    }
+
+    /**
      * Register screen options for the logging admin page.
      *
      * @return void
      */
-    public function register_screen_options(): void {
-        add_screen_option(
-            'per_page',
-            [
-                'label' => __('Logs per page', 'scouting-openid-connect'),
-                'default' => 20,
-                'option' => 'scouting_oidc_logs_per_page',
-            ]
-        );
+    public function scouting_oidc_logs_register_screen_options(): void {
+        // Add the screen option (per_page type)
+        add_screen_option('per_page', [
+            'label' => __('Logs per page', 'scouting-openid-connect'),
+            'default' => 20,
+            'option' => 'scouting_oidc_logs_per_page',
+        ]);
     }
 
     /**
@@ -27,7 +32,7 @@ class LoggingSettings
      * @param array<string, string> $columns
      * @return array<string, string>
      */
-    public function register_screen_columns(array $columns): array {
+    public function scouting_oidc_logs_register_screen_columns(array $columns): array {
         return [
             'created_at' => __('Date/Time', 'scouting-openid-connect'),
             'level' => __('Level', 'scouting-openid-connect'),
@@ -46,16 +51,11 @@ class LoggingSettings
      * @param mixed $value
      * @return mixed
      */
-    public function set_screen_option(mixed $status, string $option, mixed $value): mixed {
-        if ($option !== 'scouting_oidc_logs_per_page') {
-            return $status;
+    public function scouting_oidc_logs_set_screen_option(mixed $status, string $option, mixed $value): mixed {
+        if ($option === 'scouting_oidc_logs_per_page') {
+            return min(max(absint($value), 1), 999);
         }
 
-        $per_page = absint((int) $value);
-        if ($per_page < 1) {
-            $per_page = 20;
-        }
-
-        return min($per_page, 500);
+        return $status;
     }
 }

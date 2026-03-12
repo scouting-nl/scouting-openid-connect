@@ -57,9 +57,8 @@ class Logging
 
         if (is_string($hook) && $hook !== '') {
             $this->hook_suffix = $hook;
-            add_action('load-' . $hook, [$this->settings, 'register_screen_options']);
-            add_filter('set-screen-option', [$this->settings, 'set_screen_option'], 10, 3);
-            add_filter('manage_' . $hook . '_columns', [$this->settings, 'register_screen_columns']);
+            add_action("load-$hook", [$this->settings, 'scouting_oidc_logs_register_screen_options']);
+            add_filter("manage_{$hook}_columns", [$this->settings, 'scouting_oidc_logs_register_screen_columns']);
             add_action('admin_enqueue_scripts', [$this, 'enqueue_logging_styles_and_scripts']);
         }
     }
@@ -178,7 +177,7 @@ class Logging
              * @return void
              */
             public function prepare_items(): void {
-                $per_page = (int) $this->get_items_per_page('scouting_oidc_logs_per_page', 20);
+                $per_page = $this->get_items_per_page('scouting_oidc_logs_per_page', 20);
                 $current_page = max(1, $this->get_pagenum());
                 $offset = ($current_page - 1) * $per_page;
 
@@ -235,7 +234,7 @@ class Logging
                     <label class="screen-reader-text" for="sol_id"><?php esc_html_e('Filter by SOL ID', 'scouting-openid-connect'); ?></label>
                     <input type="text" id="sol_id" name="sol_id" value="<?php echo esc_attr($this->filters['sol_id']); ?>" placeholder="<?php esc_attr_e('SOL ID', 'scouting-openid-connect'); ?>" class="regular-text" />
 
-                    <input type="submit" id="post-query-submit" class="button" value="<?php esc_attr_e('Filter', 'scouting-openid-connect'); ?>" />
+                    <input type="submit" id="post-query-submit" class="button button-primary" value="<?php esc_attr_e('Filter', 'scouting-openid-connect'); ?>" />
                     <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=scouting-oidc-logging&orderby=created_at&order=desc')); ?>"><?php esc_html_e('Reset', 'scouting-openid-connect'); ?></a>
                 </div>
                 <?php
