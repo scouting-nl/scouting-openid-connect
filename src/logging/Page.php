@@ -167,7 +167,7 @@ class Logging
              */
             protected function get_sortable_columns(): array {
                 return [
-                    'created_at' => ['id', true],
+                    'created_at' => ['id', false],
                 ];
             }
 
@@ -235,7 +235,7 @@ class Logging
                     <input type="text" id="sol_id" name="sol_id" value="<?php echo esc_attr($this->filters['sol_id']); ?>" placeholder="<?php esc_attr_e('SOL ID', 'scouting-openid-connect'); ?>" class="regular-text" />
 
                     <input type="submit" id="post-query-submit" class="button button-primary" value="<?php esc_attr_e('Filter', 'scouting-openid-connect'); ?>" />
-                    <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=scouting-oidc-logging&orderby=created_at&order=desc')); ?>"><?php esc_html_e('Reset', 'scouting-openid-connect'); ?></a>
+                    <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=scouting-oidc-logging&orderby=id&order=desc')); ?>"><?php esc_html_e('Reset', 'scouting-openid-connect'); ?></a>
                 </div>
                 <?php
             }
