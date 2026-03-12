@@ -1,0 +1,33 @@
+#scouting-oidc-logs-filter .wp-list-table {
+    table-layout: auto;
+}
+
+#scouting-oidc-logs-filter .wp-list-table td,
+#scouting-oidc-logs-filter .wp-list-table th {
+    vertical-align: top;
+}
+
+#scouting-oidc-logs-filter .wp-list-table .column-created_at,
+#scouting-oidc-logs-filter .wp-list-table .column-type,
+#scouting-oidc-logs-filter .wp-list-table .column-level,
+#scouting-oidc-logs-filter .wp-list-table .column-user_id,
+#scouting-oidc-logs-filter .wp-list-table .column-sol_id {
+    width: 1%;
+    white-space: nowrap;
+}
+
+#scouting-oidc-logs-filter .wp-list-table .column-message {
+    width: auto;
+    white-space: normal;
+}
+
+#scouting-oidc-logs-filter .tablenav .actions #date_from,
+#scouting-oidc-logs-filter .tablenav .actions #date_to {
+    width: 210px;
+}
+
+#scouting-oidc-logs-filter .tablenav .actions select,
+#scouting-oidc-logs-filter .tablenav .actions input,
+#scouting-oidc-logs-filter .tablenav .actions .button {
+    float: none;
+}
