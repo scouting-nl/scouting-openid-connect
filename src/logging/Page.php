@@ -167,7 +167,7 @@ class Logging
              */
             protected function get_sortable_columns(): array {
                 return [
-                    'created_at' => ['created_at', true],
+                    'created_at' => ['id', true],
                 ];
             }
 
