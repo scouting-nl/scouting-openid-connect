@@ -45,7 +45,7 @@ class LoggingFilters
             return null;
         }
 
-        $formats = ['Y-m-d\\TH:i', 'Y-m-d\\TH:i:s'];
+        $formats = ['Y-m-d\\TH:i:s.v', 'Y-m-d\\TH:i:s', 'Y-m-d\\TH:i'];
 
         foreach ($formats as $format) {
             $datetime = \DateTime::createFromFormat($format, $value);
