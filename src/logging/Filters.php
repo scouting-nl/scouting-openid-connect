@@ -50,7 +50,7 @@ class LoggingFilters
         foreach ($formats as $format) {
             $datetime = \DateTime::createFromFormat($format, $value);
             if ($datetime !== false) {
-                return $datetime->format('Y-m-d H:i:s');
+                return $datetime->format('Y-m-d H:i:s.v');
             }
         }
 
