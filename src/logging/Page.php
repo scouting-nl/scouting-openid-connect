@@ -269,41 +269,51 @@ class Logging
             }
 
             /**
+             * Custom rendering for the User ID column, with links to user profiles when possible.
+             * 
              * @param array<string, mixed> $item
              * @return string
              */
             public function column_user_id($item): string {
+                // The User ID column may contain a reference to a WordPress user. If it does, we attempt to link it to the corresponding user profile in WordPress for easier navigation.
                 $user_id_value = isset($item['user_id']) && $item['user_id'] !== null ? (int) $item['user_id'] : 0;
                 if ($user_id_value <= 0) {
                     return '—';
                 }
 
+                // Attempt to find a user with the given ID and link to their profile if found
                 $url = get_edit_user_link($user_id_value);
                 if (is_string($url) && $url !== '') {
-                    return '<a href="' . esc_url($url) . '">' . esc_html((string) $user_id_value) . '</a>';
+                    return '<a href="' . esc_url($url) . '" target="_blank">' . esc_html((string) $user_id_value) . '</a>';
                 }
 
+                // If no user is found with the given ID, just display the ID as plain text
                 return esc_html((string) $user_id_value);
             }
 
             /**
+             * Custom rendering for the SOL ID column, with links to user profiles when the SOL ID matches a user login.
+             * 
              * @param array<string, mixed> $item
              * @return string
              */
             public function column_sol_id($item): string {
+                // The SOL ID column may contain a user login. If it does, we attempt to link it to the corresponding user profile in WordPress for easier navigation.
                 $sol_id_value = isset($item['sol_id']) && $item['sol_id'] !== null ? trim((string) $item['sol_id']) : '';
                 if ($sol_id_value === '') {
                     return '—';
                 }
 
+                // Attempt to find a user with a matching login name and link to their profile if found
                 $user = get_user_by('login', $sol_id_value);
                 if ($user !== false && isset($user->ID)) {
                     $url = get_edit_user_link((int) $user->ID);
                     if (is_string($url) && $url !== '') {
-                        return '<a href="' . esc_url($url) . '">' . esc_html($sol_id_value) . '</a>';
+                        return '<a href="' . esc_url($url) . '" target="_blank">' . esc_html($sol_id_value) . '</a>';
                     }
                 }
 
+                // If no user is found with the given SOL ID, just display the SOL ID as plain text
                 return esc_html($sol_id_value);
             }
 
