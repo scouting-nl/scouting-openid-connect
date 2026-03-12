@@ -316,7 +316,7 @@ class User {
      * Login user
      * 
      * @return void
-     */	
+     */
     public function scouting_oidc_user_login(): void {
         $user = get_user_by('login', $this->sol_id);
 

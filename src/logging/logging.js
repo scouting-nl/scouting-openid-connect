@@ -1,25 +1,24 @@
 (function () {
-	document.addEventListener('DOMContentLoaded', function () {
-		var params = new URLSearchParams(window.location.search);
-		var hasExplicitSort = params.has('orderby') || params.has('order');
-		if (!hasExplicitSort) {
-			console.debug('No explicit sort parameters found in URL, defaulting to sorting by created_at descending');
-			var createdAtHeader = document.querySelector('th#created_at');
-			if (createdAtHeader) {
-				// Set the default sort parameters in the URL to reflect the default sorting by created_at descending
-				params.set('orderby', 'id');
-				params.set('order', 'desc');
-				var newUrl = window.location.pathname + '?' + params.toString();
-				window.history.replaceState({}, '', newUrl);
+    document.addEventListener('DOMContentLoaded', function () {
+        var params = new URLSearchParams(window.location.search);
+        var hasExplicitSort = params.has('orderby') || params.has('order');
+        if (!hasExplicitSort) {
+            var createdAtHeader = document.querySelector('th#created_at');
+            if (createdAtHeader) {
+                // Set the default sort parameters in the URL to reflect the default sorting by created_at descending
+                params.set('orderby', 'id');
+                params.set('order', 'desc');
+                var newUrl = window.location.pathname + '?' + params.toString();
+                window.history.replaceState({}, '', newUrl);
 
-				// Update the aria-sort attribute to indicate the default sorting state for accessibility
-				createdAtHeader.setAttribute('aria-sort', 'descending');
+                // Update the aria-sort attribute to indicate the default sorting state for accessibility
+                createdAtHeader.setAttribute('aria-sort', 'descending');
 
-				// update class
-				createdAtHeader.classList.replace('manage-column', 'column-created_at', 'column-primary', 'sorted', 'desc');
-			}
-		}
-		
+                // update class
+                createdAtHeader.classList.replace('manage-column', 'column-created_at', 'column-primary', 'sorted', 'desc');
+            }
+        }
+
         function nowLocalISO() {
             var d = new Date();
             var pad = function (n) { return String(n).padStart(2, '0'); };

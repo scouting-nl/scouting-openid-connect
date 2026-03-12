@@ -79,17 +79,17 @@ function scouting_oidc_init(): void
     add_shortcode('scouting_oidc_link', array($scouting_oidc_auth, 'scouting_oidc_auth_login_url_shortcode'));
 
     // Provide additional links in the plugin overview page
-	add_filter('plugin_action_links_'.plugin_basename(__FILE__), [$scouting_oidc_actions, 'scouting_oidc_actions_plugin_links']);
+    add_filter('plugin_action_links_'.plugin_basename(__FILE__), [$scouting_oidc_actions, 'scouting_oidc_actions_plugin_links']);
 
     // Normalize plus-addressed Scouting OIDC recipient aliases in outgoing mail
     add_filter('wp_mail', [Mail::class, 'scouting_oidc_mail_filter_wp_mail'], 20);
 
     // Add user profile fields if any option is enabled
-	if (get_option('scouting_oidc_user_birthdate') || get_option('scouting_oidc_user_gender') || get_option('scouting_oidc_user_phone') || get_option('scouting_oidc_user_address'))
-	{
-		add_action('show_user_profile', [$scouting_oidc_fields, 'scouting_oidc_fields_user_profile']);
-		add_action('edit_user_profile', [$scouting_oidc_fields, 'scouting_oidc_fields_user_profile']);
-	}
+    if (get_option('scouting_oidc_user_birthdate') || get_option('scouting_oidc_user_gender') || get_option('scouting_oidc_user_phone') || get_option('scouting_oidc_user_address'))
+    {
+        add_action('show_user_profile', [$scouting_oidc_fields, 'scouting_oidc_fields_user_profile']);
+        add_action('edit_user_profile', [$scouting_oidc_fields, 'scouting_oidc_fields_user_profile']);
+    }
 
     // Enqueue scripts for admin pages
     add_action('admin_enqueue_scripts', [$scouting_oidc_shortcode, 'scouting_oidc_shortcode_enqueue_live_script']);
