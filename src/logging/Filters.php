@@ -45,16 +45,18 @@ class LoggingFilters
             return null;
         }
 
-        $formats = ['Y-m-d\\TH:i:s.v', 'Y-m-d\\TH:i:s', 'Y-m-d\\TH:i'];
-
-        foreach ($formats as $format) {
-            $datetime = \DateTime::createFromFormat($format, $value);
-            if ($datetime !== false) {
-                return $datetime->format('Y-m-d H:i:s.v');
-            }
+        // Normalize milliseconds if missing
+        if (!str_contains($value, '.')) {
+            $value .= '.000';
         }
 
-        return null;
+        try {
+            $datetime = new \DateTimeImmutable($value);
+            // Return in MySQL DATETIME(3) format with milliseconds
+            return $datetime->format('Y-m-d H:i:s.v');
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
