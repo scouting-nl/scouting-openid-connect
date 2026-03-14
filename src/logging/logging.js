@@ -26,34 +26,45 @@ document.addEventListener('DOMContentLoaded', function () {
             'T' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
     }
 
-    var dateFrom = document.getElementById('date_from');
-    var dateTo = document.getElementById('date_to');
+    const dateFrom = document.getElementById('date_from');
+    const dateTo = document.getElementById('date_to');
+    const submitBtn = document.getElementById('post-query-submit');
 
-    if (!dateFrom || !dateTo) { return; }
+    if (!dateFrom || !dateTo || !submitBtn) { return; }
 
-    // Enforce date_to max = current time
-    dateTo.max = nowLocalISO();
-    // Enforce date_from max = date_to value (or now if not set)
-    dateFrom.max = dateTo.value || dateTo.max;
+    // On page load, set the min/max attributes to enforce valid date ranges
+    if (dateFrom.value) dateTo.min = dateFrom.value;
+    if (dateTo.value) dateFrom.max = dateTo.value;
 
-    dateFrom.addEventListener('change', function () {
-        dateTo.min = dateFrom.value;
-        // Push date_to forward if it is now before date_from
-        if (dateTo.value && dateTo.value < dateFrom.value) {
-            dateTo.value = dateFrom.value;
-        }
+    function clampInput(input) {
+        if (!input.value) return;
+        if (input.min && input.value < input.min) input.value = input.min;
+        if (input.max && input.value > input.max) input.value = input.max;
+    }
+
+    // When the "from" date changes, update the min of the "to" date and clamp if necessary
+    dateFrom.addEventListener('change', () => {
+        if (dateFrom.value) dateTo.min = dateFrom.value;
+        else dateTo.removeAttribute('min');
+        clampInput(dateTo);
     });
 
-    dateTo.addEventListener('change', function () {
-        // Cap date_to to current time if user somehow exceeds it
-        var now = nowLocalISO();
-        if (dateTo.value > now) {
-            dateTo.value = now;
-        }
-        dateFrom.max = dateTo.value || now;
-        // Pull date_from back if it is now after date_to
-        if (dateFrom.value && dateTo.value && dateFrom.value > dateTo.value) {
-            dateFrom.value = dateTo.value;
-        }
+    // When the "to" date changes, update the max of the "from" date and clamp if necessary
+    dateTo.addEventListener('change', () => {
+        if (dateTo.value) dateFrom.max = dateTo.value;
+        else dateFrom.removeAttribute('max');
+        clampInput(dateFrom);
+    });
+
+    // On form submit, ensure the max attributes are set to the current date/time to prevent future dates
+    submitBtn.form.addEventListener('submit', function () {
+        // Set the max attributes to the current date/time to prevent future dates from being submitted
+        const now = nowLocalISO();
+        dateFrom.max = now;
+        dateTo.max = now;
+
+        // Clamp the input values to ensure they are within the valid range before submission
+        clampInput(dateFrom);
+        clampInput(dateTo);
     });
 });
