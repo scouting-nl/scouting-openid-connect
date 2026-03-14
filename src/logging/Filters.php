@@ -72,6 +72,7 @@ class LoggingFilters
         $date_to = isset($_GET['date_to']) ? sanitize_text_field(wp_unslash($_GET['date_to'])) : '';
         $sol_id = isset($_GET['sol_id']) ? sanitize_text_field(wp_unslash($_GET['sol_id'])) : '';
         $user_id = isset($_GET['user_id']) ? sanitize_text_field(wp_unslash($_GET['user_id'])) : '';
+        $search = isset($_GET['s']) ? sanitize_text_field(wp_unslash($_GET['s'])) : '';
 
         $filter_applied = isset($_GET['filter_applied']);
 
@@ -100,6 +101,7 @@ class LoggingFilters
             'level' => $levels,
             'sol_id' => trim($sol_id),
             'user_id' => ctype_digit($user_id) ? absint($user_id) : 0,
+            'search' => trim($search),
         ];
     }
 
@@ -151,6 +153,14 @@ class LoggingFilters
         if (!empty($filters['user_id'])) {
             $where[] = 'user_id = %d';
             $values[] = (int) $filters['user_id'];
+        }
+
+        if (!empty($filters['search'])) {
+            $search = (string) $filters['search'];
+            $search_like = '%' . $wpdb->esc_like($search) . '%';
+
+            $where[] = 'message LIKE %s';
+            $values[] = $search_like;
         }
 
         return implode(' AND ', $where);

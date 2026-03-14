@@ -341,6 +341,7 @@ class Logging
                 <input type="hidden" name="filter_applied" value="1" />
                 <input type="hidden" name="orderby" value="<?php echo esc_attr($sorting['orderby']); ?>" />
                 <input type="hidden" name="order" value="<?php echo esc_attr(strtolower($sorting['order'])); ?>" />
+                <?php $list_table->search_box(__('Search Logs', 'scouting-openid-connect'), 'scouting-oidc-logs'); ?>
                 <?php $list_table->display(); ?>
             </form>
         </div>
