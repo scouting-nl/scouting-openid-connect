@@ -13,6 +13,15 @@ class LoggingFilters
     public function get_sorting(): array {
         $allowed_orderby = ['id', 'created_at'];
 
+        $nonce = isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '';
+        if (!$nonce || !wp_verify_nonce($nonce)) {
+            return [
+                'orderby' => 'id',
+                'order' => 'DESC',
+                'next_order' => 'asc',
+            ];
+        }
+
         $orderby = isset($_GET['orderby']) ? sanitize_key(wp_unslash($_GET['orderby'])) : 'id';
         if (!in_array($orderby, $allowed_orderby, true)) {
             $orderby = 'id';
@@ -68,6 +77,23 @@ class LoggingFilters
         $type_values = array_map(static fn(LogType $case) => $case->value, LogType::cases());
         $level_values = array_map(static fn(LogLevel $case) => $case->value, LogLevel::cases());
 
+        $nonce = isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '';
+        if (!$nonce || !wp_verify_nonce($nonce)) {
+            $default_levels = array_values(array_filter($level_values, fn($v) => $v !== 'debug'));
+
+            return [
+                'date_from' => '',
+                'date_to' => '',
+                'date_from_sql' => null,
+                'date_to_sql' => null,
+                'type' => $type_values,
+                'level' => $default_levels,
+                'sol_id' => '',
+                'user_id' => 0,
+                'search' => '',
+            ];
+        }
+
         $date_from = isset($_GET['date_from']) ? sanitize_text_field(wp_unslash($_GET['date_from'])) : '';
         $date_to = isset($_GET['date_to']) ? sanitize_text_field(wp_unslash($_GET['date_to'])) : '';
         $sol_id = isset($_GET['sol_id']) ? sanitize_text_field(wp_unslash($_GET['sol_id'])) : '';
@@ -78,10 +104,10 @@ class LoggingFilters
 
         if ($filter_applied) {
             $level_raw = isset($_GET['level']) && is_array($_GET['level'])
-                ? array_map('sanitize_text_field', array_map('wp_unslash', $_GET['level']))
+                ? array_map('sanitize_text_field', wp_unslash($_GET['level']))
                 : [];
             $type_raw = isset($_GET['type']) && is_array($_GET['type'])
-                ? array_map('sanitize_text_field', array_map('wp_unslash', $_GET['type']))
+                ? array_map('sanitize_text_field', wp_unslash($_GET['type']))
                 : [];
         } else {
             // Default: all levels except debug, all types
