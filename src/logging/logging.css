@@ -21,13 +21,34 @@
     white-space: normal;
 }
 
-#scouting-oidc-logs-filter .tablenav .actions #date_from,
-#scouting-oidc-logs-filter .tablenav .actions #date_to {
-    width: 210px;
-}
-
 #scouting-oidc-logs-filter .tablenav .actions select,
 #scouting-oidc-logs-filter .tablenav .actions input,
 #scouting-oidc-logs-filter .tablenav .actions .button {
     float: none;
+}
+
+#scouting-oidc-logs-filter .tablenav .actions input[type="datetime-local"] {
+    width: 210px;
+}
+
+#scouting-oidc-logs-filter .tablenav .actions input[data-sync-key="user_id"],
+#scouting-oidc-logs-filter .tablenav .actions input[data-sync-key="sol_id"] {
+    width: 110px;
+}
+
+#scouting-oidc-logs-filter .tablenav .actions select {
+    margin-bottom: 5px;
+}
+
+#scouting-oidc-logs-filter .tablenav .actions select[data-sync-key="level"] {
+    margin-right: 0.5px;
+}
+
+#scouting-oidc-logs-filter .tablenav .actions select[data-sync-key="type"] {
+    margin-right: 1px;
+}
+
+#scouting-oidc-logs-filter .tablenav .actions input[type="submit"] {
+    margin-left: 0.5px;
+    margin-right: 2px;
 }

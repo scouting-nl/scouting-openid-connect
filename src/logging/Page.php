@@ -199,19 +199,22 @@ class Logging
              * @return void
              */
             protected function extra_tablenav($which): void {
-                if ($which !== 'top') {
+                if (!in_array($which, ['top', 'bottom'], true)) {
                     return;
                 }
+
+                $position = $which === 'bottom' ? 'bottom' : 'top';
+                $is_submit_source = $which === 'top';
                 ?>
                 <div class="alignleft actions">
-                    <label class="screen-reader-text" for="date_from"><?php esc_html_e('Date/time from', 'scouting-openid-connect'); ?></label>
-                    <input type="datetime-local" id="date_from" name="date_from" value="<?php echo esc_attr($this->filters['date_from']); ?>" step="0.001" />
+                    <label class="screen-reader-text" for="date_from_<?php echo esc_attr($position); ?>"><?php esc_html_e('Date/time from', 'scouting-openid-connect'); ?></label>
+                    <input type="datetime-local" id="date_from_<?php echo esc_attr($position); ?>" data-sync-key="date_from" <?php echo $is_submit_source ? 'name="date_from"' : ''; ?> value="<?php echo esc_attr($this->filters['date_from']); ?>" step="0.001" />
 
-                    <label class="screen-reader-text" for="date_to"><?php esc_html_e('Date/time to', 'scouting-openid-connect'); ?></label>
-                    <input type="datetime-local" id="date_to" name="date_to" value="<?php echo esc_attr($this->filters['date_to']); ?>" min="<?php echo esc_attr($this->filters['date_from']); ?>" step="0.001" />
+                    <label class="screen-reader-text" for="date_to_<?php echo esc_attr($position); ?>"><?php esc_html_e('Date/time to', 'scouting-openid-connect'); ?></label>
+                    <input type="datetime-local" id="date_to_<?php echo esc_attr($position); ?>" data-sync-key="date_to" <?php echo $is_submit_source ? 'name="date_to"' : ''; ?> value="<?php echo esc_attr($this->filters['date_to']); ?>" min="<?php echo esc_attr($this->filters['date_from']); ?>" step="0.001" />
 
-                    <label class="screen-reader-text" for="level"><?php esc_html_e('Filter by level', 'scouting-openid-connect'); ?></label>
-                    <select id="level" name="level[]" multiple size="1">
+                    <label class="screen-reader-text" for="level_<?php echo esc_attr($position); ?>"><?php esc_html_e('Filter by level', 'scouting-openid-connect'); ?></label>
+                    <select id="level_<?php echo esc_attr($position); ?>" data-sync-key="level" <?php echo $is_submit_source ? 'name="level[]"' : ''; ?> multiple size="1">
                         <?php foreach ($this->level_values as $level_value): ?>
                             <option value="<?php echo esc_attr($level_value); ?>" <?php echo in_array($level_value, $this->filters['level'], true) ? 'selected' : ''; ?>>
                                 <?php echo esc_html(strtoupper($level_value)); ?>
@@ -219,8 +222,8 @@ class Logging
                         <?php endforeach; ?>
                     </select>
 
-                    <label class="screen-reader-text" for="type"><?php esc_html_e('Filter by type', 'scouting-openid-connect'); ?></label>
-                    <select id="type" name="type[]" multiple size="1">
+                    <label class="screen-reader-text" for="type_<?php echo esc_attr($position); ?>"><?php esc_html_e('Filter by type', 'scouting-openid-connect'); ?></label>
+                    <select id="type_<?php echo esc_attr($position); ?>" data-sync-key="type" <?php echo $is_submit_source ? 'name="type[]"' : ''; ?> multiple size="1">
                         <?php foreach ($this->type_values as $type_value): ?>
                             <option value="<?php echo esc_attr($type_value); ?>" <?php echo in_array($type_value, $this->filters['type'], true) ? 'selected' : ''; ?>>
                                 <?php echo esc_html(strtoupper($type_value)); ?>
@@ -228,13 +231,13 @@ class Logging
                         <?php endforeach; ?>
                     </select>
 
-                    <label class="screen-reader-text" for="user_id"><?php esc_html_e('Filter by user ID', 'scouting-openid-connect'); ?></label>
-                    <input type="number" min="1" step="1" id="user_id" name="user_id" value="<?php echo !empty($this->filters['user_id']) ? esc_attr((string) $this->filters['user_id']) : ''; ?>" placeholder="<?php esc_attr_e('User ID', 'scouting-openid-connect'); ?>" class="small-text" />
+                    <label class="screen-reader-text" for="user_id_<?php echo esc_attr($position); ?>"><?php esc_html_e('Filter by user ID', 'scouting-openid-connect'); ?></label>
+                    <input type="number" min="1" step="1" id="user_id_<?php echo esc_attr($position); ?>" data-sync-key="user_id" <?php echo $is_submit_source ? 'name="user_id"' : ''; ?> value="<?php echo !empty($this->filters['user_id']) ? esc_attr((string) $this->filters['user_id']) : ''; ?>" placeholder="<?php esc_attr_e('User ID', 'scouting-openid-connect'); ?>" class="small-text" />
 
-                    <label class="screen-reader-text" for="sol_id"><?php esc_html_e('Filter by SOL ID', 'scouting-openid-connect'); ?></label>
-                    <input type="text" id="sol_id" name="sol_id" value="<?php echo esc_attr($this->filters['sol_id']); ?>" placeholder="<?php esc_attr_e('SOL ID', 'scouting-openid-connect'); ?>" class="regular-text" />
+                    <label class="screen-reader-text" for="sol_id_<?php echo esc_attr($position); ?>"><?php esc_html_e('Filter by SOL ID', 'scouting-openid-connect'); ?></label>
+                    <input type="text" id="sol_id_<?php echo esc_attr($position); ?>" data-sync-key="sol_id" <?php echo $is_submit_source ? 'name="sol_id"' : ''; ?> value="<?php echo esc_attr($this->filters['sol_id']); ?>" placeholder="<?php esc_attr_e('SOL ID', 'scouting-openid-connect'); ?>" class="regular-text" />
 
-                    <input type="submit" id="post-query-submit" class="button button-primary" value="<?php esc_attr_e('Filter', 'scouting-openid-connect'); ?>" />
+                    <input type="submit" id="post-query-submit-<?php echo esc_attr($position); ?>" class="button button-primary" value="<?php esc_attr_e('Filter', 'scouting-openid-connect'); ?>" />
                     <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=scouting-oidc-logging&orderby=id&order=desc')); ?>"><?php esc_html_e('Reset', 'scouting-openid-connect'); ?></a>
                 </div>
                 <?php
