@@ -70,10 +70,10 @@ $scouting_oidc_logger = new Logger();
 // Init plugin
 function scouting_oidc_init(): void
 {
-    global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode, $scouting_oidc_settings, $scouting_oidc_logger; // Declare global variables
+    global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode, $scouting_oidc_settings; // Declare global variables
 
-    // Ensure logger schema is up to date before plugin behavior runs.
-    $scouting_oidc_logger->scouting_oidc_maybe_upgrade();
+    // Check for updates and perform any necessary upgrade routines
+    (new Logger())->scouting_oidc_maybe_upgrade();
 
     // Add the OpenID Connect button to the login form
     add_action('login_form', array($scouting_oidc_auth, 'scouting_oidc_auth_login_form'));
