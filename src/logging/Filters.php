@@ -6,13 +6,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class LoggingFilters
 {
     /**
+     * Request key used for the logging filter nonce.
+     */
+    private const FILTER_NONCE_KEY = 'scouting_oidc_logs_filter_nonce';
+
+    /**
      * Get sorting options from the request.
      *
      * @return array<string, string>
      */
     public function get_sorting(): array {
-        $nonce = isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '';
-        if ($nonce !== '' && !wp_verify_nonce($nonce, "scouting_oidc_logs_filter")) {
+        $nonce = isset($_GET[self::FILTER_NONCE_KEY])
+            ? sanitize_text_field(wp_unslash($_GET[self::FILTER_NONCE_KEY]))
+            : (isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '');
+        if ($nonce !== '' && !wp_verify_nonce($nonce, 'scouting_oidc_logs_filter')) {
             return [
                 'orderby' => 'id',
                 'order' => 'desc',
@@ -63,8 +70,10 @@ class LoggingFilters
         $component_values = array_map(static fn(LogComponent $case) => $case->value, LogComponent::cases());
         $level_values = array_map(static fn(LogLevel $case) => $case->value, LogLevel::cases());
 
-        $nonce = isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '';
-        if (!$nonce || !wp_verify_nonce($nonce, "scouting_oidc_logs_filter")) {
+        $nonce = isset($_GET[self::FILTER_NONCE_KEY])
+            ? sanitize_text_field(wp_unslash($_GET[self::FILTER_NONCE_KEY]))
+            : (isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '');
+        if (!$nonce || !wp_verify_nonce($nonce, 'scouting_oidc_logs_filter')) {
             $default_levels = array_values(array_filter($level_values, fn($v) => $v !== 'debug'));
 
             return [
