@@ -10,6 +10,35 @@ class LoggingSettings
      */
     public function __construct() {
         add_filter('set-screen-option', [$this, 'scouting_oidc_logs_set_screen_option'], 10, 3);
+        add_filter('screen_settings', [$this, 'scouting_oidc_logs_preserve_filters_referer'], 10, 2);
+    }
+
+    /**
+     * Keep active logging filters in the redirect target when applying screen options.
+     *
+     * @param string $screen_settings
+     * @param mixed $screen
+     * @return string
+     */
+    public function scouting_oidc_logs_preserve_filters_referer(string $screen_settings, mixed $screen): string {
+        unset($screen);
+
+        $page = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : '';
+        if ($page !== 'scouting-oidc-logging') {
+            return $screen_settings;
+        }
+
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? wp_unslash($_SERVER['REQUEST_URI']) : '';
+        if (!is_string($request_uri) || $request_uri === '') {
+            return $screen_settings;
+        }
+
+        $referer = remove_query_arg('_wp_http_referer', $request_uri);
+
+        return $screen_settings . sprintf(
+            '<input type="hidden" name="_wp_http_referer" value="%s" />',
+            esc_attr($referer)
+        );
     }
 
     /**
