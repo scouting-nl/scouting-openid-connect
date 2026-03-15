@@ -40,6 +40,7 @@ require_once SCOUTING_OIDC_PATH . 'src/plugin/Actions.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/Description.php';
 require_once SCOUTING_OIDC_PATH . 'src/user/Fields.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/Logger.php';
+require_once SCOUTING_OIDC_PATH . 'src/utilities/CronJobs.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/Mail.php';
 
 use ScoutingOIDC\Auth;
@@ -52,6 +53,7 @@ use ScoutingOIDC\Shortcode;
 use ScoutingOIDC\Support;
 use ScoutingOIDC\Logging;
 use ScoutingOIDC\Fields;
+use ScoutingOIDC\CronJobs;
 use ScoutingOIDC\Mail;
 use ScoutingOIDC\Logger;
 
@@ -66,6 +68,7 @@ $scouting_oidc_support = new Support();
 $scouting_oidc_logging = new Logging();
 $scouting_oidc_fields = new Fields();
 $scouting_oidc_logger = new Logger();
+$scouting_oidc_cron_jobs = new CronJobs();
 
 // Init plugin
 function scouting_oidc_init(): void
@@ -73,7 +76,7 @@ function scouting_oidc_init(): void
     global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode, $scouting_oidc_settings; // Declare global variables
 
     // Check for updates and perform any necessary upgrade routines
-    (new Logger())->scouting_oidc_maybe_upgrade();
+    (new Logger())->scouting_oidc_logger_upgrade();
 
     // Add the OpenID Connect button to the login form
     add_action('login_form', array($scouting_oidc_auth, 'scouting_oidc_auth_login_form'));
@@ -132,7 +135,15 @@ add_action('wp_login', [$scouting_oidc_auth, 'scouting_oidc_auth_login_redirect'
 // Add logout redirect
 add_action('wp_logout', [$scouting_oidc_auth, 'scouting_oidc_auth_logout_redirect']);
 
+// Daily cleanup for logs older than 30 days.
+add_action(CronJobs::CLEANUP_CRON_HOOK, [CronJobs::class, 'scouting_oidc_logger_cleanup_old_logs']);
+
+// Ensure log cleanup schedule exists during runtime.
+add_action('init', [$scouting_oidc_cron_jobs, 'scouting_oidc_logger_schedule_cleanup']);
+
 // Setup defaults during installation
 register_activation_hook(__FILE__, [$scouting_oidc_settings, 'scouting_oidc_settings_install']);
-register_activation_hook(__FILE__, [$scouting_oidc_logger, 'scouting_oidc_logger_install']);
+register_activation_hook(__FILE__, [$scouting_oidc_logger, 'scouting_oidc_logger_activate']);
+register_activation_hook(__FILE__, [$scouting_oidc_cron_jobs, 'scouting_oidc_cron_activate']);
+register_deactivation_hook(__FILE__, [$scouting_oidc_cron_jobs, 'scouting_oidc_cron_deactivate']);
 ?>

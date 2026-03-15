@@ -44,11 +44,34 @@ enum LogType: string {
  */
 class Logger {
     /**
+     * Install logger table when plugin is activated.
+     *
+     * @return void
+     */
+    public function scouting_oidc_logger_activate(): void {
+        $this->scouting_oidc_logger_database_update();
+    }
+
+    /**
+     * Check the installed DB version and run the database update if the version is outdated.
+     * 
+     * @return void
+     */
+    public function scouting_oidc_logger_upgrade(): void {
+        $installed_db_version = (string) get_option('scouting_oidc_db_version', '0.0.0');
+
+        // If the installed DB version does not match the current plugin version, run the database update to create or upgrade the logs table as needed.
+        if (version_compare($installed_db_version, SCOUTING_OIDC_VERSION) != 0) {
+            $this->scouting_oidc_logger_database_update();
+        }
+    }
+
+    /**
      * Create or update the logs table during plugin activation.
      *
      * @return void
      */
-    public function scouting_oidc_logger_install(): void {
+    private function scouting_oidc_logger_database_update(): void {
         global $wpdb;
 
         $logs_table = $wpdb->prefix . 'scouting_oidc_logs';
@@ -116,20 +139,6 @@ class Logger {
 
         // Set option to track the installed DB version for future upgrades.
         update_option('scouting_oidc_db_version', SCOUTING_OIDC_VERSION);
-    }
-
-    /**
-     * Check the installed DB version and run the installer if the version is outdated.
-     * 
-     * @return void
-     */
-    public function scouting_oidc_maybe_upgrade(): void {
-        $installed_db_version = (string) get_option('scouting_oidc_db_version', '0.0.0');
-
-        // If the installed DB version does not match the current plugin version, run the installer to create or upgrade the logs table as needed.
-        if (version_compare($installed_db_version, SCOUTING_OIDC_VERSION) != 0) {
-            $this->scouting_oidc_logger_install();
-        }
     }
 
     /**
