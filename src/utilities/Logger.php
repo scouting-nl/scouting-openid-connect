@@ -48,7 +48,7 @@ class Logger {
      *
      * @return void
      */
-    private function scouting_oidc_logger_database_create(): void {
+    public function scouting_oidc_logger_database_create(): void {
         global $wpdb;
 
         $logs_table = $wpdb->prefix . 'scouting_oidc_logs';
