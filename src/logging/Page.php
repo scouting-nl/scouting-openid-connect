@@ -341,6 +341,7 @@ class Logging
                 <input type="hidden" name="filter_applied" value="1" />
                 <input type="hidden" name="orderby" value="<?php echo esc_attr($sorting['orderby']); ?>" />
                 <input type="hidden" name="order" value="<?php echo esc_attr(strtolower($sorting['order'])); ?>" />
+                <?php wp_nonce_field("scouting_oidc_logs_filter", "_wpnonce", false); ?>
                 <?php $list_table->search_box(__('Search Logs', 'scouting-openid-connect'), 'scouting-oidc-logs'); ?>
                 <?php $list_table->display(); ?>
             </form>
@@ -393,12 +394,7 @@ class Logging
         $values = [];
         $where_sql = $this->filters_helper->build_logs_where($filters, $values);
 
-        $allowed_orderby = ['id', 'created_at'];
-        $orderby = isset($sorting['orderby']) && in_array($sorting['orderby'], $allowed_orderby, true)
-            ? $sorting['orderby']
-            : 'created_at';
-        $order = (isset($sorting['order']) && $sorting['order'] === 'ASC') ? 'ASC' : 'DESC';
-
+        $order = (isset($sorting['order']) && $sorting['order'] === 'asc') ? 'ASC' : 'DESC';
         // Limit should be between 1 and 999
         $limit = max(1, min(999, $limit));
 
@@ -406,13 +402,10 @@ class Logging
         $offset = max(0, $offset);
 
         $scouting_oidc_logs_table = esc_sql($wpdb->prefix . 'scouting_oidc_logs');
-        $order_by_sql = $orderby === 'created_at'
-            ? "created_at {$order}, id {$order}"
-            : "id {$order}";
         $sql = "SELECT id, created_at, DATE_FORMAT(created_at, '%%d-%%m-%%Y %%H:%%i:%%s.%%f') AS created_at_with_ms, type, level, user_id, sol_id, message
                 FROM {$scouting_oidc_logs_table}
                 WHERE {$where_sql}
-                ORDER BY {$order_by_sql}
+                ORDER BY id {$order}
                 LIMIT {$limit} OFFSET {$offset}";
 
         if (!empty($values)) {

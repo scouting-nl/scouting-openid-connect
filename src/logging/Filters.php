@@ -11,34 +11,20 @@ class LoggingFilters
      * @return array<string, string>
      */
     public function get_sorting(): array {
-        $allowed_orderby = ['id', 'created_at'];
-
         $nonce = isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '';
-        if (!$nonce || !wp_verify_nonce($nonce)) {
+        if ($nonce !== '' && !wp_verify_nonce($nonce, "scouting_oidc_logs_filter")) {
             return [
                 'orderby' => 'id',
-                'order' => 'DESC',
-                'next_order' => 'asc',
+                'order' => 'desc',
             ];
         }
 
-        $orderby = isset($_GET['orderby']) ? sanitize_key(wp_unslash($_GET['orderby'])) : 'id';
-        if (!in_array($orderby, $allowed_orderby, true)) {
-            $orderby = 'id';
-        }
-
-        if ($orderby === 'created_at') {
-            // Date/Time sorting is backed by log ID.
-            $orderby = 'id';
-        }
-
         $order = isset($_GET['order']) ? sanitize_key(wp_unslash($_GET['order'])) : 'desc';
-        $order = $order === 'asc' ? 'ASC' : 'DESC';
+        $order = $order === 'asc' ? 'asc' : 'desc';
 
         return [
-            'orderby' => $orderby,
+            'orderby' => 'id',
             'order' => $order,
-            'next_order' => $order === 'ASC' ? 'desc' : 'asc',
         ];
     }
 
@@ -78,7 +64,7 @@ class LoggingFilters
         $level_values = array_map(static fn(LogLevel $case) => $case->value, LogLevel::cases());
 
         $nonce = isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '';
-        if (!$nonce || !wp_verify_nonce($nonce)) {
+        if (!$nonce || !wp_verify_nonce($nonce, "scouting_oidc_logs_filter")) {
             $default_levels = array_values(array_filter($level_values, fn($v) => $v !== 'debug'));
 
             return [
