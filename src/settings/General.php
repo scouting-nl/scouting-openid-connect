@@ -253,7 +253,7 @@ class Settings_General
             $new = $new !== '' ? '***REDACTED***' : 'null';
         }
 
-        Logger::info(LogType::SETTINGS, "Setting {$option} changed: {$old} -> {$new}");
+        Logger::info(LogComponent::SETTINGS, "Setting {$option} changed: {$old} -> {$new}");
     }
 
     /**

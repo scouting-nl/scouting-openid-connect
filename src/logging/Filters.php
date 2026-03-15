@@ -60,7 +60,7 @@ class LoggingFilters
      * @return array<string, mixed>
      */
     public function get_filters(): array {
-        $type_values = array_map(static fn(LogType $case) => $case->value, LogType::cases());
+        $component_values = array_map(static fn(LogComponent $case) => $case->value, LogComponent::cases());
         $level_values = array_map(static fn(LogLevel $case) => $case->value, LogLevel::cases());
 
         $nonce = isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '';
@@ -72,7 +72,7 @@ class LoggingFilters
                 'date_to' => '',
                 'date_from_sql' => null,
                 'date_to_sql' => null,
-                'type' => $type_values,
+                'component' => $component_values,
                 'level' => $default_levels,
                 'sol_id' => '',
                 'user_id' => 0,
@@ -92,24 +92,24 @@ class LoggingFilters
             $level_raw = isset($_GET['level']) && is_array($_GET['level'])
                 ? array_map('sanitize_text_field', wp_unslash($_GET['level']))
                 : [];
-            $type_raw = isset($_GET['type']) && is_array($_GET['type'])
-                ? array_map('sanitize_text_field', wp_unslash($_GET['type']))
+            $component_raw = isset($_GET['component']) && is_array($_GET['component'])
+                ? array_map('sanitize_text_field', wp_unslash($_GET['component']))
                 : [];
         } else {
-            // Default: all levels except debug, all types
+            // Default: all levels except debug, all components
             $level_raw = array_values(array_filter($level_values, fn($v) => $v !== 'debug'));
-            $type_raw = $type_values;
+            $component_raw = $component_values;
         }
 
         $levels = array_values(array_filter($level_raw, fn($l) => in_array($l, $level_values, true)));
-        $types = array_values(array_filter($type_raw, fn($t) => in_array($t, $type_values, true)));
+        $components = array_values(array_filter($component_raw, fn($c) => in_array($c, $component_values, true)));
 
         return [
             'date_from' => $date_from,
             'date_to' => $date_to,
             'date_from_sql' => $this->parse_datetime_local($date_from),
             'date_to_sql' => $this->parse_datetime_local($date_to),
-            'type' => $types,
+            'component' => $components,
             'level' => $levels,
             'sol_id' => trim($sol_id),
             'user_id' => ctype_digit($user_id) ? absint($user_id) : 0,
@@ -139,12 +139,12 @@ class LoggingFilters
             $values[] = $filters['date_to_sql'];
         }
 
-        if (!empty($filters['type'])) {
-            $selected_types = (array) $filters['type'];
-            $placeholders = implode(', ', array_fill(0, count($selected_types), '%s'));
-            $where[] = "type IN ({$placeholders})";
-            foreach ($selected_types as $t) {
-                $values[] = $t;
+        if (!empty($filters['component'])) {
+            $selected_components = (array) $filters['component'];
+            $placeholders = implode(', ', array_fill(0, count($selected_components), '%s'));
+            $where[] = "component IN ({$placeholders})";
+            foreach ($selected_components as $component) {
+                $values[] = $component;
             }
         }
 
@@ -152,8 +152,8 @@ class LoggingFilters
             $selected_levels = (array) $filters['level'];
             $placeholders = implode(', ', array_fill(0, count($selected_levels), '%s'));
             $where[] = "level IN ({$placeholders})";
-            foreach ($selected_levels as $l) {
-                $values[] = $l;
+            foreach ($selected_levels as $level) {
+                $values[] = $level;
             }
         }
 

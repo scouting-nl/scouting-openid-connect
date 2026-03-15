@@ -35,7 +35,7 @@ class Auth {
     public function scouting_oidc_auth_login_form(): void {
         // Check if the client ID and client secret are empty 
         if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
-            Logger::warning(LogType::AUTH, "Client ID or Client Secret are missing in the configuration, login button will not be rendered on the login form");
+            Logger::warning(LogComponent::AUTH, "Client ID or Client Secret are missing in the configuration, login button will not be rendered on the login form");
             return;
         }
 
@@ -43,7 +43,7 @@ class Auth {
 
         // Check if the login URL starts with 'init_error'
         if (substr($login_url, 0, 10) == 'init_error') {
-            Logger::warning(LogType::AUTH, "Failed to generate OIDC login URL, login button will not be rendered on the login form");
+            Logger::warning(LogComponent::AUTH, "Failed to generate OIDC login URL, login button will not be rendered on the login form");
             return;
         }
 
@@ -70,7 +70,7 @@ class Auth {
     public function scouting_oidc_auth_login_button_shortcode(array $atts = array()): string {
         // Check if the client ID and client secret are empty 
         if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
-            Logger::critical(LogType::AUTH, "Client ID or Client Secret are missing in the configuration, shortcode button will not be rendered");
+            Logger::critical(LogComponent::AUTH, "Client ID or Client Secret are missing in the configuration, shortcode button will not be rendered");
             return '';
         }
 
@@ -78,7 +78,7 @@ class Auth {
 
         // Check if the login URL starts with 'init_error'
         if (substr($login_url, 0, 10) == 'init_error') {
-            Logger::error(LogType::AUTH, "Failed to generate OIDC login URL, shortcode button will not be rendered");
+            Logger::error(LogComponent::AUTH, "Failed to generate OIDC login URL, shortcode button will not be rendered");
             return '';
         }
 
@@ -123,7 +123,7 @@ class Auth {
     public function scouting_oidc_auth_login_url_shortcode(): string {
         // Check if the client ID and client secret are empty 
         if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
-            Logger::critical(LogType::AUTH, "Client ID or Client Secret are missing in the configuration, shortcode login URL will be rendered as an login error URL");
+            Logger::critical(LogComponent::AUTH, "Client ID or Client Secret are missing in the configuration, shortcode login URL will be rendered as an login error URL");
             return ErrorHandler::login_error_url('init', __('Client ID or Client Secret are missing in the configuration', 'scouting-openid-connect'), 'init_error');
         }
 
@@ -134,7 +134,7 @@ class Auth {
             // Get hint from the URL
             $hint = substr($login_url, 12);
 
-            Logger::critical(LogType::AUTH, "Failed to generate OIDC login URL, shortcode login URL will be rendered as an login error URL");
+            Logger::critical(LogComponent::AUTH, "Failed to generate OIDC login URL, shortcode login URL will be rendered as an login error URL");
 
             // Return login URL with hint
             return ErrorHandler::login_error_url('init', $hint, 'init_error');
@@ -209,20 +209,20 @@ class Auth {
         // Create a new User object
         $user = new User($user_json_encoded);
 
-        Logger::info(LogType::AUTH, "User '{$user->getDisplayName()}' is being checked for login or account creation", null, $user->getUsername());
+        Logger::info(LogComponent::AUTH, "User '{$user->getDisplayName()}' is being checked for login or account creation", null, $user->getUsername());
 
         // Check if user is already created
         if ($user->scouting_oidc_user_check_if_exist()) {
-            Logger::info(LogType::AUTH, "User '{$user->getDisplayName()}' has an existing account, updating user information and logging in", null, $user->getUsername());
+            Logger::info(LogComponent::AUTH, "User '{$user->getDisplayName()}' has an existing account, updating user information and logging in", null, $user->getUsername());
             $user->scouting_oidc_user_update();
             $user->scouting_oidc_user_login();
         } else {
             if (get_option('scouting_oidc_user_auto_create')) {
-                Logger::info(LogType::AUTH, "User '{$user->getDisplayName()}' does not have an account, auto-creation is enabled, creating account and logging in", null, $user->getUsername());
+                Logger::info(LogComponent::AUTH, "User '{$user->getDisplayName()}' does not have an account, auto-creation is enabled, creating account and logging in", null, $user->getUsername());
                 $user->scouting_oidc_user_create();
                 $user->scouting_oidc_user_login();
             } else {
-                Logger::warning(LogType::AUTH, "User '{$user->getDisplayName()}' does not have an account and auto-creation is disabled, redirecting to login page with an error message", null, $user->getUsername());
+                Logger::warning(LogComponent::AUTH, "User '{$user->getDisplayName()}' does not have an account and auto-creation is disabled, redirecting to login page with an error message", null, $user->getUsername());
                 ErrorHandler::redirect_to_login_error('error', __('Webmaster disabled creation of new accounts', 'scouting-openid-connect'), 'disabled_auto_create');
             }
         }
@@ -256,7 +256,7 @@ class Auth {
 
         // If the error equals `The user denied the request`, show a translated message
         if ($hint == 'The user denied the request') {
-            logger::debug(LogType::AUTH, "User cancelled the OIDC authentication request");
+            logger::debug(LogComponent::AUTH, "User cancelled the OIDC authentication request");
             $hint = __("The user denied the request", "scouting-openid-connect");
         }
 
@@ -272,7 +272,7 @@ class Auth {
             return $error;
         }
 
-        Logger::error(LogType::AUTH, "User failed to login with OIDC: {$error_message} - {$hint}");
+        Logger::error(LogComponent::AUTH, "User failed to login with OIDC: {$error_message} - {$hint}");
 
         // Display the error message
         return '<div id="login_error" class="notice notice-error"><p><strong>Error: </strong>' . esc_html($hint) . '</p></div>';
@@ -346,7 +346,7 @@ class Auth {
         }
 
         $user = wp_get_current_user();
-        Logger::info(LogType::USER, "User '{$user->display_name}' logged out", $user->ID, $user->user_login);
+        Logger::info(LogComponent::USER, "User '{$user->display_name}' logged out", $user->ID, $user->user_login);
 
         wp_safe_redirect($logout_url);
         exit;
@@ -377,7 +377,7 @@ class Auth {
             // Return the SVG content
             return $svg_content;
         }
-        Logger::error(LogType::ASSETS, "Failed to load scouting SVG icon from path: {$svg_file_path}");
+        Logger::error(LogComponent::ASSETS, "Failed to load scouting SVG icon from path: {$svg_file_path}");
         return '';
     }
 
@@ -429,7 +429,7 @@ class Auth {
             $error_description = sanitize_text_field(wp_unslash($_GET['error_description']));
             $hint = sanitize_text_field(wp_unslash($_GET['hint']));
             if ($error_description == 'init') {
-                Logger::error(LogType::AUTH, "OIDC login URL builder returning init error: {$hint}");
+                Logger::error(LogComponent::AUTH, "OIDC login URL builder returning init error: {$hint}");
                 return "init_error:" . $hint;
             }
         }

@@ -22,18 +22,18 @@ enum LogLevel: string {
 }
 
 /**
- * Log types for categorizing log entries.
+ * Log components for categorizing log entries.
  * 
- * This enum can be extended in the future to include additional log types as needed. Each log entry must have a type, which allows for easier filtering and analysis of logs based on their category.
+ * This enum can be extended in the future to include additional log components as needed. Each log entry must have a component, which allows for easier filtering and analysis of logs based on their category.
  */
-
-enum LogType: string {
+enum LogComponent: string {
     case ASSETS = 'assets';
     case AUTH = 'auth';
-    case OIDC = 'oidc';
-    case USER = 'user';
+    case CRONJOB = 'cronjob';
     case MAIL = 'mail';
+    case OIDC = 'oidc';
     case SETTINGS = 'settings';
+    case USER = 'user';
 }
 
 /**
@@ -44,43 +44,20 @@ enum LogType: string {
  */
 class Logger {
     /**
-     * Install logger table when plugin is activated.
-     *
-     * @return void
-     */
-    public function scouting_oidc_logger_activate(): void {
-        $this->scouting_oidc_logger_database_update();
-    }
-
-    /**
-     * Check the installed DB version and run the database update if the version is outdated.
-     * 
-     * @return void
-     */
-    public function scouting_oidc_logger_upgrade(): void {
-        $installed_db_version = (string) get_option('scouting_oidc_db_version', '0.0.0');
-
-        // If the installed DB version does not match the current plugin version, run the database update to create or upgrade the logs table as needed.
-        if (version_compare($installed_db_version, SCOUTING_OIDC_VERSION) != 0) {
-            $this->scouting_oidc_logger_database_update();
-        }
-    }
-
-    /**
      * Create or update the logs table during plugin activation.
      *
      * @return void
      */
-    private function scouting_oidc_logger_database_update(): void {
+    private function scouting_oidc_logger_database_create(): void {
         global $wpdb;
 
         $logs_table = $wpdb->prefix . 'scouting_oidc_logs';
         $charset_collate = $wpdb->get_charset_collate();
 
-        // Build SQL ENUM values from the LogType enum cases
-        $enum_type_values = "'" . implode("','", array_map(
+        // Build SQL ENUM values from the LogComponent enum cases
+        $enum_component_values = "'" . implode("','", array_map(
             fn($case) => $case->value,
-            LogType::cases()
+            LogComponent::cases()
         )) . "'";
 
         // Build SQL ENUM values from the LogLevel enum cases
@@ -94,14 +71,14 @@ class Logger {
             id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             user_id BIGINT(20) UNSIGNED NULL,
             sol_id VARCHAR(60) NULL,
-            type ENUM($enum_type_values) NOT NULL,
+            component ENUM($enum_component_values) NOT NULL,
             level ENUM($enum_level_values) NOT NULL,
             created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
             message TEXT NOT NULL,
             PRIMARY KEY (id),
             KEY user_id (user_id),
             KEY sol_id (sol_id),
-            KEY type (type),
+            KEY component (component),
             KEY level (level),
             KEY created_at (created_at)
         ) $charset_collate;";
@@ -144,14 +121,14 @@ class Logger {
     /**
      * Persist a log entry to the database.
      *
-     * @param LogType $type Category/type for this log entry.
+     * @param LogComponent $component Component for this log entry.
      * @param LogLevel $level Severity level for this log entry.
      * @param string $message Log message content.
      * @param int|null $user_id Optional WP user ID to associate with this entry.
      * @param string|null $sol_id Optional SOL identifier to associate with this entry.
      * @return void
      */
-    private static function log(LogType $type, LogLevel $level, string $message, ?int $user_id = null, ?string $sol_id = null): void {
+    private static function log(LogComponent $component, LogLevel $level, string $message, ?int $user_id = null, ?string $sol_id = null): void {
         global $wpdb;
 
         // If $user_id is not provided, attempt to use the current user's ID if available.
@@ -198,7 +175,7 @@ class Logger {
         $wpdb->insert(
             $wpdb->prefix . 'scouting_oidc_logs',
             [
-                'type' => $type->value,
+                'component' => $component->value,
                 'level' => $level->value,
                 'message' => $message,
                 'user_id' => $user_id,
@@ -217,14 +194,14 @@ class Logger {
     /**
      * Log a WP_Error object at the error level, including all error codes and messages in the log entry.
      *
-     * @param LogType $type Category/type for this log entry.
+     * @param LogComponent $component Component for this log entry.
      * @param LogLevel $level Severity level for this log entry.
      * @param WP_Error $wp_error The WP_Error object to log.
      * @param int|null $user_id Optional WP user ID to associate with this error.
      * @param string|null $sol_id Optional SOL identifier to associate with this error.
      * @return void
      */
-    public static function log_wp_error(LogType $type, LogLevel $level, WP_Error $wp_error, ?int $user_id = null, ?string $sol_id = null): void {
+    public static function log_wp_error(LogComponent $component, LogLevel $level, WP_Error $wp_error, ?int $user_id = null, ?string $sol_id = null): void {
         $codes = $wp_error->get_error_codes();
 
         // Normalize to a codes array so we have a single processing path.
@@ -265,112 +242,110 @@ class Logger {
             $combined = substr($combined, 0, $max - 24) . "\n\n...truncated...";
         }
 
-        self::log($type, $level, $combined, $user_id, $sol_id);
+        self::log($component, $level, $combined, $user_id, $sol_id);
     }
 
     /**
      * Log an emergency-level message.
      *
-     * @param LogType $type
-     * @param string $message
-     * @param int|null $user_id
-     * @param string|null $sol_id
+     * @param LogComponent $component Component for this log entry.
+     * @param string $message Emergency message.
+     * @param int|null $user_id Optional WP user ID.
+     * @param string|null $sol_id Optional SOL identifier.
      * @return void
      */
-    public static function emergency(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
-        self::log($type, LogLevel::EMERGENCY, $message, $user_id, $sol_id);
+    public static function emergency(LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null): void {
+        self::log($component, LogLevel::EMERGENCY, $message, $user_id, $sol_id);
     }
 
     /**
      * Log an alert-level message.
      *
-     * @param LogType $type
-     * @param string $message
-     * @param int|null $user_id
-     * @param string|null $sol_id
+     * @param LogComponent $component Component for this log entry.
+     * @param string $message Alert message.
+     * @param int|null $user_id Optional WP user ID.
+     * @param string|null $sol_id Optional SOL identifier.
      * @return void
      */
-    public static function alert(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
-        self::log($type, LogLevel::ALERT, $message, $user_id, $sol_id);
+    public static function alert(LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null): void {
+        self::log($component, LogLevel::ALERT, $message, $user_id, $sol_id);
     }
-
 
     /**
      * Log a critical-level message.
      *
-     * @param LogType $type Category/type for this log entry.
+     * @param LogComponent $component Component for this log entry.
      * @param string $message Critical message.
      * @param int|null $user_id Optional WP user ID.
      * @param string|null $sol_id Optional SOL identifier.
      * @return void
      */
-    public static function critical(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
-        self::log($type, LogLevel::CRITICAL, $message, $user_id, $sol_id);
+    public static function critical(LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null): void {
+        self::log($component, LogLevel::CRITICAL, $message, $user_id, $sol_id);
     }
 
     /**
      * Log an error-level message.
      *
-     * @param LogType $type Category/type for this log entry.
+     * @param LogComponent $component Component for this log entry.
      * @param string $message Error message.
      * @param int|null $user_id Optional WP user ID.
      * @param string|null $sol_id Optional SOL identifier.
      * @return void
      */
-    public static function error(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
-        self::log($type, LogLevel::ERROR, $message, $user_id, $sol_id);
+    public static function error(LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null): void {
+        self::log($component, LogLevel::ERROR, $message, $user_id, $sol_id);
     }
 
     /**
      * Log a warning-level message.
      *
-     * @param LogType $type Category/type for this log entry.
+     * @param LogComponent $component Component for this log entry.
      * @param string $message Warning message.
      * @param int|null $user_id Optional WP user ID.
      * @param string|null $sol_id Optional SOL identifier.
      * @return void
      */
-    public static function warning(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
-        self::log($type, LogLevel::WARNING, $message, $user_id, $sol_id);
+    public static function warning(LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null): void {
+        self::log($component, LogLevel::WARNING, $message, $user_id, $sol_id);
     }
 
     /**
      * Log a notice-level message.
      *
-     * @param LogType $type
-     * @param string $message
-     * @param int|null $user_id
-     * @param string|null $sol_id
+     * @param LogComponent $component Component for this log entry.
+     * @param string $message Notice message.
+     * @param int|null $user_id Optional WP user ID.
+     * @param string|null $sol_id Optional SOL identifier.
      * @return void
      */
-    public static function notice(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
-        self::log($type, LogLevel::NOTICE, $message, $user_id, $sol_id);
+    public static function notice(LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null): void {
+        self::log($component, LogLevel::NOTICE, $message, $user_id, $sol_id);
     }
 
     /**
      * Log an informational message.
      *
-     * @param LogType $type Category/type for this log entry.
+     * @param LogComponent $component Component for this log entry.
      * @param string $message Informational message.
      * @param int|null $user_id Optional WP user ID.
      * @param string|null $sol_id Optional SOL identifier.
      * @return void
      */
-    public static function info(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
-        self::log($type, LogLevel::INFO, $message, $user_id, $sol_id);
+    public static function info(LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null): void {
+        self::log($component, LogLevel::INFO, $message, $user_id, $sol_id);
     }
-
 
     /**
      * Log a debug-level message.
      *
-     * @param LogType $type Category/type for this log entry.
+     * @param LogComponent $component Component for this log entry.
      * @param string $message Debug message.
      * @param int|null $user_id Optional WP user ID to associate with this message.
      * @param string|null $sol_id Optional SOL identifier to associate with this message.
      * @return void
      */
-    public static function debug(LogType $type, string $message, ?int $user_id = null, ?string $sol_id = null): void {
-        self::log($type, LogLevel::DEBUG, $message, $user_id, $sol_id);
+    public static function debug(LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null): void {
+        self::log($component, LogLevel::DEBUG, $message, $user_id, $sol_id);
     }
 }

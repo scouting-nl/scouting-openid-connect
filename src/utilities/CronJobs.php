@@ -24,6 +24,7 @@ class CronJobs {
      */
     public function scouting_oidc_cron_activate(): void {
         $this->scouting_oidc_logger_schedule_cleanup();
+        Logger::info(LogComponent::CRONJOB, 'Cron activation completed and cleanup schedule checked.');
     }
 
     /**
@@ -32,7 +33,14 @@ class CronJobs {
      * @return void
      */
     public function scouting_oidc_cron_deactivate(): void {
-        wp_clear_scheduled_hook(self::CLEANUP_CRON_HOOK);
+        $cleared = wp_clear_scheduled_hook(self::CLEANUP_CRON_HOOK);
+
+        if ($cleared === false) {
+            Logger::warning(LogComponent::CRONJOB, 'Failed to clear cleanup cron hook during deactivation.');
+            return;
+        }
+
+        Logger::info(LogComponent::CRONJOB, 'Cron deactivation cleared cleanup schedule.');
     }
 
     /**
@@ -45,7 +53,19 @@ class CronJobs {
             return;
         }
 
-        wp_schedule_event($this->get_next_cleanup_timestamp(), 'daily', self::CLEANUP_CRON_HOOK);
+        $scheduled = wp_schedule_event($this->get_next_cleanup_timestamp(), 'daily', self::CLEANUP_CRON_HOOK);
+
+        if (is_wp_error($scheduled)) {
+            Logger::log_wp_error(LogComponent::CRONJOB, LogLevel::ERROR, $scheduled);
+            return;
+        }
+
+        if ($scheduled === false) {
+            Logger::warning(LogComponent::CRONJOB, 'Cleanup cron event was not scheduled.');
+            return;
+        }
+
+        Logger::info(LogComponent::CRONJOB, 'Cleanup cron event scheduled successfully.');
     }
 
     /**
@@ -61,13 +81,20 @@ class CronJobs {
         $cutoff = gmdate('Y-m-d H:i:s', time() - (DAY_IN_SECONDS * self::LOG_RETENTION_DAYS));
 
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        $wpdb->query(
+        $result = $wpdb->query(
             $wpdb->prepare(
                 'DELETE FROM %i WHERE created_at < %s',
                 $logs_table,
                 $cutoff
             )
         );
+
+        if ($result === false) {
+            Logger::error(LogComponent::CRONJOB, 'Failed to delete old log rows during cleanup.');
+            return;
+        }
+
+        Logger::info(LogComponent::CRONJOB, 'Cron cleanup removed ' . (string) $result . ' old log row(s).');
     }
 
     /**

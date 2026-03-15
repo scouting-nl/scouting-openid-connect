@@ -109,17 +109,17 @@ class Logging
             require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
         }
 
-        $type_values = array_map(static fn(LogType $case) => $case->value, LogType::cases());
+        $component_values = array_map(static fn(LogComponent $case) => $case->value, LogComponent::cases());
         $level_values = array_map(static fn(LogLevel $case) => $case->value, LogLevel::cases());
 
-        $list_table = new class($this, $filters, $sorting, $type_values, $level_values) extends \WP_List_Table {
+        $list_table = new class($this, $filters, $sorting, $component_values, $level_values) extends \WP_List_Table {
             private Logging $logging;
             /** @var array<string, mixed> */
             private array $filters;
             /** @var array<string, string> */
             private array $sorting;
             /** @var array<int, string> */
-            private array $type_values;
+            private array $component_values;
             /** @var array<int, string> */
             private array $level_values;
 
@@ -127,10 +127,10 @@ class Logging
              * @param Logging $logging
              * @param array<string, mixed> $filters
              * @param array<string, string> $sorting
-             * @param array<int, string> $type_values
+             * @param array<int, string> $component_values
              * @param array<int, string> $level_values
              */
-            public function __construct(Logging $logging, array $filters, array $sorting, array $type_values, array $level_values) {
+            public function __construct(Logging $logging, array $filters, array $sorting, array $component_values, array $level_values) {
                 parent::__construct([
                     'singular' => 'log',
                     'plural' => 'logs',
@@ -140,7 +140,7 @@ class Logging
                 $this->logging = $logging;
                 $this->filters = $filters;
                 $this->sorting = $sorting;
-                $this->type_values = $type_values;
+                $this->component_values = $component_values;
                 $this->level_values = $level_values;
             }
 
@@ -153,7 +153,7 @@ class Logging
                 return [
                     'created_at' => __('Date/Time', 'scouting-openid-connect'),
                     'level' => __('Level', 'scouting-openid-connect'),
-                    'type' => __('Type', 'scouting-openid-connect'),
+                    'component' => __('Component', 'scouting-openid-connect'),
                     'user_id' => __('User ID', 'scouting-openid-connect'),
                     'sol_id' => __('SOL ID', 'scouting-openid-connect'),
                     'message' => __('Message', 'scouting-openid-connect'),
@@ -222,11 +222,11 @@ class Logging
                         <?php endforeach; ?>
                     </select>
 
-                    <label class="screen-reader-text" for="type_<?php echo esc_attr($position); ?>"><?php esc_html_e('Filter by type', 'scouting-openid-connect'); ?></label>
-                    <select id="type_<?php echo esc_attr($position); ?>" data-sync-key="type" <?php echo $is_submit_source ? 'name="type[]"' : ''; ?> multiple size="1">
-                        <?php foreach ($this->type_values as $type_value): ?>
-                            <option value="<?php echo esc_attr($type_value); ?>" <?php echo in_array($type_value, $this->filters['type'], true) ? 'selected' : ''; ?>>
-                                <?php echo esc_html(strtoupper($type_value)); ?>
+                    <label class="screen-reader-text" for="component_<?php echo esc_attr($position); ?>"><?php esc_html_e('Filter by component', 'scouting-openid-connect'); ?></label>
+                    <select id="component_<?php echo esc_attr($position); ?>" data-sync-key="component" <?php echo $is_submit_source ? 'name="component[]"' : ''; ?> multiple size="1">
+                        <?php foreach ($this->component_values as $component_value): ?>
+                            <option value="<?php echo esc_attr($component_value); ?>" <?php echo in_array($component_value, $this->filters['component'], true) ? 'selected' : ''; ?>>
+                                <?php echo esc_html(strtoupper($component_value)); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -257,8 +257,8 @@ class Logging
                     return esc_html(substr((string) ($item['created_at_with_ms'] ?? ''), 0, 23));
                 }
 
-                if ($column_name === 'type' || $column_name === 'level') {
-                    // Display type and level in uppercase for better readability
+                if ($column_name === 'component' || $column_name === 'level') {
+                    // Display component and level in uppercase for better readability
                     return esc_html(strtoupper((string) ($item[$column_name] ?? '—')));
                 }
 
@@ -403,7 +403,7 @@ class Logging
         $offset = max(0, $offset);
 
         $scouting_oidc_logs_table = esc_sql($wpdb->prefix . 'scouting_oidc_logs');
-        $sql = "SELECT id, created_at, DATE_FORMAT(created_at, '%%d-%%m-%%Y %%H:%%i:%%s.%%f') AS created_at_with_ms, type, level, user_id, sol_id, message
+        $sql = "SELECT id, created_at, DATE_FORMAT(created_at, '%%d-%%m-%%Y %%H:%%i:%%s.%%f') AS created_at_with_ms, component, level, user_id, sol_id, message
                 FROM {$scouting_oidc_logs_table}
                 WHERE {$where_sql}
                 ORDER BY id {$order}

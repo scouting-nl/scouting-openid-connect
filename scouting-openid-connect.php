@@ -75,9 +75,6 @@ function scouting_oidc_init(): void
 {
     global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode, $scouting_oidc_settings; // Declare global variables
 
-    // Check for updates and perform any necessary upgrade routines
-    (new Logger())->scouting_oidc_logger_upgrade();
-
     // Add the OpenID Connect button to the login form
     add_action('login_form', array($scouting_oidc_auth, 'scouting_oidc_auth_login_form'));
 
@@ -143,7 +140,7 @@ add_action('init', [$scouting_oidc_cron_jobs, 'scouting_oidc_logger_schedule_cle
 
 // Setup defaults during installation
 register_activation_hook(__FILE__, [$scouting_oidc_settings, 'scouting_oidc_settings_install']);
-register_activation_hook(__FILE__, [$scouting_oidc_logger, 'scouting_oidc_logger_activate']);
+register_activation_hook(__FILE__, [$scouting_oidc_logger, 'scouting_oidc_logger_database_create']);
 register_activation_hook(__FILE__, [$scouting_oidc_cron_jobs, 'scouting_oidc_cron_activate']);
 register_deactivation_hook(__FILE__, [$scouting_oidc_cron_jobs, 'scouting_oidc_cron_deactivate']);
 ?>

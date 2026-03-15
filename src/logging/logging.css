@@ -8,7 +8,7 @@
 }
 
 #scouting-oidc-logs-filter .wp-list-table .column-created_at,
-#scouting-oidc-logs-filter .wp-list-table .column-type,
+#scouting-oidc-logs-filter .wp-list-table .column-component,
 #scouting-oidc-logs-filter .wp-list-table .column-level,
 #scouting-oidc-logs-filter .wp-list-table .column-user_id,
 #scouting-oidc-logs-filter .wp-list-table .column-sol_id {
@@ -44,7 +44,7 @@
     margin-right: 0.5px;
 }
 
-#scouting-oidc-logs-filter .tablenav .actions select[data-sync-key="type"] {
+#scouting-oidc-logs-filter .tablenav .actions select[data-sync-key="component"] {
     margin-right: 1px;
 }
 

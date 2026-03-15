@@ -36,7 +36,7 @@ class LoggingSettings
         return [
             'created_at' => __('Date/Time', 'scouting-openid-connect'),
             'level' => __('Level', 'scouting-openid-connect'),
-            'type' => __('Type', 'scouting-openid-connect'),
+            'component' => __('Component', 'scouting-openid-connect'),
             'user_id' => __('User ID', 'scouting-openid-connect'),
             'sol_id' => __('SOL ID', 'scouting-openid-connect'),
             'message' => __('Message', 'scouting-openid-connect'),
