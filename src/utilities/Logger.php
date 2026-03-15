@@ -113,6 +113,23 @@ class Logger {
             // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB
             $wpdb->query( "ALTER TABLE `{$logs_table}` ADD CONSTRAINT fk_scouting_logs_user FOREIGN KEY (user_id) REFERENCES `{$wpdb->users}`(ID) ON DELETE CASCADE" );
         }
+
+        // Set option to track the installed DB version for future upgrades.
+        update_option('scouting_oidc_db_version', SCOUTING_OIDC_VERSION);
+    }
+
+    /**
+     * Check the installed DB version and run the installer if the version is outdated.
+     * 
+     * @return void
+     */
+    public function scouting_oidc_maybe_upgrade(): void {
+        $installed_db_version = (string) get_option('scouting_oidc_db_version', '0.0.0');
+
+        // If the installed DB version does not match the current plugin version, run the installer to create or upgrade the logs table as needed.
+        if (version_compare($installed_db_version, SCOUTING_OIDC_VERSION) != 0) {
+            $this->scouting_oidc_logger_install();
+        }
     }
 
     /**

@@ -28,6 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  **/
 
 define('SCOUTING_OIDC_PATH', plugin_dir_path( __FILE__ ));
+define('SCOUTING_OIDC_VERSION', '2.3.0');
 require_once SCOUTING_OIDC_PATH . 'src/auth/Auth.php';
 require_once SCOUTING_OIDC_PATH . 'src/auth/Session.php';
 require_once SCOUTING_OIDC_PATH . 'src/menu/Menu.php';
@@ -70,6 +71,9 @@ $scouting_oidc_logger = new Logger();
 function scouting_oidc_init(): void
 {
     global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode, $scouting_oidc_settings, $scouting_oidc_logger; // Declare global variables
+
+    // Ensure logger schema is up to date before plugin behavior runs.
+    $scouting_oidc_logger->scouting_oidc_maybe_upgrade();
 
     // Add the OpenID Connect button to the login form
     add_action('login_form', array($scouting_oidc_auth, 'scouting_oidc_auth_login_form'));
