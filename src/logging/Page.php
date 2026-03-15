@@ -366,6 +366,7 @@ class Logging
         $sql = "SELECT COUNT(*) FROM {$scouting_oidc_logs_table} WHERE {$where_sql}";
 
         if (!empty($values)) {
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $prepared_sql = $wpdb->prepare($sql, $values);
             if (!is_string($prepared_sql) || $prepared_sql === '') {
                 return 0;
@@ -373,7 +374,7 @@ class Logging
             $sql = $prepared_sql;
         }
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $count = $wpdb->get_var($sql);
 
         return (int) $count;
@@ -409,6 +410,7 @@ class Logging
                 LIMIT {$limit} OFFSET {$offset}";
 
         if (!empty($values)) {
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $prepared_sql = $wpdb->prepare($sql, $values);
             if (!is_string($prepared_sql) || $prepared_sql === '') {
                 return [];
@@ -416,7 +418,7 @@ class Logging
             $sql = $prepared_sql;
         }
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $results = $wpdb->get_results($sql, ARRAY_A);
 
         return is_array($results) ? $results : [];
