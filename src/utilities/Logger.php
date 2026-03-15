@@ -113,9 +113,6 @@ class Logger {
             // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB
             $wpdb->query( "ALTER TABLE `{$logs_table}` ADD CONSTRAINT fk_scouting_logs_user FOREIGN KEY (user_id) REFERENCES `{$wpdb->users}`(ID) ON DELETE CASCADE" );
         }
-
-        // Set option to track the installed DB version for future upgrades.
-        update_option('scouting_oidc_db_version', SCOUTING_OIDC_VERSION);
     }
 
     /**
