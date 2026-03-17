@@ -102,7 +102,7 @@ class Logging
             'scouting-oidc-logging',
             plugins_url('logging.css', __FILE__), // Path to the file
             array(),                              // No dependencies
-            "2.3.0",                              // Version number
+            SCOUTING_OIDC_VERSION,                // Version number
         );
 
         // Enqueue the external JavaScript file
@@ -110,7 +110,7 @@ class Logging
             'logging-script',                    // Handle name
             plugins_url('logging.js', __FILE__), // Path to the file
             array(),                             // No dependencies
-            "2.3.0",                             // Version number
+            SCOUTING_OIDC_VERSION,               // Version number
             array(
                 'strategy' => 'defer',           // Add the defer attribute
                 'in_footer' => true              // Load the script in the footer
