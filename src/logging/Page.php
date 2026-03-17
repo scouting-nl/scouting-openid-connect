@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 require_once plugin_dir_path(__FILE__) . '../../src/utilities/Logger.php';
 require_once __DIR__ . '/Settings.php';
 require_once __DIR__ . '/Filters.php';
+require_once __DIR__ . '/Download.php';
 
 use ScoutingOIDC\Logger;
 
@@ -33,11 +34,34 @@ class Logging
     private LoggingFilters $filters_helper;
 
     /**
+     * Logging download helper.
+     *
+     * @var LoggingDownload
+     */
+    private LoggingDownload $download_helper;
+
+    /**
      * @return void
      */
     public function __construct() {
         $this->settings = new LoggingSettings();
         $this->filters_helper = new LoggingFilters();
+        $this->download_helper = new LoggingDownload();
+        add_action('admin_post_scouting_oidc_download_logs', [$this, 'handle_logs_download']);
+    }
+
+    /**
+     * Handle log download via admin-post endpoint.
+     *
+     * @return void
+     */
+    public function handle_logs_download(): void {
+        if (!current_user_can('manage_options')) {
+            wp_die(esc_html__('You do not have sufficient permissions to export logs.', 'scouting-openid-connect'));
+        }
+
+        $filters = $this->filters_helper->get_filters();
+        $this->download_helper->download($this, $filters);
     }
 
     /** Register the logging page in the admin menu
@@ -238,6 +262,9 @@ class Logging
                     <input type="text" id="sol_id_<?php echo esc_attr($position); ?>" data-sync-key="sol_id" <?php echo $is_submit_source ? 'name="sol_id"' : ''; ?> value="<?php echo esc_attr($this->filters['sol_id']); ?>" placeholder="<?php esc_attr_e('SOL ID', 'scouting-openid-connect'); ?>" class="regular-text" />
 
                     <input type="submit" id="post-query-submit-<?php echo esc_attr($position); ?>" class="button button-primary" value="<?php esc_attr_e('Filter', 'scouting-openid-connect'); ?>" />
+                    <?php if ($is_submit_source): ?>
+                        <button type="submit" class="button" name="action" value="scouting_oidc_download_logs" formaction="<?php echo esc_url(admin_url('admin-post.php')); ?>"><?php esc_html_e('Download .log', 'scouting-openid-connect'); ?></button>
+                    <?php endif; ?>
                     <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=scouting-oidc-logging&orderby=id&order=desc')); ?>"><?php esc_html_e('Reset', 'scouting-openid-connect'); ?></a>
                 </div>
                 <?php
