@@ -21,14 +21,16 @@ class LoggingSettings
      * @return string
      */
     public function scouting_oidc_logs_preserve_filters_referer(string $screen_settings, mixed $screen): string {
-        unset($screen);
-
-        $page = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : '';
-        if ($page !== 'scouting-oidc-logging') {
+        if (!($screen instanceof \WP_Screen)) {
             return $screen_settings;
         }
 
-        $request_uri = isset($_SERVER['REQUEST_URI']) ? wp_unslash($_SERVER['REQUEST_URI']) : '';
+        $screen_id = is_string($screen->id) ? $screen->id : '';
+        if ($screen_id === '' || !str_contains($screen_id, 'scouting-oidc-logging')) {
+            return $screen_settings;
+        }
+
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_unslash($_SERVER['REQUEST_URI'])) : '';
         if (!is_string($request_uri) || $request_uri === '') {
             return $screen_settings;
         }
