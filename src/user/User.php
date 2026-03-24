@@ -143,13 +143,13 @@ class User {
         $this->countryCode = $address['country_code'] ?? "";
 
         // Validate SOL ID is present
-        if ($this->sol_id == null) {
+        if (empty($this->sol_id)) {
             Logger::error(LogComponent::USER, "Construction of User object failed: SOL ID is missing in the user data received from the OpenID Connect server. User data: " . json_encode($user_json_decoded));
             ErrorHandler::redirect_to_login_error('error', __('SOL ID is missing, make sure the "membership" scope is enabled.', 'scouting-openid-connect'), 'sol_id_is_missing');
         }
 
         // Validate email is present
-        if ($this->email == null) {
+        if (empty($this->email)) {
             Logger::error(LogComponent::USER, "Construction of User object failed: Email is missing in the user data received from the OpenID Connect server. User data: " . json_encode($user_json_decoded), null, $this->sol_id);
             ErrorHandler::redirect_to_login_error('error', __('Email is missing, make sure the "email" scope is enabled.', 'scouting-openid-connect'), 'email_is_missing');
         }
