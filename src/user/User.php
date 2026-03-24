@@ -188,7 +188,7 @@ class User {
      * @return void
      */
     public function scouting_oidc_user_create(): void {
-        Logger::info(LogComponent::USER, "Creating a account for user '{$this->fullName}'", null, $this->sol_id);
+        Logger::info(LogComponent::USER, "Creating an account for user '{$this->fullName}'", null, $this->sol_id);
         $user_id = wp_create_user($this->sol_id, wp_generate_password(18, true, true), $this->email);
 
         // If user creation failed because the email address is already in use, append the SOL ID to the email (email+sol_id@example.com)
