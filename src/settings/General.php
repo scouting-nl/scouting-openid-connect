@@ -503,9 +503,12 @@ class Settings_General
                 echo '<option value="' . esc_attr($key) . '">' . esc_html($name) . '</option>';
         }
         echo '</select>';
-        echo '<p class="description">'
-            . esc_html__('When a user tries to log in with an email that already exists in the system, this setting determines how to handle it. The default option is to add plus addressing (e.g.,', 'scouting-openid-connect')
-            . ' <code>local-part+sol_id@example.com</code>)</p>';
+        $description = sprintf(
+            /* translators: %s: example email address with plus addressing. */
+            __('When a user tries to log in with an email that already exists in the system, this setting determines how to handle it. The default option is to add plus addressing (e.g., %s).', 'scouting-openid-connect'),
+            '<code>local-part+sol_id@example.com</code>'
+        );
+        echo '<p class="description">' . wp_kses_post($description) . '</p>';
     }
 
     /**
