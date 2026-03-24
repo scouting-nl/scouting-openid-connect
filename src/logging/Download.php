@@ -82,6 +82,7 @@ class LoggingDownload
             }
         }
 
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Plain-text log file download, not HTML output.
         echo $output;
         exit;
     }

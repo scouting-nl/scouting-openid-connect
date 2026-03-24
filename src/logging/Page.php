@@ -7,6 +7,7 @@ require_once plugin_dir_path(__FILE__) . '../../src/utilities/Logger.php';
 require_once __DIR__ . '/Settings.php';
 require_once __DIR__ . '/Filters.php';
 require_once __DIR__ . '/Download.php';
+require_once __DIR__ . '/Help.php';
 
 use ScoutingOIDC\Logger;
 
@@ -41,12 +42,20 @@ class Logging
     private LoggingDownload $download_helper;
 
     /**
+     * Logging help tabs helper.
+     *
+     * @var LoggingHelp
+     */
+    private LoggingHelp $help_helper;
+
+    /**
      * @return void
      */
     public function __construct() {
         $this->settings = new LoggingSettings();
         $this->filters_helper = new LoggingFilters();
         $this->download_helper = new LoggingDownload();
+        $this->help_helper = new LoggingHelp();
         add_action('admin_post_scouting_oidc_download_logs', [$this, 'handle_logs_download']);
     }
 
@@ -82,6 +91,7 @@ class Logging
         if (is_string($hook) && $hook !== '') {
             $this->hook_suffix = $hook;
             add_action("load-$hook", [$this->settings, 'scouting_oidc_logs_register_screen_options']);
+            add_action("load-$hook", [$this->help_helper, 'scouting_oidc_logging_register_help_tabs']);
             add_filter("manage_{$hook}_columns", [$this->settings, 'scouting_oidc_logs_register_screen_columns']);
             add_action('admin_enqueue_scripts', [$this, 'enqueue_logging_styles_and_scripts']);
         }
