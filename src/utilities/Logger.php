@@ -73,7 +73,7 @@ class Logger {
             sol_id VARCHAR(60) NULL,
             component ENUM($enum_component_values) NOT NULL,
             level ENUM($enum_level_values) NOT NULL,
-            created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+            created_at DATETIME(3) NOT NULL DEFAULT UTC_TIMESTAMP(3),
             message TEXT NOT NULL,
             PRIMARY KEY (id),
             KEY user_id (user_id),
@@ -167,6 +167,8 @@ class Logger {
             }
         }
 
+        $created_at = (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s.v');
+
         // Insert the log entry. Format specifiers ensure proper data typing.
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
         $wpdb->insert(
@@ -177,6 +179,7 @@ class Logger {
                 'message' => $message,
                 'user_id' => $user_id,
                 'sol_id' => $sol_id,
+                'created_at' => $created_at,
             ],
             [
                 '%s',
@@ -184,8 +187,36 @@ class Logger {
                 '%s',
                 '%d',
                 '%s',
+                '%s',
             ]
         );
+    }
+
+    /**
+     * Format a UTC datetime string for the current site timezone.
+     *
+     * @param string $datetime UTC datetime in MySQL DATETIME(3) format.
+     * @param string $format Output format.
+     * @return string
+     */
+    public static function scouting_oidc_format_utc_datetime_for_site(string $datetime, string $format = 'd-m-Y H:i:s.v'): string {
+        $datetime = trim($datetime);
+        if ($datetime === '') {
+            return '';
+        }
+
+        $utc_timezone = new \DateTimeZone('UTC');
+        $site_timezone = wp_timezone();
+
+        $parsed_datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s.v', $datetime, $utc_timezone);
+        if ($parsed_datetime === false) {
+            $parsed_datetime = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $datetime, $utc_timezone);
+            if ($parsed_datetime === false) {
+                return $datetime;
+            }
+        }
+
+        return $parsed_datetime->setTimezone($site_timezone)->format($format);
     }
 
     /**

@@ -142,8 +142,8 @@ class LoggingDownload
      * @return string
      */
     private function format_log_line(array $row, array $padding): string {
-        // Prefer SQL-formatted value with microseconds when available
-        $created_at = (string) ($row['created_at_with_ms'] ?? $row['created_at'] ?? '');
+        // Render the stored UTC timestamp in the current site timezone.
+        $created_at = Logger::scouting_oidc_format_utc_datetime_for_site((string) ($row['created_at'] ?? ''));
         $level = strtoupper((string) ($row['level'] ?? 'unknown'));
         $component = strtoupper((string) ($row['component'] ?? 'unknown'));
 

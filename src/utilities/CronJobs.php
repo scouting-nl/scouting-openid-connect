@@ -78,14 +78,13 @@ class CronJobs {
 
         $logs_table = $wpdb->prefix . 'scouting_oidc_logs';
 
-        $cutoff = gmdate('Y-m-d H:i:s', time() - (DAY_IN_SECONDS * self::LOG_RETENTION_DAYS));
-
+        // Compare against UTC so the retention window matches the UTC timestamp stored in the table.
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $result = $wpdb->query(
             $wpdb->prepare(
-                'DELETE FROM %i WHERE created_at < %s',
+                'DELETE FROM %i WHERE created_at < (UTC_TIMESTAMP(3) - INTERVAL %d DAY)',
                 $logs_table,
-                $cutoff
+                self::LOG_RETENTION_DAYS
             )
         );
 

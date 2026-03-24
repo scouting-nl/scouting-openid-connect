@@ -280,8 +280,8 @@ class Logging
             public function column_default($item, $column_name): string {
                 // Custom rendering for specific columns
                 if ($column_name === 'created_at') {
-                    // Display the created_at column with milliseconds, formatted as "dd-mm-yyyy hh:mm:ss.fff"
-                    return esc_html(substr((string) ($item['created_at_with_ms'] ?? ''), 0, 23));
+                    // Display the stored UTC timestamp in the current site timezone.
+                    return esc_html(Logger::scouting_oidc_format_utc_datetime_for_site((string) ($item['created_at'] ?? '')));
                 }
 
                 if ($column_name === 'component' || $column_name === 'level') {
@@ -430,7 +430,7 @@ class Logging
         $offset = max(0, $offset);
 
         $scouting_oidc_logs_table = esc_sql($wpdb->prefix . 'scouting_oidc_logs');
-        $sql = "SELECT id, created_at, DATE_FORMAT(created_at, '%%d-%%m-%%Y %%H:%%i:%%s.%%f') AS created_at_with_ms, component, level, user_id, sol_id, message
+        $sql = "SELECT id, created_at, component, level, user_id, sol_id, message
                 FROM {$scouting_oidc_logs_table}
                 WHERE {$where_sql}
                 ORDER BY id {$order}
