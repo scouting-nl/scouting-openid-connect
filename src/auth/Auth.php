@@ -256,7 +256,7 @@ class Auth {
 
         // If the error equals `The user denied the request`, show a translated message
         if ($hint == 'The user denied the request') {
-            Logger::debug(LogComponent::AUTH, "User cancelled the OIDC authentication request");
+            Logger::info(LogComponent::AUTH, "User cancelled the OIDC authentication request");
             $hint = __("The user denied the request", "scouting-openid-connect");
         }
 
