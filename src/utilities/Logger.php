@@ -128,6 +128,10 @@ class Logger {
     private static function log(LogComponent $component, LogLevel $level, string $message, ?int $user_id = null, ?string $sol_id = null): void {
         global $wpdb;
 
+        if ($level === LogLevel::DEBUG && !self::is_debug_logging_enabled()) {
+            return;
+        }
+
         // If $user_id is not provided, attempt to use the current user's ID if available.
         if ($user_id === null) {
             $user_id = get_current_user_id();
@@ -168,6 +172,8 @@ class Logger {
         }
 
         $created_at = (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s.v');
+
+        self::maybe_log_to_wp_debug($component, $level, $message, $user_id, $sol_id);
 
         // Insert the log entry. Format specifiers ensure proper data typing.
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
@@ -375,5 +381,46 @@ class Logger {
      */
     public static function debug(LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null): void {
         self::log($component, LogLevel::DEBUG, $message, $user_id, $sol_id);
+    }
+
+    /**
+     * Whether debug-level entries are enabled for plugin database logging.
+     *
+     * @return bool
+     */
+    private static function is_debug_logging_enabled(): bool {
+        return (bool) get_option('scouting_oidc_debug_logging_enabled', false);
+    }
+
+    /**
+     * Mirror plugin logs to the WordPress/PHP error log when WP_DEBUG is enabled.
+     *
+     * @param LogComponent $component Component for this log entry.
+     * @param LogLevel $level Severity level for this log entry.
+     * @param string $message Log message content.
+     * @param int|null $user_id Optional WP user ID.
+     * @param string|null $sol_id Optional SOL identifier.
+     * @return void
+     */
+    private static function maybe_log_to_wp_debug(LogComponent $component, LogLevel $level, string $message, ?int $user_id, ?string $sol_id): void {
+        if (!defined('WP_DEBUG') || !WP_DEBUG) {
+            return;
+        }
+
+        $prefix = '[Scouting OIDC] [' . strtoupper($level->value) . '] [' . strtoupper($component->value) . ']';
+        $context_parts = [];
+
+        if ($user_id !== null) {
+            $context_parts[] = 'user_id=' . (string) $user_id;
+        }
+
+        if ($sol_id !== null && $sol_id !== '') {
+            $context_parts[] = 'sol_id=' . $sol_id;
+        }
+
+        $context = empty($context_parts) ? '' : ' [' . implode(' ', $context_parts) . ']';
+
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+        error_log($prefix . $context . ' ' . $message);
     }
 }

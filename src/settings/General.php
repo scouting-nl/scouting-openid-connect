@@ -120,6 +120,15 @@ class Settings_General
                 'class' => 'scouting-oidc-custom-redirect-tr'                                 // Extra args to identify the tr for JS
             ]
         );
+
+        // Add a settings checkbox field
+        add_settings_field(
+            'scouting_oidc_debug_logging_enabled',                             // Field ID
+            __('Enable debug logs', 'scouting-openid-connect'),                // Field label
+            [$this, 'scouting_oidc_settings_general_debug_logging_callback'],  // Callback to render field
+            'scouting-openid-connect-settings',                                // Page slug
+            'scouting_oidc_general_settings'                                   // Section ID where the field should be added
+        );
     
         // Register settings
         register_setting(
@@ -219,6 +228,15 @@ class Settings_General
             'scouting_oidc_custom_redirect',                                                    // Option name
             [
                 'sanitize_callback' => [$this, 'scouting_oidc_sanitize_custom_redirect_option'] // Sanitize the input value as custom redirect
+            ]
+        );
+
+        // Register settings
+        register_setting(
+            'scouting_oidc_settings_group',                                             // Settings group name
+            'scouting_oidc_debug_logging_enabled',                                      // Option name
+            [
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
             ]
         );
 
@@ -458,6 +476,16 @@ class Settings_General
         echo '<span style="padding: 5.675px 3px 5.675px 0px;">' . esc_html($base_domain) . '</span>';
         echo '<input type="text" id="scouting_oidc_custom_redirect" name="scouting_oidc_custom_redirect" size="50" value="' . esc_attr($slug) . '" placeholder="' . esc_attr__("custom-page", "scouting-openid-connect") . '"/>';
         echo '<p class="description">' . esc_html__("Enter the slug to append to the base URL where users should be redirected after login.", "scouting-openid-connect") . '</p>';
+    }
+
+    // Callback to render checkbox field
+    public function scouting_oidc_settings_general_debug_logging_callback(): void {
+        if (get_option('scouting_oidc_debug_logging_enabled'))
+            echo '<input type="checkbox" id="scouting_oidc_debug_logging_enabled" name="scouting_oidc_debug_logging_enabled" checked/>';
+        else
+            echo '<input type="checkbox" id="scouting_oidc_debug_logging_enabled" name="scouting_oidc_debug_logging_enabled"/>';
+
+        echo '<p class="description">' . esc_html__('Debug logs are stored in the plugin logs table only when enabled. If WP_DEBUG is enabled, plugin logs are also mirrored to the WordPress/PHP error log.', 'scouting-openid-connect') . '</p>';
     }
 }
 ?>

@@ -89,6 +89,7 @@ class Settings
         update_option('scouting_oidc_user_redirect', true);
         update_option('scouting_oidc_login_redirect', 'frontpage');
         update_option('scouting_oidc_custom_redirect', '');
+        update_option('scouting_oidc_debug_logging_enabled', false);
     }
 }
 ?>
