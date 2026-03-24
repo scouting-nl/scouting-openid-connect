@@ -383,7 +383,8 @@ class Mail {
 
         // Construct the normalized email by removing the +SOL_ID part
         $normalized_email = substr($local_part, 0, $plus_position) . '@' . $domain;
-        $user_id = get_user_by('login', $possible_sol_id)->ID ?? null;
+        $user = get_user_by('login', $possible_sol_id);
+        $user_id = $user ? $user->ID : null;
         
         Logger::debug(LogComponent::MAIL, "Email '{$email}' is identified as a plus-addressed alias for SOL ID '{$possible_sol_id}' belonging to user ID {$user_id} and will be normalized to '{$normalized_email}'", $user_id, $possible_sol_id);
         // Replace the original email in the recipient string with the normalized email
