@@ -349,7 +349,7 @@ class Logging
                 if ($user !== false && isset($user->ID)) {
                     $url = get_edit_user_link((int) $user->ID);
                     if (is_string($url) && $url !== '') {
-                        return '<a href="' . esc_url($url) . '" target="_blank" rel="noopener noreferrer" >' . esc_html($sol_id_value) . '</a>';
+                        return '<a href="' . esc_url($url) . '" target="_blank" rel="noopener noreferrer">' . esc_html($sol_id_value) . '</a>';
                     }
                 }
 
