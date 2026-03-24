@@ -254,7 +254,7 @@ class Mail {
 
         // Normalize each header line and reconstruct the headers string
         foreach ($header_lines as $line) {
-            [$normalized, $result_line] =self::scouting_oidc_mail_normalize_header_line($line, $supported_headers);
+            [$normalized, $result_line] = self::scouting_oidc_mail_normalize_header_line($line, $supported_headers);
             if ($normalized) {
                 $amount_of_normalized_lines++;
                 Logger::debug(LogComponent::MAIL, "Header line normalized to: {$result_line}");
