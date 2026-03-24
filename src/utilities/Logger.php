@@ -128,6 +128,10 @@ class Logger {
     private static function log(LogComponent $component, LogLevel $level, string $message, ?int $user_id = null, ?string $sol_id = null): void {
         global $wpdb;
 
+        // Create database table if it doesn't exist. This is a safety check to ensure that logging doesn't fail catastrophically if the installation step was missed or the table was accidentally deleted. The `scouting_oidc_logger_database_create` method is idempotent, so it can be safely called multiple times without risking data loss.
+        $logger = new self();
+        $logger->scouting_oidc_logger_database_create();
+
         // If $user_id is not provided, attempt to use the current user's ID if available.
         if ($user_id === null) {
             $user_id = get_current_user_id();

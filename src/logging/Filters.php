@@ -47,18 +47,42 @@ class LoggingFilters
             return null;
         }
 
-        // Normalize milliseconds if missing
-        if (!str_contains($value, '.')) {
-            $value .= '.000';
+        $site_timezone = wp_timezone();
+        $formats = ['Y-m-d\\TH:i:s.v', 'Y-m-d\\TH:i:s', 'Y-m-d\\TH:i'];
+
+        foreach ($formats as $format) {
+            $datetime = \DateTimeImmutable::createFromFormat($format, $value, $site_timezone);
+            if ($datetime !== false) {
+                return $datetime->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d H:i:s.v');
+            }
         }
 
-        try {
-            $datetime = new \DateTimeImmutable($value);
-            // Return in MySQL DATETIME(3) format with milliseconds
-            return $datetime->format('Y-m-d H:i:s.v');
-        } catch (\Exception $e) {
-            return null;
+        return null;
+    }
+
+    /**
+     * Normalize an HTML datetime-local value for input rendering.
+     *
+     * @param string $value Raw datetime-local value.
+     * @return string
+     */
+    private function normalize_datetime_local(string $value): string {
+        $value = trim($value);
+        if ($value === '') {
+            return '';
         }
+
+        $site_timezone = wp_timezone();
+        $formats = ['Y-m-d\\TH:i:s.v', 'Y-m-d\\TH:i:s', 'Y-m-d\\TH:i'];
+
+        foreach ($formats as $format) {
+            $datetime = \DateTimeImmutable::createFromFormat($format, $value, $site_timezone);
+            if ($datetime !== false) {
+                return $datetime->format('Y-m-d\\TH:i:s.v');
+            }
+        }
+
+        return $value;
     }
 
     /**
@@ -79,8 +103,8 @@ class LoggingFilters
             return [
                 'date_from' => '',
                 'date_to' => '',
-                'date_from_sql' => null,
-                'date_to_sql' => null,
+                'date_from_utc_sql' => null,
+                'date_to_utc_sql' => null,
                 'component' => $component_values,
                 'level' => $default_levels,
                 'sol_id' => '',
@@ -112,12 +136,14 @@ class LoggingFilters
 
         $levels = array_values(array_filter($level_raw, fn($l) => in_array($l, $level_values, true)));
         $components = array_values(array_filter($component_raw, fn($c) => in_array($c, $component_values, true)));
+        $date_from_normalized = $this->normalize_datetime_local($date_from);
+        $date_to_normalized = $this->normalize_datetime_local($date_to);
 
         return [
-            'date_from' => $date_from,
-            'date_to' => $date_to,
-            'date_from_sql' => $this->parse_datetime_local($date_from),
-            'date_to_sql' => $this->parse_datetime_local($date_to),
+            'date_from' => $date_from_normalized,
+            'date_to' => $date_to_normalized,
+            'date_from_utc_sql' => $this->parse_datetime_local($date_from),
+            'date_to_utc_sql' => $this->parse_datetime_local($date_to),
             'component' => $components,
             'level' => $levels,
             'sol_id' => trim($sol_id),
@@ -138,14 +164,14 @@ class LoggingFilters
 
         $where = ['1=1'];
 
-        if (!empty($filters['date_from_sql'])) {
+        if (!empty($filters['date_from_utc_sql'])) {
             $where[] = 'created_at >= %s';
-            $values[] = $filters['date_from_sql'];
+            $values[] = $filters['date_from_utc_sql'];
         }
 
-        if (!empty($filters['date_to_sql'])) {
+        if (!empty($filters['date_to_utc_sql'])) {
             $where[] = 'created_at <= %s';
-            $values[] = $filters['date_to_sql'];
+            $values[] = $filters['date_to_utc_sql'];
         }
 
         if (!empty($filters['component'])) {
