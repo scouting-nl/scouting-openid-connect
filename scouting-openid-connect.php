@@ -28,15 +28,19 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  **/
 
 define('SCOUTING_OIDC_PATH', plugin_dir_path( __FILE__ ));
+define('SCOUTING_OIDC_VERSION', '2.3.0');
 require_once SCOUTING_OIDC_PATH . 'src/auth/Auth.php';
 require_once SCOUTING_OIDC_PATH . 'src/auth/Session.php';
 require_once SCOUTING_OIDC_PATH . 'src/menu/Menu.php';
 require_once SCOUTING_OIDC_PATH . 'src/settings/Page.php';
 require_once SCOUTING_OIDC_PATH . 'src/shortcode/Page.php';
 require_once SCOUTING_OIDC_PATH . 'src/support/Page.php';
+require_once SCOUTING_OIDC_PATH . 'src/logging/Page.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/Actions.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/Description.php';
 require_once SCOUTING_OIDC_PATH . 'src/user/Fields.php';
+require_once SCOUTING_OIDC_PATH . 'src/utilities/Logger.php';
+require_once SCOUTING_OIDC_PATH . 'src/utilities/CronJobs.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/Mail.php';
 
 use ScoutingOIDC\Auth;
@@ -47,8 +51,11 @@ use ScoutingOIDC\Description;
 use ScoutingOIDC\Settings;
 use ScoutingOIDC\Shortcode;
 use ScoutingOIDC\Support;
+use ScoutingOIDC\Logging;
 use ScoutingOIDC\Fields;
+use ScoutingOIDC\CronJobs;
 use ScoutingOIDC\Mail;
+use ScoutingOIDC\Logger;
 
 $scouting_oidc_auth = new Auth();
 $scouting_oidc_session = new Session();
@@ -58,7 +65,10 @@ $scouting_oidc_description = new Description();
 $scouting_oidc_settings = new Settings();
 $scouting_oidc_shortcode = new Shortcode();
 $scouting_oidc_support = new Support();
+$scouting_oidc_logging = new Logging();
 $scouting_oidc_fields = new Fields();
+$scouting_oidc_logger = new Logger();
+$scouting_oidc_cron_jobs = new CronJobs();
 
 // Init plugin
 function scouting_oidc_init(): void
@@ -73,29 +83,31 @@ function scouting_oidc_init(): void
     add_shortcode('scouting_oidc_link', array($scouting_oidc_auth, 'scouting_oidc_auth_login_url_shortcode'));
 
     // Provide additional links in the plugin overview page
-	add_filter('plugin_action_links_'.plugin_basename(__FILE__), [$scouting_oidc_actions, 'scouting_oidc_actions_plugin_links']);
+    add_filter('plugin_action_links_'.plugin_basename(__FILE__), [$scouting_oidc_actions, 'scouting_oidc_actions_plugin_links']);
 
     // Normalize plus-addressed Scouting OIDC recipient aliases in outgoing mail
     add_filter('wp_mail', [Mail::class, 'scouting_oidc_mail_filter_wp_mail'], 20);
 
     // Add user profile fields if any option is enabled
-	if (get_option('scouting_oidc_user_birthdate') || get_option('scouting_oidc_user_gender') || get_option('scouting_oidc_user_phone') || get_option('scouting_oidc_user_address'))
-	{
-		add_action('show_user_profile', [$scouting_oidc_fields, 'scouting_oidc_fields_user_profile']);
-		add_action('edit_user_profile', [$scouting_oidc_fields, 'scouting_oidc_fields_user_profile']);
-	}
+    if (get_option('scouting_oidc_user_birthdate') || get_option('scouting_oidc_user_gender') || get_option('scouting_oidc_user_phone') || get_option('scouting_oidc_user_address'))
+    {
+        add_action('show_user_profile', [$scouting_oidc_fields, 'scouting_oidc_fields_user_profile']);
+        add_action('edit_user_profile', [$scouting_oidc_fields, 'scouting_oidc_fields_user_profile']);
+    }
 
     // Enqueue scripts for admin pages
     add_action('admin_enqueue_scripts', [$scouting_oidc_shortcode, 'scouting_oidc_shortcode_enqueue_live_script']);
     add_action('admin_enqueue_scripts', [$scouting_oidc_settings, 'scouting_oidc_fields_enqueue_hide_field_script']);
 }
 add_action('plugins_loaded', 'scouting_oidc_init');
+add_action('plugins_loaded', [$scouting_oidc_logger, 'scouting_oidc_logger_maybe_upgrade_database']);
 
 // Add pages to the admin menu
 add_action('admin_menu', [$scouting_oidc_menu, 'scouting_oidc_menu']);
 add_action('admin_menu', [$scouting_oidc_settings, 'scouting_oidc_settings_submenu_page']);
 add_action('admin_menu', [$scouting_oidc_shortcode, 'scouting_oidc_shortcode_submenu_page']);
 add_action('admin_menu', [$scouting_oidc_support, 'scouting_oidc_support_submenu_page']);
+add_action('admin_menu', [$scouting_oidc_logging, 'scouting_oidc_logging_submenu_page']);
 
 // Hook into admin_init to initialize settings
 add_action('admin_init', [$scouting_oidc_settings, 'scouting_oidc_settings_page_init']);
@@ -121,6 +133,15 @@ add_action('wp_login', [$scouting_oidc_auth, 'scouting_oidc_auth_login_redirect'
 // Add logout redirect
 add_action('wp_logout', [$scouting_oidc_auth, 'scouting_oidc_auth_logout_redirect']);
 
+// Daily cleanup for logs older than 30 days.
+add_action(CronJobs::CLEANUP_CRON_HOOK, [CronJobs::class, 'scouting_oidc_logger_cleanup_old_logs']);
+
+// Ensure log cleanup schedule exists during runtime.
+add_action('init', [$scouting_oidc_cron_jobs, 'scouting_oidc_logger_schedule_cleanup']);
+
 // Setup defaults during installation
 register_activation_hook(__FILE__, [$scouting_oidc_settings, 'scouting_oidc_settings_install']);
+register_activation_hook(__FILE__, [$scouting_oidc_logger, 'scouting_oidc_logger_database_create']);
+register_activation_hook(__FILE__, [$scouting_oidc_cron_jobs, 'scouting_oidc_cron_activate']);
+register_deactivation_hook(__FILE__, [$scouting_oidc_cron_jobs, 'scouting_oidc_cron_deactivate']);
 ?>
