@@ -20,7 +20,7 @@ $scouting_oidc_options = array(
 );
 
 foreach ($scouting_oidc_options as $scouting_oidc_option) {
-    if (get_option($scouting_oidc_option)) delete_option($scouting_oidc_option);
+    delete_option($scouting_oidc_option);
 }
 
 // Delete transients
@@ -30,7 +30,7 @@ $scouting_oidc_transients = array(
 );
 
 foreach ($scouting_oidc_transients as $scouting_oidc_transient) {
-    if (get_transient($scouting_oidc_transient)) delete_transient($scouting_oidc_transient);
+    delete_transient($scouting_oidc_transient);
 }
 
 // Delete user meta
@@ -50,7 +50,7 @@ $scouting_oidc_users = get_users();
 
 foreach ($scouting_oidc_users as $scouting_oidc_user) {
     foreach ($scouting_oidc_metas as $scouting_oidc_meta) {
-        if (get_user_meta($scouting_oidc_user->ID, $scouting_oidc_meta)) delete_user_meta($scouting_oidc_user->ID, $scouting_oidc_meta);
+        delete_user_meta($scouting_oidc_user->ID, $scouting_oidc_meta);
     }
 }
 
