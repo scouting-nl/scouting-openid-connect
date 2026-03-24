@@ -97,7 +97,7 @@ function scouting_oidc_init(): void
 
     // Enqueue scripts for admin pages
     add_action('admin_enqueue_scripts', [$scouting_oidc_shortcode, 'scouting_oidc_shortcode_enqueue_live_script']);
-    add_action('admin_enqueue_scripts', [$scouting_oidc_settings, 'scouting_oidc_fields_enqueue_hide_field_script']);
+    add_action('admin_enqueue_scripts', [$scouting_oidc_settings, 'scouting_oidc_fields_enqueue_settings_script']);
 }
 add_action('plugins_loaded', 'scouting_oidc_init');
 add_action('plugins_loaded', [$scouting_oidc_logger, 'scouting_oidc_logger_maybe_upgrade_database']);

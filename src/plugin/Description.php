@@ -3,6 +3,9 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * This class modifies the plugin description for the Scouting OIDC plugin on the WordPress plugins page.
+ */
 class Description
 {
     /**

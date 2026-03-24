@@ -3,6 +3,9 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * This class manages the main menu page for the Scouting OIDC plugin, including registering the menu and its submenus.
+ */
 class Menu
 {
     /**

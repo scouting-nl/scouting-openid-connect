@@ -3,6 +3,9 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * This class manages various WordPress actions and filters for the Scouting OIDC plugin, such as adding settings links on the plugins page.
+ */
 class Actions
 {
     /**

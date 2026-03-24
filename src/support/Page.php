@@ -3,8 +3,16 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * This class manages the settings page for the Scouting OIDC plugin, including rendering the settings page, initializing settings sections and fields, and handling default options.
+ */
 class Support
 {
+    /**
+     * Register the support submenu page under the main menu.
+     *
+     * @return void
+     */
     public function scouting_oidc_support_submenu_page(): void {
         add_submenu_page(
             'scouting-oidc-settings',                       // Parent slug (matches the main menu slug)
@@ -17,7 +25,11 @@ class Support
         );
     }
 
-    // Callback to render support page content
+    /**
+     * Callback function to render the support page content.
+     *
+     * @return void
+     */
     public function scouting_oidc_support_page_callback(): void {
         ?>
         <div class="wrap">

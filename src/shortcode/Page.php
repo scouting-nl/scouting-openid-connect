@@ -3,8 +3,16 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * This class manages the shortcode page for the Scouting OIDC plugin, including rendering the shortcode page and enqueuing scripts for interactivity.
+ */
 class Shortcode
 {
+    /**
+     * Register the shortcode submenu page under the main menu.
+     *
+     * @return void
+     */
     public function scouting_oidc_shortcode_submenu_page(): void {
         add_submenu_page(
             'scouting-oidc-settings',                         // Parent slug (matches the main menu slug)
@@ -17,7 +25,11 @@ class Shortcode
         );
     }
 
-    // Callback to render support page content
+    /**
+     * Callback function to render the shortcode page content.
+     *
+     * @return void
+     */
     public function scouting_oidc_shortcode_page_callback(): void {
         ?>
         <div class="wrap">
@@ -101,7 +113,9 @@ class Shortcode
     }
 
     /**
-     * This script renders JavaScript to live preview the shortcode with custom attributes
+     * This script renders JavaScript to live preview the shortcode with custom attributes on the shortcode settings page.
+     * 
+     * @return void
      */
     public function scouting_oidc_shortcode_enqueue_live_script(): void {
         // Enqueue the external JavaScript file with the defer attribute
