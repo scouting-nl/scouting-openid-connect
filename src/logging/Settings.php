@@ -37,10 +37,7 @@ class LoggingSettings
 
         $referer = remove_query_arg('_wp_http_referer', $request_uri);
 
-        return $screen_settings . sprintf(
-            '<input type="hidden" name="_wp_http_referer" value="%s" />',
-            esc_attr($referer)
-        );
+        return $screen_settings . '<input type="hidden" name="_wp_http_referer" value="' . esc_attr($referer) . '" />';
     }
 
     /**

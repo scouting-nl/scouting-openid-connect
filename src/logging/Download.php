@@ -40,7 +40,7 @@ class LoggingDownload
                 else {
                     $user_info = get_userdata((int) $value);
                     if ($user_info !== false) {
-                        $display = sprintf('%d (%s)', (int) $value, $user_info->display_name);
+                        $display = (int) $value . ' (' . $user_info->display_name . ')';
                     } else {
                         $display = (string) $value;
                     }
@@ -48,7 +48,7 @@ class LoggingDownload
             } else if ($key === 'sol_id') {
                 $user_info = get_user_by('login', (string) $value);
                 if ($user_info !== false) {
-                    $display = sprintf('%s (%s)', (string) $value, $user_info->display_name);
+                    $display = (string) $value . ' (' . $user_info->display_name . ')';
                 } else {
                     $display = (string) $value;
                 }
@@ -60,7 +60,7 @@ class LoggingDownload
                 }
             }
 
-            $output .= "# - " . esc_html($key) . ": " . esc_html($display) . "\n";
+            $output .= "# - {$key}: {$display}\n";
         }
         $output .= "\n";
 
@@ -159,12 +159,12 @@ class LoggingDownload
         }
 
         // Fixed-width/padded fields for monospaced alignment in .log
-        $created_at_f = str_pad($created_at, $padding['created_at']);
-        $level_f = str_pad($level, $padding['level']);
-        $component_f = str_pad($component, $padding['component']);
-        $user_id_f = str_pad($user_id, $padding['user_id']);
-        $sol_id_f = str_pad($sol_id, $padding['sol_id']);
+        $created_at_padded = str_pad($created_at, $padding['created_at']);
+        $level_padded = str_pad($level, $padding['level']);
+        $component_padded = str_pad($component, $padding['component']);
+        $user_id_padded = str_pad($user_id, $padding['user_id']);
+        $sol_id_padded = str_pad($sol_id, $padding['sol_id']);
 
-        return sprintf("[%s] [%s] [%s] [%s] [%s] %s\n", $created_at_f, $level_f, $component_f, $user_id_f, $sol_id_f, $message);
+        return "[$created_at_padded] [$level_padded] [$component_padded] [$user_id_padded] [$sol_id_padded] $message\n";
     }
 }
