@@ -100,6 +100,7 @@ function scouting_oidc_init(): void
     add_action('admin_enqueue_scripts', [$scouting_oidc_settings, 'scouting_oidc_fields_enqueue_hide_field_script']);
 }
 add_action('plugins_loaded', 'scouting_oidc_init');
+add_action('plugins_loaded', 'scouting_oidc_logger_maybe_upgrade', 5);
 
 // Add pages to the admin menu
 add_action('admin_menu', [$scouting_oidc_menu, 'scouting_oidc_menu']);

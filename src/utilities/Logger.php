@@ -44,6 +44,34 @@ enum LogComponent: string {
  */
 class Logger {
     /**
+     * Current schema version for the logs table.
+     */
+    private const LOGS_SCHEMA_VERSION = '1';
+
+    /**
+     * Option key used to persist installed logs schema version.
+     */
+    private const LOGS_SCHEMA_VERSION_OPTION = 'scouting_oidc_logs_schema_version';
+
+    /**
+     * Ensure the logs table exists and is up to date for plugin updates.
+     *
+     * @return void
+     */
+    public function scouting_oidc_logger_maybe_upgrade_database(): void {
+        global $wpdb;
+
+        $logs_table = $wpdb->prefix . 'scouting_oidc_logs';
+        $installed_version = get_option(self::LOGS_SCHEMA_VERSION_OPTION, '');
+
+        if ($installed_version === self::LOGS_SCHEMA_VERSION && $this->scouting_oidc_logger_table_exists($logs_table)) {
+            return;
+        }
+
+        $this->scouting_oidc_logger_database_create();
+    }
+
+    /**
      * Create or update the logs table during plugin activation.
      *
      * @return void
@@ -113,6 +141,8 @@ class Logger {
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB
             $wpdb->query($wpdb->prepare('ALTER TABLE %i ADD CONSTRAINT %i FOREIGN KEY (user_id) REFERENCES %i(ID) ON DELETE CASCADE', $logs_table, 'fk_scouting_logs_user', $wpdb->users));
         }
+
+        update_option(self::LOGS_SCHEMA_VERSION_OPTION, self::LOGS_SCHEMA_VERSION);
     }
 
     /**
@@ -381,6 +411,21 @@ class Logger {
      */
     public static function debug(LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null): void {
         self::log($component, LogLevel::DEBUG, $message, $user_id, $sol_id);
+    }
+
+    /**
+     * Check whether the logs table currently exists.
+     *
+     * @param string $logs_table Full logs table name.
+     * @return bool
+     */
+    private function scouting_oidc_logger_table_exists(string $logs_table): bool {
+        global $wpdb;
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $found_table = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $logs_table));
+
+        return is_string($found_table) && $found_table === $logs_table;
     }
 
     /**

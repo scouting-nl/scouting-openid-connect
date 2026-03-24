@@ -18,6 +18,7 @@ $scouting_oidc_options = array(
     'scouting_oidc_login_redirect',
     'scouting_oidc_custom_redirect',
     'scouting_oidc_debug_logging_enabled',
+    'scouting_oidc_logs_schema_version',
 );
 
 foreach ($scouting_oidc_options as $scouting_oidc_option) {
