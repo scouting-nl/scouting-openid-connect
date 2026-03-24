@@ -4,7 +4,7 @@ namespace ScoutingOIDC;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * This class manages the settings page for the Scouting OIDC plugin, including rendering the settings page, initializing settings sections and fields, and handling default options.
+ * This class manages the support submenu page for the Scouting OIDC plugin, including registering the submenu and rendering the support page content.
  */
 class Support
 {
