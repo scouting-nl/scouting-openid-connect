@@ -36,53 +36,37 @@ class LoggingFilters
     }
 
     /**
-     * Parse an HTML datetime-local value to a MySQL DATETIME string.
+     * Resolve an HTML datetime-local value to normalized and UTC SQL variants.
      *
      * @param string $value Raw datetime-local value.
-     * @return string|null
+     * @return array{normalized: string, utc_sql: string|null}
      */
-    private function parse_datetime_local(string $value): ?string {
-        $value = trim($value);
-        if ($value === '') {
-            return null;
+    private function resolve_datetime_local(string $value): array {
+        $trimmed_value = trim($value);
+        if ($trimmed_value === '') {
+            return [
+                'normalized' => '',
+                'utc_sql' => null,
+            ];
         }
 
         $site_timezone = wp_timezone();
         $formats = ['Y-m-d\\TH:i:s.v', 'Y-m-d\\TH:i:s', 'Y-m-d\\TH:i'];
 
         foreach ($formats as $format) {
-            $datetime = \DateTimeImmutable::createFromFormat($format, $value, $site_timezone);
+            $datetime = \DateTimeImmutable::createFromFormat($format, $trimmed_value, $site_timezone);
             if ($datetime !== false) {
-                return $datetime->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d H:i:s.v');
+                return [
+                    'normalized' => $datetime->format('Y-m-d\\TH:i:s.v'),
+                    'utc_sql' => $datetime->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d H:i:s.v'),
+                ];
             }
         }
 
-        return null;
-    }
-
-    /**
-     * Normalize an HTML datetime-local value for input rendering.
-     *
-     * @param string $value Raw datetime-local value.
-     * @return string
-     */
-    private function normalize_datetime_local(string $value): string {
-        $value = trim($value);
-        if ($value === '') {
-            return '';
-        }
-
-        $site_timezone = wp_timezone();
-        $formats = ['Y-m-d\\TH:i:s.v', 'Y-m-d\\TH:i:s', 'Y-m-d\\TH:i'];
-
-        foreach ($formats as $format) {
-            $datetime = \DateTimeImmutable::createFromFormat($format, $value, $site_timezone);
-            if ($datetime !== false) {
-                return $datetime->format('Y-m-d\\TH:i:s.v');
-            }
-        }
-
-        return $value;
+        return [
+            'normalized' => $trimmed_value,
+            'utc_sql' => null,
+        ];
     }
 
     /**
@@ -136,14 +120,14 @@ class LoggingFilters
 
         $levels = array_values(array_filter($level_raw, fn($l) => in_array($l, $level_values, true)));
         $components = array_values(array_filter($component_raw, fn($c) => in_array($c, $component_values, true)));
-        $date_from_normalized = $this->normalize_datetime_local($date_from);
-        $date_to_normalized = $this->normalize_datetime_local($date_to);
+        $date_from_resolved = $this->resolve_datetime_local($date_from);
+        $date_to_resolved = $this->resolve_datetime_local($date_to);
 
         return [
-            'date_from' => $date_from_normalized,
-            'date_to' => $date_to_normalized,
-            'date_from_utc_sql' => $this->parse_datetime_local($date_from),
-            'date_to_utc_sql' => $this->parse_datetime_local($date_to),
+            'date_from' => $date_from_resolved['normalized'],
+            'date_to' => $date_to_resolved['normalized'],
+            'date_from_utc_sql' => $date_from_resolved['utc_sql'],
+            'date_to_utc_sql' => $date_to_resolved['utc_sql'],
             'component' => $components,
             'level' => $levels,
             'sol_id' => trim($sol_id),
