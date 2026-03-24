@@ -36,7 +36,7 @@ class Settings
      *
      * @return void
      */
-    private function scouting_oidc_settings_page_callback(): void {
+    public function scouting_oidc_settings_page_callback(): void {
         ?>
         <div class="wrap">
             <h1><?php esc_html_e('Settings', 'scouting-openid-connect'); ?></h1>
