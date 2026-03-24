@@ -52,7 +52,6 @@ class Mail {
 
         // Check for plus-addressing markers in recipients and headers
         [$recipient_has_plus, $headers_has_plus] = self::scouting_oidc_mail_value_contains_plus($args, $supported_fields);
-        [$recipient_has_plus, $headers_has_plus] = self::scouting_oidc_mail_value_contains_plus($args, $supported_fields);
 
         // Skip normalization work when no plus-addressing markers are present
         if (!$recipient_has_plus && !$headers_has_plus) {
