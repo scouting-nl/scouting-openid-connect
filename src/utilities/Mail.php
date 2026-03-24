@@ -47,11 +47,11 @@ class Mail {
     public static function scouting_oidc_mail_filter_wp_mail(array $args): array {
         // Define the recipient fields to normalize
         $supported_fields = ['to', 'cc', 'bcc'];
-        $supported_keys = array_merge($supported_fields, ['headers']);
 
         Logger::debug(LogComponent::MAIL, "Email with subject '" . ($args['subject'] ?? '') . "' is being processed for normalization with supported fields ('" . implode(', ', $supported_fields) . "')");
 
         // Check for plus-addressing markers in recipients and headers
+        [$recipient_has_plus, $headers_has_plus] = self::scouting_oidc_mail_value_contains_plus($args, $supported_fields);
         [$recipient_has_plus, $headers_has_plus] = self::scouting_oidc_mail_value_contains_plus($args, $supported_fields);
 
         // Skip normalization work when no plus-addressing markers are present
