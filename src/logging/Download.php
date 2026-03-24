@@ -26,8 +26,12 @@ class LoggingDownload
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('X-Content-Type-Options: nosniff');
 
+        $current_user = wp_get_current_user();
+        $current_user_id = isset($current_user->ID) ? (int) $current_user->ID : 0;
+        $current_user_display = isset($current_user->display_name) ? $current_user->display_name : 'Unknown';
+
         $output = '';
-        $output .= "# Scouting OIDC logs export by user ID " . get_current_user_id() . "\n";
+        $output .= "# Scouting OIDC logs export by user ID {$current_user_id} ({$current_user_display})\n";
         $output .= "# Website: " . home_url() . "\n";
         $output .= "# UTC time of export: " . gmdate('Y-m-d H:i:s') . "\n";
         $output .= "# Wordpress time of export: " . current_time('Y-m-d H:i:s e') . "\n\n";
