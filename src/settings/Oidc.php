@@ -189,8 +189,10 @@ class Settings_Oidc
         // Identify unsupported scopes and show a warning if any were included.
         $unsupported_scopes = array_values(array_filter($parts, fn($scope) => !in_array($scope, $allowed_scopes, true)));
         if (!empty($unsupported_scopes)) {
-            $unsupported_list = implode(', ', $unsupported_scopes);
-            $supported_list = implode(', ', $allowed_scopes);
+            $unsupported_scopes_safe = array_map(static fn($scope) => esc_html(sanitize_text_field((string) $scope)), $unsupported_scopes);
+            $allowed_scopes_safe = array_map(static fn($scope) => esc_html(sanitize_text_field((string) $scope)), $allowed_scopes);
+            $unsupported_list = implode(', ', $unsupported_scopes_safe);
+            $supported_list = implode(', ', $allowed_scopes_safe);
             $unsupported_message = __('Unsupported scopes were removed:', 'scouting-openid-connect') . " ${unsupported_list}. " . __('Supported scopes are:', 'scouting-openid-connect') . " ${supported_list}.";
 
             add_settings_error(
