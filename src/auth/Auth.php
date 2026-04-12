@@ -158,12 +158,6 @@ class Auth {
             return;
         }
 
-        // Check if nonce is valid with wp_verify_nonce
-        if (wp_verify_nonce($this->oidc_client->getNonce())) {
-            $this->oidc_client->unsetStatesAndNonce();
-            ErrorHandler::redirect_to_login_error('error', __('Nonce is invalid', 'scouting-openid-connect'), 'nonce_invalid');
-        }
-
         // Handle error callback parameters and forward them to wp-login.
         if (isset($_GET['error_description'], $_GET['hint'])) {
             $this->oidc_client->unsetStatesAndNonce();
@@ -200,11 +194,14 @@ class Auth {
             ErrorHandler::redirect_to_login_error('error', __('Code is missing', 'scouting-openid-connect'), 'code_missing');
         }
 
+        // Save nonce before retrieveTokens clears session state, so validateTokens can compare it
+        $stored_nonce = $this->oidc_client->getNonce();
+
         // Retrieve tokens from the OpenID Connect server and sanitize the 'code' parameter
         $this->oidc_client->retrieveTokens(sanitize_text_field(wp_unslash($_GET['code'])), $state);
 
-        // Validate the ID token
-        $user_json_encoded = $this->oidc_client->validateTokens();
+        // Validate the ID token, passing the stored nonce for claim verification
+        $user_json_encoded = $this->oidc_client->validateTokens($stored_nonce);
 
         // Create a new User object
         $user = new User($user_json_encoded);
@@ -238,11 +235,6 @@ class Auth {
         // Check if user is logged in
         if (!is_login()) {
             return $message;
-        }
-
-        // Check if nonce is valid
-        if (wp_verify_nonce($this->oidc_client->getNonce())) {
-            $this->oidc_client->unsetStatesAndNonce();
         }
 
         // Check if error_description, hint, and message are set in the URL
@@ -419,11 +411,6 @@ class Auth {
         $response_type = 'code';
         $scopes = array_map('sanitize_text_field', explode(" ", get_option('scouting_oidc_scopes')));
 
-        // Check if nonce is valid
-        if (wp_verify_nonce($this->oidc_client->getNonce())) {
-            $this->oidc_client->unsetStatesAndNonce();
-        }
-        
         // Check if error_description, hint, and message are set in the URL
         if (isset($_GET['error_description'], $_GET['hint'])) {
             $error_description = sanitize_text_field(wp_unslash($_GET['error_description']));
