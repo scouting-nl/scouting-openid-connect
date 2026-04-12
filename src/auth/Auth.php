@@ -167,12 +167,12 @@ class Auth {
         $param_code_raw = filter_input(INPUT_GET, 'code', FILTER_UNSAFE_RAW);
 
         // All parameters are sanitized as they may contain untrusted data.
-        $param_error_description = is_string($param_error_description_raw) ? sanitize_text_field(wp_unslash($param_error_description_raw)) : null;
-        $param_hint = is_string($param_hint_raw) ? sanitize_text_field(wp_unslash($param_hint_raw)) : null;
-        $param_error = is_string($param_error_raw) ? sanitize_text_field(wp_unslash($param_error_raw)) : null;
-        $param_message = is_string($param_message_raw) ? sanitize_text_field(wp_unslash($param_message_raw)) : null;
-        $param_state = is_string($param_state_raw) ? sanitize_text_field(wp_unslash($param_state_raw)) : null;
-        $param_code = is_string($param_code_raw) ? sanitize_text_field(wp_unslash($param_code_raw)) : null;
+        $param_error_description = is_string($param_error_description_raw) ? sanitize_text_field($param_error_description_raw) : null;
+        $param_hint = is_string($param_hint_raw) ? sanitize_text_field($param_hint_raw) : null;
+        $param_error = is_string($param_error_raw) ? sanitize_text_field($param_error_raw) : null;
+        $param_message = is_string($param_message_raw) ? sanitize_text_field($param_message_raw) : null;
+        $param_state = is_string($param_state_raw) ? sanitize_text_field($param_state_raw) : null;
+        $param_code = is_string($param_code_raw) ? sanitize_text_field($param_code_raw) : null;
 
         // Handle error callback parameters and forward them to wp-login.
         if (filter_has_var(INPUT_GET, 'error_description') && filter_has_var(INPUT_GET, 'hint')) {
