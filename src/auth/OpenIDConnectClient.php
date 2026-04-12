@@ -352,6 +352,12 @@ class OpenIDConnectClient
             ErrorHandler::redirect_to_login_error('error', __('The ID token has expired.', 'scouting-openid-connect'), 'token_expired');
         }
 
+        // iat: reject tokens that appear to be issued too far in the future (allow small clock skew)
+        if (($payload['iat'] ?? 0) > (time() + 60)) {
+            Logger::error(LogComponent::OIDC, 'ID token has an invalid issued-at time in the future (iat=' . ($payload['iat'] ?? 'missing') . ')');
+            ErrorHandler::redirect_to_login_error('error', __('The ID token has an invalid issued-at timestamp.', 'scouting-openid-connect'), 'invalid_iat');
+        }
+
         // sub: subject must be present
         if (empty($payload['sub'])) {
             Logger::error(LogComponent::OIDC, 'ID token is missing the sub claim');
