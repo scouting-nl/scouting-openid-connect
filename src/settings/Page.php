@@ -95,23 +95,23 @@ class Settings
      */
     public function scouting_oidc_settings_install(): void {
         // Set default options for OIDC
-        update_option('scouting_oidc_client_id', '');
-        update_option('scouting_oidc_client_secret', '');
-        update_option('scouting_oidc_scopes', 'openid membership profile email address phone');
+        add_option('scouting_oidc_client_id', '');
+        add_option('scouting_oidc_client_secret', '');
+        add_option('scouting_oidc_scopes', 'openid membership profile email address phone');
 
         // Set default options for general settings
-        update_option('scouting_oidc_user_display_name', 'fullname');
-        update_option('scouting_oidc_user_birthdate', false);
-        update_option('scouting_oidc_user_gender', false);
-        update_option('scouting_oidc_user_phone', false);
-        update_option('scouting_oidc_user_address', false);
-        update_option('scouting_oidc_user_woocommerce_sync', false);
-        update_option('scouting_oidc_user_auto_create', true);
-        update_option('scouting_oidc_user_duplicate_email', 'plus_addressing');
-        update_option('scouting_oidc_user_redirect', true);
-        update_option('scouting_oidc_login_redirect', 'frontpage');
-        update_option('scouting_oidc_custom_redirect', '');
-        update_option('scouting_oidc_debug_logging_enabled', false);
+        add_option('scouting_oidc_user_display_name', 'fullname');
+        add_option('scouting_oidc_user_birthdate', false);
+        add_option('scouting_oidc_user_gender', false);
+        add_option('scouting_oidc_user_phone', false);
+        add_option('scouting_oidc_user_address', false);
+        add_option('scouting_oidc_user_woocommerce_sync', false);
+        add_option('scouting_oidc_user_auto_create', true);
+        add_option('scouting_oidc_user_duplicate_email', 'plus_addressing');
+        add_option('scouting_oidc_user_redirect', true);
+        add_option('scouting_oidc_login_redirect', 'frontpage');
+        add_option('scouting_oidc_custom_redirect', '');
+        add_option('scouting_oidc_debug_logging_enabled', false);
     }
 }
 ?>
