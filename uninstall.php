@@ -16,6 +16,7 @@ $scouting_oidc_options = array(
     'scouting_oidc_user_address',
     'scouting_oidc_user_woocommerce_sync',
     'scouting_oidc_user_auto_create',
+    'scouting_oidc_user_duplicate_email',
     'scouting_oidc_user_redirect',
     'scouting_oidc_login_redirect',
     'scouting_oidc_custom_redirect',
