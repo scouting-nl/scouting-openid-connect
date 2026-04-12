@@ -112,6 +112,7 @@ class Settings
         add_option('scouting_oidc_login_redirect', 'frontpage');
         add_option('scouting_oidc_custom_redirect', '');
         add_option('scouting_oidc_debug_logging_enabled', false);
+        add_option('scouting_oidc_log_retention_days', 30);
     }
 }
 ?>

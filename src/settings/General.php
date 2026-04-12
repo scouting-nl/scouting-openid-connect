@@ -137,6 +137,15 @@ class Settings_General
             'scouting-openid-connect-settings',                                // Page slug
             'scouting_oidc_general_settings'                                   // Section ID where the field should be added
         );
+
+        // Add a settings number field
+        add_settings_field(
+            'scouting_oidc_log_retention_days',                                      // Field ID
+            __('Log retention (days)', 'scouting-openid-connect'),                   // Field label
+            [$this, 'scouting_oidc_settings_general_log_retention_days_callback'],   // Callback to render field
+            'scouting-openid-connect-settings',                                       // Page slug
+            'scouting_oidc_general_settings'                                          // Section ID where the field should be added
+        );
     
         // Register settings
         register_setting(
@@ -248,6 +257,15 @@ class Settings_General
             ]
         );
 
+        // Register settings
+        register_setting(
+            'scouting_oidc_settings_group',                                                    // Settings group name
+            'scouting_oidc_log_retention_days',                                                // Option name
+            [
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_log_retention_days_option'] // Sanitize retention days as bounded integer
+            ]
+        );
+
         // Log settings changes for options that belong to this plugin
         add_action('updated_option', [$this, 'handle_option_update'], 10, 3);
     }
@@ -332,6 +350,30 @@ class Settings_General
      */
     public function scouting_oidc_sanitize_boolean_option(mixed $input): int {
         return $input ? 1 : 0;
+    }
+
+    /**
+     * Sanitize the log retention option.
+     *
+     * @param mixed $input
+     * @return int
+     */
+    public function scouting_oidc_sanitize_log_retention_days_option(mixed $input): int {
+        if (!is_numeric($input)) {
+            return 30;
+        }
+
+        $retention_days = (int) $input;
+
+        if ($retention_days < 1) {
+            return 1;
+        }
+
+        if ($retention_days > 3650) {
+            return 3650;
+        }
+
+        return $retention_days;
     }
 
     /**
@@ -561,6 +603,21 @@ class Settings_General
         echo '<span style="padding: 5.675px 3px 5.675px 0px;">' . esc_html($base_domain) . '</span>';
         echo '<input type="text" id="scouting_oidc_custom_redirect" name="scouting_oidc_custom_redirect" size="50" value="' . esc_attr($slug) . '" placeholder="' . esc_attr__("custom-page", "scouting-openid-connect") . '"/>';
         echo '<p class="description">' . esc_html__("Enter the slug to append to the base URL where users should be redirected after login.", "scouting-openid-connect") . '</p>';
+    }
+
+    /**
+     * Callback to render log retention days number field.
+     *
+     * @return void
+     */
+    public function scouting_oidc_settings_general_log_retention_days_callback(): void {
+        $value = (int) get_option('scouting_oidc_log_retention_days', 30);
+        if ($value < 1) {
+            $value = 1;
+        }
+
+        echo '<input type="number" id="scouting_oidc_log_retention_days" name="scouting_oidc_log_retention_days" min="1" max="3650" step="1" value="' . esc_attr((string) $value) . '" style="width: 95px;"/>';
+        echo '<p class="description">' . esc_html__('Logs may contain personal data such as user IDs and SOL IDs. Set how many days logs are retained before daily cleanup removes older entries.', 'scouting-openid-connect') . '</p>';
     }
 
     /**

@@ -21,6 +21,7 @@ $scouting_oidc_options = array(
     'scouting_oidc_login_redirect',
     'scouting_oidc_custom_redirect',
     'scouting_oidc_debug_logging_enabled',
+    'scouting_oidc_log_retention_days',
     'scouting_oidc_logs_schema_version',
 );
 
@@ -47,7 +48,7 @@ $scouting_oidc_transient_where_clause = implode(' OR ', array_fill(0, count($sco
 $scouting_oidc_delete_transients_sql = "DELETE FROM {$wpdb->options} WHERE $scouting_oidc_transient_where_clause";
 
 // Delete all matching transient and timeout rows in one query.
-// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
 $wpdb->query($wpdb->prepare($scouting_oidc_delete_transients_sql, $scouting_oidc_transient_like_patterns));
 
 // Delete user meta
