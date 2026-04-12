@@ -13,24 +13,24 @@ class CronJobs {
     public const CLEANUP_CRON_HOOK = 'scouting_oidc_logs_cleanup_daily';
 
     /**
-        * Default number of days to retain logs.
+     * Default number of days to retain logs.
      */
-        private const DEFAULT_LOG_RETENTION_DAYS = 30;
+    private const DEFAULT_LOG_RETENTION_DAYS = 30;
 
-        /**
-        * Minimum allowed number of days to retain logs.
-        */
-        private const MIN_LOG_RETENTION_DAYS = 1;
+    /**
+     * Minimum allowed number of days to retain logs.
+     */
+    private const MIN_LOG_RETENTION_DAYS = 1;
 
-        /**
-        * Maximum allowed number of days to retain logs.
-        */
-        private const MAX_LOG_RETENTION_DAYS = 3650;
+    /**
+     * Maximum allowed number of days to retain logs.
+     */
+    private const MAX_LOG_RETENTION_DAYS = 3650;
 
-        /**
-        * Option key for log retention days.
-        */
-        private const LOG_RETENTION_OPTION = 'scouting_oidc_log_retention_days';
+    /**
+     * Option key for log retention days.
+     */
+    private const LOG_RETENTION_OPTION = 'scouting_oidc_log_retention_days';
 
     /**
      * Schedule cleanup jobs when plugin is activated.
