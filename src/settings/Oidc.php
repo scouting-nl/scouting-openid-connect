@@ -105,9 +105,8 @@ class Settings_Oidc
         $toggle_id = 'scouting_oidc_client_secret_toggle';
         $show_text = __('Show', 'scouting-openid-connect');
         $hide_text = __('Hide', 'scouting-openid-connect');
-        $required_attr = $has_secret ? '' : ' required';
 
-        echo '<input type="password" id="' . esc_attr($input_id) . '" name="scouting_oidc_client_secret" placeholder="' . esc_attr__("Enter new client secret", "scouting-openid-connect") . '" value="" size="55"' . $required_attr . ' />';
+        echo '<input type="password" id="' . esc_attr($input_id) . '" name="scouting_oidc_client_secret" placeholder="' . esc_attr__('Enter new client secret', 'scouting-openid-connect') . '" value="" size="55"' . ( $has_secret ? '' : ' required' ) . ' />';
         echo ' <button type="button" class="button" id="' . esc_attr($toggle_id) . '" data-show-text="' . esc_attr($show_text) . '" data-hide-text="' . esc_attr($hide_text) . '" disabled>' . esc_html($show_text) . '</button>';
         if ($has_secret) {
             echo '<p class="description">' . esc_html__("A client secret is already stored. Leave this field empty to keep the current secret. For security reasons, the stored value cannot be shown here.", "scouting-openid-connect") . '</p>';
