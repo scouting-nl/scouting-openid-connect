@@ -27,15 +27,27 @@ foreach ($scouting_oidc_options as $scouting_oidc_option) {
     delete_option($scouting_oidc_option);
 }
 
-// Delete transients
-$scouting_oidc_transients = array(
-    'scouting_oidc_well_known_data',
-    'scouting_oidc_jwks_data',
+// Delete issuer-scoped transient rows (e.g. scouting_oidc_wk_<hash>, scouting_oidc_jwks_<hash>)
+$scouting_oidc_transient_prefixes = array(
+    'scouting_oidc_wk_',
+    'scouting_oidc_jwks_',
 );
 
-foreach ($scouting_oidc_transients as $scouting_oidc_transient) {
-    delete_transient($scouting_oidc_transient);
+// Build LIKE patterns for both transient and transient_timeout rows for each prefix to delete all relevant transients in a single query for scalability.
+$scouting_oidc_transient_like_patterns = array();
+foreach ($scouting_oidc_transient_prefixes as $scouting_oidc_transient_prefix) {
+    $scouting_oidc_escaped_prefix = $wpdb->esc_like($scouting_oidc_transient_prefix);
+    $scouting_oidc_transient_like_patterns[] = '_transient_' . $scouting_oidc_escaped_prefix . '%';
+    $scouting_oidc_transient_like_patterns[] = '_transient_timeout_' . $scouting_oidc_escaped_prefix . '%';
 }
+
+// Prepare the WHERE clause with placeholders for each LIKE pattern based on the number of patterns to delete and construct the full SQL query to delete all matching transients in one go for better performance.
+$scouting_oidc_transient_where_clause = implode(' OR ', array_fill(0, count($scouting_oidc_transient_like_patterns), 'option_name LIKE %s'));
+$scouting_oidc_delete_transients_sql = "DELETE FROM {$wpdb->options} WHERE $scouting_oidc_transient_where_clause";
+
+// Delete all matching transient and timeout rows in one query.
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+$wpdb->query($wpdb->prepare($scouting_oidc_delete_transients_sql, $scouting_oidc_transient_like_patterns));
 
 // Delete user meta
 $scouting_oidc_metas = array(
@@ -51,6 +63,7 @@ $scouting_oidc_metas = array(
     'scouting_oidc_country_code',
 );
 
+// Prepare placeholders for the IN clause based on the number of meta keys to delete
 $scouting_oidc_metas_placeholders = implode(', ', array_fill(0, count($scouting_oidc_metas), '%s'));
 $scouting_oidc_delete_usermeta_sql = "DELETE FROM {$wpdb->usermeta} WHERE meta_key IN ($scouting_oidc_metas_placeholders)";
 $scouting_oidc_delete_usermeta_args = array_merge(array($scouting_oidc_delete_usermeta_sql), $scouting_oidc_metas);
