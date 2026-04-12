@@ -554,9 +554,11 @@ class OpenIDConnectClient
         try {
             return random_bytes($length);
         } catch (\Exception $e) {
-            wp_die(
-                esc_html__('Authentication is temporarily unavailable. Please try again later.', 'scouting-oidc'),
-                esc_html__('Authentication Error', 'scouting-oidc')
+            Logger::error(LogComponent::OIDC, 'Failed to generate random bytes.');
+            ErrorHandler::redirect_to_login_error(
+                'init',
+                __('Authentication is temporarily unavailable. Please try again later.', 'scouting-openid-connect'),
+                'random_bytes_failed'
             );
         }
     }
@@ -606,7 +608,7 @@ class OpenIDConnectClient
      * @return string the nonce
      */
     private function setNonce(): string {
-        $nonce = bin2hex(random_bytes(16));
+        $nonce = bin2hex($this->generateRandomBytes(16));
         $this->session->scouting_oidc_session_set('scouting_oidc_nonce', $nonce);
         return $nonce;
     }
