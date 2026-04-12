@@ -545,13 +545,30 @@ class OpenIDConnectClient
     }
 
     /**
+     * Generates cryptographically secure random bytes and converts failures into a controlled auth error.
+     *
+     * @param int $length the number of bytes to generate
+     * @return string the random bytes
+     */
+    private function generateRandomBytes(int $length): string {
+        try {
+            return random_bytes($length);
+        } catch (\Exception $e) {
+            wp_die(
+                esc_html__('Authentication is temporarily unavailable. Please try again later.', 'scouting-oidc'),
+                esc_html__('Authentication Error', 'scouting-oidc')
+            );
+        }
+    }
+
+    /**
      * Generates a cryptographically secure random token
      *
      * @param int $length the length of the token (characters)
      * @return string the token
      */
     private function generateToken(int $length): string {
-        return substr(bin2hex(random_bytes((int) ceil($length / 2))), 0, $length);
+        return substr(bin2hex($this->generateRandomBytes((int) ceil($length / 2))), 0, $length);
     }
 
     /**
@@ -567,7 +584,7 @@ class OpenIDConnectClient
 
         $verifier = '';
         while (strlen($verifier) < $length) {
-            $verifier .= $this->base64UrlEncode(random_bytes(32));
+            $verifier .= $this->base64UrlEncode($this->generateRandomBytes(32));
         }
 
         return substr($verifier, 0, $length);
