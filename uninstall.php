@@ -68,7 +68,6 @@ $scouting_oidc_metas = array(
 // Prepare placeholders for the IN clause based on the number of meta keys to delete
 $scouting_oidc_metas_placeholders = implode(', ', array_fill(0, count($scouting_oidc_metas), '%s'));
 $scouting_oidc_delete_usermeta_sql = "DELETE FROM {$wpdb->usermeta} WHERE meta_key IN ($scouting_oidc_metas_placeholders)";
-$scouting_oidc_delete_usermeta_args = array_merge(array($scouting_oidc_delete_usermeta_sql), $scouting_oidc_metas);
 
 // Delete all matching plugin user meta in one query for scalability.
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
