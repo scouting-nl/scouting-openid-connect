@@ -203,11 +203,18 @@ class Auth {
             ErrorHandler::redirect_to_login_error('error', __('Code is missing', 'scouting-openid-connect'), 'code_missing');
         }
 
+        // Validate that the 'code' parameter is a non-empty string
+        $param_code = is_string($param_code ?? null) ? trim($param_code) : '';
+        if ($param_code === '') {
+            $this->oidc_client->unsetStatesAndNonce();
+            ErrorHandler::redirect_to_login_error('error', __('Code is missing', 'scouting-openid-connect'), 'code_missing');
+        }
+
         // Save nonce before retrieveTokens clears session state, so validateTokens can compare it
         $stored_nonce = $this->oidc_client->getNonce();
 
-        // Retrieve tokens from the OpenID Connect server and sanitize the 'code' parameter
-        $this->oidc_client->retrieveTokens($param_code ?? '', $state);
+        // Retrieve tokens from the OpenID Connect server using the validated 'code' parameter
+        $this->oidc_client->retrieveTokens($param_code, $state);
 
         // Validate the ID token, passing the stored nonce for claim verification
         $user_json_encoded = $this->oidc_client->validateTokens($stored_nonce);
