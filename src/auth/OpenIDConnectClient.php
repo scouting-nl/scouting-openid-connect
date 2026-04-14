@@ -319,8 +319,19 @@ class OpenIDConnectClient
         // Convert the certificate chain (x5c) to a public key certificate
         $public_key_certificate = "-----BEGIN CERTIFICATE-----\n" . chunk_split($x5c, 64, "\n") . "-----END CERTIFICATE-----";
 
-        // Check if the signature is valid
+        // Check if the signing certificate can be converted to a public key before verifying the signature
         $publicKey = openssl_pkey_get_public($public_key_certificate);
+        if ($publicKey === false) {
+            $opensslError = openssl_error_string();
+            $logMessage = 'ID token validation failed: unable to extract public key from signing certificate';
+            if ($opensslError !== false) {
+                $logMessage .= ' (' . $opensslError . ')';
+            }
+            Logger::error(LogComponent::OIDC, $logMessage);
+            ErrorHandler::redirect_to_login_error('error', __('The signing certificate used to validate the ID token is invalid or unsupported.', 'scouting-openid-connect'), 'invalid_signing_certificate');
+        }
+
+        // Check if the signature is valid
         $signatureValid = openssl_verify($headerEncoded . '.' . $payloadEncoded, $signature, $publicKey, OPENSSL_ALGO_SHA256);
         if ($signatureValid !== 1) {
             Logger::error(LogComponent::OIDC, 'ID token signature validation failed');
