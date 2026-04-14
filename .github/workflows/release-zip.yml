@@ -43,14 +43,14 @@ jobs:
           echo "ZIP_NAME=${ZIP_NAME}" >> "${GITHUB_ENV}"
 
       - name: Upload zip as artifact
-        uses: actions/upload-artifact@v7.0.0
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: ${{ env.ZIP_NAME }}
           path: ${{ env.ZIP_PATH }}
           if-no-files-found: error
 
       - name: Attach zip to release
-        uses: softprops/action-gh-release@v2.6.1
+        uses: softprops/action-gh-release@v3.0.0
         with:
           files: ${{ env.ZIP_PATH }}
           generate_release_notes: true
