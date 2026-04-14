@@ -376,12 +376,20 @@ class OpenIDConnectClient
         }
 
         // Validate the nonce claim against the value sent in the auth request
-        if (!empty($stored_nonce)) {
-            $token_nonce = $payload['nonce'] ?? '';
-            if ($token_nonce === '' || !hash_equals($stored_nonce, $token_nonce)) {
-                Logger::error(LogComponent::OIDC, 'ID token nonce mismatch: the nonce in the token does not match the session nonce');
-                ErrorHandler::redirect_to_login_error('error', __('The ID token nonce is invalid.', 'scouting-openid-connect'), 'nonce_mismatch');
-            }
+        if (empty($stored_nonce)) {
+            Logger::error(LogComponent::OIDC, 'ID token nonce validation failed: no stored nonce available in session state');
+            ErrorHandler::redirect_to_login_error('error', __('The login session is invalid or has expired.', 'scouting-openid-connect'), 'missing_nonce');
+        }
+
+        $token_nonce = $payload['nonce'] ?? '';
+        if ($token_nonce === '') {
+            Logger::error(LogComponent::OIDC, 'ID token is missing the nonce claim');
+            ErrorHandler::redirect_to_login_error('error', __('The ID token is missing the required nonce claim.', 'scouting-openid-connect'), 'missing_token_nonce');
+        }
+
+        if (!hash_equals($stored_nonce, $token_nonce)) {
+            Logger::error(LogComponent::OIDC, 'ID token nonce mismatch: the nonce in the token does not match the session nonce');
+            ErrorHandler::redirect_to_login_error('error', __('The ID token nonce is invalid.', 'scouting-openid-connect'), 'nonce_mismatch');
         }
 
         Logger::debug(LogComponent::OIDC, 'ID token validation succeeded');
