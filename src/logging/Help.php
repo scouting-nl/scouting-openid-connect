@@ -38,7 +38,13 @@ class LoggingHelp
             'title' => __('Export and Retention', 'scouting-openid-connect'),
             'content' =>
                 '<p>' . esc_html__('Use the Download .log button to export the currently filtered logs.', 'scouting-openid-connect') . '</p>' .
-                '<p>' . esc_html__('A daily cleanup task removes log entries older than 30 days.', 'scouting-openid-connect') . '</p>'
+                '<p>' . esc_html(
+                    sprintf(
+                        /* translators: %d: Number of days log entries are kept before cleanup. */
+                        __('A daily cleanup task removes log entries older than %d day(s).', 'scouting-openid-connect'),
+                        CronJobs::scouting_oidc_get_log_retention_days()
+                    )
+                ) . '</p>'
         ]);
 
         $screen->add_help_tab([

@@ -139,7 +139,7 @@ class Auth {
             // Return login URL with hint
             return ErrorHandler::login_error_url('init', $hint, 'init_error');
         }
-        return esc_url($this->scouting_oidc_auth_login_url());
+        return esc_url($login_url);
     }
 
     /**
@@ -158,35 +158,38 @@ class Auth {
             return;
         }
 
-        // Check if nonce is valid with wp_verify_nonce
-        if (wp_verify_nonce($this->oidc_client->getNonce())) {
-            $this->oidc_client->unsetStatesAndNonce();
-            ErrorHandler::redirect_to_login_error('error', __('Nonce is invalid', 'scouting-openid-connect'), 'nonce_invalid');
-        }
+        // All raw $_GET reads collected here.
+        $param_error_description_raw = filter_input(INPUT_GET, 'error_description', FILTER_UNSAFE_RAW);
+        $param_hint_raw = filter_input(INPUT_GET, 'hint', FILTER_UNSAFE_RAW);
+        $param_error_raw = filter_input(INPUT_GET, 'error', FILTER_UNSAFE_RAW);
+        $param_message_raw = filter_input(INPUT_GET, 'message', FILTER_UNSAFE_RAW);
+        $param_state_raw = filter_input(INPUT_GET, 'state', FILTER_UNSAFE_RAW);
+        $param_code_raw = filter_input(INPUT_GET, 'code', FILTER_UNSAFE_RAW);
+
+        // All parameters are sanitized as they may contain untrusted data.
+        $param_error_description = is_string($param_error_description_raw) ? sanitize_text_field($param_error_description_raw) : null;
+        $param_hint = is_string($param_hint_raw) ? sanitize_text_field($param_hint_raw) : null;
+        $param_error = is_string($param_error_raw) ? sanitize_text_field($param_error_raw) : null;
+        $param_message = is_string($param_message_raw) ? sanitize_text_field($param_message_raw) : null;
+        $param_state = is_string($param_state_raw) ? sanitize_text_field($param_state_raw) : null;
+        $param_code = is_string($param_code_raw) ? sanitize_text_field($param_code_raw) : null;
 
         // Handle error callback parameters and forward them to wp-login.
-        if (isset($_GET['error_description'], $_GET['hint'])) {
+        if (filter_has_var(INPUT_GET, 'error_description') && filter_has_var(INPUT_GET, 'hint')) {
             $this->oidc_client->unsetStatesAndNonce();
 
-            $error_description = sanitize_text_field(wp_unslash($_GET['error_description']));
-            $hint = sanitize_text_field(wp_unslash($_GET['hint']));
-            $error = isset($_GET['error'])
-                ? sanitize_text_field(wp_unslash($_GET['error']))
-                : null;
-            $message = isset($_GET['message'])
-                ? sanitize_text_field(wp_unslash($_GET['message']))
-                : ($error ?? 'error');
+            $message = $param_message ?? ($param_error ?? 'error');
 
-            ErrorHandler::redirect_to_login_error($error_description, $hint, $message, $error);
+            ErrorHandler::redirect_to_login_error($param_error_description ?? '', $param_hint ?? '', $message, $param_error);
         }
 
         // Check if 'state' parameter is set in the URL
-        if (!isset($_GET['state'])) {
+        if (!filter_has_var(INPUT_GET, 'state')) {
             return;
         }
 
         // Verify state parameter for security
-        $state = sanitize_text_field(wp_unslash($_GET['state']));
+        $state = $param_state ?? '';
 
         // If the state is invalid, unset states and nonce, then redirect to login page with an error message
         if (!$this->oidc_client->hasState($state)) {
@@ -195,16 +198,26 @@ class Auth {
         }
 
         // Check if 'code' parameter is set in the URL
-        if (!isset($_GET['code'])) {
+        if (!filter_has_var(INPUT_GET, 'code')) {
             $this->oidc_client->unsetStatesAndNonce();
             ErrorHandler::redirect_to_login_error('error', __('Code is missing', 'scouting-openid-connect'), 'code_missing');
         }
 
-        // Retrieve tokens from the OpenID Connect server and sanitize the 'code' parameter
-        $this->oidc_client->retrieveTokens(sanitize_text_field(wp_unslash($_GET['code'])), $state);
+        // Validate that the 'code' parameter is a non-empty string
+        $param_code = is_string($param_code ?? null) ? trim($param_code) : '';
+        if ($param_code === '') {
+            $this->oidc_client->unsetStatesAndNonce();
+            ErrorHandler::redirect_to_login_error('error', __('Code is missing', 'scouting-openid-connect'), 'code_missing');
+        }
 
-        // Validate the ID token
-        $user_json_encoded = $this->oidc_client->validateTokens();
+        // Fetch nonce bound to this specific state before retrieveTokens clears session data
+        $stored_nonce = $this->oidc_client->getNonceForState($state);
+
+        // Retrieve tokens from the OpenID Connect server using the validated 'code' parameter
+        $this->oidc_client->retrieveTokens($param_code, $state);
+
+        // Validate the ID token, passing the stored nonce for claim verification
+        $user_json_encoded = $this->oidc_client->validateTokens($stored_nonce);
 
         // Create a new User object
         $user = new User($user_json_encoded);
@@ -240,19 +253,20 @@ class Auth {
             return $message;
         }
 
-        // Check if nonce is valid
-        if (wp_verify_nonce($this->oidc_client->getNonce())) {
-            $this->oidc_client->unsetStatesAndNonce();
-        }
-
         // Check if error_description, hint, and message are set in the URL
-        if (!isset($_GET['error_description'], $_GET['hint'], $_GET['message'])) {
+        if (!filter_has_var(INPUT_GET, 'error_description') || !filter_has_var(INPUT_GET, 'hint') || !filter_has_var(INPUT_GET, 'message')) {
             return $message;
         }
 
-        $error_description = sanitize_text_field(wp_unslash($_GET['error_description']));
-        $error_message = sanitize_text_field(wp_unslash($_GET['message']));
-        $hint = sanitize_text_field(wp_unslash($_GET['hint']));
+        // All raw $_GET reads collected here.
+        $error_description_raw = filter_input(INPUT_GET, 'error_description', FILTER_UNSAFE_RAW);
+        $error_message_raw = filter_input(INPUT_GET, 'message', FILTER_UNSAFE_RAW);
+        $hint_raw = filter_input(INPUT_GET, 'hint', FILTER_UNSAFE_RAW);
+
+        // All parameters are sanitized as they may contain untrusted data.
+        $error_description = is_string($error_description_raw) ? sanitize_text_field(wp_unslash($error_description_raw)) : '';
+        $error_message = is_string($error_message_raw) ? sanitize_text_field(wp_unslash($error_message_raw)) : '';
+        $hint = is_string($hint_raw) ? sanitize_text_field(wp_unslash($hint_raw)) : '';
 
         // If the error equals `The user denied the request`, show a translated message
         if ($hint == 'The user denied the request') {
@@ -419,15 +433,18 @@ class Auth {
         $response_type = 'code';
         $scopes = array_map('sanitize_text_field', explode(" ", get_option('scouting_oidc_scopes')));
 
-        // Check if nonce is valid
-        if (wp_verify_nonce($this->oidc_client->getNonce())) {
-            $this->oidc_client->unsetStatesAndNonce();
-        }
-        
         // Check if error_description, hint, and message are set in the URL
-        if (isset($_GET['error_description'], $_GET['hint'])) {
-            $error_description = sanitize_text_field(wp_unslash($_GET['error_description']));
-            $hint = sanitize_text_field(wp_unslash($_GET['hint']));
+        if (filter_has_var(INPUT_GET, 'error_description') && filter_has_var(INPUT_GET, 'hint')) {
+
+            // All raw $_GET reads collected here.
+            $error_description_raw = filter_input(INPUT_GET, 'error_description', FILTER_UNSAFE_RAW);
+            $hint_raw = filter_input(INPUT_GET, 'hint', FILTER_UNSAFE_RAW);
+
+            // All parameters are sanitized as they may contain untrusted data.
+            $error_description = is_string($error_description_raw) ? sanitize_text_field(wp_unslash($error_description_raw)) : '';
+            $hint = is_string($hint_raw) ? sanitize_text_field(wp_unslash($hint_raw)) : '';
+
+            // If the error equals `init`, it means there was an error during the initialization of the login URL, so we log it and return a custom URL that indicates an initialization error with the hint as a parameter
             if ($error_description == 'init') {
                 Logger::error(LogComponent::AUTH, "OIDC login URL builder returning init error: {$hint}");
                 return "init_error:" . $hint;

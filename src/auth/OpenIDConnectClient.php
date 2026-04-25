@@ -130,11 +130,11 @@ class OpenIDConnectClient
             ErrorHandler::redirect_to_login_error('init', $hint, 'scopes_not_saved');
         }
 
-        // Generate and store a nonce in the session
-        $nonce = $this->setNonce();
-
         // State essentially acts as a session key for OIDC
         $state = $this->setState($this->generateToken(32));
+
+        // Generate and store a nonce bound to this state so multiple pending logins do not overwrite each other
+        $nonce = $this->setNonceForState($state);
 
         // PKCE: generate and store a code verifier bound to this state, then derive the S256 challenge
         $code_verifier = $this->generateCodeVerifier();
@@ -247,7 +247,7 @@ class OpenIDConnectClient
      */
     public function unsetStatesAndNonce(): void {
         $this->session->scouting_oidc_session_delete('scouting_oidc_states');
-        $this->session->scouting_oidc_session_delete('scouting_oidc_nonce');
+        $this->session->scouting_oidc_session_delete('scouting_oidc_nonces');
         $this->session->scouting_oidc_session_delete('scouting_oidc_code_verifiers');
 
         Logger::debug(LogComponent::OIDC, 'OIDC state, nonce and PKCE verifier session data cleared');
@@ -255,10 +255,15 @@ class OpenIDConnectClient
 
     /**
      * Validates the ID token and returns the payload
-     * 
-     * @return array returns the payload 
+     *
+     * Performs full OIDC validation: structure check, algorithm guard, signature
+     * verification against the JWKS x5c certificate, and standard claim checks
+     * (iss, aud, exp, sub, nonce).
+     *
+     * @param string $stored_nonce The nonce saved before retrieveTokens cleared session state.
+     * @return array returns the validated payload
      */
-    public function validateTokens(): array {
+    public function validateTokens(string $stored_nonce = ''): array {
         Logger::debug(LogComponent::OIDC, 'ID token validation started');
         $this->getWellKnownData();
         $this->getJWKSData();
@@ -275,13 +280,26 @@ class OpenIDConnectClient
             ErrorHandler::redirect_to_login_error('error', __('The JSON Web Key Set (JWKS) is not available.', 'scouting-openid-connect'), 'jwks_is_missing');
         }
 
-        // Split the token into header, payload and signature
-        list($headerEncoded, $payloadEncoded, $signatureEncoded) = explode('.', $this->tokens->id_token);
-        
+        // Validate JWT has exactly 3 segments before splitting
+        $parts = explode('.', $this->tokens->id_token);
+        if (count($parts) !== 3) {
+            Logger::error(LogComponent::OIDC, 'ID token has an invalid structure: expected 3 dot-separated segments, got ' . count($parts));
+            ErrorHandler::redirect_to_login_error('error', __('The ID token has an invalid structure.', 'scouting-openid-connect'), 'malformed_token');
+        }
+
+        [$headerEncoded, $payloadEncoded, $signatureEncoded] = $parts;
+
         // Decode the header, payload and signature
         $header = json_decode($this->base64UrlDecode($headerEncoded), true);
         $payload = json_decode($this->base64UrlDecode($payloadEncoded), true);
         $signature = $this->base64UrlDecode($signatureEncoded);
+
+        // Validate the algorithm header to prevent unexpected algorithm attacks
+        $expected_alg = 'RS256';
+        if (!is_array($header) || ($header['alg'] ?? '') !== $expected_alg) {
+            Logger::error(LogComponent::OIDC, 'ID token uses an unexpected algorithm: ' . ($header['alg'] ?? 'none'));
+            ErrorHandler::redirect_to_login_error('error', __('The ID token uses an unexpected signing algorithm.', 'scouting-openid-connect'), 'invalid_alg');
+        }
 
         // Loop through the keys in the JSON Web Key Set (JWKS) to find the certificate chain (x5c) for the key ID (kid) specified in the header
         $x5c = null;
@@ -301,17 +319,81 @@ class OpenIDConnectClient
         // Convert the certificate chain (x5c) to a public key certificate
         $public_key_certificate = "-----BEGIN CERTIFICATE-----\n" . chunk_split($x5c, 64, "\n") . "-----END CERTIFICATE-----";
 
-        // Check if the signature is valid
+        // Check if the signing certificate can be converted to a public key before verifying the signature
         $publicKey = openssl_pkey_get_public($public_key_certificate);
+        if ($publicKey === false) {
+            $opensslError = openssl_error_string();
+            $logMessage = 'ID token validation failed: unable to extract public key from signing certificate';
+            if ($opensslError !== false) {
+                $logMessage .= ' (' . $opensslError . ')';
+            }
+            Logger::error(LogComponent::OIDC, $logMessage);
+            ErrorHandler::redirect_to_login_error('error', __('The signing certificate used to validate the ID token is invalid or unsupported.', 'scouting-openid-connect'), 'invalid_signing_certificate');
+        }
+
+        // Check if the signature is valid
         $signatureValid = openssl_verify($headerEncoded . '.' . $payloadEncoded, $signature, $publicKey, OPENSSL_ALGO_SHA256);
         if ($signatureValid !== 1) {
             Logger::error(LogComponent::OIDC, 'ID token signature validation failed');
-            ErrorHandler::redirect_to_login_error('error', __('The signature in the ID token is not valid.', 'scouting-openid-connect'), 'jwks_is_missing');
+            ErrorHandler::redirect_to_login_error('error', __('The signature in the ID token is not valid.', 'scouting-openid-connect'), 'invalid_signature');
         }
-        else {
-            Logger::debug(LogComponent::OIDC, 'ID token validation succeeded');
-            return $payload;
+
+        // Validate standard OIDC claims after signature is confirmed
+        if (!is_array($payload)) {
+            Logger::error(LogComponent::OIDC, 'ID token payload could not be decoded');
+            ErrorHandler::redirect_to_login_error('error', __('The ID token payload could not be decoded.', 'scouting-openid-connect'), 'malformed_token');
         }
+
+        // iss: must match the configured issuer
+        if (($payload['iss'] ?? '') !== $this->issuer) {
+            Logger::error(LogComponent::OIDC, 'ID token issuer mismatch: expected ' . $this->issuer . ', got ' . ($payload['iss'] ?? '(missing)'));
+            ErrorHandler::redirect_to_login_error('error', __('The ID token was issued by an unexpected issuer.', 'scouting-openid-connect'), 'invalid_iss');
+        }
+
+        // aud: must contain the configured client ID
+        $audience = (array) ($payload['aud'] ?? []);
+        if (!in_array($this->clientID, $audience, true)) {
+            Logger::error(LogComponent::OIDC, 'ID token audience does not include the configured client ID');
+            ErrorHandler::redirect_to_login_error('error', __('The ID token was not issued for this client.', 'scouting-openid-connect'), 'invalid_aud');
+        }
+
+        // exp: token must not be expired
+        if (($payload['exp'] ?? 0) < time()) {
+            Logger::error(LogComponent::OIDC, 'ID token has expired (exp=' . ($payload['exp'] ?? 'missing') . ')');
+            ErrorHandler::redirect_to_login_error('error', __('The ID token has expired.', 'scouting-openid-connect'), 'token_expired');
+        }
+
+        // iat: reject tokens that appear to be issued too far in the future (allow small clock skew)
+        if (($payload['iat'] ?? 0) > (time() + 60)) {
+            Logger::error(LogComponent::OIDC, 'ID token has an invalid issued-at time in the future (iat=' . ($payload['iat'] ?? 'missing') . ')');
+            ErrorHandler::redirect_to_login_error('error', __('The ID token has an invalid issued-at timestamp.', 'scouting-openid-connect'), 'invalid_iat');
+        }
+
+        // sub: subject must be present
+        if (empty($payload['sub'])) {
+            Logger::error(LogComponent::OIDC, 'ID token is missing the sub claim');
+            ErrorHandler::redirect_to_login_error('error', __('The ID token is missing the required sub claim.', 'scouting-openid-connect'), 'missing_sub');
+        }
+
+        // Validate the nonce claim against the value sent in the auth request
+        if (empty($stored_nonce)) {
+            Logger::error(LogComponent::OIDC, 'ID token nonce validation failed: no stored nonce available in session state');
+            ErrorHandler::redirect_to_login_error('error', __('The login session is invalid or has expired.', 'scouting-openid-connect'), 'missing_nonce');
+        }
+
+        $token_nonce = $payload['nonce'] ?? '';
+        if ($token_nonce === '') {
+            Logger::error(LogComponent::OIDC, 'ID token is missing the nonce claim');
+            ErrorHandler::redirect_to_login_error('error', __('The ID token is missing the required nonce claim.', 'scouting-openid-connect'), 'missing_token_nonce');
+        }
+
+        if (!hash_equals($stored_nonce, $token_nonce)) {
+            Logger::error(LogComponent::OIDC, 'ID token nonce mismatch: the nonce in the token does not match the session nonce');
+            ErrorHandler::redirect_to_login_error('error', __('The ID token nonce is invalid.', 'scouting-openid-connect'), 'nonce_mismatch');
+        }
+
+        Logger::debug(LogComponent::OIDC, 'ID token validation succeeded');
+        return $payload;
     }
 
     /**
@@ -354,8 +436,9 @@ class OpenIDConnectClient
      * @return void
      */
     public function getWellKnownData(): void {
-        // Define a transient key for caching the well-known data
-        $transient_key = 'scouting_oidc_well_known_data';
+        // Define a transient key for caching the well-known data, scoped to the issuer
+        // so that changing the issuer in settings does not serve stale cached data.
+        $transient_key = 'scouting_oidc_wk_' . md5($this->issuer);
 
         // Check if the well-known data already exists in the cache (transient)
         $well_known_data = get_transient($transient_key);
@@ -400,8 +483,9 @@ class OpenIDConnectClient
      * @return void
      */
     public function getJWKSData(): void {
-        // Define a transient key for caching the JWKS data
-        $transient_key = 'scouting_oidc_jwks_data';
+        // Define a transient key for caching the JWKS data, scoped to the issuer
+        // so that changing the issuer in settings does not serve stale cached keys.
+        $transient_key = 'scouting_oidc_jwks_' . md5($this->issuer);
     
         // Check if the JWKS data already exists in the cache (transient)
         $jwks_data = get_transient($transient_key);
@@ -480,26 +564,32 @@ class OpenIDConnectClient
     }
 
     /**
-     * Generates a random token
+     * Generates cryptographically secure random bytes and converts failures into a controlled auth error.
      *
-     * @param int $length the length of the token
+     * @param int $length the number of bytes to generate
+     * @return string the random bytes
+     */
+    private function generateRandomBytes(int $length): string {
+        try {
+            return random_bytes($length);
+        } catch (\Exception $e) {
+            Logger::error(LogComponent::OIDC, 'Failed to generate random bytes.');
+            ErrorHandler::redirect_to_login_error(
+                'init',
+                __('Authentication is temporarily unavailable. Please try again later.', 'scouting-openid-connect'),
+                'random_bytes_failed'
+            );
+        }
+    }
+
+    /**
+     * Generates a cryptographically secure random token
+     *
+     * @param int $length the length of the token (characters)
      * @return string the token
      */
     private function generateToken(int $length): string {
-        //set up random characters
-        $chars='1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
-        // Get the length of the random characters
-        $char_len = strlen($chars)-1;
-        //store output
-        $output = '';
-        //iterate over $chars
-        while (strlen($output) < $length) {
-            /* get random characters and append to output till the length of the output 
-             is greater than the length provided */
-            $output .= $chars[wp_rand(0, $char_len)];
-        }
-        //return the result
-        return $output;
+        return substr(bin2hex($this->generateRandomBytes((int) ceil($length / 2))), 0, $length);
     }
 
     /**
@@ -515,7 +605,7 @@ class OpenIDConnectClient
 
         $verifier = '';
         while (strlen($verifier) < $length) {
-            $verifier .= $this->base64UrlEncode(random_bytes(32));
+            $verifier .= $this->base64UrlEncode($this->generateRandomBytes(32));
         }
 
         return substr($verifier, 0, $length);
@@ -532,25 +622,40 @@ class OpenIDConnectClient
     }
 
     /**
-     * Generates and stores a nonce in the session
-     * 
+     * Generates and stores a cryptographically secure random nonce keyed by state.
+     *
+     * @param string $state the OIDC state value
      * @return string the nonce
      */
-    private function setNonce(): string {
-        $nonce = wp_create_nonce('scouting_oidc_nonce');
-        $this->session->scouting_oidc_session_set('scouting_oidc_nonce', $nonce);
+    private function setNonceForState(string $state): string {
+        $nonces = $this->session->scouting_oidc_session_get('scouting_oidc_nonces') ?? [];
+        if (!is_array($nonces)) {
+            $nonces = [];
+        }
+
+        $nonce = bin2hex($this->generateRandomBytes(16));
+        $nonces[$state] = $nonce;
+        $this->session->scouting_oidc_session_set('scouting_oidc_nonces', $nonces);
+
         return $nonce;
     }
 
     /**
-     * Get stored nonce from the session
+     * Gets the stored nonce for the given state from the session.
      *
-     * @return string the nonce from the session
+     * @param string $state the OIDC state value
+     * @return string the nonce from the session or an empty string
      */
-    public function getNonce(): string {
-        $nonce = $this->session->scouting_oidc_session_get('scouting_oidc_nonce');
+    public function getNonceForState(string $state): string {
+        $nonces = $this->session->scouting_oidc_session_get('scouting_oidc_nonces');
+        if (is_array($nonces)) {
+            $nonce = $nonces[$state] ?? null;
+            if (is_string($nonce) && $nonce !== '') {
+                return $nonce;
+            }
+        }
 
-        return is_string($nonce) ? $nonce : '';
+        return '';
     }
 
     /**

@@ -13,9 +13,24 @@ class CronJobs {
     public const CLEANUP_CRON_HOOK = 'scouting_oidc_logs_cleanup_daily';
 
     /**
-     * Number of days to retain logs.
+     * Default number of days to retain logs.
      */
-    private const LOG_RETENTION_DAYS = 30;
+    private const DEFAULT_LOG_RETENTION_DAYS = 30;
+
+    /**
+     * Minimum allowed number of days to retain logs.
+     */
+    private const MIN_LOG_RETENTION_DAYS = 1;
+
+    /**
+     * Maximum allowed number of days to retain logs.
+     */
+    private const MAX_LOG_RETENTION_DAYS = 3650;
+
+    /**
+     * Option key for log retention days.
+     */
+    private const LOG_RETENTION_OPTION = 'scouting_oidc_log_retention_days';
 
     /**
      * Schedule cleanup jobs when plugin is activated.
@@ -77,6 +92,7 @@ class CronJobs {
         global $wpdb;
 
         $logs_table = $wpdb->prefix . 'scouting_oidc_logs';
+        $retention_days = self::scouting_oidc_get_log_retention_days();
 
         // Compare against UTC so the retention window matches the UTC timestamp stored in the table.
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
@@ -84,7 +100,7 @@ class CronJobs {
             $wpdb->prepare(
                 'DELETE FROM %i WHERE created_at < (UTC_TIMESTAMP(3) - INTERVAL %d DAY)',
                 $logs_table,
-                self::LOG_RETENTION_DAYS
+                $retention_days
             )
         );
 
@@ -93,7 +109,32 @@ class CronJobs {
             return;
         }
 
-        Logger::info(LogComponent::CRONJOB, 'Cron cleanup removed ' . (string) $result . ' old log row(s).');
+        Logger::info(LogComponent::CRONJOB, 'Cron cleanup removed ' . (string) $result . ' old log row(s) older than ' . (string) $retention_days . ' day(s).');
+    }
+
+    /**
+     * Get the configured log retention period in days.
+     *
+     * @return int
+     */
+    public static function scouting_oidc_get_log_retention_days(): int {
+        $configured_retention_days = get_option(self::LOG_RETENTION_OPTION, self::DEFAULT_LOG_RETENTION_DAYS);
+
+        if (!is_numeric($configured_retention_days)) {
+            return self::DEFAULT_LOG_RETENTION_DAYS;
+        }
+
+        $retention_days = (int) $configured_retention_days;
+
+        if ($retention_days < self::MIN_LOG_RETENTION_DAYS) {
+            return self::MIN_LOG_RETENTION_DAYS;
+        }
+
+        if ($retention_days > self::MAX_LOG_RETENTION_DAYS) {
+            return self::MAX_LOG_RETENTION_DAYS;
+        }
+
+        return $retention_days;
     }
 
     /**

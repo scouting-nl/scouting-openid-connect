@@ -111,15 +111,15 @@ class User {
         $this->emailVerified = rest_sanitize_boolean($user_json_decoded['email_verified'] ?? false);
 
         // Profile scope data
-        $this->fullName = $user_json_decoded['name'] ?? "";
-        $this->firstName = $user_json_decoded['given_name'] ?? "";
-        $this->infix = $user_json_decoded['infix'] ?? "";
-        $this->familyName = $user_json_decoded['family_name'] ?? "";
-        $this->gender = $user_json_decoded['gender'] ?? "unknown";
-        $this->birthdate = $user_json_decoded['birthdate'] ?? "";
+        $this->fullName   = sanitize_text_field($user_json_decoded['name'] ?? '');
+        $this->firstName  = sanitize_text_field($user_json_decoded['given_name'] ?? '');
+        $this->infix      = sanitize_text_field($user_json_decoded['infix'] ?? '');
+        $this->familyName = sanitize_text_field($user_json_decoded['family_name'] ?? '');
+        $this->gender     = sanitize_text_field($user_json_decoded['gender'] ?? 'unknown');
+        $this->birthdate  = sanitize_text_field($user_json_decoded['birthdate'] ?? '');
 
         // Profile scope - Language preference
-        $locale = $user_json_decoded['locale'] ?? '';
+        $locale = sanitize_text_field($user_json_decoded['locale'] ?? '');
         $normalized_locale = strtolower(str_replace('-', '_', $locale));
         if ($normalized_locale === 'nl' || strpos($normalized_locale, 'nl_') === 0) {
             $this->language = 'nl_NL';
@@ -131,26 +131,30 @@ class User {
 
         // Optional scopes data
         // Phone scope data
-        $this->phoneNumber = $user_json_decoded['phone_number'] ?? "";
+        $this->phoneNumber = sanitize_text_field($user_json_decoded['phone_number'] ?? '');
         $this->phoneNumberVerified = rest_sanitize_boolean($user_json_decoded['phone_number_verified'] ?? false);
 
         // Address scope data
         $address = is_array($user_json_decoded['address'] ?? null) ? $user_json_decoded['address'] : [];
-        $this->street = $address['street'] ?? "";
-        $this->houseNumber = $address['house_number'] ?? "";
-        $this->postalCode = $address['postal_code'] ?? "";
-        $this->locality = $address['locality'] ?? "";
-        $this->countryCode = $address['country_code'] ?? "";
+        $this->street      = sanitize_text_field($address['street'] ?? '');
+        $this->houseNumber = sanitize_text_field($address['house_number'] ?? '');
+        $this->postalCode  = sanitize_text_field($address['postal_code'] ?? '');
+        $this->locality    = sanitize_text_field($address['locality'] ?? '');
+        $this->countryCode = sanitize_text_field($address['country_code'] ?? '');
 
         // Validate SOL ID is present
         if (empty($this->sol_id)) {
-            Logger::error(LogComponent::USER, "Construction of User object failed: SOL ID is missing in the user data received from the OpenID Connect server. User data: " . json_encode($user_json_decoded));
+            // Log only which claims are present/absent — never dump personal claim values
+            $present_claims = implode(', ', array_keys($user_json_decoded));
+            Logger::error(LogComponent::USER, "Construction of User object failed: SOL ID is missing in the user data received from the OpenID Connect server. Present claims: " . $present_claims);
             ErrorHandler::redirect_to_login_error('error', __('SOL ID is missing, make sure the "membership" scope is enabled.', 'scouting-openid-connect'), 'sol_id_is_missing');
         }
 
         // Validate email is present
         if (empty($this->email)) {
-            Logger::error(LogComponent::USER, "Construction of User object failed: Email is missing in the user data received from the OpenID Connect server. User data: " . json_encode($user_json_decoded), null, $this->sol_id);
+            // Log only which claims are present/absent — never dump personal claim values
+            $present_claims = implode(', ', array_keys($user_json_decoded));
+            Logger::error(LogComponent::USER, "Construction of User object failed: Email is missing in the user data received from the OpenID Connect server. Present claims: " . $present_claims, null, $this->sol_id);
             ErrorHandler::redirect_to_login_error('error', __('Email is missing, make sure the "email" scope is enabled.', 'scouting-openid-connect'), 'email_is_missing');
         }
     }
