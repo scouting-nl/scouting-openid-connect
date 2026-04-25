@@ -130,11 +130,11 @@ class OpenIDConnectClient
             ErrorHandler::redirect_to_login_error('init', $hint, 'scopes_not_saved');
         }
 
-        // Generate and store a nonce in the session
-        $nonce = $this->setNonce();
-
         // State essentially acts as a session key for OIDC
         $state = $this->setState($this->generateToken(32));
+
+        // Generate and store a nonce bound to this state so multiple pending logins do not overwrite each other
+        $nonce = $this->setNonceForState($state);
 
         // PKCE: generate and store a code verifier bound to this state, then derive the S256 challenge
         $code_verifier = $this->generateCodeVerifier();
@@ -247,7 +247,7 @@ class OpenIDConnectClient
      */
     public function unsetStatesAndNonce(): void {
         $this->session->scouting_oidc_session_delete('scouting_oidc_states');
-        $this->session->scouting_oidc_session_delete('scouting_oidc_nonce');
+        $this->session->scouting_oidc_session_delete('scouting_oidc_nonces');
         $this->session->scouting_oidc_session_delete('scouting_oidc_code_verifiers');
 
         Logger::debug(LogComponent::OIDC, 'OIDC state, nonce and PKCE verifier session data cleared');
@@ -622,25 +622,40 @@ class OpenIDConnectClient
     }
 
     /**
-     * Generates and stores a cryptographically secure random nonce in the session.
-     * 
+     * Generates and stores a cryptographically secure random nonce keyed by state.
+     *
+     * @param string $state the OIDC state value
      * @return string the nonce
      */
-    private function setNonce(): string {
+    private function setNonceForState(string $state): string {
+        $nonces = $this->session->scouting_oidc_session_get('scouting_oidc_nonces') ?? [];
+        if (!is_array($nonces)) {
+            $nonces = [];
+        }
+
         $nonce = bin2hex($this->generateRandomBytes(16));
-        $this->session->scouting_oidc_session_set('scouting_oidc_nonce', $nonce);
+        $nonces[$state] = $nonce;
+        $this->session->scouting_oidc_session_set('scouting_oidc_nonces', $nonces);
+
         return $nonce;
     }
 
     /**
-     * Get stored nonce from the session
+     * Gets the stored nonce for the given state from the session.
      *
-     * @return string the nonce from the session
+     * @param string $state the OIDC state value
+     * @return string the nonce from the session or an empty string
      */
-    public function getNonce(): string {
-        $nonce = $this->session->scouting_oidc_session_get('scouting_oidc_nonce');
+    public function getNonceForState(string $state): string {
+        $nonces = $this->session->scouting_oidc_session_get('scouting_oidc_nonces');
+        if (is_array($nonces)) {
+            $nonce = $nonces[$state] ?? null;
+            if (is_string($nonce) && $nonce !== '') {
+                return $nonce;
+            }
+        }
 
-        return is_string($nonce) ? $nonce : '';
+        return '';
     }
 
     /**

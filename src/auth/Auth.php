@@ -139,7 +139,7 @@ class Auth {
             // Return login URL with hint
             return ErrorHandler::login_error_url('init', $hint, 'init_error');
         }
-        return esc_url($this->scouting_oidc_auth_login_url());
+        return esc_url($login_url);
     }
 
     /**
@@ -210,8 +210,8 @@ class Auth {
             ErrorHandler::redirect_to_login_error('error', __('Code is missing', 'scouting-openid-connect'), 'code_missing');
         }
 
-        // Save nonce before retrieveTokens clears session state, so validateTokens can compare it
-        $stored_nonce = $this->oidc_client->getNonce();
+        // Fetch nonce bound to this specific state before retrieveTokens clears session data
+        $stored_nonce = $this->oidc_client->getNonceForState($state);
 
         // Retrieve tokens from the OpenID Connect server using the validated 'code' parameter
         $this->oidc_client->retrieveTokens($param_code, $state);
