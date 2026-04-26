@@ -1,63 +1,216 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Get the input elements
-    const scoutingOIDCWidthInput = document.getElementById('scoutingOIDCWidthInput');
-    const scoutingOIDCHeightInput = document.getElementById('scoutingOIDCHeightInput');
-    const scoutingOIDCBackgroundColorInput = document.getElementById('scoutingOIDCBackgroundColorInput');
-    const scoutingOIDCTextColorInput = document.getElementById('scoutingOIDCTextColorInput');
-    const scoutingOIDCHideLogoInput = document.getElementById('scoutingOIDCHideLogoInput');
-    const scoutingOIDCDemoLogoutInput = document.getElementById('scoutingOIDCDemoLogoutInput');
+const DEFAULT_SHORTCODE_VALUES = Object.freeze({
+    width: '250',
+    height: '40',
+    backgroundColor: '#4caf50',
+    textColor: '#ffffff',
+});
 
-    // Get the shortcode text element
-    const scoutingOIDCButtonShortCode = document.getElementById('scoutingOIDCButtonShortCode');
+const MIN_DIMENSIONS = Object.freeze({
+    width: 120,
+    height: 40,
+});
 
-    // Get the button element and the image element
-    const scoutingOIDCButton = document.getElementById('scouting-oidc-login-div');
-    const scoutingOIDCLoginImg = document.getElementById('scouting-oidc-login-img');
-    const scoutingOIDCLoginLink = document.getElementById('scouting-oidc-login-link');
-    const scoutingOIDCLoginText = document.getElementById('scouting-oidc-login-text');
+document.addEventListener('DOMContentLoaded', initializeLiveShortcodeEditor);
 
-    // Check if all required elements are present
-    if (!scoutingOIDCWidthInput || !scoutingOIDCHeightInput || !scoutingOIDCBackgroundColorInput || !scoutingOIDCTextColorInput || !scoutingOIDCHideLogoInput || !scoutingOIDCDemoLogoutInput || !scoutingOIDCButtonShortCode || !scoutingOIDCButton || !scoutingOIDCLoginLink || !scoutingOIDCLoginText) {
-        // Required elements are missing, exit the script
+function initializeLiveShortcodeEditor() {
+    const elements = getLiveShortcodeElements();
+
+    if (!hasRequiredElements(elements)) {
         return;
     }
 
-    const loginButtonText =
-        (window.scoutingOIDCLiveShortcodeL10n && window.scoutingOIDCLiveShortcodeL10n.loginText)
-            ? window.scoutingOIDCLiveShortcodeL10n.loginText
-            : 'Login with Scouts Online';
-    const logoutButtonText =
-        (window.scoutingOIDCLiveShortcodeL10n && window.scoutingOIDCLiveShortcodeL10n.logoutText)
-            ? window.scoutingOIDCLiveShortcodeL10n.logoutText
-            : 'Logout';
-
-    const defaultShortcodeValues = {
-        width: '250',
-        height: '40',
-        backgroundColor: '#4caf50',
-        textColor: '#ffffff',
+    const buttonTextLabels = getButtonTextLabels();
+    const state = {
+        loginButtonText: buttonTextLabels.loginButtonText,
+        logoutButtonText: buttonTextLabels.logoutButtonText,
+        lastValidWidth: getInitialDimensionValue(elements.widthInput.value, MIN_DIMENSIONS.width, DEFAULT_SHORTCODE_VALUES.width),
+        lastValidHeight: getInitialDimensionValue(elements.heightInput.value, MIN_DIMENSIONS.height, DEFAULT_SHORTCODE_VALUES.height),
+        loginImgBackup: null,
     };
 
-    const buildShortcodeText = () => {
+    initializeEditorInputs(elements);
+    registerEventListeners(elements, state);
+
+    updateShortcodeText(elements, state);
+    updateDemoLogoutPreview(elements, state);
+    updateLogoVisibility(elements, state);
+
+    elements.loginLink.removeAttribute('href');
+}
+
+function getLiveShortcodeElements() {
+    return {
+        widthInput: document.getElementById('scoutingOIDCWidthInput'),
+        heightInput: document.getElementById('scoutingOIDCHeightInput'),
+        backgroundColorInput: document.getElementById('scoutingOIDCBackgroundColorInput'),
+        textColorInput: document.getElementById('scoutingOIDCTextColorInput'),
+        hideLogoInput: document.getElementById('scoutingOIDCHideLogoInput'),
+        demoLogoutInput: document.getElementById('scoutingOIDCDemoLogoutInput'),
+        shortcodeText: document.getElementById('scoutingOIDCButtonShortCode'),
+        button: document.getElementById('scouting-oidc-login-div'),
+        loginLink: document.getElementById('scouting-oidc-login-link'),
+        loginText: document.getElementById('scouting-oidc-login-text'),
+    };
+}
+
+function hasRequiredElements(elements) {
+    return Boolean(
+        elements.widthInput
+            && elements.heightInput
+            && elements.backgroundColorInput
+            && elements.textColorInput
+            && elements.hideLogoInput
+            && elements.demoLogoutInput
+            && elements.shortcodeText
+            && elements.button
+            && elements.loginLink
+            && elements.loginText
+    );
+}
+
+function getButtonTextLabels() {
+    const localizedText = window.scoutingOIDCLiveShortcodeL10n || {};
+
+    return {
+        loginButtonText: localizedText.loginText || 'Login with Scouts Online',
+        logoutButtonText: localizedText.logoutText || 'Logout',
+    };
+}
+
+function initializeEditorInputs(elements) {
+    elements.hideLogoInput.checked = /hide_logo="true"/.test(elements.shortcodeText.textContent);
+    elements.demoLogoutInput.checked = false;
+}
+
+function registerEventListeners(elements, state) {
+    elements.widthInput.addEventListener('input', (event) => {
+        handleWidthInput(event, elements, state);
+    });
+    elements.heightInput.addEventListener('input', (event) => {
+        handleHeightInput(event, elements, state);
+    });
+    elements.backgroundColorInput.addEventListener('input', (event) => {
+        handleBackgroundColorInput(event, elements, state);
+    });
+    elements.textColorInput.addEventListener('input', (event) => {
+        handleTextColorInput(event, elements, state);
+    });
+    elements.hideLogoInput.addEventListener('change', () => {
+        handleHideLogoChange(elements, state);
+    });
+    elements.demoLogoutInput.addEventListener('change', () => {
+        updateDemoLogoutPreview(elements, state);
+    });
+}
+
+function handleWidthInput(event, elements, state) {
+    const validWidth = getValidDimensionValue(event.target.value, MIN_DIMENSIONS.width);
+
+    if (validWidth === null) {
+        setInputValidationState(event.target, false);
+        return;
+    }
+
+    setInputValidationState(event.target, true);
+    state.lastValidWidth = validWidth;
+    elements.button.style.width = `${validWidth}px`;
+
+    updateShortcodeText(elements, state);
+    updateLogoVisibility(elements, state);
+}
+
+function handleHeightInput(event, elements, state) {
+    const validHeight = getValidDimensionValue(event.target.value, MIN_DIMENSIONS.height);
+
+    if (validHeight === null) {
+        setInputValidationState(event.target, false);
+        return;
+    }
+
+    setInputValidationState(event.target, true);
+    state.lastValidHeight = validHeight;
+    elements.button.style.height = `${validHeight}px`;
+
+    updateShortcodeText(elements, state);
+}
+
+function handleBackgroundColorInput(event, elements, state) {
+    const validBackgroundColor = getValidHexColor(event.target.value);
+
+    if (validBackgroundColor === null) {
+        setInputValidationState(event.target, false);
+        return;
+    }
+
+    setInputValidationState(event.target, true);
+    elements.loginLink.style.backgroundColor = validBackgroundColor;
+
+    updateShortcodeText(elements, state);
+}
+
+function handleTextColorInput(event, elements, state) {
+    const validTextColor = getValidHexColor(event.target.value);
+
+    if (validTextColor === null) {
+        setInputValidationState(event.target, false);
+        return;
+    }
+
+    setInputValidationState(event.target, true);
+    elements.loginLink.style.color = validTextColor;
+
+    updateShortcodeText(elements, state);
+}
+
+function handleHideLogoChange(elements, state) {
+    updateShortcodeText(elements, state);
+    updateLogoVisibility(elements, state);
+}
+
+function updateDemoLogoutPreview(elements, state) {
+    elements.loginText.textContent = elements.demoLogoutInput.checked
+        ? state.logoutButtonText
+        : state.loginButtonText;
+}
+
+function updateShortcodeText(elements, state) {
+    elements.shortcodeText.textContent = buildShortcodeText(elements, state);
+}
+
+function buildShortcodeText(elements, state) {
     const shortcodeAttributes = [];
+    const effectiveWidth = getEffectiveDimensionValue(
+        elements.widthInput.value,
+        MIN_DIMENSIONS.width,
+        state.lastValidWidth,
+        DEFAULT_SHORTCODE_VALUES.width
+    );
+    const effectiveHeight = getEffectiveDimensionValue(
+        elements.heightInput.value,
+        MIN_DIMENSIONS.height,
+        state.lastValidHeight,
+        DEFAULT_SHORTCODE_VALUES.height
+    );
+    const effectiveBackgroundColor = getEffectiveColorValue(elements.backgroundColorInput.value, DEFAULT_SHORTCODE_VALUES.backgroundColor);
+    const effectiveTextColor = getEffectiveColorValue(elements.textColorInput.value, DEFAULT_SHORTCODE_VALUES.textColor);
 
-    if (scoutingOIDCWidthInput.value !== defaultShortcodeValues.width) {
-        shortcodeAttributes.push(`width="${scoutingOIDCWidthInput.value}"`);
+    if (effectiveWidth !== DEFAULT_SHORTCODE_VALUES.width) {
+        shortcodeAttributes.push(`width="${effectiveWidth}"`);
     }
 
-    if (scoutingOIDCHeightInput.value !== defaultShortcodeValues.height) {
-        shortcodeAttributes.push(`height="${scoutingOIDCHeightInput.value}"`);
+    if (effectiveHeight !== DEFAULT_SHORTCODE_VALUES.height) {
+        shortcodeAttributes.push(`height="${effectiveHeight}"`);
     }
 
-    if (scoutingOIDCBackgroundColorInput.value.toLowerCase() !== defaultShortcodeValues.backgroundColor) {
-        shortcodeAttributes.push(`background_color="${scoutingOIDCBackgroundColorInput.value}"`);
+    if (effectiveBackgroundColor !== DEFAULT_SHORTCODE_VALUES.backgroundColor) {
+        shortcodeAttributes.push(`background_color="${effectiveBackgroundColor}"`);
     }
 
-    if (scoutingOIDCTextColorInput.value.toLowerCase() !== defaultShortcodeValues.textColor) {
-        shortcodeAttributes.push(`text_color="${scoutingOIDCTextColorInput.value}"`);
+    if (effectiveTextColor !== DEFAULT_SHORTCODE_VALUES.textColor) {
+        shortcodeAttributes.push(`text_color="${effectiveTextColor}"`);
     }
 
-    if (scoutingOIDCHideLogoInput.checked) {
+    if (elements.hideLogoInput.checked) {
         shortcodeAttributes.push('hide_logo="true"');
     }
 
@@ -66,135 +219,82 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     return `[scouting_oidc_button ${shortcodeAttributes.join(' ')}]`;
-    };
+}
 
-    const updateShortcodeText = () => {
-    scoutingOIDCButtonShortCode.textContent = buildShortcodeText();
-    };
+function updateLogoVisibility(elements, state) {
+    const effectiveWidth = parseInt(
+        getEffectiveDimensionValue(
+            elements.widthInput.value,
+            MIN_DIMENSIONS.width,
+            state.lastValidWidth,
+            DEFAULT_SHORTCODE_VALUES.width
+        ),
+        10
+    );
+    const shouldHideLogo = elements.hideLogoInput.checked || effectiveWidth < 225;
+    const currentLogo = elements.loginLink.querySelector('#scouting-oidc-login-img');
 
-    // Variable to hold a backup of the image element
-    let scoutingOIDCLoginImgBackup = null;
-
-    const updateLogoVisibility = () => {
-    const currentWidth = parseInt(scoutingOIDCWidthInput.value, 10);
-    const hideLogo = scoutingOIDCHideLogoInput.checked || (!isNaN(currentWidth) && currentWidth < 225);
-
-    if (hideLogo) {
-        // Keep a reference so the image can be restored when conditions allow it.
-        if (scoutingOIDCLoginImg && scoutingOIDCLoginImg.parentElement) {
-            scoutingOIDCLoginImgBackup = scoutingOIDCLoginImg;
-            scoutingOIDCLoginImg.remove();
+    if (shouldHideLogo) {
+        if (currentLogo) {
+            // Keep a reference so the image can be restored when conditions allow it.
+            state.loginImgBackup = currentLogo;
+            currentLogo.remove();
         }
         return;
     }
 
-    if (scoutingOIDCLoginImgBackup && !scoutingOIDCLoginLink.contains(scoutingOIDCLoginImgBackup)) {
-        scoutingOIDCLoginLink.insertBefore(scoutingOIDCLoginImgBackup, scoutingOIDCLoginLink.firstChild);
-        scoutingOIDCLoginImgBackup = null;
+    if (!currentLogo && state.loginImgBackup) {
+        elements.loginLink.insertBefore(state.loginImgBackup, elements.loginLink.firstChild);
+        state.loginImgBackup = null;
     }
-    };
+}
 
-    const updateValueWidth = (event) => {
-    // Check if width is a number above 120 and not empty
-    let newWidth = event.target.value;
-    if (newWidth === '' || isNaN(newWidth) || newWidth < 120) {
-        // Change border color to red
-        event.target.style.border = '2px solid red';
-        return;
-    }
-    // Change border color to default
-    event.target.style.border = '';
+function getValidDimensionValue(rawValue, minValue) {
+    const parsedValue = parseInt(rawValue, 10);
 
-    // Update button width
-    scoutingOIDCButton.style.width = `${newWidth}px`;
-
-    // Rebuild shortcode and hide attributes that are still defaults.
-    updateShortcodeText();
-
-    // Logo visibility depends on both width and hide-logo checkbox.
-    updateLogoVisibility();
-    };
-
-    const updateValueHeight = (event) => {
-    // check if width is a number above 40 and not empty
-    let newHeight = event.target.value;
-    if (newHeight === '' || isNaN(newHeight) || newHeight < 40) {
-        // Change border color to red
-        event.target.style.border = '2px solid red';
-        return;
-    }
-    // Change border color to default
-    event.target.style.border = '';
-
-    // Update button height
-    scoutingOIDCButton.style.height = `${newHeight}px`;
-
-    // Rebuild shortcode and hide attributes that are still defaults.
-    updateShortcodeText();
-    };
-
-    const updateValueBackgroundColor = (event) => {
-    // Check if background color is not empty
-    let newBackgroundColor = event.target.value;
-    if (newBackgroundColor === '') {
-        // Change border color to red
-        event.target.style.border = '2px solid red';
-        return;
-    }
-    // Change border color to default
-    event.target.style.border = '';
-
-    // Update button background color
-    scoutingOIDCLoginLink.style.backgroundColor = newBackgroundColor;
-
-    // Rebuild shortcode and hide attributes that are still defaults.
-    updateShortcodeText();
+    if (rawValue === '' || Number.isNaN(parsedValue) || parsedValue < minValue) {
+        return null;
     }
 
-    const updateValueTextColor = (event) => {
-    // Check if text color is not empty
-    let newTextColor = event.target.value;
-    if (newTextColor === '') {
-        // Change border color to red
-        event.target.style.border = '2px solid red';
-        return;
-    }
-    // Change border color to default
-    event.target.style.border = '';
+    return String(parsedValue);
+}
 
-    // Update button text color
-    scoutingOIDCLoginLink.style.color = newTextColor;
+function getInitialDimensionValue(rawValue, minValue, defaultValue) {
+    const validValue = getValidDimensionValue(rawValue, minValue);
 
-    // Rebuild shortcode and hide attributes that are still defaults.
-    updateShortcodeText();
+    return validValue === null ? defaultValue : validValue;
+}
+
+function getEffectiveDimensionValue(rawValue, minValue, fallbackValue, defaultValue) {
+    const validValue = getValidDimensionValue(rawValue, minValue);
+
+    if (validValue !== null) {
+        return validValue;
     }
 
-    const updateValueHideLogo = (event) => {
-    // Rebuild shortcode and hide attributes that are still defaults.
-    updateShortcodeText();
-
-    // Update preview logo state immediately.
-    updateLogoVisibility();
+    if (typeof fallbackValue === 'string' && fallbackValue !== '') {
+        return fallbackValue;
     }
 
-    const updateDemoLogoutPreview = (event) => {
-    scoutingOIDCLoginText.textContent = event.target.checked ? logoutButtonText : loginButtonText;
+    return defaultValue;
+}
+
+function getEffectiveColorValue(rawValue, defaultValue) {
+    const validColor = getValidHexColor(rawValue);
+
+    return validColor === null ? defaultValue : validColor;
+}
+
+function getValidHexColor(rawValue) {
+    const normalizedColor = String(rawValue || '').trim().toLowerCase();
+
+    if (!/^#[0-9a-f]{6}$/.test(normalizedColor)) {
+        return null;
     }
 
-    scoutingOIDCWidthInput.addEventListener('input', updateValueWidth);
-    scoutingOIDCHeightInput.addEventListener('input', updateValueHeight);
-    scoutingOIDCBackgroundColorInput.addEventListener('input', updateValueBackgroundColor);
-    scoutingOIDCTextColorInput.addEventListener('input', updateValueTextColor);
-    scoutingOIDCHideLogoInput.addEventListener('change', updateValueHideLogo);
-    scoutingOIDCDemoLogoutInput.addEventListener('change', updateDemoLogoutPreview);
+    return normalizedColor;
+}
 
-    // Keep checkbox state aligned with the initial shortcode text.
-    scoutingOIDCHideLogoInput.checked = /hide_logo="true"/.test(scoutingOIDCButtonShortCode.textContent);
-    scoutingOIDCDemoLogoutInput.checked = false;
-    updateShortcodeText();
-    updateDemoLogoutPreview({ target: scoutingOIDCDemoLogoutInput });
-    updateLogoVisibility();
-
-    // Remove href attribute from the link
-    scoutingOIDCLoginLink.removeAttribute('href');
-});
+function setInputValidationState(inputElement, isValid) {
+    inputElement.style.border = isValid ? '' : '2px solid red';
+}
