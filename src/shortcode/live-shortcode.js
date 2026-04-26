@@ -1,145 +1,302 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Get the input elements
-    const scoutingOIDCWidthInput = document.getElementById('scoutingOIDCWidthInput');
-    const scoutingOIDCHeightInput = document.getElementById('scoutingOIDCHeightInput');
-    const scoutingOIDCBackgroundColorInput = document.getElementById('scoutingOIDCBackgroundColorInput');
-    const scoutingOIDCTextColorInput = document.getElementById('scoutingOIDCTextColorInput');
-
-    // Get the shortcode text element
-    const scoutingOIDCButtonShortCode = document.getElementById('scoutingOIDCButtonShortCode');
-
-    // Get the button element and the image element
-    const scoutingOIDCButton = document.getElementById('scouting-oidc-login-div');
-    const scoutingOIDCLoginImg = document.getElementById('scouting-oidc-login-img');
-    const scoutingOIDCLoginLink = document.getElementById('scouting-oidc-login-link');
-
-    // Check if all required elements are present
-    if (!scoutingOIDCWidthInput || !scoutingOIDCHeightInput || !scoutingOIDCBackgroundColorInput || !scoutingOIDCTextColorInput || !scoutingOIDCButtonShortCode || !scoutingOIDCButton || !scoutingOIDCLoginLink) {
-        // Required elements are missing, exit the script
-        return;
-    }
-
-    // Variable to hold a backup of the image element
-    let scoutingOIDCLoginImgBackup = null;
-
-    const updateValueWidth = (event) => {
-    // Get the current shortcode text
-    let currentText = scoutingOIDCButtonShortCode.textContent;
-
-    // Check if width is a number above 120 and not empty
-    let newWidth = event.target.value;
-    if (newWidth === '' || isNaN(newWidth) || newWidth < 120) {
-        // Change border color to red
-        event.target.style.border = '2px solid red';
-        return;
-    }
-    // Change border color to default
-    event.target.style.border = '';
-
-    // Use a regular expression to replace the width attribute value
-    let updatedText = currentText.replace(/width="\d+"/, `width="${newWidth}"`);
-
-    // Update the content of the element
-    scoutingOIDCButtonShortCode.textContent = updatedText;
-
-    // Update button width
-    scoutingOIDCButton.style.width = `${newWidth}px`;
-
-    // Check if the new width is less than 225
-    if (newWidth < 225) {
-        // Remove the image element if it exists
-        if (scoutingOIDCLoginImg) {
-            scoutingOIDCLoginImgBackup = scoutingOIDCLoginImg; // Backup the image
-            scoutingOIDCLoginImg.remove();
-        }
-    }
-    else {
-        // Add the image element if it exists
-        if (scoutingOIDCLoginImgBackup) {
-            // Add the image element as the first child if it exists
-            scoutingOIDCLoginLink.insertBefore(scoutingOIDCLoginImgBackup, scoutingOIDCLoginLink.firstChild);
-            scoutingOIDCLoginImgBackup = null; // Clear the backup after restoring
-        }
-    }
-    };
-
-    const updateValueHeight = (event) => {
-    // Get the current shortcode text
-    let currentText = scoutingOIDCButtonShortCode.textContent;
-
-    // check if width is a number above 40 and not empty
-    let newHeight = event.target.value;
-    if (newHeight === '' || isNaN(newHeight) || newHeight < 40) {
-        // Change border color to red
-        event.target.style.border = '2px solid red';
-        return;
-    }
-    // Change border color to default
-    event.target.style.border = '';
-
-    // Use a regular expression to replace the height attribute value
-    let updatedText = currentText.replace(/height="\d+"/, `height="${newHeight}"`);
-    
-    // Update the content of the element
-    scoutingOIDCButtonShortCode.textContent = updatedText;
-
-    // Update button height
-    scoutingOIDCButton.style.height = `${newHeight}px`;
-    };
-
-    const updateValueBackgroundColor = (event) => {
-    // Get the current shortcode text
-    let currentText = scoutingOIDCButtonShortCode.textContent;
-
-    // Check if background color is not empty
-    let newBackgroundColor = event.target.value;
-    if (newBackgroundColor === '') {
-        // Change border color to red
-        event.target.style.border = '2px solid red';
-        return;
-    }
-    // Change border color to default
-    event.target.style.border = '';
-
-    // Use a regular expression to replace the background_color attribute value
-    let updatedText = currentText.replace(/background_color="#\w+"/, `background_color="${newBackgroundColor}"`);
-    
-    // Update the content of the element
-    scoutingOIDCButtonShortCode.textContent = updatedText;
-
-    // Update button background color
-    scoutingOIDCLoginLink.style.backgroundColor = newBackgroundColor;
-    }
-
-    const updateValueTextColor = (event) => {
-    // Get the current shortcode text
-    let currentText = scoutingOIDCButtonShortCode.textContent;
-
-    // Check if text color is not empty
-    let newTextColor = event.target.value;
-    if (newTextColor === '') {
-        // Change border color to red
-        event.target.style.border = '2px solid red';
-        return;
-    }
-    // Change border color to default
-    event.target.style.border = '';
-
-    // Use a regular expression to replace the text_color attribute value
-    let updatedText = currentText.replace(/text_color="#\w+"/, `text_color="${newTextColor}"`);
-    
-    // Update the content of the element
-    scoutingOIDCButtonShortCode.textContent = updatedText;
-
-    // Update button text color
-    scoutingOIDCLoginLink.style.color = newTextColor;
-    }
-
-    scoutingOIDCWidthInput.addEventListener('input', updateValueWidth);
-    scoutingOIDCHeightInput.addEventListener('input', updateValueHeight);
-    scoutingOIDCBackgroundColorInput.addEventListener('input', updateValueBackgroundColor);
-    scoutingOIDCTextColorInput.addEventListener('input', updateValueTextColor);
-
-    // Remove href attribute from the link
-    scoutingOIDCLoginLink.removeAttribute('href');
+const DEFAULT_SHORTCODE_VALUES = Object.freeze({
+    width: '250',
+    height: '40',
+    backgroundColor: '#4caf50',
+    textColor: '#ffffff',
 });
+
+const MIN_DIMENSIONS = Object.freeze({
+    width: 120,
+    height: 40,
+});
+
+document.addEventListener('DOMContentLoaded', initializeLiveShortcodeEditor);
+
+function initializeLiveShortcodeEditor() {
+    const elements = getLiveShortcodeElements();
+
+    if (!hasRequiredElements(elements)) {
+        return;
+    }
+
+    const buttonTextLabels = getButtonTextLabels();
+    const state = {
+        loginButtonText: buttonTextLabels.loginButtonText,
+        logoutButtonText: buttonTextLabels.logoutButtonText,
+        lastValidWidth: getInitialDimensionValue(elements.widthInput.value, MIN_DIMENSIONS.width, DEFAULT_SHORTCODE_VALUES.width),
+        lastValidHeight: getInitialDimensionValue(elements.heightInput.value, MIN_DIMENSIONS.height, DEFAULT_SHORTCODE_VALUES.height),
+        loginImgBackup: null,
+    };
+
+    initializeEditorInputs(elements);
+    registerEventListeners(elements, state);
+
+    updateShortcodeText(elements, state);
+    updateDemoLogoutPreview(elements, state);
+    updateLogoVisibility(elements, state);
+
+    elements.loginLink.removeAttribute('href');
+}
+
+function getLiveShortcodeElements() {
+    const previewContainer = document.getElementById('scoutingOIDCLivePreviewContainer');
+
+    return {
+        widthInput: document.getElementById('scoutingOIDCWidthInput'),
+        heightInput: document.getElementById('scoutingOIDCHeightInput'),
+        backgroundColorInput: document.getElementById('scoutingOIDCBackgroundColorInput'),
+        textColorInput: document.getElementById('scoutingOIDCTextColorInput'),
+        hideLogoInput: document.getElementById('scoutingOIDCHideLogoInput'),
+        demoLogoutInput: document.getElementById('scoutingOIDCDemoLogoutInput'),
+        shortcodeText: document.getElementById('scoutingOIDCButtonShortCode'),
+        button: previewContainer ? previewContainer.querySelector('.scouting-oidc-login-div, #scouting-oidc-login-div') : null,
+        loginLink: previewContainer ? previewContainer.querySelector('.scouting-oidc-login-link, #scouting-oidc-login-link') : null,
+        loginText: previewContainer ? previewContainer.querySelector('.scouting-oidc-login-text, #scouting-oidc-login-text') : null,
+    };
+}
+
+function hasRequiredElements(elements) {
+    return Boolean(
+        elements.widthInput
+            && elements.heightInput
+            && elements.backgroundColorInput
+            && elements.textColorInput
+            && elements.hideLogoInput
+            && elements.demoLogoutInput
+            && elements.shortcodeText
+            && elements.button
+            && elements.loginLink
+            && elements.loginText
+    );
+}
+
+function getButtonTextLabels() {
+    const localizedText = window.scoutingOIDCLiveShortcodeL10n || {};
+
+    return {
+        loginButtonText: localizedText.loginText || 'Login with Scouts Online',
+        logoutButtonText: localizedText.logoutText || 'Logout',
+    };
+}
+
+function initializeEditorInputs(elements) {
+    elements.hideLogoInput.checked = /hide_logo="true"/.test(elements.shortcodeText.textContent);
+    elements.demoLogoutInput.checked = false;
+}
+
+function registerEventListeners(elements, state) {
+    elements.widthInput.addEventListener('input', (event) => {
+        handleWidthInput(event, elements, state);
+    });
+    elements.heightInput.addEventListener('input', (event) => {
+        handleHeightInput(event, elements, state);
+    });
+    elements.backgroundColorInput.addEventListener('input', (event) => {
+        handleBackgroundColorInput(event, elements, state);
+    });
+    elements.textColorInput.addEventListener('input', (event) => {
+        handleTextColorInput(event, elements, state);
+    });
+    elements.hideLogoInput.addEventListener('change', () => {
+        handleHideLogoChange(elements, state);
+    });
+    elements.demoLogoutInput.addEventListener('change', () => {
+        updateDemoLogoutPreview(elements, state);
+    });
+}
+
+function handleWidthInput(event, elements, state) {
+    const validWidth = getValidDimensionValue(event.target.value, MIN_DIMENSIONS.width);
+
+    if (validWidth === null) {
+        setInputValidationState(event.target, false);
+        return;
+    }
+
+    setInputValidationState(event.target, true);
+    state.lastValidWidth = validWidth;
+    elements.button.style.width = `${validWidth}px`;
+
+    updateShortcodeText(elements, state);
+    updateLogoVisibility(elements, state);
+}
+
+function handleHeightInput(event, elements, state) {
+    const validHeight = getValidDimensionValue(event.target.value, MIN_DIMENSIONS.height);
+
+    if (validHeight === null) {
+        setInputValidationState(event.target, false);
+        return;
+    }
+
+    setInputValidationState(event.target, true);
+    state.lastValidHeight = validHeight;
+    elements.button.style.height = `${validHeight}px`;
+
+    updateShortcodeText(elements, state);
+}
+
+function handleBackgroundColorInput(event, elements, state) {
+    const validBackgroundColor = getValidHexColor(event.target.value);
+
+    if (validBackgroundColor === null) {
+        setInputValidationState(event.target, false);
+        return;
+    }
+
+    setInputValidationState(event.target, true);
+    elements.loginLink.style.backgroundColor = validBackgroundColor;
+
+    updateShortcodeText(elements, state);
+}
+
+function handleTextColorInput(event, elements, state) {
+    const validTextColor = getValidHexColor(event.target.value);
+
+    if (validTextColor === null) {
+        setInputValidationState(event.target, false);
+        return;
+    }
+
+    setInputValidationState(event.target, true);
+    elements.loginLink.style.color = validTextColor;
+
+    updateShortcodeText(elements, state);
+}
+
+function handleHideLogoChange(elements, state) {
+    updateShortcodeText(elements, state);
+    updateLogoVisibility(elements, state);
+}
+
+function updateDemoLogoutPreview(elements, state) {
+    elements.loginText.textContent = elements.demoLogoutInput.checked
+        ? state.logoutButtonText
+        : state.loginButtonText;
+}
+
+function updateShortcodeText(elements, state) {
+    elements.shortcodeText.textContent = buildShortcodeText(elements, state);
+}
+
+function buildShortcodeText(elements, state) {
+    const shortcodeAttributes = [];
+    const effectiveWidth = getEffectiveDimensionValue(
+        elements.widthInput.value,
+        MIN_DIMENSIONS.width,
+        state.lastValidWidth,
+        DEFAULT_SHORTCODE_VALUES.width
+    );
+    const effectiveHeight = getEffectiveDimensionValue(
+        elements.heightInput.value,
+        MIN_DIMENSIONS.height,
+        state.lastValidHeight,
+        DEFAULT_SHORTCODE_VALUES.height
+    );
+    const effectiveBackgroundColor = getEffectiveColorValue(elements.backgroundColorInput.value, DEFAULT_SHORTCODE_VALUES.backgroundColor);
+    const effectiveTextColor = getEffectiveColorValue(elements.textColorInput.value, DEFAULT_SHORTCODE_VALUES.textColor);
+
+    if (effectiveWidth !== DEFAULT_SHORTCODE_VALUES.width) {
+        shortcodeAttributes.push(`width="${effectiveWidth}"`);
+    }
+
+    if (effectiveHeight !== DEFAULT_SHORTCODE_VALUES.height) {
+        shortcodeAttributes.push(`height="${effectiveHeight}"`);
+    }
+
+    if (effectiveBackgroundColor !== DEFAULT_SHORTCODE_VALUES.backgroundColor) {
+        shortcodeAttributes.push(`background_color="${effectiveBackgroundColor}"`);
+    }
+
+    if (effectiveTextColor !== DEFAULT_SHORTCODE_VALUES.textColor) {
+        shortcodeAttributes.push(`text_color="${effectiveTextColor}"`);
+    }
+
+    if (elements.hideLogoInput.checked) {
+        shortcodeAttributes.push('hide_logo="true"');
+    }
+
+    if (shortcodeAttributes.length === 0) {
+        return '[scouting_oidc_button]';
+    }
+
+    return `[scouting_oidc_button ${shortcodeAttributes.join(' ')}]`;
+}
+
+function updateLogoVisibility(elements, state) {
+    const effectiveWidth = parseInt(
+        getEffectiveDimensionValue(
+            elements.widthInput.value,
+            MIN_DIMENSIONS.width,
+            state.lastValidWidth,
+            DEFAULT_SHORTCODE_VALUES.width
+        ),
+        10
+    );
+    const shouldHideLogo = elements.hideLogoInput.checked || effectiveWidth < 225;
+    const currentLogo = elements.loginLink.querySelector('.scouting-oidc-login-img, #scouting-oidc-login-img, [id^="scouting-oidc-login-img-"]');
+
+    if (shouldHideLogo) {
+        if (currentLogo) {
+            // Keep a reference so the image can be restored when conditions allow it.
+            state.loginImgBackup = currentLogo;
+            currentLogo.remove();
+        }
+        return;
+    }
+
+    if (!currentLogo && state.loginImgBackup) {
+        elements.loginLink.insertBefore(state.loginImgBackup, elements.loginLink.firstChild);
+        state.loginImgBackup = null;
+    }
+}
+
+function getValidDimensionValue(rawValue, minValue) {
+    const parsedValue = parseInt(rawValue, 10);
+
+    if (rawValue === '' || Number.isNaN(parsedValue) || parsedValue < minValue) {
+        return null;
+    }
+
+    return String(parsedValue);
+}
+
+function getInitialDimensionValue(rawValue, minValue, defaultValue) {
+    const validValue = getValidDimensionValue(rawValue, minValue);
+
+    return validValue === null ? defaultValue : validValue;
+}
+
+function getEffectiveDimensionValue(rawValue, minValue, fallbackValue, defaultValue) {
+    const validValue = getValidDimensionValue(rawValue, minValue);
+
+    if (validValue !== null) {
+        return validValue;
+    }
+
+    if (typeof fallbackValue === 'string' && fallbackValue !== '') {
+        return fallbackValue;
+    }
+
+    return defaultValue;
+}
+
+function getEffectiveColorValue(rawValue, defaultValue) {
+    const validColor = getValidHexColor(rawValue);
+
+    return validColor === null ? defaultValue : validColor;
+}
+
+function getValidHexColor(rawValue) {
+    const normalizedColor = String(rawValue || '').trim().toLowerCase();
+
+    if (!/^#[0-9a-f]{6}$/.test(normalizedColor)) {
+        return null;
+    }
+
+    return normalizedColor;
+}
+
+function setInputValidationState(inputElement, isValid) {
+    inputElement.style.border = isValid ? '' : '2px solid red';
+}

@@ -64,6 +64,7 @@ class Shortcode
                         <li><code>height</code>: <?php esc_html_e('The height of the button in pixels.', 'scouting-openid-connect'); ?></li>
                         <li><code>background_color</code>: <?php esc_html_e('The background color of the button.', 'scouting-openid-connect'); ?></li>
                         <li><code>text_color</code>: <?php esc_html_e('The text color of the button.', 'scouting-openid-connect'); ?></li>
+                        <li><code>hide_logo</code>: <?php esc_html_e('Set to true to hide the logo.', 'scouting-openid-connect'); ?></li>
                     </ul>
                 </div>
                 <div style="float: left; width: 50%; padding-left: 10px; box-sizing: border-box;">
@@ -84,15 +85,25 @@ class Shortcode
                         <label for="scoutingOIDCTextColorInput">Text Color</label>
                         <input type="color" id="scoutingOIDCTextColorInput" value="#ffffff" style="width: 75px;">
                         <p class="description"><?php esc_html_e('The default color is #ffffff.', 'scouting-openid-connect'); ?></p>
+
+                        <label for="scoutingOIDCHideLogoInput">Hide Logo</label>
+                        <input type="checkbox" id="scoutingOIDCHideLogoInput">
+                        <p class="description"><?php esc_html_e('Check this box to hide the logo on the button.', 'scouting-openid-connect'); ?></p>
+
+                        <label for="scoutingOIDCDemoLogoutInput">Preview Logout Button</label>
+                        <input type="checkbox" id="scoutingOIDCDemoLogoutInput">
+                        <p class="description"><?php esc_html_e('For demo purposes only: check this box to preview the logout button text.', 'scouting-openid-connect'); ?></p>
                     </form>
                 </div>
             </div>
 
             <div>
-                <p><?php esc_html_e('Example of the shortcode with custom attributes:', 'scouting-openid-connect'); ?></p>
-                <pre><code id="scoutingOIDCButtonShortCode">[scouting_oidc_button width="250" height="40" background_color="#4caf50" text_color="#ffffff"]</code></pre>
+                <p><?php esc_html_e('Generated shortcode (default attributes shown below until edited):', 'scouting-openid-connect'); ?></p>
+                <pre><code id="scoutingOIDCButtonShortCode">[scouting_oidc_button]</code></pre>
                 <p><?php esc_html_e('Example of the shortcode above:', 'scouting-openid-connect'); ?></p>
-                <?php echo do_shortcode('[scouting_oidc_button width="250" height="40" background_color="#4caf50" text_color="#ffffff"]'); ?>
+                <div id="scoutingOIDCLivePreviewContainer">
+                    <?php echo do_shortcode('[scouting_oidc_button]'); ?>
+                </div>
                 <p><strong><?php esc_html_e('Note: The button is not interactive in this preview.', 'scouting-openid-connect'); ?></strong></p>
             </div>
 
@@ -127,6 +138,15 @@ class Shortcode
             array(
                 'strategy' => 'defer',                  // Add the defer attribute
                 'in_footer' => true                     // Load the script in the footer
+            )
+        );
+
+        wp_localize_script(
+            'live-shortcode-script',
+            'scoutingOIDCLiveShortcodeL10n',
+            array(
+                'loginText' => __('Login with Scouts Online', 'scouting-openid-connect'),
+                'logoutText' => __('Logout', 'scouting-openid-connect'),
             )
         );
     }
