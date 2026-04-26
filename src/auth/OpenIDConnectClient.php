@@ -408,25 +408,40 @@ class OpenIDConnectClient
         // Check if end_session_endpoint is available in well-known data
         if (!isset($this->wellKnownData->end_session_endpoint)) {
             Logger::warning(LogComponent::OIDC, 'While constructing logout URL, end_session_endpoint was missing from well-known data, falling back to home URL');
-            return home_url();
+            $logout_url = home_url();
+        } else {
+            // Ensure tokens is an object and id_token is available
+            $id_token = is_object($this->tokens) && property_exists($this->tokens, 'id_token') ? $this->tokens->id_token : null;
+
+            // Redirect to WordPress home URL if ID token is not available
+            if (!$id_token) {
+                Logger::warning(LogComponent::OIDC, 'While constructing logout URL, no id_token available, falling back to home URL');
+                $logout_url = home_url();
+            } else {
+                // add id_token_hint & client_id to the logout URL
+                $logout_params = [
+                    'id_token_hint' => $id_token,
+                    'client_id' => $this->clientID,
+                ];
+
+                $logout_url = $this->wellKnownData->end_session_endpoint . '?' . http_build_query($logout_params, '', '&', PHP_QUERY_RFC1738);
+            }
         }
 
-        // Ensure tokens is an object and id_token is available
-        $id_token = is_object($this->tokens) && property_exists($this->tokens, 'id_token') ? $this->tokens->id_token : null;
-
-        // Redirect to WordPress home URL if ID token is not available
-        if (!$id_token) {
-            Logger::warning(LogComponent::OIDC, 'While constructing logout URL, no id_token available, falling back to home URL');
-            return home_url();
+        // Make sure the external logout host is allowed for safe redirects.
+        // wp_safe_redirect() checks the host against the 'allowed_redirect_hosts' filter,
+        // so we add the logout host here to avoid blocking a trusted external logout URL.
+        $host = wp_parse_url($logout_url, PHP_URL_HOST);
+        if (!empty($host)) {
+            add_filter('allowed_redirect_hosts', function (array $hosts) use ($host): array {
+                if (!in_array($host, $hosts, true)) {
+                    $hosts[] = $host;
+                }
+                return $hosts;
+            });
         }
 
-        // add id_token_hint & client_id to the logout URL
-        $logout_params = [
-            'id_token_hint' => $id_token,
-            'client_id' => $this->clientID,
-        ];
-        
-        return $this->wellKnownData->end_session_endpoint . '?' . http_build_query($logout_params, '', '&', PHP_QUERY_RFC1738);
+        return $logout_url;
     }
 
     /**

@@ -64,31 +64,18 @@ class Auth {
     /**
      * Create shortcode with a login button
      * 
-     * @param array $atts the shortcode attributes for customizing the button (width, height, background_color, text_color)
-     * @return string the HTML for the login button or an empty string if the button cannot be rendered due to missing configuration or errors
+     * @param array $atts the shortcode attributes for customizing the button (width, height, background_color, text_color, hide_logo)
+     * @return string the HTML for the login/logout button, or an empty string if the button cannot be rendered due to missing configuration or errors
      */
     public function scouting_oidc_auth_login_button_shortcode(array $atts = array()): string {
-        // Check if the client ID and client secret are empty 
-        if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
-            Logger::critical(LogComponent::AUTH, "Client ID or Client Secret are missing in the configuration, shortcode button will not be rendered");
-            return '';
-        }
-
-        $login_url = $this->scouting_oidc_auth_login_url();
-
-        // Check if the login URL starts with 'init_error'
-        if (substr($login_url, 0, 10) == 'init_error') {
-            Logger::error(LogComponent::AUTH, "Failed to generate OIDC login URL, shortcode button will not be rendered");
-            return '';
-        }
-
         // Extract shortcode attributes (if any)
         $atts = shortcode_atts(
             array(
-                'width' => '250',                // Default width in pixels
-                'height' => '40',                // Default height in pixels
+                'width' => '250',                  // Default width in pixels
+                'height' => '40',                  // Default height in pixels
                 'background_color' => '#4CAF50', // Default background color
                 'text_color' => '#ffffff',       // Default text color
+                'hide_logo' => 'false',            // Hide the logo in the button
             ),
             $atts,
             'scouting_oidc_button' // Name of your shortcode
@@ -100,16 +87,42 @@ class Auth {
         $atts['background_color'] = sanitize_hex_color($atts['background_color']);
         $atts['text_color'] = sanitize_hex_color($atts['text_color']);
 
+        // Parse boolean-like shortcode attributes (true/false, 1/0, yes/no, on/off)
+        $hide_logo = filter_var((string) $atts['hide_logo'], FILTER_VALIDATE_BOOLEAN);
+
+        if (is_user_logged_in()) {
+            // Use the standard WP logout URL, plugin logout hook will forward to OIDC provider logout endpoint.
+            $button_url = wp_logout_url(home_url());
+            $button_text = esc_html__('Logout', 'scouting-openid-connect');
+        } else {
+            // Check if the client ID and client secret are empty
+            if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
+                Logger::critical(LogComponent::AUTH, "Client ID or Client Secret are missing in the configuration, shortcode button will not be rendered");
+                return '';
+            }
+
+            $login_url = $this->scouting_oidc_auth_login_url();
+
+            // Check if the login URL starts with 'init_error'
+            if (substr($login_url, 0, 10) == 'init_error') {
+                Logger::error(LogComponent::AUTH, "Failed to generate OIDC login URL, shortcode button will not be rendered");
+                return '';
+            }
+
+            $button_url = $login_url;
+            $button_text = esc_html__('Login with Scouts Online', 'scouting-openid-connect');
+        }
+
         // Button style
         $button_style = "display: flex; justify-content: center; align-items: center; background-color: " . esc_attr($atts['background_color']) . "; color: " . esc_attr($atts['text_color']) . "; border: none; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: bold; width: 100%; height: 100%; text-align: center;";
         
         $button_html = '<div id="scouting-oidc-login-div" style="min-width: 120px; width: ' . esc_attr($atts['width']) . 'px; min-height: 40px; height: ' . esc_attr($atts['height']) . 'px;">';
-        $button_html .= '<a id="scouting-oidc-login-link" href="' . esc_url($login_url) . '" style="' . esc_attr($button_style) . '">';
-        // If width is smaller than 225px, the image will not be displayed
-        if (intval($atts['width']) >= 225) {
+        $button_html .= '<a id="scouting-oidc-login-link" href="' . esc_url($button_url) . '" style="' . esc_attr($button_style) . '">';
+        // Show logo only when explicitly allowed and there is enough width
+        if (!$hide_logo && intval($atts['width']) >= 225) {
             $button_html .= wp_kses($this->scouting_oidc_auth_icon(), $this->scouting_oidc_auth_icon_wp_kses_allowed_svg());
         }
-        $button_html .= '<span id="scouting-oidc-login-text">' . esc_html__('Login with Scouts Online', 'scouting-openid-connect') . '</span>';
+        $button_html .= '<span id="scouting-oidc-login-text">' . $button_text . '</span>';
         $button_html .= '</a></div>';
 
         return $button_html;
@@ -345,19 +358,6 @@ class Auth {
      */
     public function scouting_oidc_auth_logout_redirect(): void {
         $logout_url = esc_url_raw($this->oidc_client->getLogoutUrl());
-
-        // Make sure the external logout host is allowed for safe redirects.
-        // wp_safe_redirect() checks the host against the 'allowed_redirect_hosts' filter,
-        // so we add the logout host here to avoid blocking a trusted external logout URL.
-        $host = wp_parse_url($logout_url, PHP_URL_HOST);
-        if (!empty($host)) {
-            add_filter('allowed_redirect_hosts', function (array $hosts) use ($host): array {
-                if (!in_array($host, $hosts, true)) {
-                    $hosts[] = $host;
-                }
-                return $hosts;
-            });
-        }
 
         $user = wp_get_current_user();
         Logger::info(LogComponent::USER, "User '{$user->display_name}' logged out", $user->ID, $user->user_login);
