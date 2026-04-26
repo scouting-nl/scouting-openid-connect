@@ -244,6 +244,12 @@ class OpenIDConnectClient
         // Store the tokens
         $this->tokens = json_decode(wp_remote_retrieve_body($response));
 
+        // Persist id_token so logout redirects can still include id_token_hint in later requests.
+        $id_token = is_object($this->tokens) && property_exists($this->tokens, 'id_token') ? $this->tokens->id_token : null;
+        if (is_string($id_token) && $id_token !== '') {
+            $this->session->scouting_oidc_session_set('scouting_oidc_id_token', $id_token);
+        }
+
         Logger::debug(LogComponent::OIDC, 'ID token retrieved successfully from token endpoint');
 
         // Cleanup state and nonce
@@ -420,8 +426,7 @@ class OpenIDConnectClient
             Logger::warning(LogComponent::OIDC, 'While constructing logout URL, end_session_endpoint was missing from well-known data, falling back to home URL');
             $logout_url = home_url();
         } else {
-            // Ensure tokens is an object and id_token is available
-            $id_token = is_object($this->tokens) && property_exists($this->tokens, 'id_token') ? $this->tokens->id_token : null;
+            $id_token = $this->getIdTokenForLogout();
 
             // Redirect to WordPress home URL if ID token is not available
             if (!$id_token) {
@@ -447,6 +452,36 @@ class OpenIDConnectClient
         }
 
         return $logout_url;
+    }
+
+    /**
+     * Clears the stored ID token copy from session storage.
+     *
+     * @return void
+     */
+    public function clearStoredIdToken(): void {
+        $this->session->scouting_oidc_session_delete('scouting_oidc_id_token');
+    }
+
+    /**
+     * Gets an ID token suitable for OIDC logout from memory or session storage.
+     *
+     * @return string|null the id_token if available, otherwise null
+     */
+    private function getIdTokenForLogout(): ?string {
+        // Prefer the in-memory token when available in this request.
+        $in_memory_id_token = is_object($this->tokens) && property_exists($this->tokens, 'id_token') ? $this->tokens->id_token : null;
+        if (is_string($in_memory_id_token) && $in_memory_id_token !== '') {
+            return $in_memory_id_token;
+        }
+
+        // Fallback to the session copy for logout requests where tokens are not in memory anymore.
+        $session_id_token = $this->session->scouting_oidc_session_get('scouting_oidc_id_token');
+        if (is_string($session_id_token) && $session_id_token !== '') {
+            return $session_id_token;
+        }
+
+        return null;
     }
 
     /**

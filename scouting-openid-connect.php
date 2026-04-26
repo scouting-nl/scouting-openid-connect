@@ -131,7 +131,7 @@ add_filter('safe_style_css', function(array $styles): array {
 add_action('wp_login', [$scouting_oidc_auth, 'scouting_oidc_auth_login_redirect']);
 
 // Add logout redirect
-add_action('wp_logout', [$scouting_oidc_auth, 'scouting_oidc_auth_logout_redirect']);
+add_action('wp_logout', [$scouting_oidc_auth, 'scouting_oidc_auth_logout_redirect'], 10, 1);
 
 // Daily cleanup for logs older than the configured retention period.
 add_action(CronJobs::CLEANUP_CRON_HOOK, [CronJobs::class, 'scouting_oidc_logger_cleanup_old_logs']);

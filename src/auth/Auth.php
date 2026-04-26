@@ -364,11 +364,30 @@ class Auth {
      * 
      * @return void
      */
-    public function scouting_oidc_auth_logout_redirect(): void {
+    public function scouting_oidc_auth_logout_redirect(int $user_id = 0): void {
         $logout_url = esc_url_raw($this->oidc_client->getLogoutUrl());
+        $this->oidc_client->clearStoredIdToken();
 
-        $user = wp_get_current_user();
-        Logger::info(LogComponent::USER, "User '{$user->display_name}' logged out", $user->ID, $user->user_login);
+        $user = null;
+        if ($user_id > 0) {
+            $found_user = get_user_by('ID', $user_id);
+            if ($found_user instanceof \WP_User) {
+                $user = $found_user;
+            }
+        }
+
+        if (!$user) {
+            $current_user = wp_get_current_user();
+            if ($current_user instanceof \WP_User && $current_user->ID > 0) {
+                $user = $current_user;
+            }
+        }
+
+        $display_name = $user instanceof \WP_User && $user->display_name !== '' ? $user->display_name : 'Unknown user';
+        $log_user_id = $user instanceof \WP_User && $user->ID > 0 ? $user->ID : null;
+        $log_user_login = $user instanceof \WP_User && $user->user_login !== '' ? $user->user_login : null;
+
+        Logger::info(LogComponent::USER, "User '{$display_name}' logged out", $log_user_id, $log_user_login);
 
         wp_safe_redirect($logout_url);
         exit;
