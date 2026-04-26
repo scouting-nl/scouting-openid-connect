@@ -143,8 +143,8 @@ class Shortcode
             'live-shortcode-script',
             'scoutingOIDCLiveShortcodeL10n',
             array(
-                'loginText' => esc_html__('Login with Scouts Online', 'scouting-openid-connect'),
-                'logoutText' => esc_html__('Logout', 'scouting-openid-connect'),
+                'loginText' => __('Login with Scouts Online', 'scouting-openid-connect'),
+                'logoutText' => __('Logout', 'scouting-openid-connect'),
             )
         );
     }
