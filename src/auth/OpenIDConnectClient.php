@@ -73,6 +73,16 @@ class OpenIDConnectClient
     private $session;
 
     /**
+     * @var array<string> normalized hosts allowed for logout redirects
+     */
+    private static array $logoutRedirectHosts = [];
+
+    /**
+     * @var bool whether the allowed_redirect_hosts callback is already attached
+     */
+    private static bool $logoutRedirectHostsFilterAdded = false;
+
+    /**
      * OpenIDConnectClient constructor
      * 
      * @param string $client_id
@@ -432,16 +442,59 @@ class OpenIDConnectClient
         // wp_safe_redirect() checks the host against the 'allowed_redirect_hosts' filter,
         // so we add the logout host here to avoid blocking a trusted external logout URL.
         $host = wp_parse_url($logout_url, PHP_URL_HOST);
-        if (!empty($host)) {
-            add_filter('allowed_redirect_hosts', function (array $hosts) use ($host): array {
-                if (!in_array($host, $hosts, true)) {
-                    $hosts[] = $host;
-                }
-                return $hosts;
-            });
+        if (is_string($host) && $host !== '') {
+            $this->registerLogoutRedirectHost($host);
         }
 
         return $logout_url;
+    }
+
+    /**
+     * Registers a host for logout redirects and attaches the filter callback once per request.
+     *
+     * @param string $host the host to allow for redirects
+     * @return void
+     */
+    private function registerLogoutRedirectHost(string $host): void {
+        $normalized_host = strtolower(trim($host));
+
+        if ($normalized_host === '') {
+            return;
+        }
+
+        if (!in_array($normalized_host, self::$logoutRedirectHosts, true)) {
+            self::$logoutRedirectHosts[] = $normalized_host;
+        }
+
+        if (!self::$logoutRedirectHostsFilterAdded) {
+            add_filter('allowed_redirect_hosts', array(__CLASS__, 'scouting_oidc_filter_allowed_redirect_hosts'));
+            self::$logoutRedirectHostsFilterAdded = true;
+        }
+    }
+
+    /**
+     * Extends allowed redirect hosts with normalized logout hosts.
+     *
+     * @param array $hosts existing allowed hosts
+     * @return array updated allowed hosts
+     */
+    public static function scouting_oidc_filter_allowed_redirect_hosts(array $hosts): array {
+        $normalized_existing_hosts = [];
+
+        foreach ($hosts as $existing_host) {
+            if (is_string($existing_host) && $existing_host !== '') {
+                $normalized_existing_hosts[] = strtolower($existing_host);
+            }
+        }
+
+        foreach (self::$logoutRedirectHosts as $logout_host) {
+            if (!in_array($logout_host, $normalized_existing_hosts, true)) {
+                $hosts[] = $logout_host;
+                $normalized_existing_hosts[] = $logout_host;
+            }
+        }
+
+        return $hosts;
     }
 
     /**

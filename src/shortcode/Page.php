@@ -98,10 +98,12 @@ class Shortcode
             </div>
 
             <div>
-                <p><?php esc_html_e('Example of the shortcode with custom attributes:', 'scouting-openid-connect'); ?></p>
+                <p><?php esc_html_e('Generated shortcode (default attributes shown below until edited):', 'scouting-openid-connect'); ?></p>
                 <pre><code id="scoutingOIDCButtonShortCode">[scouting_oidc_button]</code></pre>
                 <p><?php esc_html_e('Example of the shortcode above:', 'scouting-openid-connect'); ?></p>
-                <?php echo do_shortcode('[scouting_oidc_button]'); ?>
+                <div id="scoutingOIDCLivePreviewContainer">
+                    <?php echo do_shortcode('[scouting_oidc_button]'); ?>
+                </div>
                 <p><strong><?php esc_html_e('Note: The button is not interactive in this preview.', 'scouting-openid-connect'); ?></strong></p>
             </div>
 

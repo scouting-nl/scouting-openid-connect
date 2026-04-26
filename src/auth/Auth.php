@@ -68,13 +68,16 @@ class Auth {
      * @return string the HTML for the login/logout button, or an empty string if the button cannot be rendered due to missing configuration or errors
      */
     public function scouting_oidc_auth_login_button_shortcode(array $atts = array()): string {
+        $default_background_color = '#4CAF50';
+        $default_text_color = '#ffffff';
+
         // Extract shortcode attributes (if any)
         $atts = shortcode_atts(
             array(
                 'width' => '250',                  // Default width in pixels
                 'height' => '40',                  // Default height in pixels
-                'background_color' => '#4CAF50', // Default background color
-                'text_color' => '#ffffff',       // Default text color
+                'background_color' => $default_background_color, // Default background color
+                'text_color' => $default_text_color,       // Default text color
                 'hide_logo' => 'false',            // Hide the logo in the button
             ),
             $atts,
@@ -84,11 +87,16 @@ class Auth {
         // Ensure minimal button dimensions and sanitize
         $atts['width'] = max(120, intval($atts['width']));
         $atts['height'] = max(40, intval($atts['height']));
-        $atts['background_color'] = sanitize_hex_color($atts['background_color']);
-        $atts['text_color'] = sanitize_hex_color($atts['text_color']);
+        $atts['background_color'] = sanitize_hex_color($atts['background_color']) ?: $default_background_color;
+        $atts['text_color'] = sanitize_hex_color($atts['text_color']) ?: $default_text_color;
 
         // Parse boolean-like shortcode attributes (true/false, 1/0, yes/no, on/off)
         $hide_logo = filter_var((string) $atts['hide_logo'], FILTER_VALIDATE_BOOLEAN);
+
+        $button_container_id = wp_unique_id('scouting-oidc-login-div-');
+        $button_link_id = wp_unique_id('scouting-oidc-login-link-');
+        $button_text_id = wp_unique_id('scouting-oidc-login-text-');
+        $button_icon_id = wp_unique_id('scouting-oidc-login-img-');
 
         if (is_user_logged_in()) {
             // Use the standard WP logout URL, plugin logout hook will forward to OIDC provider logout endpoint.
@@ -116,13 +124,13 @@ class Auth {
         // Button style
         $button_style = "display: flex; justify-content: center; align-items: center; background-color: " . esc_attr($atts['background_color']) . "; color: " . esc_attr($atts['text_color']) . "; border: none; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: bold; width: 100%; height: 100%; text-align: center;";
         
-        $button_html = '<div id="scouting-oidc-login-div" style="min-width: 120px; width: ' . esc_attr($atts['width']) . 'px; min-height: 40px; height: ' . esc_attr($atts['height']) . 'px;">';
-        $button_html .= '<a id="scouting-oidc-login-link" href="' . esc_url($button_url) . '" style="' . esc_attr($button_style) . '">';
+        $button_html = '<div id="' . esc_attr($button_container_id) . '" class="scouting-oidc-login-div" style="min-width: 120px; width: ' . esc_attr($atts['width']) . 'px; min-height: 40px; height: ' . esc_attr($atts['height']) . 'px;">';
+        $button_html .= '<a id="' . esc_attr($button_link_id) . '" class="scouting-oidc-login-link" href="' . esc_url($button_url) . '" style="' . esc_attr($button_style) . '">';
         // Show logo only when explicitly allowed and there is enough width
         if (!$hide_logo && intval($atts['width']) >= 225) {
-            $button_html .= wp_kses($this->scouting_oidc_auth_icon(), $this->scouting_oidc_auth_icon_wp_kses_allowed_svg());
+            $button_html .= wp_kses($this->scouting_oidc_auth_icon($button_icon_id), $this->scouting_oidc_auth_icon_wp_kses_allowed_svg());
         }
-        $button_html .= '<span id="scouting-oidc-login-text">' . $button_text . '</span>';
+        $button_html .= '<span id="' . esc_attr($button_text_id) . '" class="scouting-oidc-login-text">' . $button_text . '</span>';
         $button_html .= '</a></div>';
 
         return $button_html;
@@ -371,7 +379,7 @@ class Auth {
      * 
      * @return string the HTML for the SVG icon or an empty string if the icon cannot be loaded
      */
-    private function scouting_oidc_auth_icon(): string {
+    private function scouting_oidc_auth_icon(string $icon_id = 'scouting-oidc-login-img'): string {
         // Define the path to the SVG file
         $svg_file_path = SCOUTING_OIDC_PATH . 'assets/icon.svg';
 
@@ -382,11 +390,9 @@ class Auth {
             $svg_content = $wp_filesystem->get_contents($svg_file_path);
 
             // Modify the SVG tag to include additional attributes
-            $svg_content = preg_replace(
-                '/<svg([^>]+)>/',
-                '<svg\1 id="scouting-oidc-login-img" style="width: 2.5rem; height: 2.5rem; margin-right: 10px;" role="img" aria-label="Scouting NL Logo">',
-                $svg_content
-            );
+            $sanitized_icon_id = sanitize_html_class($icon_id);
+            $svg_attributes = 'id="' . esc_attr($sanitized_icon_id) . '" class="scouting-oidc-login-img" style="width: 2.5rem; height: 2.5rem; margin-right: 10px;" role="img" aria-label="Scouting NL Logo"';
+            $svg_content = preg_replace('/<svg([^>]+)>/', '<svg\1 ' . $svg_attributes . '>', $svg_content);
 
             // Return the SVG content
             return $svg_content;
@@ -407,6 +413,7 @@ class Auth {
                 'xmlns' => true,
                 'viewbox' => true,
                 'id' => true,
+                'class' => true,
                 'style' => true,
                 'role' => true,
                 'aria-label' => true,

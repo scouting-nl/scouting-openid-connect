@@ -39,6 +39,8 @@ function initializeLiveShortcodeEditor() {
 }
 
 function getLiveShortcodeElements() {
+    const previewContainer = document.getElementById('scoutingOIDCLivePreviewContainer');
+
     return {
         widthInput: document.getElementById('scoutingOIDCWidthInput'),
         heightInput: document.getElementById('scoutingOIDCHeightInput'),
@@ -47,9 +49,9 @@ function getLiveShortcodeElements() {
         hideLogoInput: document.getElementById('scoutingOIDCHideLogoInput'),
         demoLogoutInput: document.getElementById('scoutingOIDCDemoLogoutInput'),
         shortcodeText: document.getElementById('scoutingOIDCButtonShortCode'),
-        button: document.getElementById('scouting-oidc-login-div'),
-        loginLink: document.getElementById('scouting-oidc-login-link'),
-        loginText: document.getElementById('scouting-oidc-login-text'),
+        button: previewContainer ? previewContainer.querySelector('.scouting-oidc-login-div, #scouting-oidc-login-div') : null,
+        loginLink: previewContainer ? previewContainer.querySelector('.scouting-oidc-login-link, #scouting-oidc-login-link') : null,
+        loginText: previewContainer ? previewContainer.querySelector('.scouting-oidc-login-text, #scouting-oidc-login-text') : null,
     };
 }
 
@@ -232,7 +234,7 @@ function updateLogoVisibility(elements, state) {
         10
     );
     const shouldHideLogo = elements.hideLogoInput.checked || effectiveWidth < 225;
-    const currentLogo = elements.loginLink.querySelector('#scouting-oidc-login-img');
+    const currentLogo = elements.loginLink.querySelector('.scouting-oidc-login-img, #scouting-oidc-login-img, [id^="scouting-oidc-login-img-"]');
 
     if (shouldHideLogo) {
         if (currentLogo) {
