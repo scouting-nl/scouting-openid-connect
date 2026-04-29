@@ -161,6 +161,12 @@ class Auth {
         );
 
         $redirect_back = filter_var((string) ($atts['redirect_back'] ?? 'false'), FILTER_VALIDATE_BOOLEAN);
+
+        // If the user is already logged in, return the logout URL instead of the login URL
+        if (is_user_logged_in()) {
+            return esc_url(wp_logout_url(home_url()));
+        }
+
         // Check if the client ID and client secret are empty 
         if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
             Logger::critical(LogComponent::AUTH, "Client ID or Client Secret are missing in the configuration, shortcode login URL will be rendered as an login error URL");
