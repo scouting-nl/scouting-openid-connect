@@ -122,6 +122,7 @@ class Shortcode
             </p>
             <pre><code id="scoutingOIDCLinkShortCode">[scouting_oidc_link]</code></pre>
             <p><?php esc_html_e('You can not customize the appearance of the link, but you can add redirect_back="true" to return the user to the current page after login.', 'scouting-openid-connect'); ?></p>
+            <p><?php esc_html_e('Example of the link shortcode:', 'scouting-openid-connect'); ?></p>
             <p><?php echo do_shortcode('[scouting_oidc_link]'); ?><br><strong><?php esc_html_e('Note: Do not copy this link, it will not work. This is just an example of how the link will look like.', 'scouting-openid-connect'); ?></strong></p>
         </div>
         <?php
