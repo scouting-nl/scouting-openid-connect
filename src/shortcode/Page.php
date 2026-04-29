@@ -68,7 +68,7 @@ class Shortcode
                         <li><code>redirect_back</code>: <?php esc_html_e('Set to true to return the user to the page with the button after login. This overrides login redirection settings.', 'scouting-openid-connect'); ?></li>
                     </ul>
                 </div>
-                <div style="float: left; width: 50%; padding-left: 10px; border-left: 2px solid #8c8f94;box-sizing: border-box;">
+                <div style="float: left; width: 50%; padding-left: 10px; border-left: 2px solid #8c8f94; box-sizing: border-box;">
                     <h4><?php esc_html_e('Live Shortcode Editor', 'scouting-openid-connect'); ?></h4>
                     <form>
                         <label for="scoutingOIDCWidthInput">Width</label>
