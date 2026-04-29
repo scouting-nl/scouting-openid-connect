@@ -74,11 +74,12 @@ class Auth {
         // Extract shortcode attributes (if any)
         $atts = shortcode_atts(
             array(
-                'width' => '250',                  // Default width in pixels
-                'height' => '40',                  // Default height in pixels
+                'width' => '250',                                // Default width in pixels
+                'height' => '40',                                // Default height in pixels
                 'background_color' => $default_background_color, // Default background color
-                'text_color' => $default_text_color,       // Default text color
-                'hide_logo' => 'false',            // Hide the logo in the button
+                'text_color' => $default_text_color,             // Default text color
+                'hide_logo' => 'false',                          // Hide the logo in the button
+                'redirect_back' => 'false',                      // Redirect back to the current page after login (only applies to the login button, not the logout button)
             ),
             $atts,
             'scouting_oidc_button' // Name of your shortcode
@@ -92,6 +93,7 @@ class Auth {
 
         // Parse boolean-like shortcode attributes (true/false, 1/0, yes/no, on/off)
         $hide_logo = filter_var((string) $atts['hide_logo'], FILTER_VALIDATE_BOOLEAN);
+        $redirect_back = filter_var((string) ($atts['redirect_back'] ?? 'false'), FILTER_VALIDATE_BOOLEAN);
 
         $button_container_id = wp_unique_id('scouting-oidc-login-div-');
         $button_link_id = wp_unique_id('scouting-oidc-login-link-');
@@ -109,7 +111,14 @@ class Auth {
                 return '';
             }
 
-            $login_url = $this->scouting_oidc_auth_login_url();
+            // If redirect_back is requested, build a return URL to the current page and pass it to the auth URL builder
+            if ($redirect_back) {
+                $current_url = (is_ssl() ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? '') . ($_SERVER['REQUEST_URI'] ?? '/');
+                $current_url = esc_url_raw($current_url);
+                $login_url = $this->scouting_oidc_auth_login_url($current_url);
+            } else {
+                $login_url = $this->scouting_oidc_auth_login_url();
+            }
 
             // Check if the login URL starts with 'init_error'
             if (substr($login_url, 0, 10) == 'init_error') {
@@ -141,14 +150,30 @@ class Auth {
      * 
      * @return string the HTML for the login URL or an error URL if the login URL cannot be generated
      */
-    public function scouting_oidc_auth_login_url_shortcode(): string {
+    public function scouting_oidc_auth_login_url_shortcode(array $atts = array()): string {
+        // Allow a `redirect_back` attribute for the link shortcode as well
+        $atts = shortcode_atts(
+            array(
+                'redirect_back' => 'false',
+            ),
+            $atts,
+            'scouting_oidc_link'
+        );
+
+        $redirect_back = filter_var((string) ($atts['redirect_back'] ?? 'false'), FILTER_VALIDATE_BOOLEAN);
         // Check if the client ID and client secret are empty 
         if (empty(get_option('scouting_oidc_client_id')) || empty(get_option('scouting_oidc_client_secret'))) {
             Logger::critical(LogComponent::AUTH, "Client ID or Client Secret are missing in the configuration, shortcode login URL will be rendered as an login error URL");
             return ErrorHandler::login_error_url('init', __('Client ID or Client Secret are missing in the configuration', 'scouting-openid-connect'), 'init_error');
         }
 
-        $login_url = $this->scouting_oidc_auth_login_url();
+        if ($redirect_back) {
+            $current_url = (is_ssl() ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? '') . ($_SERVER['REQUEST_URI'] ?? '/');
+            $current_url = esc_url_raw($current_url);
+            $login_url = $this->scouting_oidc_auth_login_url($current_url);
+        } else {
+            $login_url = $this->scouting_oidc_auth_login_url();
+        }
 
         // Check if the login URL starts with 'init_error'
         if (substr($login_url, 0, 10) == 'init_error') {
@@ -217,6 +242,9 @@ class Auth {
             $this->oidc_client->unsetStatesAndNonce();
             ErrorHandler::redirect_to_login_error('error', __('State is invalid', 'scouting-openid-connect'), 'state_invalid');
         }
+
+        // Apply any per-state redirect into the session so the post-login redirect hook can use it
+        $this->oidc_client->applyRedirectForStateToSession($state);
 
         // Check if 'code' parameter is set in the URL
         if (!filter_has_var(INPUT_GET, 'code')) {
@@ -320,6 +348,14 @@ class Auth {
      * @return void
      */
     public function scouting_oidc_auth_login_redirect(string $user_login): void {
+        // If a post-login redirect was stored (from a shortcode redirect_back), honor it and exit early
+        $maybe_redirect = $this->oidc_client->getAndClearPostLoginRedirectFromSession();
+        if (is_string($maybe_redirect) && $maybe_redirect !== '') {
+            $safe_redirect = wp_validate_redirect($maybe_redirect, home_url());
+            wp_safe_redirect($safe_redirect);
+            exit;
+        }
+
         $user = get_user_by('login', $user_login);
         if (!$user) return;
 
@@ -453,9 +489,10 @@ class Auth {
     /**
      * Helper function to get the login URL
      * 
+     * @param string|null $redirect_after_login Optional URL to redirect to after login, used for shortcode support. If null, default redirect behavior applies.
      * @return string the login URL
      */
-    private function scouting_oidc_auth_login_url(): string {
+    private function scouting_oidc_auth_login_url(?string $redirect_after_login = null): string {
         $response_type = 'code';
         $scopes = array_map('sanitize_text_field', explode(" ", get_option('scouting_oidc_scopes')));
 
@@ -477,7 +514,7 @@ class Auth {
             }
         }
 
-        return $this->oidc_client->getAuthenticationURL($response_type, $scopes);
+        return $this->oidc_client->getAuthenticationURL($response_type, $scopes, $redirect_after_login);
     }
 }
 ?>
