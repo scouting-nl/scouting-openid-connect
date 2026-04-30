@@ -3,7 +3,7 @@ Contributors: jobvk
 Tags: scouting, scouting nederland, sol, openid connect, oidc
 Requires at least: 6.6.0
 Tested up to: 6.9
-Stable tag: 2.4.0
+Stable tag: 2.4.1
 Requires PHP: 8.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -74,11 +74,14 @@ Currently not, but this is planned for a future update of this plugin.
 
 == Changelog ==
 
+= 2.4.1 =
+* Fixed some spelling mistakes.
+
 = 2.4.0 =
 * Added logout support and dedicated handling for the OpenID Connect logout flow.
 * Redefined the nonce-based login flow to harden authentication callbacks.
 * Added logging pages and utilities to inspect plugin activity and support troubleshooting.
-* Added redirect_back to currect for both shortcodes.
+* Added redirect_back to current page for both shortcodes.
 
 = 2.3.0 =
 * Added a settings option to define how duplicated emails should be handled: plus addressing or return an error.
