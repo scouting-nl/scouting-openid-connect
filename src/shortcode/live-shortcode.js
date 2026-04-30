@@ -3,6 +3,7 @@ const DEFAULT_SHORTCODE_VALUES = Object.freeze({
     height: '40',
     backgroundColor: '#4caf50',
     textColor: '#ffffff',
+    redirectBack: false,
 });
 
 const MIN_DIMENSIONS = Object.freeze({
@@ -25,13 +26,15 @@ function initializeLiveShortcodeEditor() {
         logoutButtonText: buttonTextLabels.logoutButtonText,
         lastValidWidth: getInitialDimensionValue(elements.widthInput.value, MIN_DIMENSIONS.width, DEFAULT_SHORTCODE_VALUES.width),
         lastValidHeight: getInitialDimensionValue(elements.heightInput.value, MIN_DIMENSIONS.height, DEFAULT_SHORTCODE_VALUES.height),
+        redirectBack: false,
         loginImgBackup: null,
     };
 
-    initializeEditorInputs(elements);
+    initializeEditorInputs(elements, state);
     registerEventListeners(elements, state);
 
     updateShortcodeText(elements, state);
+    updateLinkShortcodeText(elements, state);
     updateDemoLogoutPreview(elements, state);
     updateLogoVisibility(elements, state);
 
@@ -48,7 +51,9 @@ function getLiveShortcodeElements() {
         textColorInput: document.getElementById('scoutingOIDCTextColorInput'),
         hideLogoInput: document.getElementById('scoutingOIDCHideLogoInput'),
         demoLogoutInput: document.getElementById('scoutingOIDCDemoLogoutInput'),
+        redirectBackInput: document.getElementById('scoutingOIDCRedirectBackInput'),
         shortcodeText: document.getElementById('scoutingOIDCButtonShortCode'),
+        linkShortcodeText: document.getElementById('scoutingOIDCLinkShortCode'),
         button: previewContainer ? previewContainer.querySelector('.scouting-oidc-login-div, #scouting-oidc-login-div') : null,
         loginLink: previewContainer ? previewContainer.querySelector('.scouting-oidc-login-link, #scouting-oidc-login-link') : null,
         loginText: previewContainer ? previewContainer.querySelector('.scouting-oidc-login-text, #scouting-oidc-login-text') : null,
@@ -63,7 +68,9 @@ function hasRequiredElements(elements) {
             && elements.textColorInput
             && elements.hideLogoInput
             && elements.demoLogoutInput
+            && elements.redirectBackInput
             && elements.shortcodeText
+            && elements.linkShortcodeText
             && elements.button
             && elements.loginLink
             && elements.loginText
@@ -79,9 +86,11 @@ function getButtonTextLabels() {
     };
 }
 
-function initializeEditorInputs(elements) {
+function initializeEditorInputs(elements, state) {
     elements.hideLogoInput.checked = /hide_logo="true"/.test(elements.shortcodeText.textContent);
     elements.demoLogoutInput.checked = false;
+    elements.redirectBackInput.checked = false;
+    state.redirectBack = elements.redirectBackInput.checked;
 }
 
 function registerEventListeners(elements, state) {
@@ -102,6 +111,11 @@ function registerEventListeners(elements, state) {
     });
     elements.demoLogoutInput.addEventListener('change', () => {
         updateDemoLogoutPreview(elements, state);
+    });
+    elements.redirectBackInput.addEventListener('change', () => {
+        state.redirectBack = elements.redirectBackInput.checked;
+        updateShortcodeText(elements, state);
+        updateLinkShortcodeText(elements, state);
     });
 }
 
@@ -179,6 +193,14 @@ function updateShortcodeText(elements, state) {
     elements.shortcodeText.textContent = buildShortcodeText(elements, state);
 }
 
+function updateLinkShortcodeText(elements, state) {
+    if (!elements.linkShortcodeText) {
+        return;
+    }
+
+    elements.linkShortcodeText.textContent = buildLinkShortcodeText(state);
+}
+
 function buildShortcodeText(elements, state) {
     const shortcodeAttributes = [];
     const effectiveWidth = getEffectiveDimensionValue(
@@ -216,11 +238,19 @@ function buildShortcodeText(elements, state) {
         shortcodeAttributes.push('hide_logo="true"');
     }
 
+    if (state.redirectBack) {
+        shortcodeAttributes.push('redirect_back="true"');
+    }
+
     if (shortcodeAttributes.length === 0) {
         return '[scouting_oidc_button]';
     }
 
     return `[scouting_oidc_button ${shortcodeAttributes.join(' ')}]`;
+}
+
+function buildLinkShortcodeText(state) {
+    return state.redirectBack ? '[scouting_oidc_link redirect_back="true"]' : '[scouting_oidc_link]';
 }
 
 function updateLogoVisibility(elements, state) {

@@ -106,9 +106,10 @@ class OpenIDConnectClient
      * 
      * @param string $response_type the response type
      * @param array $scopes_array an array of scopes
+     * @param string|null $redirect_after_login Optional URL to redirect to after login, used for shortcode support. If null, default redirect behavior applies.
      * @return string the authentication URL
      */
-    public function getAuthenticationURL(string $response_type, array $scopes_array): string {
+    public function getAuthenticationURL(string $response_type, array $scopes_array, ?string $redirect_after_login = null): string {
         Logger::debug(LogComponent::OIDC, 'Authentication URL generation started');
         $this->getWellKnownData();
         $this->getJWKSData();
@@ -164,6 +165,12 @@ class OpenIDConnectClient
             'code_challenge' => $code_challenge,
             'code_challenge_method' => 'S256',
         ];
+
+        // If a specific post-login redirect was requested (e.g. shortcode redirect_back), store it keyed by state
+        if (is_string($redirect_after_login) && $redirect_after_login !== '') {
+            $redirect_after_login = esc_url_raw($redirect_after_login);
+            $this->setRedirectForState($state, $redirect_after_login);
+        }
 
         Logger::debug(LogComponent::OIDC, 'Authentication URL generated successfully');
 
@@ -265,6 +272,7 @@ class OpenIDConnectClient
         $this->session->scouting_oidc_session_delete('scouting_oidc_states');
         $this->session->scouting_oidc_session_delete('scouting_oidc_nonces');
         $this->session->scouting_oidc_session_delete('scouting_oidc_code_verifiers');
+        $this->session->scouting_oidc_session_delete('scouting_oidc_post_login_redirect');
 
         Logger::debug(LogComponent::OIDC, 'OIDC state, nonce and PKCE verifier session data cleared');
     }
@@ -801,6 +809,88 @@ class OpenIDConnectClient
         $this->session->scouting_oidc_session_set('scouting_oidc_code_verifiers', $verifiers);
 
         return $code_verifier;
+    }
+
+    /**
+     * Store a post-login redirect target keyed by state in the session
+     *
+     * @param string $state the OIDC state value
+     * @param string $redirect_url the URL to redirect to after login is complete.
+     * @return void
+     */
+    private function setRedirectForState(string $state, string $redirect_url): void {
+        $redirects = $this->session->scouting_oidc_session_get('scouting_oidc_redirects') ?? [];
+        if (!is_array($redirects)) {
+            $redirects = [];
+        }
+
+        $redirects[$state] = $redirect_url;
+        $this->session->scouting_oidc_session_set('scouting_oidc_redirects', $redirects);
+    }
+
+    /**
+     * Retrieve the stored redirect for a given state
+     *
+     * @param string $state the OIDC state value
+     * @return string|null the redirect URL if found, or null if not found or invalid.
+     */
+    public function getRedirectForState(string $state): ?string {
+        $redirects = $this->session->scouting_oidc_session_get('scouting_oidc_redirects');
+        if (!is_array($redirects)) {
+            return null;
+        }
+
+        $redirect = $redirects[$state] ?? null;
+        return is_string($redirect) && $redirect !== '' ? $redirect : null;
+    }
+
+    /**
+     * Remove the stored redirect for a given state
+     *
+     * @param string $state the OIDC state value
+     * @return void
+     */
+    private function deleteRedirectForState(string $state): void {
+        $redirects = $this->session->scouting_oidc_session_get('scouting_oidc_redirects') ?? [];
+        if (!is_array($redirects)) {
+            return;
+        }
+
+        if (array_key_exists($state, $redirects)) {
+            unset($redirects[$state]);
+            $this->session->scouting_oidc_session_set('scouting_oidc_redirects', $redirects);
+        }
+    }
+
+    /**
+     * If a per-state redirect exists, copy it into a single post-login session key and remove the per-state entry.
+     *
+     * The value is stored in this plugin's transient-backed session (1 hour TTL), so it may survive
+     * across requests until consumed by `getAndClearPostLoginRedirectFromSession()` or expiration.
+     *
+     * @param string $state the OIDC state value
+     * @return void
+     */
+    public function applyRedirectForStateToSession(string $state): void {
+        $redirect = $this->getRedirectForState($state);
+        if ($redirect !== null) {
+            $this->session->scouting_oidc_session_set('scouting_oidc_post_login_redirect', $redirect);
+            $this->deleteRedirectForState($state);
+        }
+    }
+
+    /**
+     * Retrieve and clear the post-login redirect stored in session.
+     *
+     * @return string|null the redirect URL if found, or null if not found or invalid.
+     */
+    public function getAndClearPostLoginRedirectFromSession(): ?string {
+        $redirect = $this->session->scouting_oidc_session_get('scouting_oidc_post_login_redirect');
+        if (!is_string($redirect) || $redirect === '') {
+            return null;
+        }
+        $this->session->scouting_oidc_session_delete('scouting_oidc_post_login_redirect');
+        return esc_url_raw($redirect);
     }
 
     /**
