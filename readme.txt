@@ -78,7 +78,7 @@ Currently not, but this is planned for a future update of this plugin.
 * Added logout support and dedicated handling for the OpenID Connect logout flow.
 * Redefined the nonce-based login flow to harden authentication callbacks.
 * Added logging pages and utilities to inspect plugin activity and support troubleshooting.
-* Added redirect_back to currect for both shortcodes.
+* Added redirect_back to current page for both shortcodes.
 
 = 2.3.0 =
 * Added a settings option to define how duplicated emails should be handled: plus addressing or return an error.
