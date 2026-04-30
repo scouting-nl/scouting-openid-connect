@@ -545,7 +545,7 @@ class Settings_General
                 echo '<option value="' . esc_attr($key) . '">' . esc_html($name) . '</option>';
         }
         echo '</select>';
-        echo '<p class="description">' . esc_html__('When a user tries to log in with an email that already exists in the system, this setting determines how to handle it. The default option is to add plus addressing (e.g., local-part+sol_id@example.com).', 'scouting-openid-connect') . '</p>';
+        echo '<p class="description">' . esc_html__('When a user tries to log in with an email that already exists in the system, this setting determines how to handle it. The default option is to add plus addressing.', 'scouting-openid-connect') . ' ' . esc_html('Example: local-part+sol_id@example.com') . '</p>';
     }
 
     /**
