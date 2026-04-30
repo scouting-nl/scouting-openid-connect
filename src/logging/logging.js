@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!hasExplicitSort) {
         var createdAtHeader = document.querySelector('th#created_at');
         if (createdAtHeader) {
-            // Set default sorting to created_at descending by updating the URL parameters without reloading the page
+            // Set default sorting to id descending (newest first) by updating the URL parameters without reloading the page
             params.set('orderby', 'id');
             params.set('order', 'desc');
             var newUrl = window.location.pathname + '?' + params.toString();
