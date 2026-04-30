@@ -3,8 +3,16 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * This class manages the general settings section of the Scouting OIDC plugin, including rendering the settings fields and sanitizing input values.
+ */
 class Settings_General
 {
+    /**
+     * Register General settings, sections, and fields.
+     * 
+     * @return void
+     */
     public function scouting_oidc_settings_general(): void {
         // Add settings sections
         add_settings_section(
@@ -120,6 +128,24 @@ class Settings_General
                 'class' => 'scouting-oidc-custom-redirect-tr'                                 // Extra args to identify the tr for JS
             ]
         );
+
+        // Add a settings checkbox field
+        add_settings_field(
+            'scouting_oidc_debug_logging_enabled',                             // Field ID
+            __('Enable debug logs', 'scouting-openid-connect'),                // Field label
+            [$this, 'scouting_oidc_settings_general_debug_logging_callback'],  // Callback to render field
+            'scouting-openid-connect-settings',                                // Page slug
+            'scouting_oidc_general_settings'                                   // Section ID where the field should be added
+        );
+
+        // Add a settings number field
+        add_settings_field(
+            'scouting_oidc_log_retention_days',                                      // Field ID
+            __('Log retention (days)', 'scouting-openid-connect'),                   // Field label
+            [$this, 'scouting_oidc_settings_general_log_retention_days_callback'],   // Callback to render field
+            'scouting-openid-connect-settings',                                       // Page slug
+            'scouting_oidc_general_settings'                                          // Section ID where the field should be added
+        );
     
         // Register settings
         register_setting(
@@ -221,9 +247,93 @@ class Settings_General
                 'sanitize_callback' => [$this, 'scouting_oidc_sanitize_custom_redirect_option'] // Sanitize the input value as custom redirect
             ]
         );
+
+        // Register settings
+        register_setting(
+            'scouting_oidc_settings_group',                                             // Settings group name
+            'scouting_oidc_debug_logging_enabled',                                      // Option name
+            [
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_boolean_option'] // Sanitize the input value as a boolean (0 or 1)
+            ]
+        );
+
+        // Register settings
+        register_setting(
+            'scouting_oidc_settings_group',                                                    // Settings group name
+            'scouting_oidc_log_retention_days',                                                // Option name
+            [
+                'sanitize_callback' => [$this, 'scouting_oidc_sanitize_log_retention_days_option'] // Sanitize retention days as bounded integer
+            ]
+        );
+
+        // Log settings changes for options that belong to this plugin
+        add_action('updated_option', [$this, 'handle_option_update'], 10, 3);
     }
 
-    // Sanitize the display name option
+    /**
+     * Handle option updates and log changes for scouting_oidc_ options.
+     *
+     * @param string $option
+     * @param mixed $old_value
+     * @param mixed $value
+     * @return void
+     */
+    public function handle_option_update(string $option, $old_value, $value): void {
+        if (strpos($option, 'scouting_oidc_') !== 0) {
+            return;
+        }
+
+        $old = $this->format_setting_value($old_value);
+        $new = $this->format_setting_value($value);
+
+        if ($old === $new) {
+            return;
+        }
+
+        // Redact sensitive options from logs
+        $sensitive_options = array('scouting_oidc_client_secret');
+        if (in_array($option, $sensitive_options, true)) {
+            $old = $old !== '' ? '***REDACTED***' : 'null';
+            $new = $new !== '' ? '***REDACTED***' : 'null';
+        }
+
+        Logger::info(LogComponent::SETTINGS, "Setting {$option} changed: {$old} -> {$new}");
+    }
+
+    /**
+     * Convert a setting value to a short, safe string for logging.
+     * 
+     * @param mixed $value
+     * @return string
+     */
+    public function format_setting_value(mixed $value): string {
+        if (is_null($value)) {
+            return 'null';
+        }
+
+        if (is_bool($value)) {
+            return $value ? '1' : '0';
+        }
+
+        if (is_scalar($value)) {
+            return (string) $value;
+        }
+
+        $json = json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR);
+        if ($json !== false) {
+            return $json;
+        }
+
+        // Fallback for data that cannot be JSON encoded
+        return '[' . gettype($value) . ': Unable to encode]';
+    }
+
+    /**
+     * Sanitize the display name option value.
+     *
+     * @param mixed $input
+     * @return string
+     */
     public function scouting_oidc_sanitize_display_name_option(mixed $input): string {
         // Define allowed options
         $valid = ['fullname', 'firstname', 'lastname'];
@@ -232,12 +342,46 @@ class Settings_General
         return in_array($input, $valid, true) ? $input : 'fullname';
     }
 
-    // Sanitize the input value as boolean
+    /**
+     * Sanitize the input value as a boolean.
+     *
+     * @param mixed $input
+     * @return int
+     */
     public function scouting_oidc_sanitize_boolean_option(mixed $input): int {
         return $input ? 1 : 0;
     }
 
-    // Sanitize the duplicate email option
+    /**
+     * Sanitize the log retention option.
+     *
+     * @param mixed $input
+     * @return int
+     */
+    public function scouting_oidc_sanitize_log_retention_days_option(mixed $input): int {
+        if (!is_numeric($input)) {
+            return 30;
+        }
+
+        $retention_days = (int) $input;
+
+        if ($retention_days < 1) {
+            return 1;
+        }
+
+        if ($retention_days > 3650) {
+            return 3650;
+        }
+
+        return $retention_days;
+    }
+
+    /**
+     * Sanitize the duplicate email option.
+     *
+     * @param mixed $input
+     * @return string
+     */
     public function scouting_oidc_sanitize_duplicate_email_option(mixed $input): string {
         // Define allowed options
         $valid = ['plus_addressing', 'error'];
@@ -246,7 +390,12 @@ class Settings_General
         return in_array($input, $valid, true) ? $input : 'plus_addressing';
     }
 
-    // Sanitize the login redirect option
+    /**
+     * Sanitize the login redirect option.
+     *
+     * @param mixed $input
+     * @return string
+     */
     public function scouting_oidc_sanitize_login_redirect_option(mixed $input): string {
         // Define allowed options
         $valid = ['default', 'frontpage', 'dashboard', 'custom'];
@@ -255,7 +404,12 @@ class Settings_General
         return in_array($input, $valid, true) ? $input : 'default';
     }
 
-    // Sanitize the custom redirect option
+    /**
+     * Sanitize the custom redirect option.
+     *
+     * @param mixed $input
+     * @return string
+     */
     public function scouting_oidc_sanitize_custom_redirect_option(mixed $input): string {
         // Define your fixed base domain
         $base_domain = home_url('/');
@@ -269,10 +423,18 @@ class Settings_General
         return sanitize_text_field($input);
     }
 
-    // Callback to render section content
+    /**
+     * Callback to render section content.
+     *
+     * @return void
+     */
     public function scouting_oidc_settings_general_callback(): void {}
 
-    // Callback to render selectbox field
+    /**
+     * Callback to render selectbox field.
+     *
+     * @return void
+     */
     public function scouting_oidc_settings_general_display_name_callback(): void {
         $possible_values = array(
             'fullname' => __('Full name', 'scouting-openid-connect'),
@@ -291,7 +453,11 @@ class Settings_General
         echo '</select>';
     }
 
-    // Callback to render checkbox field
+    /**
+     * Callback to render birthdate checkbox field.
+     *
+     * @return void
+     */
     public function scouting_oidc_settings_general_birthdate_callback(): void {
         if (get_option('scouting_oidc_user_birthdate'))
             echo '<input type="checkbox" id="scouting_oidc_user_birthdate" name="scouting_oidc_user_birthdate" checked/>';
@@ -299,7 +465,11 @@ class Settings_General
             echo '<input type="checkbox" id="scouting_oidc_user_birthdate" name="scouting_oidc_user_birthdate"/>';
     }
 
-    // Callback to render checkbox field
+    /**
+     * Callback to render gender checkbox field.
+     *
+     * @return void
+     */
     public function scouting_oidc_settings_general_gender_callback(): void {
         if (get_option('scouting_oidc_user_gender'))
             echo '<input type="checkbox" id="scouting_oidc_user_gender" name="scouting_oidc_user_gender" checked/>';
@@ -307,7 +477,11 @@ class Settings_General
             echo '<input type="checkbox" id="scouting_oidc_user_gender" name="scouting_oidc_user_gender"/>';
     }
 
-    // Callback to render checkbox field
+    /**
+     * Callback to render phone checkbox field.
+     *
+     * @return void
+     */
     public function scouting_oidc_settings_general_phone_callback(): void {
         if (get_option('scouting_oidc_user_phone'))
             echo '<input type="checkbox" id="scouting_oidc_user_phone" name="scouting_oidc_user_phone" checked/>';
@@ -315,7 +489,11 @@ class Settings_General
             echo '<input type="checkbox" id="scouting_oidc_user_phone" name="scouting_oidc_user_phone"/>';
     }
 
-    // Callback to render checkbox field
+    /**
+     * Callback to render address checkbox field.
+     *
+     * @return void
+     */
     public function scouting_oidc_settings_general_address_callback(): void {
         if (get_option('scouting_oidc_user_address'))
             echo '<input type="checkbox" id="scouting_oidc_user_address" name="scouting_oidc_user_address" checked/>';
@@ -323,7 +501,11 @@ class Settings_General
             echo '<input type="checkbox" id="scouting_oidc_user_address" name="scouting_oidc_user_address"/>';
     }
 
-    // Callback to render checkbox field
+    /**
+     * Callback to render WooCommerce sync checkbox field.
+     *
+     * @return void
+     */
     public function scouting_oidc_settings_general_woocommerce_sync_callback(): void {
         if (get_option('scouting_oidc_user_woocommerce_sync'))
             echo '<input type="checkbox" id="scouting_oidc_user_woocommerce_sync" name="scouting_oidc_user_woocommerce_sync" checked/>';
@@ -331,7 +513,11 @@ class Settings_General
             echo '<input type="checkbox" id="scouting_oidc_user_woocommerce_sync" name="scouting_oidc_user_woocommerce_sync"/>';
     }
 
-    // Callback to render checkbox field
+    /**
+     * Callback to render user auto-create checkbox field.
+     *
+     * @return void
+     */
     public function scouting_oidc_settings_general_user_auto_create_callback(): void {
         if (get_option('scouting_oidc_user_auto_create'))
             echo '<input type="checkbox" id="scouting_oidc_user_auto_create" name="scouting_oidc_user_auto_create" checked/>';
@@ -339,7 +525,11 @@ class Settings_General
             echo '<input type="checkbox" id="scouting_oidc_user_auto_create" name="scouting_oidc_user_auto_create"/>';
     }
 
-    // Callback to render selectbox field
+    /**
+     * Callback to render duplicate email selectbox field.
+     *
+     * @return void
+     */
     public function scouting_oidc_settings_general_duplicate_email_callback(): void {
         $possible_values = array(
             'plus_addressing' => __('Add plus addressing to email', 'scouting-openid-connect'),
@@ -355,9 +545,14 @@ class Settings_General
                 echo '<option value="' . esc_attr($key) . '">' . esc_html($name) . '</option>';
         }
         echo '</select>';
+        echo '<p class="description">' . esc_html__('When a user tries to log in with an email that already exists in the system, this setting determines how to handle it. The default option is to add plus addressing.', 'scouting-openid-connect') . ' ' . esc_html('Example: local-part+sol_id@example.com') . '</p>';
     }
 
-    // Callback to render checkbox field
+    /**
+     * Callback to render user redirect checkbox field.
+     *
+     * @return void
+     */
     public function scouting_oidc_settings_general_user_redirect_callback(): void {
         if (get_option('scouting_oidc_user_redirect'))
             echo '<input type="checkbox" id="scouting_oidc_user_redirect" name="scouting_oidc_user_redirect" checked/>';
@@ -365,7 +560,11 @@ class Settings_General
             echo '<input type="checkbox" id="scouting_oidc_user_redirect" name="scouting_oidc_user_redirect"/>';
     }
 
-    // Callback to render selectbox field
+    /**
+     * Callback to render login redirect selectbox field.
+     *
+     * @return void
+     */
     public function scouting_oidc_settings_general_login_redirect_callback(): void {
         $possible_values = array(
             'default' => __('Default (no action)', 'scouting-openid-connect'),
@@ -385,7 +584,11 @@ class Settings_General
         echo '</select>';
     }
 
-    // Callback to render text field
+    /**
+     * Callback to render custom redirect text field.
+     *
+     * @return void
+     */
     public function scouting_oidc_settings_general_custom_redirect_callback(): void {
         $value = get_option('scouting_oidc_custom_redirect');
 
@@ -400,6 +603,35 @@ class Settings_General
         echo '<span style="padding: 5.675px 3px 5.675px 0px;">' . esc_html($base_domain) . '</span>';
         echo '<input type="text" id="scouting_oidc_custom_redirect" name="scouting_oidc_custom_redirect" size="50" value="' . esc_attr($slug) . '" placeholder="' . esc_attr__("custom-page", "scouting-openid-connect") . '"/>';
         echo '<p class="description">' . esc_html__("Enter the slug to append to the base URL where users should be redirected after login.", "scouting-openid-connect") . '</p>';
+    }
+
+    /**
+     * Callback to render log retention days number field.
+     *
+     * @return void
+     */
+    public function scouting_oidc_settings_general_log_retention_days_callback(): void {
+        $value = (int) get_option('scouting_oidc_log_retention_days', 30);
+        if ($value < 1) {
+            $value = 1;
+        }
+
+        echo '<input type="number" id="scouting_oidc_log_retention_days" name="scouting_oidc_log_retention_days" min="1" max="3650" step="1" value="' . esc_attr((string) $value) . '" style="width: 95px;"/>';
+        echo '<p class="description">' . esc_html__('Logs may contain personal data such as user IDs and SOL IDs. Set how many days logs are retained before daily cleanup removes older entries.', 'scouting-openid-connect') . '</p>';
+    }
+
+    /**
+     * Callback to render debug logging checkbox field.
+     *
+     * @return void
+     */
+    public function scouting_oidc_settings_general_debug_logging_callback(): void {
+        if (get_option('scouting_oidc_debug_logging_enabled'))
+            echo '<input type="checkbox" id="scouting_oidc_debug_logging_enabled" name="scouting_oidc_debug_logging_enabled" checked/>';
+        else
+            echo '<input type="checkbox" id="scouting_oidc_debug_logging_enabled" name="scouting_oidc_debug_logging_enabled"/>';
+
+        echo '<p class="description">' . esc_html__('Debug logs are stored in the plugin logs table only when enabled. If WP_DEBUG is enabled, plugin logs are also mirrored to the WordPress/PHP error log.', 'scouting-openid-connect') . '</p>';
     }
 }
 ?>

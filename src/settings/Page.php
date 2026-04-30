@@ -9,8 +9,16 @@ require_once plugin_dir_path(__FILE__) . 'General.php';
 use ScoutingOIDC\Settings_Oidc;
 use ScoutingOIDC\Settings_General;
 
+/**
+ * This class manages the settings page for the Scouting OIDC plugin, including rendering the settings page, initializing settings sections and fields, and handling default options.
+ */
 class Settings
 {
+    /**
+     * Register the settings submenu page under the main menu.
+     *
+     * @return void
+     */
     public function scouting_oidc_settings_submenu_page(): void {
         add_submenu_page(
             'scouting-oidc-settings',                        // Parent slug (matches the main menu slug)
@@ -23,7 +31,11 @@ class Settings
         );
     }
 
-    // Callback to render settings page content
+    /**
+     * Callback function to render the settings page content.
+     *
+     * @return void
+     */
     public function scouting_oidc_settings_page_callback(): void {
         ?>
         <div class="wrap">
@@ -44,7 +56,11 @@ class Settings
         <?php
     }
 
-    // Add the OpenID Connect settings page to the admin menu
+    /**
+     * Initialize the settings page and register all settings sections and fields.
+     *
+     * @return void
+     */
     public function scouting_oidc_settings_page_init(): void {
         $scouting_oidc_settings_oidc = new Settings_Oidc();
         $scouting_oidc_settings_oidc->scouting_oidc_settings_oidc();
@@ -54,15 +70,17 @@ class Settings
     }
     
     /**
-     * This script renders JavaScript to hide the custom redirect field when not needed.
+     * This script renders JavaScript that adds interactivity to the settings page, such as showing/hiding fields based on other field values.
+     *
+     * @return void
      */
-    public function scouting_oidc_fields_enqueue_hide_field_script(): void {
+    public function scouting_oidc_fields_enqueue_settings_script(): void {
         // Enqueue the external JavaScript file
         wp_enqueue_script(
-            'hide-field-script',                    // Handle name
-            plugins_url('hide-field.js', __FILE__), // Path to the file
+            'scouting-oidc-settings-script',       // Handle name
+            plugins_url('settings.js', __FILE__),  // Path to the file
             array(),                                // No dependencies
-            "2.3.0",                                // Version number
+            SCOUTING_OIDC_VERSION,                  // Version number
             array(
                 'strategy' => 'defer',              // Add the defer attribute
                 'in_footer' => true                 // Load the script in the footer
@@ -70,25 +88,31 @@ class Settings
         );
     } 
 
-    // Set up defaults during installation
+    /**
+     * Set default options upon plugin activation.
+     *
+     * @return void
+     */
     public function scouting_oidc_settings_install(): void {
         // Set default options for OIDC
-        update_option('scouting_oidc_client_id', '');
-        update_option('scouting_oidc_client_secret', '');
-        update_option('scouting_oidc_scopes', 'openid membership profile email address phone');
+        add_option('scouting_oidc_client_id', '');
+        add_option('scouting_oidc_client_secret', '');
+        add_option('scouting_oidc_scopes', 'openid membership profile email address phone');
 
         // Set default options for general settings
-        update_option('scouting_oidc_user_display_name', 'fullname');
-        update_option('scouting_oidc_user_birthdate', false);
-        update_option('scouting_oidc_user_gender', false);
-        update_option('scouting_oidc_user_phone', false);
-        update_option('scouting_oidc_user_address', false);
-        update_option('scouting_oidc_user_woocommerce_sync', false);
-        update_option('scouting_oidc_user_auto_create', true);
-        update_option('scouting_oidc_user_duplicate_email', 'plus_addressing');
-        update_option('scouting_oidc_user_redirect', true);
-        update_option('scouting_oidc_login_redirect', 'frontpage');
-        update_option('scouting_oidc_custom_redirect', '');
+        add_option('scouting_oidc_user_display_name', 'fullname');
+        add_option('scouting_oidc_user_birthdate', false);
+        add_option('scouting_oidc_user_gender', false);
+        add_option('scouting_oidc_user_phone', false);
+        add_option('scouting_oidc_user_address', false);
+        add_option('scouting_oidc_user_woocommerce_sync', false);
+        add_option('scouting_oidc_user_auto_create', true);
+        add_option('scouting_oidc_user_duplicate_email', 'plus_addressing');
+        add_option('scouting_oidc_user_redirect', true);
+        add_option('scouting_oidc_login_redirect', 'frontpage');
+        add_option('scouting_oidc_custom_redirect', '');
+        add_option('scouting_oidc_debug_logging_enabled', false);
+        add_option('scouting_oidc_log_retention_days', 30);
     }
 }
 ?>

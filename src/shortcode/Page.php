@@ -3,8 +3,16 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * This class manages the shortcode page for the Scouting OIDC plugin, including rendering the shortcode page and enqueuing scripts for interactivity.
+ */
 class Shortcode
 {
+    /**
+     * Register the shortcode submenu page under the main menu.
+     *
+     * @return void
+     */
     public function scouting_oidc_shortcode_submenu_page(): void {
         add_submenu_page(
             'scouting-oidc-settings',                         // Parent slug (matches the main menu slug)
@@ -17,7 +25,11 @@ class Shortcode
         );
     }
 
-    // Callback to render support page content
+    /**
+     * Callback function to render the shortcode page content.
+     *
+     * @return void
+     */
     public function scouting_oidc_shortcode_page_callback(): void {
         ?>
         <div class="wrap">
@@ -38,7 +50,7 @@ class Shortcode
             <hr class="scouting-oidc-divider" style="border-top: 2px solid #8c8f94; border-radius: 4px; margin: 20px 0px;"/>
             <h3 id="openid-button"><?php esc_html_e('OpenID Connect Button', 'scouting-openid-connect'); ?></h3>
             <div style='content: ""; display: table; clear: both;'>
-                <div style="float: left; width: 50%; padding-right: 10px; border-right: 2px solid #8c8f94; box-sizing: border-box;">
+                <div style="float: left; width: 50%; padding-right: 10px; box-sizing: border-box;">
                     <h4><?php esc_html_e('Button Example', 'scouting-openid-connect'); ?></h4>
                     <p>
                         <?php esc_html_e('The OpenID Connect button shortcode allows you to add a button to your WordPress site that users can click to log in using their Scouts Online account.', 'scouting-openid-connect'); ?>
@@ -52,9 +64,11 @@ class Shortcode
                         <li><code>height</code>: <?php esc_html_e('The height of the button in pixels.', 'scouting-openid-connect'); ?></li>
                         <li><code>background_color</code>: <?php esc_html_e('The background color of the button.', 'scouting-openid-connect'); ?></li>
                         <li><code>text_color</code>: <?php esc_html_e('The text color of the button.', 'scouting-openid-connect'); ?></li>
+                        <li><code>hide_logo</code>: <?php esc_html_e('Set to true to hide the logo.', 'scouting-openid-connect'); ?></li>
+                        <li><code>redirect_back</code>: <?php esc_html_e('Set to true to return the user to the page with the button after login. This overrides login redirection settings.', 'scouting-openid-connect'); ?></li>
                     </ul>
                 </div>
-                <div style="float: left; width: 50%; padding-left: 10px; box-sizing: border-box;">
+                <div style="float: left; width: 50%; padding-left: 10px; border-left: 2px solid #8c8f94; box-sizing: border-box;">
                     <h4><?php esc_html_e('Live Shortcode Editor', 'scouting-openid-connect'); ?></h4>
                     <form>
                         <label for="scoutingOIDCWidthInput">Width</label>
@@ -72,15 +86,29 @@ class Shortcode
                         <label for="scoutingOIDCTextColorInput">Text Color</label>
                         <input type="color" id="scoutingOIDCTextColorInput" value="#ffffff" style="width: 75px;">
                         <p class="description"><?php esc_html_e('The default color is #ffffff.', 'scouting-openid-connect'); ?></p>
+
+                        <label for="scoutingOIDCHideLogoInput">Hide Logo</label>
+                        <input type="checkbox" id="scoutingOIDCHideLogoInput">
+                        <p class="description"><?php esc_html_e('Check this box to hide the logo on the button.', 'scouting-openid-connect'); ?></p>
+
+                        <label for="scoutingOIDCRedirectBackInput">Redirect Back</label>
+                        <input type="checkbox" id="scoutingOIDCRedirectBackInput">
+                        <p class="description"><?php esc_html_e('Check this box to add redirect_back="true" to the generated shortcodes.', 'scouting-openid-connect'); ?></p>
+
+                        <label for="scoutingOIDCDemoLogoutInput">Preview Logout Button</label>
+                        <input type="checkbox" id="scoutingOIDCDemoLogoutInput">
+                        <p class="description"><?php esc_html_e('For demo purposes only: check this box to preview the logout button text.', 'scouting-openid-connect'); ?></p>
                     </form>
                 </div>
             </div>
 
             <div>
-                <p><?php esc_html_e('Example of the shortcode with custom attributes:', 'scouting-openid-connect'); ?></p>
-                <pre><code id="scoutingOIDCButtonShortCode">[scouting_oidc_button width="250" height="40" background_color="#4caf50" text_color="#ffffff"]</code></pre>
+                <p><?php esc_html_e('Generated shortcode (default attributes shown below until edited):', 'scouting-openid-connect'); ?></p>
+                <pre><code id="scoutingOIDCButtonShortCode">[scouting_oidc_button]</code></pre>
                 <p><?php esc_html_e('Example of the shortcode above:', 'scouting-openid-connect'); ?></p>
-                <?php echo do_shortcode('[scouting_oidc_button width="250" height="40" background_color="#4caf50" text_color="#ffffff"]'); ?>
+                <div id="scoutingOIDCLivePreviewContainer">
+                    <?php echo do_shortcode('[scouting_oidc_button]'); ?>
+                </div>
                 <p><strong><?php esc_html_e('Note: The button is not interactive in this preview.', 'scouting-openid-connect'); ?></strong></p>
             </div>
 
@@ -92,8 +120,8 @@ class Shortcode
                 <br>
                 <?php esc_html_e('To add the OpenID Connect link to your site, use the following shortcode:', 'scouting-openid-connect'); ?>
             </p>
-            <pre><code>[scouting_oidc_link]</code></pre>
-            <p><?php esc_html_e('You can not customize the appearance of the link.', 'scouting-openid-connect'); ?></p>
+            <pre><code id="scoutingOIDCLinkShortCode">[scouting_oidc_link]</code></pre>
+            <p><?php esc_html_e('You cannot customize the appearance of the link, but you can add redirect_back="true" to return the user to the current page after login.', 'scouting-openid-connect'); ?></p>
             <p><?php esc_html_e('Example of the link shortcode:', 'scouting-openid-connect'); ?></p>
             <p><?php echo do_shortcode('[scouting_oidc_link]'); ?><br><strong><?php esc_html_e('Note: Do not copy this link, it will not work. This is just an example of how the link will look like.', 'scouting-openid-connect'); ?></strong></p>
         </div>
@@ -101,7 +129,9 @@ class Shortcode
     }
 
     /**
-     * This script renders JavaScript to live preview the shortcode with custom attributes
+     * This script renders JavaScript to live preview the shortcode with custom attributes on the shortcode settings page.
+     * 
+     * @return void
      */
     public function scouting_oidc_shortcode_enqueue_live_script(): void {
         // Enqueue the external JavaScript file with the defer attribute
@@ -109,10 +139,19 @@ class Shortcode
             'live-shortcode-script',                    // Handle name
             plugins_url('live-shortcode.js', __FILE__), // Path to the file
             array(),                                    // No dependencies
-            "2.3.0",                                    // Version number
+            SCOUTING_OIDC_VERSION,                      // Version number
             array(
                 'strategy' => 'defer',                  // Add the defer attribute
                 'in_footer' => true                     // Load the script in the footer
+            )
+        );
+
+        wp_localize_script(
+            'live-shortcode-script',
+            'scoutingOIDCLiveShortcodeL10n',
+            array(
+                'loginText' => __('Login with Scouts Online', 'scouting-openid-connect'),
+                'logoutText' => __('Logout', 'scouting-openid-connect'),
             )
         );
     }

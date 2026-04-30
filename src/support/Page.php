@@ -3,8 +3,16 @@ namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * This class manages the support submenu page for the Scouting OIDC plugin, including registering the submenu and rendering the support page content.
+ */
 class Support
 {
+    /**
+     * Register the support submenu page under the main menu.
+     *
+     * @return void
+     */
     public function scouting_oidc_support_submenu_page(): void {
         add_submenu_page(
             'scouting-oidc-settings',                       // Parent slug (matches the main menu slug)
@@ -17,7 +25,11 @@ class Support
         );
     }
 
-    // Callback to render support page content
+    /**
+     * Callback function to render the support page content.
+     *
+     * @return void
+     */
     public function scouting_oidc_support_page_callback(): void {
         ?>
         <div class="wrap">
@@ -47,15 +59,15 @@ class Support
                     <?php esc_html_e('Fill in the OpenID Connect Settings with the copied data.', 'scouting-openid-connect'); ?>
                     <br><?php esc_html_e('Required scopes:', 'scouting-openid-connect'); ?>
                     <ul style="list-style: disc; margin-left: 20px;">
-                        <li><?php esc_html_e('openid', 'scouting-openid-connect'); ?></li>
-                        <li><?php esc_html_e('membership', 'scouting-openid-connect'); ?></li>
-                        <li><?php esc_html_e('profile', 'scouting-openid-connect'); ?></li>
-                        <li><?php esc_html_e('email', 'scouting-openid-connect'); ?></li>
+                        <li>openid</li>
+                        <li>membership</li>
+                        <li>profile</li>
+                        <li>email</li>
                     </ul>
                     <?php esc_html_e('Optional scopes:', 'scouting-openid-connect'); ?>
                     <ul style="list-style: disc; margin-left: 20px;">
-                        <li><?php esc_html_e('address', 'scouting-openid-connect'); ?></li>
-                        <li><?php esc_html_e('phone', 'scouting-openid-connect'); ?></li>
+                        <li>address</li>
+                        <li>phone</li>
                     </ul>
                 </li>
                 <li><?php esc_html_e('Fill in the General Settings.', 'scouting-openid-connect'); ?></li>
