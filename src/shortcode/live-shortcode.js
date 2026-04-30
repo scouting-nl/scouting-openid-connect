@@ -34,6 +34,7 @@ function initializeLiveShortcodeEditor() {
     registerEventListeners(elements, state);
 
     updateShortcodeText(elements, state);
+    updateLinkShortcodeText(elements, state);
     updateDemoLogoutPreview(elements, state);
     updateLogoVisibility(elements, state);
 
@@ -190,7 +191,6 @@ function updateDemoLogoutPreview(elements, state) {
 
 function updateShortcodeText(elements, state) {
     elements.shortcodeText.textContent = buildShortcodeText(elements, state);
-    updateLinkShortcodeText(elements, state);
 }
 
 function updateLinkShortcodeText(elements, state) {

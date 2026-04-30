@@ -113,8 +113,8 @@ class Auth {
 
             // If redirect_back is requested, build a return URL to the current page and pass it to the auth URL builder
             if ($redirect_back) {
-                $current_url = (is_ssl() ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? '') . ($_SERVER['REQUEST_URI'] ?? '/');
-                $current_url = esc_url_raw($current_url);
+                $request_uri = wp_unslash($_SERVER['REQUEST_URI'] ?? '/');
+                $current_url = home_url($request_uri);
                 $login_url = $this->scouting_oidc_auth_login_url($current_url);
             } else {
                 $login_url = $this->scouting_oidc_auth_login_url();
@@ -174,8 +174,8 @@ class Auth {
         }
 
         if ($redirect_back) {
-            $current_url = (is_ssl() ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? '') . ($_SERVER['REQUEST_URI'] ?? '/');
-            $current_url = esc_url_raw($current_url);
+            $request_uri = wp_unslash($_SERVER['REQUEST_URI'] ?? '/');
+            $current_url = home_url($request_uri);
             $login_url = $this->scouting_oidc_auth_login_url($current_url);
         } else {
             $login_url = $this->scouting_oidc_auth_login_url();
@@ -249,9 +249,6 @@ class Auth {
             ErrorHandler::redirect_to_login_error('error', __('State is invalid', 'scouting-openid-connect'), 'state_invalid');
         }
 
-        // Apply any per-state redirect into the session so the post-login redirect hook can use it
-        $this->oidc_client->applyRedirectForStateToSession($state);
-
         // Check if 'code' parameter is set in the URL
         if (!filter_has_var(INPUT_GET, 'code')) {
             $this->oidc_client->unsetStatesAndNonce();
@@ -283,11 +280,15 @@ class Auth {
         if ($user->scouting_oidc_user_check_if_exist()) {
             Logger::info(LogComponent::AUTH, "User '{$user->getDisplayName()}' has an existing account, updating user information and logging in", null, $user->getUsername());
             $user->scouting_oidc_user_update();
+            // Promote per-state redirect only after successful callback validation and right before login.
+            $this->oidc_client->applyRedirectForStateToSession($state);
             $user->scouting_oidc_user_login();
         } else {
             if (get_option('scouting_oidc_user_auto_create')) {
                 Logger::info(LogComponent::AUTH, "User '{$user->getDisplayName()}' does not have an account, auto-creation is enabled, creating account and logging in", null, $user->getUsername());
                 $user->scouting_oidc_user_create();
+                // Promote per-state redirect only after successful callback validation and right before login.
+                $this->oidc_client->applyRedirectForStateToSession($state);
                 $user->scouting_oidc_user_login();
             } else {
                 Logger::warning(LogComponent::AUTH, "User '{$user->getDisplayName()}' does not have an account and auto-creation is disabled, redirecting to login page with an error message", null, $user->getUsername());

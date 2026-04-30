@@ -272,6 +272,7 @@ class OpenIDConnectClient
         $this->session->scouting_oidc_session_delete('scouting_oidc_states');
         $this->session->scouting_oidc_session_delete('scouting_oidc_nonces');
         $this->session->scouting_oidc_session_delete('scouting_oidc_code_verifiers');
+        $this->session->scouting_oidc_session_delete('scouting_oidc_post_login_redirect');
 
         Logger::debug(LogComponent::OIDC, 'OIDC state, nonce and PKCE verifier session data cleared');
     }
@@ -863,7 +864,9 @@ class OpenIDConnectClient
 
     /**
      * If a per-state redirect exists, copy it into a single post-login session key and remove the per-state entry.
-     * This makes the redirect available to `wp_login` hooks running later in the same request.
+     *
+     * The value is stored in this plugin's transient-backed session (1 hour TTL), so it may survive
+     * across requests until consumed by `getAndClearPostLoginRedirectFromSession()` or expiration.
      *
      * @param string $state the OIDC state value
      * @return void
