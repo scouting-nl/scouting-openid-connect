@@ -1,7 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [[2.4.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.4.0)] - 29/04/2026
+## [[2.4.1](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.4.1)] - 30/04/2026
+
+- Fixed some spelling mistakes.
+
+## [[2.4.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.4.0)] - 30/04/2026
 
 - Added logout support and dedicated handling for the OpenID Connect logout flow.
 - Redefined the nonce-based login flow to harden authentication callbacks.
