@@ -1,9 +1,9 @@
 === Scouting OpenID Connect ===
 Contributors: jobvk
 Tags: scouting, scouting nederland, sol, openid connect, oidc
-Requires at least: 6.6.0
-Tested up to: 6.9
-Stable tag: 2.4.1
+Requires at least: 6.9.5
+Tested up to: 7.0.2
+Stable tag: 2.5.0
 Requires PHP: 8.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -17,6 +17,8 @@ A WordPress plugin for logging in with Scouting Nederland OpenID Connect Server.
 This plugin allows users to authenticate and login to their WordPress websites using their Scouting Nederland OpenID Connect credentials.
 It provides a secure and convenient way for Scouting Nederland members to access their WordPress sites without the need for separate login credentials. 
 With this plugin, users can seamlessly integrate their Scouting Nederland accounts with their WordPress websites, enhancing the user experience and simplifying the login process.
+
+Do not report security vulnerabilities in a public issue or support topic. Follow the [security policy](https://github.com/Scouting-nl/scouting-openid-connect/security/policy) to submit a private report.
 
 == Installation ==
 

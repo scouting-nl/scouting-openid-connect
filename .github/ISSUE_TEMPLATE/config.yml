@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Report a security vulnerability privately
+    url: https://github.com/scouting-nl/scouting-openid-connect/security/advisories/new
+    about: Do not disclose security vulnerabilities in a public issue or discussion.
   - name: I have a question or need support, ask the community.
     url: https://github.com/scouting-nl/scouting-openid-connect/discussions/categories/support
     about: Let the people of our community help you.
