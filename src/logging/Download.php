@@ -49,7 +49,7 @@ class LoggingDownload
                         $display = (string) $value;
                     }
                 }
-            } else if ($key === 'sol_id') {
+            } elseif ($key === 'sol_id') {
                 $user_info = get_user_by('login', (string) $value);
                 if ($user_info !== false) {
                     $display = (string) $value . ' (' . $user_info->display_name . ')';
