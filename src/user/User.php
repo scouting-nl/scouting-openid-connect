@@ -108,6 +108,8 @@ class User {
 
         // Email scope data
         $this->email = sanitize_email($user_json_decoded['email'] ?? null);
+        // SOL3 currently returns false for email_verified for all users.
+        // Preserve the claim for future compatibility, but do not use it to reject logins.
         $this->emailVerified = rest_sanitize_boolean($user_json_decoded['email_verified'] ?? false);
 
         // Profile scope data
@@ -214,10 +216,10 @@ class User {
                 }
 
                 // Try creating the user again with the plus-addressed email
-                $user_id_by_plus_address_email = wp_create_user($this->sol_id, wp_generate_password(18, true, true), $plusAddressEmail);
-                if (is_wp_error($user_id_by_plus_address_email)) {
-                    Logger::log_wp_error(LogComponent::USER, LogLevel::ERROR, $user_id_by_plus_address_email, null, $this->sol_id);
-                    ErrorHandler::redirect_to_login_error('error', $user_id_by_plus_address_email->get_error_message(), 'login_email_mismatch');
+                $user_id = wp_create_user($this->sol_id, wp_generate_password(18, true, true), $plusAddressEmail);
+                if (is_wp_error($user_id)) {
+                    Logger::log_wp_error(LogComponent::USER, LogLevel::ERROR, $user_id, null, $this->sol_id);
+                    ErrorHandler::redirect_to_login_error('error', $user_id->get_error_message(), 'login_email_mismatch');
                 }
             } else {
                 Logger::error(LogComponent::USER, "Creating user '{$this->fullName}' failed: Email conflict for '{$this->email}' and duplicate-email strategy is not plus-addressing", null, $this->sol_id);
