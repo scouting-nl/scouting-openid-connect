@@ -93,13 +93,15 @@ class Session {
      * @param string $session_id Session identifier
      */
     private function scouting_oidc_session_set_cookie(string $session_id): void {
-        setcookie(self::COOKIE_NAME, $session_id, [
-            'expires' => time() + HOUR_IN_SECONDS,
-            'path' => '/',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'Lax'
-        ]);
+        if (!headers_sent()) {
+            setcookie(self::COOKIE_NAME, $session_id, [
+                'expires' => time() + HOUR_IN_SECONDS,
+                'path' => '/',
+                'secure' => true,
+                'httponly' => true,
+                'samesite' => 'Lax'
+            ]);
+        }
 
         $_COOKIE[self::COOKIE_NAME] = $session_id;
     }
