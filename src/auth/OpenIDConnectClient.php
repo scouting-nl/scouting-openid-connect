@@ -877,6 +877,8 @@ class OpenIDConnectClient
             $this->session->scouting_oidc_session_set('scouting_oidc_post_login_redirect', $redirect);
             $this->deleteRedirectForState($state);
         }
+
+        $this->session->scouting_oidc_session_regenerate_id();
     }
 
     /**
