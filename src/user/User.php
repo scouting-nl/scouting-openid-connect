@@ -119,7 +119,7 @@ class User {
         $this->sol_id = sanitize_user($user_json_decoded['member_id'] ?? null);
 
         // Email scope data
-        $this->email = sanitize_email($user_json_decoded['email'] ?? null);s.
+        $this->email = sanitize_email($user_json_decoded['email'] ?? null);
         $this->emailVerified = rest_sanitize_boolean($user_json_decoded['email_verified'] ?? false);
 
         // Profile scope data
