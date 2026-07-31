@@ -120,6 +120,8 @@ class User {
 
         // Email scope data
         $this->email = sanitize_email($user_json_decoded['email'] ?? null);
+        // SOL3 currently returns false for email_verified for all users.
+        // Preserve the claim for future compatibility, but do not use it to reject logins.
         $this->emailVerified = rest_sanitize_boolean($user_json_decoded['email_verified'] ?? false);
 
         // Profile scope data
