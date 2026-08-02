@@ -79,7 +79,7 @@ class Session {
      * @return string the session ID value or an empty string if the session ID does not exist
      */
     private function scouting_oidc_session_get_session_id(): string {
-        $session_id = isset($_COOKIE[self::COOKIE_NAME]) ? wp_unslash($_COOKIE[self::COOKIE_NAME]) : '';
+        $session_id = isset($_COOKIE[self::COOKIE_NAME]) ? sanitize_text_field(wp_unslash($_COOKIE[self::COOKIE_NAME])) : '';
         if (is_string($session_id) && preg_match('/\A[a-f0-9]{32}\z/', $session_id) === 1) {
             return $session_id;
         }

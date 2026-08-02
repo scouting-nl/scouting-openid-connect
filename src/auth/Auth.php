@@ -113,7 +113,7 @@ class Auth {
 
             // If redirect_back is requested, build a return URL to the current page and pass it to the auth URL builder
             if ($redirect_back) {
-                $request_uri = wp_unslash($_SERVER['REQUEST_URI'] ?? '/');
+                $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_unslash($_SERVER['REQUEST_URI'])) : '/';
                 $current_url = home_url($request_uri);
                 $login_url = $this->scouting_oidc_auth_login_url($current_url);
             } else {
@@ -174,7 +174,7 @@ class Auth {
         }
 
         if ($redirect_back) {
-            $request_uri = wp_unslash($_SERVER['REQUEST_URI'] ?? '/');
+            $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_unslash($_SERVER['REQUEST_URI'])) : '/';
             $current_url = home_url($request_uri);
             $login_url = $this->scouting_oidc_auth_login_url($current_url);
         } else {
