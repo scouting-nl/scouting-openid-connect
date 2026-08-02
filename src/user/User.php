@@ -14,7 +14,11 @@ use ScoutingOIDC\Mail;
 class User {
 
     /**
-     * @var string SOL Member ID
+     * @var string SOL member ID.
+     *
+     * The SOL `member_id` is immutable and unique for each user. It is the
+     * primary account identifier in Scouts Online and is used as the
+     * WordPress username to ensure consistent account mapping across logins.
      */
     private $sol_id;
 
@@ -25,6 +29,10 @@ class User {
 
     /**
      * @var bool Email address verified
+     *
+     * SOL3 currently returns `false` for `email_verified` for all users.
+     * Preserve the claim for future compatibility, but do not reject login
+     * based on this value.
      */
     private $emailVerified;
 
@@ -70,6 +78,10 @@ class User {
 
     /**
      * @var bool Phone number verified
+     *
+     * SOL3 currently returns `false` for `phone_number_verified` for all users.
+     * Preserve the claim for future compatibility, but do not reject login
+     * based on this value.
      */
     private $phoneNumberVerified;
 
@@ -123,7 +135,7 @@ class User {
         $normalized_locale = strtolower(str_replace('-', '_', $locale));
         if ($normalized_locale === 'nl' || strpos($normalized_locale, 'nl_') === 0) {
             $this->language = 'nl_NL';
-        } else if ($normalized_locale === 'en' || strpos($normalized_locale, 'en_') === 0) {
+        } elseif ($normalized_locale === 'en' || strpos($normalized_locale, 'en_') === 0) {
             $this->language = 'en_US';
         } else {
             $this->language = ''; // Use default WordPress language
@@ -161,7 +173,7 @@ class User {
 
     /**
      * Check if user already exists based on SOL ID
-     * 
+     *
      * @return bool True if user exists, false otherwise
      */
     public function scouting_oidc_user_check_if_exist(): bool {
@@ -170,7 +182,7 @@ class User {
 
     /**
      * Get the username to be used for the WordPress user, which is the SOL ID
-     * 
+     *
      * @return string Username
      */
     public function getUsername(): string {
@@ -179,7 +191,7 @@ class User {
 
     /**
      * Get the display name to be used for logging and error messages, which is the full name
-     * 
+     *
      * @return string Display name
      */
     public function getDisplayName(): string {
@@ -188,7 +200,7 @@ class User {
 
     /**
      * Create a new user
-     * 
+     *
      * @return void
      */
     public function scouting_oidc_user_create(): void {
@@ -214,10 +226,10 @@ class User {
                 }
 
                 // Try creating the user again with the plus-addressed email
-                $user_id_by_plus_address_email = wp_create_user($this->sol_id, wp_generate_password(18, true, true), $plusAddressEmail);
-                if (is_wp_error($user_id_by_plus_address_email)) {
-                    Logger::log_wp_error(LogComponent::USER, LogLevel::ERROR, $user_id_by_plus_address_email, null, $this->sol_id);
-                    ErrorHandler::redirect_to_login_error('error', $user_id_by_plus_address_email->get_error_message(), 'login_email_mismatch');
+                $user_id = wp_create_user($this->sol_id, wp_generate_password(18, true, true), $plusAddressEmail);
+                if (is_wp_error($user_id)) {
+                    Logger::log_wp_error(LogComponent::USER, LogLevel::ERROR, $user_id, null, $this->sol_id);
+                    ErrorHandler::redirect_to_login_error('error', $user_id->get_error_message(), 'login_email_mismatch');
                 }
             } else {
                 Logger::error(LogComponent::USER, "Creating user '{$this->fullName}' failed: Email conflict for '{$this->email}' and duplicate-email strategy is not plus-addressing", null, $this->sol_id);
@@ -241,7 +253,7 @@ class User {
 
     /**
      * Update user data if user already exists
-     * 
+     *
      * @return void
      */
     public function scouting_oidc_user_update(): void {
@@ -255,7 +267,7 @@ class User {
             $this->scouting_oidc_user_update_meta($user_id_by_sol_id);
         }
         // User exists by SOL ID and email, but the email belongs to another account
-        else if ($user_id_by_sol_id && $user_id_by_email && $user_id_by_sol_id !== $user_id_by_email) {
+        elseif ($user_id_by_sol_id && $user_id_by_email && $user_id_by_sol_id !== $user_id_by_email) {
             Logger::warning(LogComponent::USER, "Updating user '{$this->fullName}' where SOL ID matches an existing account but email '{$this->email}' is associated with a different account", $user_id_by_sol_id, $this->sol_id);
             /// Handle email conflict based on the setting
             if (get_option('scouting_oidc_user_duplicate_email') === 'plus_addressing') {
@@ -291,8 +303,8 @@ class User {
             $this->scouting_oidc_user_update_meta($user_id_by_sol_id);
         }
         // User exists by SOL ID but email is not associated with any account, update email and meta data
-        else if ($user_id_by_sol_id && !$user_id_by_email) {
-            $user = get_userdata($user_id_by_sol_id); 
+        elseif ($user_id_by_sol_id && !$user_id_by_email) {
+            $user = get_userdata($user_id_by_sol_id);
             $old_email = $user ? $user->user_email : null;
             Logger::info(LogComponent::USER, "Updating user '{$this->fullName}' their email address from '{$old_email}' to '{$this->email}'", $user_id_by_sol_id, $this->sol_id);
             // Update email
