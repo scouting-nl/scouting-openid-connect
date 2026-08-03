@@ -84,7 +84,7 @@ class OpenIDConnectClient
 
     /**
      * OpenIDConnectClient constructor
-     * 
+     *
      * @param string $client_id
      * @param string $client_secret
      * @param string $redirect_uri
@@ -103,13 +103,22 @@ class OpenIDConnectClient
 
     /**
      * Generates the authentication URL
-     * 
+     *
      * @param string $response_type the response type
      * @param array $scopes_array an array of scopes
      * @param string|null $redirect_after_login Optional URL to redirect to after login, used for shortcode support. If null, default redirect behavior applies.
      * @return string the authentication URL
      */
     public function getAuthenticationURL(string $response_type, array $scopes_array, ?string $redirect_after_login = null): string {
+        if (!$this->session->scouting_oidc_session_set_session_id()) {
+            Logger::critical(LogComponent::OIDC, 'A secure OIDC session cookie could not be created.');
+            ErrorHandler::redirect_to_login_error(
+                'init',
+                __('A secure login session could not be started. Please use HTTPS and try again.', 'scouting-openid-connect'),
+                'session_cookie_unavailable'
+            );
+        }
+
         Logger::debug(LogComponent::OIDC, 'Authentication URL generation started');
         $this->getWellKnownData();
         $this->getJWKSData();
@@ -878,7 +887,14 @@ class OpenIDConnectClient
             $this->deleteRedirectForState($state);
         }
 
-        $this->session->scouting_oidc_session_regenerate_id();
+        if (!$this->session->scouting_oidc_session_regenerate_id()) {
+            Logger::critical(LogComponent::OIDC, 'A secure OIDC session cookie could not be created.');
+            ErrorHandler::redirect_to_login_error(
+                'init',
+                __('A secure login session could not be started. Please use HTTPS and try again.', 'scouting-openid-connect'),
+                'session_cookie_unavailable'
+            );
+        }
     }
 
     /**

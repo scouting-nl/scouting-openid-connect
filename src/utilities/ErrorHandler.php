@@ -38,6 +38,10 @@ class ErrorHandler {
      * @return void
      */
     public static function redirect_to_login_error(string $error_description, string $hint, string $message, ?string $error = null): void {
+        if (headers_sent()) {
+            wp_die(esc_html($hint));
+        }
+
         wp_safe_redirect(self::login_error_url($error_description, $hint, $message, $error));
         exit;
     }
