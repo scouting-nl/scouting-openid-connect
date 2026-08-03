@@ -13,7 +13,7 @@ class Session {
 
     /**
      * Sets value in a transient session for 1 hour
-     * 
+     *
      * @param string $key the key to set in the transient session
      * @param mixed $value the value to set in the transient session
      */
@@ -23,7 +23,7 @@ class Session {
 
     /**
      * Gets value from the transient session
-     * 
+     *
      * @param string $key the key to get from the transient session
      * @return mixed the value from the transient session
      */
@@ -34,7 +34,7 @@ class Session {
 
     /**
      * Delete value from the transient session
-     * 
+     *
      * @param string $key the key to delete from the transient session
      */
     public function scouting_oidc_session_delete(string $key): void {
@@ -75,7 +75,7 @@ class Session {
 
     /**
      * Get the scouting_oidc_session session ID value
-     * 
+     *
      * @return string the session ID value or an empty string if the session ID does not exist
      */
     private function scouting_oidc_session_get_session_id(): string {
