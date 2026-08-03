@@ -31,6 +31,8 @@ jobs:
             --exclude ".github" \
             --exclude ".gitattributes" \
             --exclude "CHANGELOG.md" \
+            --exclude "SECURITY.md" \
+            --exclude "CONTRIBUTING.md" \
             --exclude "README.md" \
             --include "assets/" \
             --include "assets/icon.svg" \

@@ -23,6 +23,11 @@ class User {
     private $sol_id;
 
     /**
+     * @var string OpenID Connect subject
+     */
+    private $subject;
+
+    /**
      * @var string Email address
      */
     private $email;
@@ -117,6 +122,8 @@ class User {
         // Required scopes data
         // Membership scope data
         $this->sol_id = sanitize_user($user_json_decoded['member_id'] ?? null);
+        $subject = $user_json_decoded['sub'] ?? '';
+        $this->subject = is_string($subject) ? $subject : '';
 
         // Email scope data
         $this->email = sanitize_email($user_json_decoded['email'] ?? null);
@@ -162,6 +169,11 @@ class User {
             ErrorHandler::redirect_to_login_error('error', __('SOL ID is missing, make sure the "membership" scope is enabled.', 'scouting-openid-connect'), 'sol_id_is_missing');
         }
 
+        if ($this->subject === '') {
+            Logger::error(LogComponent::USER, 'Construction of User object failed: OIDC subject is missing');
+            ErrorHandler::redirect_to_login_error('error', __('OpenID Connect subject is missing.', 'scouting-openid-connect'), 'subject_is_missing');
+        }
+
         // Validate email is present
         if (empty($this->email)) {
             // Log only which claims are present/absent — never dump personal claim values
@@ -177,7 +189,23 @@ class User {
      * @return bool True if user exists, false otherwise
      */
     public function scouting_oidc_user_check_if_exist(): bool {
-        return username_exists($this->sol_id) !== false;
+        $user_id = username_exists($this->sol_id);
+        if ($user_id === false) {
+            return false;
+        }
+
+        $stored_subject = get_user_meta($user_id, 'scouting_oidc_subject', true);
+        $is_oidc_user = get_user_meta($user_id, 'scouting_oidc_user', true) === 'true';
+        $subject_matches = is_string($stored_subject) && $stored_subject !== '' && hash_equals($stored_subject, $this->subject);
+
+        // Existing plugin users without a subject are bound during this login.
+        if ($is_oidc_user && ($stored_subject === '' || $subject_matches)) {
+            return true;
+        }
+
+        Logger::error(LogComponent::USER, 'Login rejected: existing username is not bound to the OIDC subject', $user_id, $this->sol_id);
+        ErrorHandler::redirect_to_login_error('error', __('This SOL ID is already linked to another account.', 'scouting-openid-connect'), 'account_binding_mismatch');
+        return false;
     }
 
     /**
@@ -374,6 +402,7 @@ class User {
         update_user_meta($user_id, 'locale', $this->language);
         update_user_meta($user_id, 'show_admin_bar_front', 'false');
         update_user_meta($user_id, 'scouting_oidc_user', 'true');
+        update_user_meta($user_id, 'scouting_oidc_subject', $this->subject);
 
         if (get_option('scouting_oidc_user_display_name')) {
             switch (get_option('scouting_oidc_user_display_name')) {
