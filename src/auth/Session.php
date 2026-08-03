@@ -66,7 +66,8 @@ class Session {
             return true;
         }
 
-        return $this->scouting_oidc_session_set_cookie(bin2hex(random_bytes(16)));
+        $session_id = $this->generateSessionId();
+        return $session_id !== null && $this->scouting_oidc_session_set_cookie($session_id);
     }
 
     /**
@@ -85,7 +86,8 @@ class Session {
             'scouting_oidc_post_login_redirect' => $this->scouting_oidc_session_get('scouting_oidc_post_login_redirect'),
         );
 
-        if (!$this->scouting_oidc_session_set_cookie(bin2hex(random_bytes(16)))) {
+        $session_id = $this->generateSessionId();
+        if ($session_id === null || !$this->scouting_oidc_session_set_cookie($session_id)) {
             return false;
         }
 
@@ -145,6 +147,19 @@ class Session {
 
         $_COOKIE[self::COOKIE_NAME] = $session_id;
         return true;
+    }
+
+    /**
+     * Generate a cryptographically secure session identifier.
+     *
+     * @return string|null Session identifier, or null when secure randomness is unavailable
+     */
+    private function generateSessionId(): ?string {
+        try {
+            return bin2hex(random_bytes(16));
+        } catch (\Exception $exception) {
+            return null;
+        }
     }
 
     /**

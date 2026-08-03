@@ -96,9 +96,8 @@ class OpenIDConnectClient
         $this->redirectURL = trailingslashit($redirect_uri);
         $this->issuer = $scouting_issuer;
 
-        // Load session to store tokens if needed
+        // Initialize session storage; create the cookie only when login begins.
         $this->session = new Session();
-        $this->session->scouting_oidc_session_set_session_id();
     }
 
     /**
