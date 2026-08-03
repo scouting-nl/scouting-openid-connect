@@ -205,6 +205,7 @@ class User {
 
         Logger::error(LogComponent::USER, 'Login rejected: existing username is not bound to the OIDC subject', $user_id, $this->sol_id);
         ErrorHandler::redirect_to_login_error('error', __('This SOL ID is already linked to another account.', 'scouting-openid-connect'), 'account_binding_mismatch');
+        return false;
     }
 
     /**
