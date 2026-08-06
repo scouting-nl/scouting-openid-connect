@@ -1,0 +1,94 @@
+name: 'update-wordpress-tested-up-to'
+
+on:
+  schedule:
+    - cron: '23 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-wordpress-tested-up-to
+  cancel-in-progress: false
+
+jobs:
+  update-tested-up-to:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: development
+
+      - name: Check latest stable WordPress release
+        id: wordpress-version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          VERSION_RESPONSE="$(curl --silent --show-error --fail-with-body --retry 3 \
+            'https://api.wordpress.org/core/version-check/1.7/?channel=stable')"
+          LATEST_VERSION="$(jq -r '.offers[0].version // empty' <<< "${VERSION_RESPONSE}")"
+
+          if [[ ! "${LATEST_VERSION}" =~ ^([0-9]+\.[0-9]+)(\.[0-9]+)?$ ]]; then
+            echo "::error::Latest stable WordPress version '${LATEST_VERSION}' is invalid."
+            exit 1
+          fi
+
+          LATEST_SERIES="${BASH_REMATCH[1]}"
+          CURRENT_VERSION="$(awk -F ': *' '/^Tested up to:/ { print $2; exit }' readme.txt | tr -d '\r')"
+
+          if [[ ! "${CURRENT_VERSION}" =~ ^[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Could not parse Tested up to from readme.txt."
+            exit 1
+          fi
+
+          HIGHEST_VERSION="$(printf '%s\n%s\n' "${CURRENT_VERSION}" "${LATEST_SERIES}" | sort -V | tail -n 1)"
+          if [[ "${CURRENT_VERSION}" == "${LATEST_SERIES}" || "${HIGHEST_VERSION}" == "${CURRENT_VERSION}" ]]; then
+            echo "::notice::Tested up to ${CURRENT_VERSION} already covers WordPress ${LATEST_VERSION}."
+            echo 'update=false' >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          sed -i -E "s/^(Tested up to:[[:space:]]*)[0-9.]+/\1${LATEST_SERIES}/" readme.txt
+          sed -i -E "s/^(\*\*Tested up to:\*\*[[:space:]]*)[0-9.]+/\1${LATEST_SERIES}/" README.md
+
+          grep -qEx "Tested up to:[[:space:]]*${LATEST_SERIES}" readme.txt
+          grep -qE "^\*\*Tested up to:\*\*[[:space:]]*${LATEST_SERIES}([[:space:]]|$)" README.md
+
+          echo "latest=${LATEST_SERIES}" >> "${GITHUB_OUTPUT}"
+          echo 'update=true' >> "${GITHUB_OUTPUT}"
+
+      - name: Run plugin check against latest WordPress
+        if: steps.wordpress-version.outputs.update == 'true'
+        uses: wordpress/plugin-check-action@v1.1.7
+        with:
+          wp-version: latest
+          exclude-files: |
+            .gitignore
+            .gitattributes
+            .wp-env.json
+            CHANGELOG.md
+            README.md
+          exclude-directories: |
+            .github
+
+      - name: Create pull request
+        if: steps.wordpress-version.outputs.update == 'true'
+        uses: peter-evans/create-pull-request@v8.1.1
+        with:
+          add-paths: |
+            README.md
+            readme.txt
+          base: development
+          branch: automation/wordpress-tested-up-to
+          commit-message: Update WordPress tested version to ${{ steps.wordpress-version.outputs.latest }}
+          delete-branch: true
+          title: Update WordPress tested version to ${{ steps.wordpress-version.outputs.latest }}
+          body: |
+            Updates `Tested up to` after a new stable WordPress release series.
+
+            Plugin Check passed against the latest stable WordPress release before this pull request was created.
