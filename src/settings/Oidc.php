@@ -161,7 +161,7 @@ class Settings_Oidc
      * @return string
      */
     public function scouting_oidc_sanitize_scopes_option(mixed $input): string {
-        $allowed_scopes = ['openid', 'membership', 'profile', 'email', 'address', 'phone'];
+        $allowed_scopes = ['openid', 'membership', 'profile', 'email', 'address', 'phone', 'guardians', 'roles'];
         $input = is_string($input) ? strtolower(trim($input)) : '';
 
         // If the input is empty, return the default set of scopes.

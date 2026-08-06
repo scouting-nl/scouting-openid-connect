@@ -23,6 +23,11 @@ class User {
     private $sol_id;
 
     /**
+     * @var url SOL URL
+     */
+    private $sol_url;
+
+    /**
      * @var string OpenID Connect subject
      */
     private $subject;
@@ -136,6 +141,7 @@ class User {
         $this->familyName = sanitize_text_field($user_json_decoded['family_name'] ?? '');
         $this->gender     = sanitize_text_field($user_json_decoded['gender'] ?? 'unknown');
         $this->birthdate  = sanitize_text_field($user_json_decoded['birthdate'] ?? '');
+        $this->sol_url    = esc_url_raw($user_json_decoded['profile'] ?? '');
 
         // Profile scope - Language preference
         $locale = sanitize_text_field($user_json_decoded['locale'] ?? '');
