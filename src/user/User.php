@@ -23,7 +23,7 @@ class User {
     private $sol_id;
 
     /**
-     * @var url SOL URL
+     * @var string SOL profile URL
      */
     private $sol_url;
 
@@ -409,6 +409,7 @@ class User {
         update_user_meta($user_id, 'show_admin_bar_front', 'false');
         update_user_meta($user_id, 'scouting_oidc_user', 'true');
         update_user_meta($user_id, 'scouting_oidc_subject', $this->subject);
+        update_user_meta($user_id, 'scouting_oidc_sol_url', $this->sol_url);
 
         if (get_option('scouting_oidc_user_display_name')) {
             switch (get_option('scouting_oidc_user_display_name')) {

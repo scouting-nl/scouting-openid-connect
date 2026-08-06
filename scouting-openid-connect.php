@@ -85,6 +85,9 @@ function scouting_oidc_init(): void
     // Provide additional links in the plugin overview page
     add_filter('plugin_action_links_'.plugin_basename(__FILE__), [$scouting_oidc_actions, 'scouting_oidc_actions_plugin_links']);
 
+    // Add a link to Scouts Online after View in each applicable user row.
+    add_filter('user_row_actions', [$scouting_oidc_fields, 'scouting_oidc_fields_user_row_actions'], 10, 2);
+
     // Normalize plus-addressed Scouting OIDC recipient aliases in outgoing mail
     add_filter('wp_mail', [Mail::class, 'scouting_oidc_mail_filter_wp_mail'], 20);
 

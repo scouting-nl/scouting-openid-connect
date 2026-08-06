@@ -56,6 +56,7 @@ $wpdb->query($wpdb->prepare($scouting_oidc_delete_transients_sql, $scouting_oidc
 $scouting_oidc_metas = array(
     'scouting_oidc_user',
     'scouting_oidc_subject',
+    'scouting_oidc_sol_url',
     'scouting_oidc_birthdate',
     'scouting_oidc_gender',
     'scouting_oidc_phone_number',

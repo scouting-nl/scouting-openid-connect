@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 - Fetch user claims from the discovered OpenID Connect UserInfo endpoint instead of the ID token.
+- Add a "View in SOL" action to Scouting OpenID Connect users in the WordPress Users table.
 
 ## [[2.4.1](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.4.1)] - 30/04/2026
 

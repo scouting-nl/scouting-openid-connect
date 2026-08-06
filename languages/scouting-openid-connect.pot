@@ -26,6 +26,10 @@ msgstr ""
 msgid "Logout"
 msgstr ""
 
+#: user/Fields.php:29
+msgid "View in SOL"
+msgstr ""
+
 #: auth/Auth.php:173
 msgid "Client ID or Client Secret are missing in the configuration"
 msgstr ""

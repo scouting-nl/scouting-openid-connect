@@ -27,6 +27,10 @@ msgstr "Inloggen met Scouts Online"
 msgid "Logout"
 msgstr "Uitloggen"
 
+#: user/Fields.php:29
+msgid "View in SOL"
+msgstr "Bekijken in SOL"
+
 #: auth/Auth.php:173
 msgid "Client ID or Client Secret are missing in the configuration"
 msgstr "Client-ID of Client Secret ontbreekt in de configuratie"
