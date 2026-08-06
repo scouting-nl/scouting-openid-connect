@@ -27,7 +27,7 @@ msgstr "Inloggen met Scouts Online"
 msgid "Logout"
 msgstr "Uitloggen"
 
-#: user/Fields.php:29
+#: user/Fields.php:27
 msgid "View in SOL"
 msgstr "Bekijken in SOL"
 

@@ -26,7 +26,7 @@ msgstr ""
 msgid "Logout"
 msgstr ""
 
-#: user/Fields.php:29
+#: user/Fields.php:27
 msgid "View in SOL"
 msgstr ""
 

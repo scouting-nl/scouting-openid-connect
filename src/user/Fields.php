@@ -19,12 +19,11 @@ class Fields
      */
     public function scouting_oidc_fields_user_row_actions(array $actions, WP_User $user): array {
         $sol_url = get_user_meta($user->ID, 'scouting_oidc_sol_url', true);
-        if (!is_string($sol_url) || wp_http_validate_url($sol_url) === false) {
+        if (! wp_http_validate_url($sol_url)) {
             return $actions;
         }
 
-        $view_in_sol = '<a href="' . esc_url($sol_url) . '" target="_blank" rel="noopener noreferrer">'
-            . esc_html__('View in SOL', 'scouting-openid-connect') . '</a>';
+        $view_in_sol = '<a href="' . esc_url($sol_url) . '" target="_blank" rel="noopener noreferrer">' . esc_html__('View in SOL', 'scouting-openid-connect') . '</a>';
         $view_position = array_search('view', array_keys($actions), true);
 
         if ($view_position === false) {
