@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- Fetch user claims from the discovered OpenID Connect UserInfo endpoint instead of the ID token.
+
 ## [[2.4.1](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.4.1)] - 30/04/2026
 
 - Fixed some spelling mistakes.

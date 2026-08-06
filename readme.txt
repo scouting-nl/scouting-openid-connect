@@ -76,6 +76,9 @@ Currently not, but this is planned for a future update of this plugin.
 
 == Changelog ==
 
+= Unreleased =
+* Fetch user claims from the discovered OpenID Connect UserInfo endpoint instead of the ID token.
+
 = 2.4.1 =
 * Fixed some spelling mistakes.
 

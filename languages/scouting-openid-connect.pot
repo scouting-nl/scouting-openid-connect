@@ -144,6 +144,30 @@ msgstr ""
 msgid "The ID token nonce is invalid."
 msgstr ""
 
+#: auth/OpenIDConnectClient.php:446
+msgid "The userinfo_endpoint is not available in the well-known data."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:458
+msgid "The access token is not available in the tokens."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:487
+msgid "The UserInfo endpoint returned an unexpected response."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:497
+msgid "The UserInfo endpoint returned invalid user data."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:507
+msgid "The UserInfo response is missing the required sub claim."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:516
+msgid "The UserInfo response belongs to a different subject."
+msgstr ""
+
 #: auth/OpenIDConnectClient.php:582 auth/OpenIDConnectClient.php:641
 msgid "No additional details provided."
 msgstr ""
