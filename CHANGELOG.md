@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 
 - Fetch user claims from the discovered OpenID Connect UserInfo endpoint instead of the ID token.
 - Add a "View in SOL" action to Scouting OpenID Connect users in the WordPress Users table.
+- Add seven WordPress Site Health checks for runtime requirements, credentials, scopes, provider compatibility, login redirects, log storage, and scheduled log cleanup.
+- Add a redacted Site Health information report with configuration, cache, user count, WooCommerce, logging, and cron diagnostics.
+- Add a Site Health recovery action for overdue log cleanup, repair invalid cleanup schedules, and record the last successful cleanup time.
 
 ## [[2.4.1](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.4.1)] - 30/04/2026
 
