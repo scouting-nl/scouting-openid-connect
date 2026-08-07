@@ -121,8 +121,6 @@ The Status tab checks:
 * The logging database table and schema.
 * The daily log cleanup schedule and retention period.
 
-When cleanup is overdue, Site Health identifies whether automatic WP-Cron spawning is disabled and offers administrators a **Run log cleanup now** action. A manual run removes expired logs, records the successful run time, and recreates the daily schedule. The underlying WordPress cron or loopback problem must still be corrected for future automatic cleanup.
-
 The Info tab contains a **Scouting OpenID Connect** section that can be copied into a support report. It includes useful configuration, cache, user count, WooCommerce, logging, and cron details. Client secrets, user claims, log messages, and other personal data are never included.
 
 ## Frequently Asked Questions

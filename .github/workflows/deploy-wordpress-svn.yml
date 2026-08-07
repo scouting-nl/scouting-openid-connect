@@ -1,0 +1,35 @@
+name: 'deploy-wordpress-svn'
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-wordpress-svn-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Prepare WordPress.org assets
+        run: |
+          mkdir .wordpress-org
+          cp -R assets/. .wordpress-org/
+          find assets -type f ! -name '*.svg' -delete
+
+      - name: Deploy to WordPress.org SVN
+        uses: nk-o/action-wordpress-plugin-deploy@v0.0.5
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: scouting-openid-connect
+          ASSETS_DIR: .wordpress-org

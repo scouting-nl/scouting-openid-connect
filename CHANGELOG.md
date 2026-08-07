@@ -1,13 +1,16 @@
 # Change Log
+
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [[2.5.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.5.0)] - 07/08/2026
 
+- Added a `subject` property to the User class to store the OpenID Connect subject, enforced that it must be present.
 - Fetch user claims from the discovered OpenID Connect UserInfo endpoint instead of the ID token.
 - Add a "View in SOL" action to Scouting OpenID Connect users in the WordPress Users table.
-- Add seven WordPress Site Health checks for runtime requirements, credentials, scopes, provider compatibility, login redirects, log storage, and scheduled log cleanup.
-- Add a redacted Site Health information report with configuration, cache, user count, WooCommerce, logging, and cron diagnostics.
-- Add a Site Health recovery action for overdue log cleanup, repair invalid cleanup schedules, and record the last successful cleanup time.
+- Add a Site Health check to verify the OpenID Connect provider's health and configuration.
+- Fix cron job scheduling for clearing old logs to ensure it runs as expected.
+- Added Code of Conduct, Contributing and Security policy to the plugin distribution.
+- Tested up to: `7.0`.
 
 ## [[2.4.1](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.4.1)] - 30/04/2026
 
@@ -57,34 +60,36 @@ This release introduces a major change in how WordPress users are identified.
 The WordPress `UserName` now uses the `SOL ID` instead of the `SOL UserName`.
 This change was made because SOL usernames can be changed, which caused issues with Scout-In 2025.
 
-Importent: 
+Importent:
+
 - The `membership` scope is now required to obtain the SOL Member ID.
 - The `infix` field has been removed from the user object due to conflicts with WooCommerce. The infix is now automatically added before the last name.
 
 Other changes:
+
 - The `prefix` field has been removed from General Settings.
 - The SOL ID field has been removed from the user profile, it is now used as the WordPress username.
 - Improved error messages and redirect handling for missing or invalid user data or OIDC scopes.
 - Updated setup and support documentation to reflect the new identification model.
 
 ## [[1.2.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/1.2.0)] - 14/09/2025
- 
+
 - Added custom redirect option for successful login.
 - Improved error handling and redirects for cases where required user data or scopes are missing or invalid.
 
 ## [[1.1.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/1.1.0)] - 23/06/2025
- 
+
 - Added option to redirect only SOL users in settings.
 
 ## [[1.0.2](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/1.0.2)] - 20/05/2025
- 
+
 - Tested plugin up to WordPress 6.7.2 => 6.8.0
 
 ## [[1.0.1](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/1.0.1)] - 23/02/2025
- 
+
 - Fix hook [wp_login](https://developer.wordpress.org/reference/hooks/wp_login/) by adding third parameter.
 - Tested plugin up to WordPress 6.7.1 => 6.7.2
 
 ## [[1.0.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/1.0.0)] - 17/12/2024
- 
+
 Initial release

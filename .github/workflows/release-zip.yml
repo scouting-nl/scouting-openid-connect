@@ -29,11 +29,13 @@ jobs:
           rsync -av . "${STAGING}" \
             --exclude ".git" \
             --exclude ".github" \
+            --exclude ".distignore" \
             --exclude ".gitattributes" \
             --exclude "CHANGELOG.md" \
-            --exclude "SECURITY.md" \
+            --exclude "CODE_OF_CONDUCT.md" \
             --exclude "CONTRIBUTING.md" \
             --exclude "README.md" \
+            --exclude "SECURITY.md" \
             --include "assets/" \
             --include "assets/icon.svg" \
             --exclude "assets/*"

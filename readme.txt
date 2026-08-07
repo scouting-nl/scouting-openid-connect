@@ -94,12 +94,14 @@ Currently not, but this is planned for a future update of this plugin.
 
 == Changelog ==
 
-= Unreleased =
+= 2.5.0 =
+* Added a `subject` property to the User class to store the OpenID Connect subject, enforced that it must be present.
 * Fetch user claims from the discovered OpenID Connect UserInfo endpoint instead of the ID token.
-* Add a "View in SOL" action to Scouting OpenID Connect users in the WordPress Users table.
-* Add seven WordPress Site Health checks for runtime requirements, credentials, scopes, provider compatibility, login redirects, log storage, and scheduled log cleanup.
-* Add a redacted Site Health information report with configuration, cache, user count, WooCommerce, logging, and cron diagnostics.
-* Add a Site Health recovery action for overdue log cleanup, repair invalid cleanup schedules, and record the last successful cleanup time.
+* Add a `View in SOL` action to Scouting OpenID Connect users in the WordPress Users table.
+* Add a Site Health check to verify the OpenID Connect provider's health and configuration.
+* Fix cron job scheduling for clearing old logs to ensure it runs as expected.
+* Added Code of Conduct, Contributing and Security policy to the plugin distribution.time.
+* Tested up to: `7.0`.
 
 = 2.4.1 =
 * Fixed some spelling mistakes.
