@@ -29,7 +29,7 @@ class Auth {
 
     /**
      * Add the OpenID Connect button to the login form
-     * 
+     *
      * @return void
      */
     public function scouting_oidc_auth_login_form(): void {
@@ -269,10 +269,13 @@ class Auth {
         $this->oidc_client->retrieveTokens($param_code, $state);
 
         // Validate the ID token, passing the stored nonce for claim verification
-        $user_json_encoded = $this->oidc_client->validateTokens($stored_nonce);
+        $id_token_claims = $this->oidc_client->validateTokens($stored_nonce);
+
+        // Retrieve current user claims from the discovered UserInfo endpoint
+        $user_info = $this->oidc_client->retrieveUserInfo($id_token_claims['sub']);
 
         // Create a new User object
-        $user = new User($user_json_encoded);
+        $user = new User($user_info);
 
         Logger::info(LogComponent::AUTH, "User '{$user->getDisplayName()}' is being checked for login or account creation", null, $user->getUsername());
 

@@ -20,7 +20,11 @@ jobs:
           .gitignore
           .gitattributes
           .wp-env.json
+          .distignore
           CHANGELOG.md
+          CODE_OF_CONDUCT.md
+          CONTRIBUTING.md
           README.md
+          SECURITY.md
         exclude-directories: |
           .github

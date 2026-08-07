@@ -23,6 +23,11 @@ class User {
     private $sol_id;
 
     /**
+     * @var string SOL profile URL
+     */
+    private $sol_url;
+
+    /**
      * @var string OpenID Connect subject
      */
     private $subject;
@@ -136,6 +141,7 @@ class User {
         $this->familyName = sanitize_text_field($user_json_decoded['family_name'] ?? '');
         $this->gender     = sanitize_text_field($user_json_decoded['gender'] ?? 'unknown');
         $this->birthdate  = sanitize_text_field($user_json_decoded['birthdate'] ?? '');
+        $this->sol_url    = sanitize_url($user_json_decoded['profile'] ?? '', ['http', 'https']);
 
         // Profile scope - Language preference
         $locale = sanitize_text_field($user_json_decoded['locale'] ?? '');
@@ -403,6 +409,7 @@ class User {
         update_user_meta($user_id, 'show_admin_bar_front', 'false');
         update_user_meta($user_id, 'scouting_oidc_user', 'true');
         update_user_meta($user_id, 'scouting_oidc_subject', $this->subject);
+        update_user_meta($user_id, 'scouting_oidc_sol_url', $this->sol_url);
 
         if (get_option('scouting_oidc_user_display_name')) {
             switch (get_option('scouting_oidc_user_display_name')) {

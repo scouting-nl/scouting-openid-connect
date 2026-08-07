@@ -1,0 +1,15 @@
+# Distribution exclusions
+
+/.git
+/.github
+/.gitattributes
+/.gitignore
+/.wordpress-org
+/.wp-env.json
+/CHANGELOG.md
+/CODE_OF_CONDUCT.md
+/CONTRIBUTING.md
+/README.md
+/SECURITY.md
+/.distignore
+/node_modules

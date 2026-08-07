@@ -22,6 +22,7 @@ Connect your Wordpress website to the Scouting Nederland OpenID Connect server.
 * [Installation](#installation)
 * [Configuration](#configuration)
 * [Shortcodes](#shortcodes)
+* [Site Health](#site-health)
 * [Frequently-Asked-Questions](#frequently-asked-questions)
 * [Security](#security)
 * [Translations](#translations)
@@ -105,6 +106,22 @@ This shortcode will create a login url
 This shortcode will create a login button
 
 `[scouting_oidc_button]`
+
+## Site Health
+
+Go to **Tools > Site Health** in WordPress to inspect the plugin's configuration and operational status.
+
+The Status tab checks:
+
+* Client ID and Client Secret configuration.
+* HTTPS and PHP runtime requirements.
+* Required scopes and optional scopes used by enabled profile fields.
+* Provider discovery, issuer, required OpenID Connect capabilities, endpoints, and signing keys.
+* The configured post-login redirect.
+* The logging database table and schema.
+* The daily log cleanup schedule and retention period.
+
+The Info tab contains a **Scouting OpenID Connect** section that can be copied into a support report. It includes useful configuration, cache, user count, WooCommerce, logging, and cron details. Client secrets, user claims, log messages, and other personal data are never included.
 
 ## Frequently Asked Questions
 

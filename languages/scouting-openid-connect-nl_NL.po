@@ -6,7 +6,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/"
 "issues\n"
 "POT-Creation-Date: 2026-04-30 22:49+0200\n"
-"PO-Revision-Date: 2026-04-30 22:49+0200\n"
+"PO-Revision-Date: 2026-08-06 20:38+0200\n"
 "Last-Translator: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language: nl_NL\n"
@@ -26,6 +26,10 @@ msgstr "Inloggen met Scouts Online"
 #: auth/Auth.php:106 shortcode/Page.php:154
 msgid "Logout"
 msgstr "Uitloggen"
+
+#: user/Fields.php:27
+msgid "View in SOL"
+msgstr "Bekijken in SOL"
 
 #: auth/Auth.php:173
 msgid "Client ID or Client Secret are missing in the configuration"
@@ -157,6 +161,30 @@ msgstr "De vereiste nonce-claim ontbreekt in het ID-token."
 msgid "The ID token nonce is invalid."
 msgstr "De nonce van het ID-token is ongeldig."
 
+#: auth/OpenIDConnectClient.php:446
+msgid "The userinfo_endpoint is not available in the well-known data."
+msgstr "Het userinfo_endpoint is niet beschikbaar in de well-known data."
+
+#: auth/OpenIDConnectClient.php:458
+msgid "The access token is not available in the tokens."
+msgstr "Het toegangstoken is niet beschikbaar in de tokens."
+
+#: auth/OpenIDConnectClient.php:487
+msgid "The UserInfo endpoint returned an unexpected response."
+msgstr "Het UserInfo-eindpunt heeft een onverwacht antwoord geretourneerd."
+
+#: auth/OpenIDConnectClient.php:497
+msgid "The UserInfo endpoint returned invalid user data."
+msgstr "Het UserInfo-eindpunt heeft ongeldige gebruikersgegevens geretourneerd."
+
+#: auth/OpenIDConnectClient.php:507
+msgid "The UserInfo response is missing the required sub claim."
+msgstr "De vereiste subclaim ontbreekt in het UserInfo-antwoord."
+
+#: auth/OpenIDConnectClient.php:516
+msgid "The UserInfo response belongs to a different subject."
+msgstr "Het UserInfo-antwoord hoort bij een ander subject."
+
 #: auth/OpenIDConnectClient.php:582 auth/OpenIDConnectClient.php:641
 msgid "No additional details provided."
 msgstr "Geen aanvullende details verstrekt."
@@ -192,6 +220,10 @@ msgstr "U beschikt niet over voldoende rechten om logbestanden te exporteren."
 #: logging/Help.php:21
 msgid "Overview"
 msgstr "Overzicht"
+
+#: logging/Help.php:25
+msgid "Log timestamps are stored in UTC in the database and displayed using the WordPress site timezone."
+msgstr "Logtijdstempels worden in de database opgeslagen in UTC en weergegeven in de tijdzone van de WordPress-site."
 
 #: logging/Help.php:23
 msgid ""
@@ -1035,9 +1067,6 @@ msgstr "Er is iets misgegaan tijdens het inloggen"
 
 #~ msgid "The userinfo endpoint is not available in the well-known data."
 #~ msgstr "Het eindpunt userinfo is niet beschikbaar in de well-known data."
-
-#~ msgid "The access token is not available in the tokens."
-#~ msgstr "Het toegangstoken is niet beschikbaar in de tokens."
 
 #~ msgid "Failed to retrieve user info. Response code:"
 #~ msgstr "Kon gebruikersinformatie niet ophalen. Responscode:"

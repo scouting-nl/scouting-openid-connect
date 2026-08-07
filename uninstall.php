@@ -22,6 +22,7 @@ $scouting_oidc_options = array(
     'scouting_oidc_custom_redirect',
     'scouting_oidc_debug_logging_enabled',
     'scouting_oidc_log_retention_days',
+    'scouting_oidc_last_log_cleanup',
     'scouting_oidc_logs_schema_version',
 );
 
@@ -56,6 +57,7 @@ $wpdb->query($wpdb->prepare($scouting_oidc_delete_transients_sql, $scouting_oidc
 $scouting_oidc_metas = array(
     'scouting_oidc_user',
     'scouting_oidc_subject',
+    'scouting_oidc_sol_url',
     'scouting_oidc_birthdate',
     'scouting_oidc_gender',
     'scouting_oidc_phone_number',

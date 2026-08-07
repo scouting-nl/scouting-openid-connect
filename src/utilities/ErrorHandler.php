@@ -11,7 +11,7 @@ class ErrorHandler {
      * @param string $hint A hint to help the user understand the error or how to resolve it.
      * @param string $message A user-friendly message to display on the login page.
      * @param string|null $error An optional error code or identifier for the error.
-     * @return string 
+     * @return string The generated login error URL with the error details as query parameters.
      */
     public static function login_error_url(string $error_description, string $hint, string $message, ?string $error = null): string {
         $query_args = array(
