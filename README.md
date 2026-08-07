@@ -89,7 +89,6 @@ Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scout
     * `email` (Required)
     * `address` (Optional)
     * `phone` (Optional)
-    * `roles` (Optional)
 12. Fill in the General Settings.
 13. Press `Save Settings`.
 14. Log out and try to log in with the Scouts Login button.
