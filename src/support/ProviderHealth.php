@@ -58,13 +58,18 @@ class ProviderHealth {
             $result = $this->buildResult(
                 __('The Scouts Online OpenID Connect provider could not be reached', 'scouting-openid-connect'),
                 'critical',
-                sprintf(__('Provider discovery failed: %s', 'scouting-openid-connect'), $response->get_error_message())
+                sprintf(
+                    /* translators: %s: Error message returned while requesting provider discovery. */
+                    __('Provider discovery failed: %s', 'scouting-openid-connect'),
+                    $response->get_error_message()
+                )
             );
         } elseif (wp_remote_retrieve_response_code($response) !== 200) {
             $result = $this->buildResult(
                 __('The Scouts Online provider returned an unexpected response', 'scouting-openid-connect'),
                 'critical',
                 sprintf(
+                    /* translators: %d: HTTP status code returned by provider discovery. */
                     __('Provider discovery returned HTTP status %d instead of 200.', 'scouting-openid-connect'),
                     wp_remote_retrieve_response_code($response)
                 )
@@ -79,7 +84,7 @@ class ProviderHealth {
                     __('The provider response was not a valid JSON object.', 'scouting-openid-connect')
                 );
         }
-
+THERE
         return $result;
     }
 
@@ -163,6 +168,7 @@ class ProviderHealth {
             __('The provider discovery data is incomplete', 'scouting-openid-connect'),
             'critical',
             sprintf(
+                /* translators: %s: Comma-separated list of missing or invalid provider endpoints. */
                 __('These required endpoints are missing or invalid: %s.', 'scouting-openid-connect'),
                 implode(', ', $invalid_endpoints)
             )
@@ -206,6 +212,7 @@ class ProviderHealth {
             __('The provider is missing required OpenID Connect capabilities', 'scouting-openid-connect'),
             'critical',
             sprintf(
+                /* translators: %s: Comma-separated list of missing OpenID Connect capabilities. */
                 __('These capabilities are not advertised: %s.', 'scouting-openid-connect'),
                 implode(', ', $missing_capabilities)
             )
@@ -231,7 +238,11 @@ class ProviderHealth {
         return $this->buildResult(
             __('Configured scopes are not advertised by the provider', 'scouting-openid-connect'),
             'recommended',
-            sprintf(__('Review these scopes: %s.', 'scouting-openid-connect'), implode(', ', $unsupported_scopes)),
+            sprintf(
+                /* translators: %s: Comma-separated list of scopes not advertised by the provider. */
+                __('Review these scopes: %s.', 'scouting-openid-connect'),
+                implode(', ', $unsupported_scopes)
+            ),
             $this->settingsAction()
         );
     }
@@ -268,13 +279,18 @@ class ProviderHealth {
             $result = $this->buildResult(
                 __('The provider signing keys could not be reached', 'scouting-openid-connect'),
                 'critical',
-                sprintf(__('Signing-key retrieval failed: %s', 'scouting-openid-connect'), $response->get_error_message())
+                sprintf(
+                    /* translators: %s: Error message returned while requesting provider signing keys. */
+                    __('Signing-key retrieval failed: %s', 'scouting-openid-connect'),
+                    $response->get_error_message()
+                )
             );
         } elseif (wp_remote_retrieve_response_code($response) !== 200) {
             $result = $this->buildResult(
                 __('The provider signing keys returned an unexpected response', 'scouting-openid-connect'),
                 'critical',
                 sprintf(
+                    /* translators: %d: HTTP status code returned by the signing-key endpoint. */
                     __('Signing-key retrieval returned HTTP status %d instead of 200.', 'scouting-openid-connect'),
                     wp_remote_retrieve_response_code($response)
                 )

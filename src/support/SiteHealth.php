@@ -83,6 +83,7 @@ class SiteHealth {
                 __('The server is missing functions required for Scouts Online login', 'scouting-openid-connect'),
                 'critical',
                 sprintf(
+                    /* translators: %s: Comma-separated list of missing PHP functions. */
                     __('Ask the hosting provider to enable the PHP functions or extensions that provide: %s.', 'scouting-openid-connect'),
                     implode(', ', $missing_functions)
                 )
@@ -128,6 +129,7 @@ class SiteHealth {
                 __('Scouting OpenID Connect is not fully configured', 'scouting-openid-connect'),
                 'critical',
                 sprintf(
+                    /* translators: %s: Comma-separated list of missing configuration values. */
                     __('Add the following value(s) before users can log in with Scouts Online: %s.', 'scouting-openid-connect'),
                     implode(', ', $missing)
                 ),
@@ -158,6 +160,7 @@ class SiteHealth {
                 __('Required OpenID Connect scopes are missing', 'scouting-openid-connect'),
                 'critical',
                 sprintf(
+                    /* translators: %s: Comma-separated list of missing OpenID Connect scopes. */
                     __('Add these required scopes to the plugin and the connection in Scouts Online: %s.', 'scouting-openid-connect'),
                     implode(', ', $missing_required)
                 ),
@@ -191,6 +194,7 @@ class SiteHealth {
             __('OpenID Connect scopes match the enabled features', 'scouting-openid-connect'),
             'good',
             sprintf(
+                /* translators: %s: Space-separated list of configured OpenID Connect scopes. */
                 __('All required scopes are configured. Current scopes: %s.', 'scouting-openid-connect'),
                 implode(' ', $scopes)
             )
@@ -211,7 +215,11 @@ class SiteHealth {
                 'scouting_oidc_redirect',
                 __('The login redirect mode is invalid', 'scouting-openid-connect'),
                 'recommended',
-                sprintf(__('The stored redirect mode "%s" is not recognized.', 'scouting-openid-connect'), $mode),
+                sprintf(
+                    /* translators: %s: Stored post-login redirect mode. */
+                    __('The stored redirect mode "%s" is not recognized.', 'scouting-openid-connect'),
+                    $mode
+                ),
                 $this->settingsAction()
             );
         }
@@ -231,7 +239,11 @@ class SiteHealth {
             'scouting_oidc_redirect',
             __('The login redirect is configured', 'scouting-openid-connect'),
             'good',
-            sprintf(__('The current post-login redirect mode is %s.', 'scouting-openid-connect'), $mode)
+            sprintf(
+                /* translators: %s: Current post-login redirect mode. */
+                __('The current post-login redirect mode is %s.', 'scouting-openid-connect'),
+                $mode
+            )
         );
     }
 
@@ -257,12 +269,14 @@ class SiteHealth {
 
         if (!empty($missing_columns)) {
             $storage_issues[] = sprintf(
+                /* translators: %s: Comma-separated list of missing database column names. */
                 __('Missing database columns: %s.', 'scouting-openid-connect'),
                 implode(', ', $missing_columns)
             );
         }
         if ($installed_schema !== self::LOGS_SCHEMA_VERSION) {
             $storage_issues[] = sprintf(
+                /* translators: 1: Installed log schema version. 2: Expected log schema version. */
                 __('Installed schema version is %1$s; expected %2$s.', 'scouting-openid-connect'),
                 $installed_schema === '' ? __('not recorded', 'scouting-openid-connect') : $installed_schema,
                 self::LOGS_SCHEMA_VERSION
@@ -326,11 +340,13 @@ class SiteHealth {
             $scheduled_time = wp_date(self::DEBUG_DATE_FORMAT, $next_cleanup);
             if (defined('DISABLE_WP_CRON') && DISABLE_WP_CRON) {
                 $schedule_issues[] = sprintf(
+                    /* translators: %s: Date and time of the overdue log cleanup event. */
                     __('Automatic WP-Cron spawning is disabled, and the external cron runner has not processed the cleanup scheduled for %s.', 'scouting-openid-connect'),
                     $scheduled_time
                 );
             } else {
                 $schedule_issues[] = sprintf(
+                    /* translators: %s: Date and time of the overdue log cleanup event. */
                     __('WordPress has not dispatched the cleanup scheduled for %s. Check the core scheduled-events and loopback-request Site Health tests.', 'scouting-openid-connect'),
                     $scheduled_time
                 );
@@ -352,6 +368,7 @@ class SiteHealth {
             __('Scouting OpenID Connect log cleanup is scheduled', 'scouting-openid-connect'),
             'good',
             sprintf(
+                /* translators: 1: Date and time of the next log cleanup. 2: Number of days logs are retained. */
                 __('The next cleanup is scheduled for %1$s and will retain %2$d days of logs.', 'scouting-openid-connect'),
                 wp_date(self::DEBUG_DATE_FORMAT, $next_cleanup),
                 CronJobs::scouting_oidc_get_log_retention_days()
@@ -432,7 +449,11 @@ class SiteHealth {
                     __('Required scopes', 'scouting-openid-connect'),
                     empty($missing_required)
                         ? __('All present', 'scouting-openid-connect')
-                        : sprintf(__('Missing: %s', 'scouting-openid-connect'), implode(', ', $missing_required))
+                        : sprintf(
+                            /* translators: %s: Comma-separated list of missing OpenID Connect scopes. */
+                            __('Missing: %s', 'scouting-openid-connect'),
+                            implode(', ', $missing_required)
+                        )
                 ),
                 'profile_fields' => $this->debugField(
                     __('Stored profile fields', 'scouting-openid-connect'),
@@ -448,7 +469,11 @@ class SiteHealth {
                 'debug_logging' => $this->debugField(__('Debug logging', 'scouting-openid-connect'), $this->enabledText((bool) get_option('scouting_oidc_debug_logging_enabled'))),
                 'log_retention' => $this->debugField(
                     __('Log retention', 'scouting-openid-connect'),
-                    sprintf(__('%d days', 'scouting-openid-connect'), CronJobs::scouting_oidc_get_log_retention_days())
+                    sprintf(
+                        /* translators: %d: Number of days logs are retained. */
+                        __('%d days', 'scouting-openid-connect'),
+                        CronJobs::scouting_oidc_get_log_retention_days()
+                    )
                 ),
                 'logs_table' => $this->debugField(__('Log table', 'scouting-openid-connect'), $this->logsTableExists() ? __('Available', 'scouting-openid-connect') : __('Missing', 'scouting-openid-connect')),
                 'logs_schema' => $this->debugField(__('Log database schema', 'scouting-openid-connect'), $this->getStringOption('scouting_oidc_logs_schema_version')),
@@ -631,7 +656,9 @@ class SiteHealth {
     private function getOidcUserCount(): int {
         $users = new \WP_User_Query(
             [
+                // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Required to count plugin-managed users.
                 'meta_key' => 'scouting_oidc_user',
+                // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Required to select the ownership flag.
                 'meta_value' => 'true',
                 'fields' => 'ID',
                 'number' => 1,
