@@ -3,16 +3,16 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Scouting OpenID Connect 2.4.1\n"
+"Project-Id-Version: Scouting OpenID Connect 2.5.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/issues\n"
-"POT-Creation-Date: 2026-04-30 21:49+0200\n"
+"POT-Creation-Date: 2026-08-07 17:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.8\n"
+"X-Generator: Poedit 3.9\n"
 "X-Poedit-KeywordsList: __;esc_html__;_e;esc_html_e\n"
 "X-Poedit-Basepath: ../src\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -24,10 +24,6 @@ msgstr ""
 
 #: auth/Auth.php:106 shortcode/Page.php:154
 msgid "Logout"
-msgstr ""
-
-#: user/Fields.php:27
-msgid "View in SOL"
 msgstr ""
 
 #: auth/Auth.php:173
@@ -42,109 +38,113 @@ msgstr ""
 msgid "Code is missing"
 msgstr ""
 
-#: auth/Auth.php:295
+#: auth/Auth.php:298
 msgid "Webmaster disabled creation of new accounts"
 msgstr ""
 
-#: auth/Auth.php:330
+#: auth/Auth.php:337
 msgid "The user denied the request"
 msgstr ""
 
-#: auth/Auth.php:334 auth/OpenIDConnectClient.php:583
-#: auth/OpenIDConnectClient.php:620 auth/OpenIDConnectClient.php:642
+#: auth/Auth.php:341 auth/OpenIDConnectClient.php:685
+#: auth/OpenIDConnectClient.php:722 auth/OpenIDConnectClient.php:744
 msgid "Details:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:120
+#: auth/OpenIDConnectClient.php:116 auth/OpenIDConnectClient.php:987
+msgid "A secure login session could not be started. Please use HTTPS and try again."
+msgstr ""
+
+#: auth/OpenIDConnectClient.php:128
 msgid "The identity provider does not support the required S256 code challenge method for PKCE."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:126
+#: auth/OpenIDConnectClient.php:134
 msgid "The authorization_endpoint is not available in the well-known data."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:140
+#: auth/OpenIDConnectClient.php:148
 msgid "The following scopes are not supported:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:140
+#: auth/OpenIDConnectClient.php:148
 msgid "The supported scopes are:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:199
+#: auth/OpenIDConnectClient.php:207
 msgid "The token_endpoint is not available in the well-known data."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:209
+#: auth/OpenIDConnectClient.php:217
 msgid "The code_verifier for PKCE is missing from the session."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:246
+#: auth/OpenIDConnectClient.php:254
 #, php-format
 msgid "Token endpoint error %1$s: %2$s"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:298
+#: auth/OpenIDConnectClient.php:306
 msgid "The ID token is not available in the tokens."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:304
+#: auth/OpenIDConnectClient.php:312
 msgid "The JSON Web Key Set (JWKS) is not available."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:311
+#: auth/OpenIDConnectClient.php:319
 msgid "The ID token has an invalid structure."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:325
+#: auth/OpenIDConnectClient.php:333
 msgid "The ID token uses an unexpected signing algorithm."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:340
+#: auth/OpenIDConnectClient.php:348
 msgid "The certificate chain (x5c) for the key ID (kid) specified in the header was not found."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:355
+#: auth/OpenIDConnectClient.php:363
 msgid "The signing certificate used to validate the ID token is invalid or unsupported."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:362
+#: auth/OpenIDConnectClient.php:370
 msgid "The signature in the ID token is not valid."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:368
+#: auth/OpenIDConnectClient.php:376
 msgid "The ID token payload could not be decoded."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:374
+#: auth/OpenIDConnectClient.php:382
 msgid "The ID token was issued by an unexpected issuer."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:381
+#: auth/OpenIDConnectClient.php:389
 msgid "The ID token was not issued for this client."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:387
+#: auth/OpenIDConnectClient.php:395
 msgid "The ID token has expired."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:393
+#: auth/OpenIDConnectClient.php:401
 msgid "The ID token has an invalid issued-at timestamp."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:399
+#: auth/OpenIDConnectClient.php:407
 msgid "The ID token is missing the required sub claim."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:405
+#: auth/OpenIDConnectClient.php:413
 msgid "The login session is invalid or has expired."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:411
+#: auth/OpenIDConnectClient.php:419
 msgid "The ID token is missing the required nonce claim."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:416
+#: auth/OpenIDConnectClient.php:424
 msgid "The ID token nonce is invalid."
 msgstr ""
 
@@ -172,31 +172,31 @@ msgstr ""
 msgid "The UserInfo response belongs to a different subject."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:582 auth/OpenIDConnectClient.php:641
+#: auth/OpenIDConnectClient.php:684 auth/OpenIDConnectClient.php:743
 msgid "No additional details provided."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:583
+#: auth/OpenIDConnectClient.php:685
 msgid "When retrieving well-known data, the status code was:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:614
+#: auth/OpenIDConnectClient.php:716
 msgid "The jwks_uri is not available in the well-known data."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:620
+#: auth/OpenIDConnectClient.php:722
 msgid "The jwks_uri is not a valid URL."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:620
+#: auth/OpenIDConnectClient.php:722
 msgid "The jwks_uri is not valid:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:642
+#: auth/OpenIDConnectClient.php:744
 msgid "When retrieving JWKS data, the status code was:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:690
+#: auth/OpenIDConnectClient.php:792
 msgid "Authentication is temporarily unavailable. Please try again later."
 msgstr ""
 
@@ -220,52 +220,52 @@ msgstr ""
 msgid "Log timestamps are stored in UTC in the database and displayed using the WordPress site timezone."
 msgstr ""
 
-#: logging/Help.php:29
+#: logging/Help.php:30
 msgid "Filtering and Search"
 msgstr ""
 
-#: logging/Help.php:31
+#: logging/Help.php:32
 msgid "Use the filter controls to narrow results by date/time range, level, component, user ID or SOL ID."
 msgstr ""
 
-#: logging/Help.php:32
+#: logging/Help.php:33
 msgid "Use the search box to find text in the message field."
 msgstr ""
 
-#: logging/Help.php:33
+#: logging/Help.php:34
 msgid "The Reset button clears filters and returns to the latest entries."
 msgstr ""
 
-#: logging/Help.php:38
+#: logging/Help.php:39
 msgid "Export and Retention"
 msgstr ""
 
-#: logging/Help.php:40
+#: logging/Help.php:41
 msgid "Use the Download .log button to export the currently filtered logs."
 msgstr ""
 
-#: logging/Help.php:44
+#: logging/Help.php:45
 #, php-format
 msgid "A daily cleanup task removes log entries older than %d day(s)."
 msgstr ""
 
-#: logging/Help.php:52
+#: logging/Help.php:53
 msgid "Debug Logging"
 msgstr ""
 
-#: logging/Help.php:54
+#: logging/Help.php:55
 msgid "Debug-level entries are stored only when Enable debug logs is checked in General Settings."
 msgstr ""
 
-#: logging/Help.php:55
+#: logging/Help.php:56
 msgid "When WP_DEBUG is enabled, plugin log messages are also mirrored to the WordPress/PHP error log."
 msgstr ""
 
-#: logging/Help.php:59
+#: logging/Help.php:60
 msgid "Need more help?"
 msgstr ""
 
-#: logging/Help.php:60
+#: logging/Help.php:61
 msgid "Open the Support page"
 msgstr ""
 
@@ -461,11 +461,11 @@ msgstr ""
 msgid "OpenID Connect Settings"
 msgstr ""
 
-#: settings/Oidc.php:28
+#: settings/Oidc.php:28 support/SiteHealth.php:119 support/SiteHealth.php:436
 msgid "Client ID"
 msgstr ""
 
-#: settings/Oidc.php:37
+#: settings/Oidc.php:37 support/SiteHealth.php:123 support/SiteHealth.php:442
 msgid "Client Secret"
 msgstr ""
 
@@ -753,74 +753,600 @@ msgstr ""
 msgid "(developer of the plugin)"
 msgstr ""
 
-#: user/Fields.php:20
-msgid "Scouts Online (SOL) Profile Information"
+#: support/ProviderHealth.php:59
+msgid "The Scouts Online OpenID Connect provider could not be reached"
 msgstr ""
 
-#: user/Fields.php:53
+#: support/ProviderHealth.php:63
+#, php-format
+msgid "Provider discovery failed: %s"
+msgstr ""
+
+#: support/ProviderHealth.php:69
+msgid "The Scouts Online provider returned an unexpected response"
+msgstr ""
+
+#: support/ProviderHealth.php:73
+#, php-format
+msgid "Provider discovery returned HTTP status %d instead of 200."
+msgstr ""
+
+#: support/ProviderHealth.php:82
+msgid "The Scouts Online provider returned invalid discovery data"
+msgstr ""
+
+#: support/ProviderHealth.php:84
+msgid "The provider response was not a valid JSON object."
+msgstr ""
+
+#: support/ProviderHealth.php:111
+msgid "The provider does not advertise a logout endpoint"
+msgstr ""
+
+#: support/ProviderHealth.php:113
+msgid "Login is available, but provider logout will fall back to the site home page."
+msgstr ""
+
+#: support/ProviderHealth.php:135
+msgid "The provider discovery issuer does not match"
+msgstr ""
+
+#: support/ProviderHealth.php:137
+msgid "The discovered issuer does not match the issuer expected by Scouting OpenID Connect."
+msgstr ""
+
+#: support/ProviderHealth.php:168
+msgid "The provider discovery data is incomplete"
+msgstr ""
+
+#: support/ProviderHealth.php:172
+#, php-format
+msgid "These required endpoints are missing or invalid: %s."
+msgstr ""
+
+#: support/ProviderHealth.php:187
+msgid "The provider does not advertise the required PKCE method"
+msgstr ""
+
+#: support/ProviderHealth.php:189
+msgid "Scouting OpenID Connect requires the S256 code challenge method."
+msgstr ""
+
+#: support/ProviderHealth.php:212
+msgid "The provider is missing required OpenID Connect capabilities"
+msgstr ""
+
+#: support/ProviderHealth.php:216
+#, php-format
+msgid "These capabilities are not advertised: %s."
+msgstr ""
+
+#: support/ProviderHealth.php:239
+msgid "Configured scopes are not advertised by the provider"
+msgstr ""
+
+#: support/ProviderHealth.php:243
+#, php-format
+msgid "Review these scopes: %s."
+msgstr ""
+
+#: support/ProviderHealth.php:280
+msgid "The provider signing keys could not be reached"
+msgstr ""
+
+#: support/ProviderHealth.php:284
+#, php-format
+msgid "Signing-key retrieval failed: %s"
+msgstr ""
+
+#: support/ProviderHealth.php:290
+msgid "The provider signing keys returned an unexpected response"
+msgstr ""
+
+#: support/ProviderHealth.php:294
+#, php-format
+msgid "Signing-key retrieval returned HTTP status %d instead of 200."
+msgstr ""
+
+#: support/ProviderHealth.php:303
+msgid "The Scouts Online OpenID Connect provider is available"
+msgstr ""
+
+#: support/ProviderHealth.php:305
+msgid "Discovery, required protocol capabilities, endpoints, and signing keys are available."
+msgstr ""
+
+#: support/ProviderHealth.php:308
+msgid "The provider signing-key set is empty or invalid"
+msgstr ""
+
+#: support/ProviderHealth.php:310
+msgid "The provider did not return an RSA/RS256 signing key with the certificate chain required to validate ID tokens."
+msgstr ""
+
+#: support/ProviderHealth.php:373 support/SiteHealth.php:423
+#: support/SiteHealth.php:524
+msgid "Scouting OpenID Connect"
+msgstr ""
+
+#: support/ProviderHealth.php:391 support/SiteHealth.php:542
+msgid "Review Scouting OpenID Connect settings"
+msgstr ""
+
+#: support/SiteHealth.php:36
+msgid "Scouting OpenID Connect runtime"
+msgstr ""
+
+#: support/SiteHealth.php:40
+msgid "Scouting OpenID Connect configuration"
+msgstr ""
+
+#: support/SiteHealth.php:44
+msgid "Scouting OpenID Connect scopes"
+msgstr ""
+
+#: support/SiteHealth.php:48
+msgid "Scouting OpenID Connect provider"
+msgstr ""
+
+#: support/SiteHealth.php:54
+msgid "Scouting OpenID Connect login redirect"
+msgstr ""
+
+#: support/SiteHealth.php:58
+msgid "Scouting OpenID Connect log storage"
+msgstr ""
+
+#: support/SiteHealth.php:62
+msgid "Scouting OpenID Connect log cleanup"
+msgstr ""
+
+#: support/SiteHealth.php:83
+msgid "The server is missing functions required for Scouts Online login"
+msgstr ""
+
+#: support/SiteHealth.php:87
+#, php-format
+msgid "Ask the hosting provider to enable the PHP functions or extensions that provide: %s."
+msgstr ""
+
+#: support/SiteHealth.php:96
+msgid "Scouting OpenID Connect requires the site to use HTTPS"
+msgstr ""
+
+#: support/SiteHealth.php:98
+msgid "The login flow needs HTTPS to create its secure session cookie. Update both WordPress URLs to use HTTPS."
+msgstr ""
+
+#: support/SiteHealth.php:104
+msgid "The server meets the Scouting OpenID Connect runtime requirements"
+msgstr ""
+
+#: support/SiteHealth.php:106
+msgid "HTTPS and the PHP functions required for sessions and ID token validation are available."
+msgstr ""
+
+#: support/SiteHealth.php:129
+msgid "Scouting OpenID Connect is not fully configured"
+msgstr ""
+
+#: support/SiteHealth.php:133
+#, php-format
+msgid "Add the following value(s) before users can log in with Scouts Online: %s."
+msgstr ""
+
+#: support/SiteHealth.php:142
+msgid "Scouting OpenID Connect credentials are configured"
+msgstr ""
+
+#: support/SiteHealth.php:144
+msgid "A Client ID and Client Secret are stored. Site Health never displays the Client Secret."
+msgstr ""
+
+#: support/SiteHealth.php:160
+msgid "Required OpenID Connect scopes are missing"
+msgstr ""
+
+#: support/SiteHealth.php:164
+#, php-format
+msgid "Add these required scopes to the plugin and the connection in Scouts Online: %s."
+msgstr ""
+
+#: support/SiteHealth.php:173
+msgid "Phone storage is enabled without the phone scope."
+msgstr ""
+
+#: support/SiteHealth.php:176
+msgid "Address storage is enabled without the address scope."
+msgstr ""
+
+#: support/SiteHealth.php:179
+msgid "WooCommerce synchronization is enabled while WooCommerce is not available."
+msgstr ""
+
+#: support/SiteHealth.php:185
+msgid "Enabled profile features do not match the configured scopes"
+msgstr ""
+
+#: support/SiteHealth.php:194
+msgid "OpenID Connect scopes match the enabled features"
+msgstr ""
+
+#: support/SiteHealth.php:198
+#, php-format
+msgid "All required scopes are configured. Current scopes: %s."
+msgstr ""
+
+#: support/SiteHealth.php:216
+msgid "The login redirect mode is invalid"
+msgstr ""
+
+#: support/SiteHealth.php:220
+#, php-format
+msgid "The stored redirect mode \"%s\" is not recognized."
+msgstr ""
+
+#: support/SiteHealth.php:231
+msgid "The custom login redirect is not configured correctly"
+msgstr ""
+
+#: support/SiteHealth.php:233
+msgid "Choose a valid page on this site or select another login redirect mode."
+msgstr ""
+
+#: support/SiteHealth.php:240
+msgid "The login redirect is configured"
+msgstr ""
+
+#: support/SiteHealth.php:244
+#, php-format
+msgid "The current post-login redirect mode is %s."
+msgstr ""
+
+#: support/SiteHealth.php:259
+msgid "The Scouting OpenID Connect log table is missing"
+msgstr ""
+
+#: support/SiteHealth.php:261
+msgid "Deactivate and reactivate the plugin to recreate its log storage."
+msgstr ""
+
+#: support/SiteHealth.php:273
+#, php-format
+msgid "Missing database columns: %s."
+msgstr ""
+
+#: support/SiteHealth.php:280
+#, php-format
+msgid "Installed schema version is %1$s; expected %2$s."
+msgstr ""
+
+#: support/SiteHealth.php:281
+msgid "not recorded"
+msgstr ""
+
+#: support/SiteHealth.php:289
+msgid "The Scouting OpenID Connect log storage needs attention"
+msgstr ""
+
+#: support/SiteHealth.php:297
+msgid "The Scouting OpenID Connect log storage is ready"
+msgstr ""
+
+#: support/SiteHealth.php:299
+msgid "The log table exists with the expected schema and columns."
+msgstr ""
+
+#: support/SiteHealth.php:320
+msgid "Run log cleanup now"
+msgstr ""
+
+#: support/SiteHealth.php:327
+msgid "Scouting OpenID Connect log cleanup is not scheduled"
+msgstr ""
+
+#: support/SiteHealth.php:329
+msgid "The plugin could not find its daily cleanup event. Run cleanup now to recreate the schedule."
+msgstr ""
+
+#: support/SiteHealth.php:337
+msgid "The cleanup event is not using the daily schedule."
+msgstr ""
+
+#: support/SiteHealth.php:344
+#, php-format
+msgid "Automatic WP-Cron spawning is disabled, and the external cron runner has not processed the cleanup scheduled for %s."
+msgstr ""
+
+#: support/SiteHealth.php:350
+#, php-format
+msgid "WordPress has not dispatched the cleanup scheduled for %s. Check the core scheduled-events and loopback-request Site Health tests."
+msgstr ""
+
+#: support/SiteHealth.php:359
+msgid "Scouting OpenID Connect log cleanup needs attention"
+msgstr ""
+
+#: support/SiteHealth.php:368
+msgid "Scouting OpenID Connect log cleanup is scheduled"
+msgstr ""
+
+#: support/SiteHealth.php:372
+#, php-format
+msgid "The next cleanup is scheduled for %1$s and will retain %2$d days of logs."
+msgstr ""
+
+#: support/SiteHealth.php:402 user/Fields.php:79
 msgid "Birthdate"
 msgstr ""
 
-#: user/Fields.php:72
+#: support/SiteHealth.php:403 user/Fields.php:98
 msgid "Gender"
 msgstr ""
 
-#: user/Fields.php:75
+#: support/SiteHealth.php:404
+msgid "Phone"
+msgstr ""
+
+#: support/SiteHealth.php:405
+msgid "Address"
+msgstr ""
+
+#: support/SiteHealth.php:415
+msgid "Not scheduled"
+msgstr ""
+
+#: support/SiteHealth.php:419
+msgid "Never recorded"
+msgstr ""
+
+#: support/SiteHealth.php:424
+msgid "Configuration and operational details. Client secrets and personal user claims are never included."
+msgstr ""
+
+#: support/SiteHealth.php:427
+msgid "Plugin version"
+msgstr ""
+
+#: support/SiteHealth.php:428
+msgid "Issuer"
+msgstr ""
+
+#: support/SiteHealth.php:429
+msgid "Redirect URI"
+msgstr ""
+
+#: support/SiteHealth.php:430
+msgid "Site uses HTTPS"
+msgstr ""
+
+#: support/SiteHealth.php:432
+msgid "PHP OpenSSL library"
+msgstr ""
+
+#: support/SiteHealth.php:433 support/SiteHealth.php:616
+#: support/SiteHealth.php:694
+msgid "Not available"
+msgstr ""
+
+#: support/SiteHealth.php:438 support/SiteHealth.php:444
+msgid "Not configured"
+msgstr ""
+
+#: support/SiteHealth.php:439 support/SiteHealth.php:445
+msgid "Configured"
+msgstr ""
+
+#: support/SiteHealth.php:447
+msgid "Configured scopes"
+msgstr ""
+
+#: support/SiteHealth.php:449
+msgid "Required scopes"
+msgstr ""
+
+#: support/SiteHealth.php:451
+msgid "All present"
+msgstr ""
+
+#: support/SiteHealth.php:454
+#, php-format
+msgid "Missing: %s"
+msgstr ""
+
+#: support/SiteHealth.php:459
+msgid "Stored profile fields"
+msgstr ""
+
+#: support/SiteHealth.php:460 support/SiteHealth.php:644
+msgid "None"
+msgstr ""
+
+#: support/SiteHealth.php:462
+msgid "Automatic account creation"
+msgstr ""
+
+#: support/SiteHealth.php:463
+msgid "Duplicate email handling"
+msgstr ""
+
+#: support/SiteHealth.php:464
+msgid "Login redirect mode"
+msgstr ""
+
+#: support/SiteHealth.php:465
+msgid "Custom login redirect"
+msgstr ""
+
+#: support/SiteHealth.php:466
+msgid "Scouting OpenID Connect users"
+msgstr ""
+
+#: support/SiteHealth.php:467
+msgid "WooCommerce available"
+msgstr ""
+
+#: support/SiteHealth.php:468
+msgid "WooCommerce synchronization"
+msgstr ""
+
+#: support/SiteHealth.php:469
+msgid "Debug logging"
+msgstr ""
+
+#: support/SiteHealth.php:471
+msgid "Log retention"
+msgstr ""
+
+#: support/SiteHealth.php:474
+#, php-format
+msgid "%d days"
+msgstr ""
+
+#: support/SiteHealth.php:478
+msgid "Log table"
+msgstr ""
+
+#: support/SiteHealth.php:478
+msgid "Available"
+msgstr ""
+
+#: support/SiteHealth.php:478
+msgid "Missing"
+msgstr ""
+
+#: support/SiteHealth.php:479
+msgid "Log database schema"
+msgstr ""
+
+#: support/SiteHealth.php:480
+msgid "Log entries"
+msgstr ""
+
+#: support/SiteHealth.php:481
+msgid "Errors in the last 24 hours"
+msgstr ""
+
+#: support/SiteHealth.php:482
+msgid "Latest log entry"
+msgstr ""
+
+#: support/SiteHealth.php:483
+msgid "Last successful log cleanup"
+msgstr ""
+
+#: support/SiteHealth.php:484
+msgid "Next log cleanup"
+msgstr ""
+
+#: support/SiteHealth.php:486
+msgid "WordPress cron spawning"
+msgstr ""
+
+#: support/SiteHealth.php:488
+msgid "Disabled by configuration"
+msgstr ""
+
+#: support/SiteHealth.php:489 support/SiteHealth.php:680
+msgid "Enabled"
+msgstr ""
+
+#: support/SiteHealth.php:492
+msgid "Provider discovery cache"
+msgstr ""
+
+#: support/SiteHealth.php:494 support/SiteHealth.php:500
+msgid "Empty"
+msgstr ""
+
+#: support/SiteHealth.php:495 support/SiteHealth.php:501
+msgid "Populated"
+msgstr ""
+
+#: support/SiteHealth.php:498
+msgid "Provider signing-key cache"
+msgstr ""
+
+#: support/SiteHealth.php:681
+msgid "Disabled"
+msgstr ""
+
+#: user/Fields.php:26
+msgid "View in SOL"
+msgstr ""
+
+#: user/Fields.php:46
+msgid "Scouts Online (SOL) Profile Information"
+msgstr ""
+
+#: user/Fields.php:101
 msgid "Male"
 msgstr ""
 
-#: user/Fields.php:76
+#: user/Fields.php:102
 msgid "Female"
 msgstr ""
 
-#: user/Fields.php:77
+#: user/Fields.php:103
 msgid "Other"
 msgstr ""
 
-#: user/Fields.php:78
+#: user/Fields.php:104
 msgid "Unknown"
 msgstr ""
 
-#: user/Fields.php:93
+#: user/Fields.php:119
 msgid "Phone Number"
 msgstr ""
 
-#: user/Fields.php:110
+#: user/Fields.php:136
 msgid "Street"
 msgstr ""
 
-#: user/Fields.php:126
+#: user/Fields.php:152
 msgid "House Number"
 msgstr ""
 
-#: user/Fields.php:142
+#: user/Fields.php:168
 msgid "Postal Code"
 msgstr ""
 
-#: user/Fields.php:158
+#: user/Fields.php:184
 msgid "City"
 msgstr ""
 
-#: user/Fields.php:174
+#: user/Fields.php:200
 msgid "Country Code"
 msgstr ""
 
-#: user/User.php:150
+#: user/User.php:175
 msgid "SOL ID is missing, make sure the \"membership\" scope is enabled."
 msgstr ""
 
-#: user/User.php:158
+#: user/User.php:180
+msgid "OpenID Connect subject is missing."
+msgstr ""
+
+#: user/User.php:188
 msgid "Email is missing, make sure the \"email\" scope is enabled."
 msgstr ""
 
-#: user/User.php:213 user/User.php:224 user/User.php:273 user/User.php:287
+#: user/User.php:213
+msgid "This SOL ID is already linked to another account."
+msgstr ""
+
+#: user/User.php:259 user/User.php:270 user/User.php:319 user/User.php:333
 msgid "Email address is already in use by another account"
 msgstr ""
 
-#: user/User.php:313
+#: user/User.php:359
 msgid "User not found for update"
 msgstr ""
 
-#: user/User.php:329
+#: user/User.php:375
 msgid "Something went wrong while trying to log in"
+msgstr ""
+
+#: utilities/CronJobs.php:152
+msgid "Sorry, you are not allowed to run Scouting OpenID Connect log cleanup."
 msgstr ""
