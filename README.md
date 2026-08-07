@@ -4,6 +4,10 @@
 [![Wordpress-Version](https://img.shields.io/wordpress/plugin/v/scouting-openid-connect.svg)](https://wordpress.org/plugins/scouting-openid-connect/)
 [![Wordpress-Downloads](https://img.shields.io/wordpress/plugin/dt/scouting-openid-connect.svg)](https://wordpress.org/plugins/scouting-openid-connect/)
 [![Wordpress-Active-Installs](https://img.shields.io/wordpress/plugin/installs/scouting-openid-connect.svg)](https://wordpress.org/plugins/scouting-openid-connect/)
+[![License](https://img.shields.io/github/license/scouting-nl/scouting-openid-connect)](https://github.com/scouting-nl/scouting-openid-connect/blob/main/LICENSE)
+
+[![CI](https://github.com/scouting-nl/scouting-openid-connect/actions/workflows/build-test.yml/badge.svg)](https://github.com/scouting-nl/scouting-openid-connect/actions/workflows/build-test.yml)
+[![CodeQL](https://github.com/scouting-nl/scouting-openid-connect/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/scouting-nl/scouting-openid-connect/actions/workflows/github-code-scanning/codeql)
 
 **Contributors:** [jobvk](https://github.com/jobvk) \
 **Requires at least:** 6.9.5 \
