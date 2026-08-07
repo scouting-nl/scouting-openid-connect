@@ -29,7 +29,7 @@ class Auth {
 
     /**
      * Add the OpenID Connect button to the login form
-     * 
+     *
      * @return void
      */
     public function scouting_oidc_auth_login_form(): void {
@@ -113,7 +113,7 @@ class Auth {
 
             // If redirect_back is requested, build a return URL to the current page and pass it to the auth URL builder
             if ($redirect_back) {
-                $request_uri = wp_unslash($_SERVER['REQUEST_URI'] ?? '/');
+                $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_unslash($_SERVER['REQUEST_URI'])) : '/';
                 $current_url = home_url($request_uri);
                 $login_url = $this->scouting_oidc_auth_login_url($current_url);
             } else {
@@ -174,7 +174,7 @@ class Auth {
         }
 
         if ($redirect_back) {
-            $request_uri = wp_unslash($_SERVER['REQUEST_URI'] ?? '/');
+            $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_unslash($_SERVER['REQUEST_URI'])) : '/';
             $current_url = home_url($request_uri);
             $login_url = $this->scouting_oidc_auth_login_url($current_url);
         } else {
@@ -269,10 +269,13 @@ class Auth {
         $this->oidc_client->retrieveTokens($param_code, $state);
 
         // Validate the ID token, passing the stored nonce for claim verification
-        $user_json_encoded = $this->oidc_client->validateTokens($stored_nonce);
+        $id_token_claims = $this->oidc_client->validateTokens($stored_nonce);
+
+        // Retrieve current user claims from the discovered UserInfo endpoint
+        $user_info = $this->oidc_client->retrieveUserInfo($id_token_claims['sub']);
 
         // Create a new User object
-        $user = new User($user_json_encoded);
+        $user = new User($user_info);
 
         Logger::info(LogComponent::AUTH, "User '{$user->getDisplayName()}' is being checked for login or account creation", null, $user->getUsername());
 
@@ -295,11 +298,15 @@ class Auth {
                 ErrorHandler::redirect_to_login_error('error', __('Webmaster disabled creation of new accounts', 'scouting-openid-connect'), 'disabled_auto_create');
             }
         }
+
+        // Configured post-login redirects exit from the wp_login hook. Clean OIDC callback parameters for the default flow.
+        wp_safe_redirect(home_url('/'));
+        exit;
     }
 
     /**
      * Callback after failed login
-     * 
+     *
      * @param string $message the error message
      * @return string the HTML for the error message or an empty string if the user is not logged in
      */

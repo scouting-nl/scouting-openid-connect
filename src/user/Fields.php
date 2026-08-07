@@ -11,6 +11,32 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Fields
 {
     /**
+     * Add a link to the user's Scouts Online profile to the Users table.
+     *
+     * @param array $actions Existing row actions
+     * @param WP_User $user User represented by the row
+     * @return array Updated row actions
+     */
+    public function scouting_oidc_fields_user_row_actions(array $actions, WP_User $user): array {
+        $sol_url = get_user_meta($user->ID, 'scouting_oidc_sol_url', true);
+        if (! wp_http_validate_url($sol_url)) {
+            return $actions;
+        }
+
+        $view_in_sol = '<a href="' . esc_url($sol_url) . '" target="_blank" rel="noopener noreferrer">' . esc_html__('View in SOL', 'scouting-openid-connect') . '</a>';
+        $view_position = array_search('view', array_keys($actions), true);
+
+        if ($view_position === false) {
+            $actions['scouting_oidc_view_in_sol'] = $view_in_sol;
+            return $actions;
+        }
+
+        return array_slice($actions, 0, $view_position + 1, true)
+            + array('scouting_oidc_view_in_sol' => $view_in_sol)
+            + array_slice($actions, $view_position + 1, null, true);
+    }
+
+    /**
      * Show the user profile fields in the user profile and edit user profile pages, except when WooCommerce WooCommerce synchronization is enabled (because WooCommerce has its own fields for address and phone number)
      * 
      * @param WP_User $user The user object

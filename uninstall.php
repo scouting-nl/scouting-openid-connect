@@ -22,6 +22,7 @@ $scouting_oidc_options = array(
     'scouting_oidc_custom_redirect',
     'scouting_oidc_debug_logging_enabled',
     'scouting_oidc_log_retention_days',
+    'scouting_oidc_last_log_cleanup',
     'scouting_oidc_logs_schema_version',
 );
 
@@ -29,10 +30,11 @@ foreach ($scouting_oidc_options as $scouting_oidc_option) {
     delete_option($scouting_oidc_option);
 }
 
-// Delete issuer-scoped transient rows (e.g. scouting_oidc_wk_<hash>, scouting_oidc_jwks_<hash>)
+// Delete plugin transient rows.
 $scouting_oidc_transient_prefixes = array(
     'scouting_oidc_wk_',
     'scouting_oidc_jwks_',
+    'scouting_oidc_session_',
 );
 
 // Build LIKE patterns for both transient and transient_timeout rows for each prefix to delete all relevant transients in a single query for scalability.
@@ -54,6 +56,8 @@ $wpdb->query($wpdb->prepare($scouting_oidc_delete_transients_sql, $scouting_oidc
 // Delete user meta
 $scouting_oidc_metas = array(
     'scouting_oidc_user',
+    'scouting_oidc_subject',
+    'scouting_oidc_sol_url',
     'scouting_oidc_birthdate',
     'scouting_oidc_gender',
     'scouting_oidc_phone_number',

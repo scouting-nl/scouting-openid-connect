@@ -84,7 +84,7 @@ class OpenIDConnectClient
 
     /**
      * OpenIDConnectClient constructor
-     * 
+     *
      * @param string $client_id
      * @param string $client_secret
      * @param string $redirect_uri
@@ -96,20 +96,28 @@ class OpenIDConnectClient
         $this->redirectURL = trailingslashit($redirect_uri);
         $this->issuer = $scouting_issuer;
 
-        // Load session to store tokens if needed
+        // Initialize session storage; create the cookie only when login begins.
         $this->session = new Session();
-        $this->session->scouting_oidc_session_set_session_id();
     }
 
     /**
      * Generates the authentication URL
-     * 
+     *
      * @param string $response_type the response type
      * @param array $scopes_array an array of scopes
      * @param string|null $redirect_after_login Optional URL to redirect to after login, used for shortcode support. If null, default redirect behavior applies.
      * @return string the authentication URL
      */
     public function getAuthenticationURL(string $response_type, array $scopes_array, ?string $redirect_after_login = null): string {
+        if (!$this->session->scouting_oidc_session_set_session_id()) {
+            Logger::critical(LogComponent::OIDC, 'A secure OIDC session cookie could not be created.');
+            ErrorHandler::redirect_to_login_error(
+                'init',
+                __('A secure login session could not be started. Please use HTTPS and try again.', 'scouting-openid-connect'),
+                'session_cookie_unavailable'
+            );
+        }
+
         Logger::debug(LogComponent::OIDC, 'Authentication URL generation started');
         $this->getWellKnownData();
         $this->getJWKSData();
@@ -421,8 +429,102 @@ class OpenIDConnectClient
     }
 
     /**
+     * Retrieves user claims from the UserInfo endpoint.
+     *
+     * @param string $expected_subject the subject from the validated ID token
+     * @return array returns the UserInfo claims
+     */
+    public function retrieveUserInfo(string $expected_subject): array {
+        Logger::debug(LogComponent::OIDC, 'UserInfo retrieval started');
+        $this->getWellKnownData();
+
+        $userinfo_endpoint = $this->wellKnownData->userinfo_endpoint ?? null;
+        if (!is_string($userinfo_endpoint) || !filter_var($userinfo_endpoint, FILTER_VALIDATE_URL)) {
+            Logger::error(LogComponent::OIDC, 'UserInfo endpoint is missing or invalid in the well-known data');
+            ErrorHandler::redirect_to_login_error(
+                'error',
+                __('The userinfo_endpoint is not available in the well-known data.', 'scouting-openid-connect'),
+                'userinfo_endpoint_is_missing'
+            );
+        }
+
+        $access_token = is_object($this->tokens) && property_exists($this->tokens, 'access_token')
+            ? $this->tokens->access_token
+            : null;
+        if (!is_string($access_token) || $access_token === '') {
+            Logger::error(LogComponent::OIDC, 'Access token missing from token response');
+            ErrorHandler::redirect_to_login_error(
+                'error',
+                __('The access token is not available in the tokens.', 'scouting-openid-connect'),
+                'access_token_is_missing'
+            );
+        }
+
+        $response = wp_safe_remote_get(
+            $userinfo_endpoint,
+            array(
+                'timeout' => 30,
+                'redirection' => 0,
+                'httpversion' => '2.0',
+                'headers' => array(
+                    'Authorization' => 'Bearer ' . $access_token,
+                    'Accept' => 'application/json',
+                ),
+            )
+        );
+
+        if (is_wp_error($response)) {
+            Logger::log_wp_error(LogComponent::OIDC, LogLevel::ERROR, $response);
+            ErrorHandler::redirect_to_login_error('error', $response->get_error_message(), 'get_userinfo_failed');
+        }
+
+        $status_code = wp_remote_retrieve_response_code($response);
+        $response_body = wp_remote_retrieve_body($response);
+        if ($status_code !== 200) {
+            Logger::error(LogComponent::OIDC, "UserInfo retrieval failed with HTTP status '{$status_code}'");
+            ErrorHandler::redirect_to_login_error(
+                'error',
+                __('The UserInfo endpoint returned an unexpected response.', 'scouting-openid-connect'),
+                'get_userinfo_failed'
+            );
+        }
+
+        $user_info = json_decode($response_body, true);
+        if (!is_array($user_info) || json_last_error() !== JSON_ERROR_NONE) {
+            Logger::error(LogComponent::OIDC, 'UserInfo endpoint returned an invalid JSON response');
+            ErrorHandler::redirect_to_login_error(
+                'error',
+                __('The UserInfo endpoint returned invalid user data.', 'scouting-openid-connect'),
+                'invalid_userinfo_response'
+            );
+        }
+
+        $subject = $user_info['sub'] ?? null;
+        if (!is_string($subject) || $subject === '') {
+            Logger::error(LogComponent::OIDC, 'UserInfo response is missing the sub claim');
+            ErrorHandler::redirect_to_login_error(
+                'error',
+                __('The UserInfo response is missing the required sub claim.', 'scouting-openid-connect'),
+                'missing_userinfo_sub'
+            );
+        }
+
+        if (!hash_equals($expected_subject, $subject)) {
+            Logger::error(LogComponent::OIDC, 'UserInfo subject does not match the validated ID token subject');
+            ErrorHandler::redirect_to_login_error(
+                'error',
+                __('The UserInfo response belongs to a different subject.', 'scouting-openid-connect'),
+                'userinfo_sub_mismatch'
+            );
+        }
+
+        Logger::debug(LogComponent::OIDC, 'UserInfo retrieval succeeded');
+        return $user_info;
+    }
+
+    /**
      * Gets the logout URL
-     * 
+     *
      * @return string returns the logout URL
      */
     public function getLogoutUrl(): string {
@@ -876,6 +978,15 @@ class OpenIDConnectClient
         if ($redirect !== null) {
             $this->session->scouting_oidc_session_set('scouting_oidc_post_login_redirect', $redirect);
             $this->deleteRedirectForState($state);
+        }
+
+        if (!$this->session->scouting_oidc_session_regenerate_id()) {
+            Logger::critical(LogComponent::OIDC, 'A secure OIDC session cookie could not be created.');
+            ErrorHandler::redirect_to_login_error(
+                'init',
+                __('A secure login session could not be started. Please use HTTPS and try again.', 'scouting-openid-connect'),
+                'session_cookie_unavailable'
+            );
         }
     }
 

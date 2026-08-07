@@ -1,9 +1,9 @@
 === Scouting OpenID Connect ===
 Contributors: jobvk
 Tags: scouting, scouting nederland, sol, openid connect, oidc
-Requires at least: 6.6.0
-Tested up to: 6.9
-Stable tag: 2.4.1
+Requires at least: 6.9.5
+Tested up to: 7.0
+Stable tag: 2.5.0
 Requires PHP: 8.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -17,6 +17,8 @@ A WordPress plugin for logging in with Scouting Nederland OpenID Connect Server.
 This plugin allows users to authenticate and login to their WordPress websites using their Scouting Nederland OpenID Connect credentials.
 It provides a secure and convenient way for Scouting Nederland members to access their WordPress sites without the need for separate login credentials. 
 With this plugin, users can seamlessly integrate their Scouting Nederland accounts with their WordPress websites, enhancing the user experience and simplifying the login process.
+
+Do not report security vulnerabilities in a public issue or support topic. Follow the [security policy](https://github.com/Scouting-nl/scouting-openid-connect/security/policy) to submit a private report.
 
 == Installation ==
 
@@ -46,6 +48,24 @@ Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scout
 13. Press `Save Settings`.
 14. Log out and try to log in with the Scouts Login button.
 
+== Site Health ==
+
+Go to Tools > Site Health in WordPress to inspect the plugin's configuration and operational status.
+
+The Status tab checks:
+
+* Client ID and Client Secret configuration.
+* HTTPS and PHP runtime requirements.
+* Required scopes and optional scopes used by enabled profile fields.
+* Provider discovery, issuer, required OpenID Connect capabilities, endpoints, and signing keys.
+* The configured post-login redirect.
+* The logging database table and schema.
+* The daily log cleanup schedule and retention period.
+
+When cleanup is overdue, Site Health identifies whether automatic WP-Cron spawning is disabled and offers administrators a Run log cleanup now action. A manual run removes expired logs, records the successful run time, and recreates the daily schedule. The underlying WordPress cron or loopback problem must still be corrected for future automatic cleanup.
+
+The Info tab contains a Scouting OpenID Connect section that can be copied into a support report. It includes useful configuration, cache, user count, WooCommerce, logging, and cron details. Client secrets, user claims, log messages, and other personal data are never included.
+
 == Frequently Asked Questions ==
 
 = Do i need to be part of Scouting Nederland to use this? =
@@ -73,6 +93,15 @@ Currently not, but this is planned for a future update of this plugin.
 4. Support Page
 
 == Changelog ==
+
+= 2.5.0 =
+* Added a `subject` property to the User class to store the OpenID Connect subject, enforced that it must be present.
+* Fetch user claims from the discovered OpenID Connect UserInfo endpoint instead of the ID token.
+* Add a `View in SOL` action to Scouting OpenID Connect users in the WordPress Users table.
+* Add a Site Health check to verify the OpenID Connect provider's health and configuration.
+* Fix cron job scheduling for clearing old logs to ensure it runs as expected.
+* Added Code of Conduct, Contributing and Security policy to the plugin distribution.time.
+* Tested up to: `7.0`.
 
 = 2.4.1 =
 * Fixed some spelling mistakes.

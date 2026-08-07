@@ -9,15 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @author     Job van Koeveringe <job.van.koeveringe@scouting.nl>
  * @copyright  2026 Scouting Nederland
  * @license    GPLv3
- * @version    2.4.1
+ * @version    2.5.0
  * @link       https://github.com/Scouting-nl/scouting-openid-connect
  *
  * @wordpress-plugin
  * Plugin Name:          Scouting OpenID Connect
  * Plugin URI:           https://github.com/Scouting-nl/scouting-openid-connect
  * Description:          WordPress plugin for logging in with Scouting Nederland OpenID Connect Server.
- * Version:              2.4.1
- * Requires at least:    6.6.0
+ * Version:              2.5.0
+ * Requires at least:    6.9.5
  * Requires PHP:         8.2
  * Author:               Job van Koeveringe
  * Author URI:           https://jobvankoeveringe.com?utm_source=wordpress&utm_medium=plugin&utm_campaign=scouting_oidc
@@ -28,13 +28,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  **/
 
 define('SCOUTING_OIDC_PATH', plugin_dir_path( __FILE__ ));
-define('SCOUTING_OIDC_VERSION', '2.4.1');
+define('SCOUTING_OIDC_VERSION', '2.5.0');
 require_once SCOUTING_OIDC_PATH . 'src/auth/Auth.php';
 require_once SCOUTING_OIDC_PATH . 'src/auth/Session.php';
 require_once SCOUTING_OIDC_PATH . 'src/menu/Menu.php';
 require_once SCOUTING_OIDC_PATH . 'src/settings/Page.php';
 require_once SCOUTING_OIDC_PATH . 'src/shortcode/Page.php';
 require_once SCOUTING_OIDC_PATH . 'src/support/Page.php';
+require_once SCOUTING_OIDC_PATH . 'src/support/SiteHealth.php';
 require_once SCOUTING_OIDC_PATH . 'src/logging/Page.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/Actions.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/Description.php';
@@ -51,6 +52,8 @@ use ScoutingOIDC\Description;
 use ScoutingOIDC\Settings;
 use ScoutingOIDC\Shortcode;
 use ScoutingOIDC\Support;
+use ScoutingOIDC\ProviderHealth;
+use ScoutingOIDC\SiteHealth;
 use ScoutingOIDC\Logging;
 use ScoutingOIDC\Fields;
 use ScoutingOIDC\CronJobs;
@@ -65,6 +68,8 @@ $scouting_oidc_description = new Description();
 $scouting_oidc_settings = new Settings();
 $scouting_oidc_shortcode = new Shortcode();
 $scouting_oidc_support = new Support();
+$scouting_oidc_provider_health = new ProviderHealth();
+$scouting_oidc_site_health = new SiteHealth($scouting_oidc_provider_health);
 $scouting_oidc_logging = new Logging();
 $scouting_oidc_fields = new Fields();
 $scouting_oidc_logger = new Logger();
@@ -84,6 +89,9 @@ function scouting_oidc_init(): void
 
     // Provide additional links in the plugin overview page
     add_filter('plugin_action_links_'.plugin_basename(__FILE__), [$scouting_oidc_actions, 'scouting_oidc_actions_plugin_links']);
+
+    // Add a link to Scouts Online after View in each applicable user row.
+    add_filter('user_row_actions', [$scouting_oidc_fields, 'scouting_oidc_fields_user_row_actions'], 10, 2);
 
     // Normalize plus-addressed Scouting OIDC recipient aliases in outgoing mail
     add_filter('wp_mail', [Mail::class, 'scouting_oidc_mail_filter_wp_mail'], 20);
@@ -121,6 +129,11 @@ add_filter('login_message', [$scouting_oidc_auth, 'scouting_oidc_auth_login_fail
 // Modify plugin description
 add_filter('all_plugins', [$scouting_oidc_description, 'scouting_oidc_description_modify_plugin']);
 
+// Add plugin checks and redacted diagnostics to WordPress Site Health.
+add_filter('site_status_tests', [$scouting_oidc_site_health, 'siteHealthTests']);
+add_filter('debug_information', [$scouting_oidc_site_health, 'debugInformation']);
+add_action('rest_api_init', [$scouting_oidc_provider_health, 'registerRoute']);
+
 // Add display to safe style css for user profile fields
 add_filter('safe_style_css', function(array $styles): array {
     $styles[] = 'display';
@@ -138,6 +151,9 @@ add_action(CronJobs::CLEANUP_CRON_HOOK, [CronJobs::class, 'scouting_oidc_logger_
 
 // Ensure log cleanup schedule exists during runtime.
 add_action('init', [$scouting_oidc_cron_jobs, 'scouting_oidc_logger_schedule_cleanup']);
+
+// Allow administrators to recover an overdue cleanup directly from Site Health.
+add_action('admin_post_' . CronJobs::RUN_CLEANUP_ACTION, [$scouting_oidc_cron_jobs, 'scouting_oidc_logger_run_cleanup_now']);
 
 // Setup defaults during installation
 register_activation_hook(__FILE__, [$scouting_oidc_settings, 'scouting_oidc_settings_install']);
