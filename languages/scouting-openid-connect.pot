@@ -216,6 +216,10 @@ msgstr ""
 msgid "Each row contains a timestamp, severity level, component, optional user details, and the log message."
 msgstr ""
 
+#: logging/Help.php:25
+msgid "Log timestamps are stored in UTC in the database and displayed using the WordPress site timezone."
+msgstr ""
+
 #: logging/Help.php:29
 msgid "Filtering and Search"
 msgstr ""

@@ -15,7 +15,7 @@ class SiteHealth {
 
     private const LOGS_SCHEMA_VERSION = '1';
 
-    private const DEBUG_DATE_FORMAT = 'Y-m-d H:i:s T';
+    private const DEBUG_DATE_FORMAT = 'd-m-Y H:i:s T';
 
     private ProviderHealth $providerHealth;
 

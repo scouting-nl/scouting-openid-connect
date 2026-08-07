@@ -221,6 +221,10 @@ msgstr "U beschikt niet over voldoende rechten om logbestanden te exporteren."
 msgid "Overview"
 msgstr "Overzicht"
 
+#: logging/Help.php:25
+msgid "Log timestamps are stored in UTC in the database and displayed using the WordPress site timezone."
+msgstr "Logtijdstempels worden in de database opgeslagen in UTC en weergegeven in de tijdzone van de WordPress-site."
+
 #: logging/Help.php:23
 msgid ""
 "This screen shows the plugin logs stored in the database table "

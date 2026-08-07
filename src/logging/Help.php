@@ -21,7 +21,8 @@ class LoggingHelp
             'title' => __('Overview', 'scouting-openid-connect'),
             'content' =>
                 '<p>' . esc_html__('This screen shows the plugin logs stored in the database table scouting_oidc_logs.', 'scouting-openid-connect') . '</p>' .
-                '<p>' . esc_html__('Each row contains a timestamp, severity level, component, optional user details, and the log message.', 'scouting-openid-connect') . '</p>'
+                '<p>' . esc_html__('Each row contains a timestamp, severity level, component, optional user details, and the log message.', 'scouting-openid-connect') . '</p>' .
+                '<p>' . esc_html__('Log timestamps are stored in UTC in the database and displayed using the WordPress site timezone.', 'scouting-openid-connect') . '</p>'
         ]);
 
         $screen->add_help_tab([
