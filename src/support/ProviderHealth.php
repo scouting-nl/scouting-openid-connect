@@ -84,7 +84,7 @@ class ProviderHealth {
                     __('The provider response was not a valid JSON object.', 'scouting-openid-connect')
                 );
         }
-THERE
+
         return $result;
     }
 
