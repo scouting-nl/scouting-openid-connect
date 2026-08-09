@@ -8,7 +8,7 @@
  * @copyright  2026 Scouting Nederland
  * @license    GPLv3
  * @version    2.5.0
- * @since 1.0.0
+ * @since      1.0.0
  * @link       https://github.com/Scouting-nl/scouting-openid-connect
  *
  * @wordpress-plugin
