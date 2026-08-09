@@ -1,36 +1,46 @@
 <?php
+/**
+ * Scouting OpenID Connect plugin file
+ *
+ * @package ScoutingOIDC
+ * @since 1.0.0
+ */
+
 namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
 /**
- * This class manages the support submenu page for the Scouting OIDC plugin, including registering the submenu and rendering the support page content.
+ * Manages the Scouting OIDC support submenu, including registering and rendering
+ * the support page.
+ *
+ * @since 1.0.0
  */
 class Support {
 
 	/**
-	 * Register the support submenu page under the main menu.
+	 * Registers the support submenu page under the main menu.
 	 *
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function scouting_oidc_support_submenu_page(): void {
 		add_submenu_page(
-			'scouting-oidc-settings',                       // Parent slug (matches the main menu slug)
-			'Support',                                      // Page title
-			'Support',                                      // Menu title
-			'manage_options',                               // Capability
-			'scouting-oidc-support',                        // Submenu slug
-			array( $this, 'scouting_oidc_support_page_callback' ), // Callback function
-			3                                               // Menu position
+			'scouting-oidc-settings',
+			'Support',
+			'Support',
+			'manage_options',
+			'scouting-oidc-support',
+			array( $this, 'scouting_oidc_support_page_callback' ),
+			3
 		);
 	}
 
 	/**
-	 * Callback function to render the support page content.
+	 * Renders the support page content.
 	 *
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function scouting_oidc_support_page_callback(): void {
 		?>

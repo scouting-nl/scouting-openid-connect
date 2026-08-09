@@ -1,64 +1,55 @@
 <?php
+/**
+ * Scouting OpenID Connect plugin file
+ *
+ * @package ScoutingOIDC
+ * @since 2.4.0
+ */
+
 namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
 use WP_Error;
 
 /**
- * Log levels for the logging system (PSR-3 compatible).
- *
- * This enum lists the supported severity levels (PSR-3) stored in the database.
+ * Loads the class-logcomponent.php implementation.
  */
-enum LogLevel: string {
-	case EMERGENCY = 'emergency';
-	case ALERT     = 'alert';
-	case CRITICAL  = 'critical';
-	case ERROR     = 'error';
-	case WARNING   = 'warning';
-	case NOTICE    = 'notice';
-	case INFO      = 'info';
-	case DEBUG     = 'debug';
-}
+require_once __DIR__ . '/class-logcomponent.php';
+/**
+ * Loads the class-loglevel.php implementation.
+ */
+require_once __DIR__ . '/class-loglevel.php';
 
 /**
- * Log components for categorizing log entries.
- *
- * This enum can be extended in the future to include additional log components as needed. Each log entry must have a component, which allows for easier filtering and analysis of logs based on their category.
- */
-enum LogComponent: string {
-	case ASSETS   = 'assets';
-	case AUTH     = 'auth';
-	case CRONJOB  = 'cronjob';
-	case MAIL     = 'mail';
-	case OIDC     = 'oidc';
-	case SETTINGS = 'settings';
-	case USER     = 'user';
-}
-
-/**
- * Database-backed logging helper for Scouting OIDC.
+ * Provides database-backed logging for Scouting OIDC.
  *
  * Provides convenience wrappers for logging at various severity levels and
  * a small installer to create the underlying logs table.
+ *
+ * @since 2.4.0
  */
 class Logger {
 	/**
 	 * Current schema version for the logs table.
+	 *
+	 * @since 2.4.0
 	 */
 	private const LOGS_SCHEMA_VERSION = '1';
 
 	/**
 	 * Option key used to persist installed logs schema version.
+	 *
+	 * @since 2.4.0
 	 */
 	private const LOGS_SCHEMA_VERSION_OPTION = 'scouting_oidc_logs_schema_version';
 
 	/**
-	 * Ensure the logs table exists and is up to date for plugin updates.
+	 * Ensures the logs table exists and is up to date for plugin updates.
 	 *
-	 * @return void
+	 * @since 2.4.0
 	 */
 	public function scouting_oidc_logger_maybe_upgrade_database(): void {
 		global $wpdb;
@@ -66,7 +57,7 @@ class Logger {
 		$logs_table        = $wpdb->prefix . 'scouting_oidc_logs';
 		$installed_version = get_option( self::LOGS_SCHEMA_VERSION_OPTION, '' );
 
-		if ( $installed_version === self::LOGS_SCHEMA_VERSION && $this->scouting_oidc_logger_table_exists( $logs_table ) ) {
+		if ( self::LOGS_SCHEMA_VERSION === $installed_version && $this->scouting_oidc_logger_table_exists( $logs_table ) ) {
 			return;
 		}
 
@@ -74,9 +65,9 @@ class Logger {
 	}
 
 	/**
-	 * Create or update the logs table during plugin activation.
+	 * Creates or updates the logs table during plugin activation.
 	 *
-	 * @return void
+	 * @since 2.4.0
 	 */
 	public function scouting_oidc_logger_database_create(): void {
 		global $wpdb;
@@ -84,20 +75,20 @@ class Logger {
 		$logs_table      = $wpdb->prefix . 'scouting_oidc_logs';
 		$charset_collate = $wpdb->get_charset_collate();
 
-		// Build SQL ENUM values from the LogComponent enum cases
+		// Build SQL ENUM values from the LogComponent enum cases.
 		$enum_component_values = "'" . implode(
 			"','",
 			array_map(
-				fn( $case ) => $case->value,
+				fn( $enum_case ) => $enum_case->value,
 				LogComponent::cases()
 			)
 		) . "'";
 
-		// Build SQL ENUM values from the LogLevel enum cases
+		// Build SQL ENUM values from the LogLevel enum cases.
 		$enum_level_values = "'" . implode(
 			"','",
 			array_map(
-				fn( $case ) => $case->value,
+				fn( $enum_case ) => $enum_case->value,
 				LogLevel::cases()
 			)
 		) . "'";
@@ -119,6 +110,9 @@ class Logger {
             KEY created_at (created_at)
         ) $charset_collate;";
 
+		/**
+		 * Loads the upgrade.php implementation.
+		 */
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 
@@ -126,7 +120,7 @@ class Logger {
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB
 		$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ENGINE=InnoDB', $logs_table ) );
 
-		// Only add FK if it doesn't already exist
+		// Only add FK if it doesn't already exist.
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$existing_fk = $wpdb->get_var(
 			$wpdb->prepare(
@@ -154,34 +148,35 @@ class Logger {
 	}
 
 	/**
-	 * Persist a log entry to the database.
+	 * Persists a log entry to the database.
+	 *
+	 * @since 2.4.0
 	 *
 	 * @param LogComponent $component Component for this log entry.
 	 * @param LogLevel     $level Severity level for this log entry.
 	 * @param string       $message Log message content.
-	 * @param int|null     $user_id Optional WP user ID to associate with this entry.
-	 * @param string|null  $sol_id Optional SOL identifier to associate with this entry.
-	 * @return void
+	 * @param int|null     $user_id Optional. WP user ID to associate with this entry. Default null.
+	 * @param string|null  $sol_id Optional. SOL identifier to associate with this entry. Default null.
 	 */
 	private static function log( LogComponent $component, LogLevel $level, string $message, ?int $user_id = null, ?string $sol_id = null ): void {
 		global $wpdb;
 
-		if ( $level === LogLevel::DEBUG && ! self::is_debug_logging_enabled() ) {
+		if ( LogLevel::DEBUG === $level && ! self::is_debug_logging_enabled() ) {
 			return;
 		}
 
 		// If $user_id is not provided, attempt to use the current user's ID if available.
-		if ( $user_id === null ) {
+		if ( null === $user_id ) {
 			$user_id = get_current_user_id();
 
 			// `get_current_user_id()` returns 0 when no user is available; convert 0 to null
-			if ( $user_id === 0 ) {
+			if ( 0 === $user_id ) {
 				$user_id = null;
 			}
 		} else {
 			// If a $user_id is provided, verify that it corresponds to an existing user.
 			$user_exists = get_user_by( 'ID', $user_id );
-			if ( $user_exists === false ) {
+			if ( false === $user_exists ) {
 				// If the user ID does not correspond to a real user, clear it so
 				// we don't store an invalid user_id in the logs.
 				$user_id = null;
@@ -189,21 +184,19 @@ class Logger {
 		}
 
 		// If $sol_id is not provided and we have a valid $user_id, attempt to use the user's login as the SOL ID.
-		if ( empty( $sol_id ) && $user_id !== null ) {
+		if ( empty( $sol_id ) && null !== $user_id ) {
 			$user = get_userdata( $user_id );
 
-			// Check $user is valid and has a user_login before using it as sol_id
-			if ( $user !== false && ! empty( $user->user_login ) ) {
+			// Check $user is valid and has a user_login before using it as sol_id.
+			if ( false !== $user && ! empty( $user->user_login ) ) {
 				$sol_id = $user->user_login;
 			} else {
 				// If we can't derive a valid sol_id, set it to null to avoid storing empty strings.
 				$sol_id = null;
 			}
-		} else {
+		} elseif ( is_string( $sol_id ) && '' === trim( $sol_id ) ) {
 			// If a $sol_id is provided, ensure it's a non-empty string. If it's empty, set it to null.
-			if ( is_string( $sol_id ) && trim( $sol_id ) === '' ) {
-				$sol_id = null;
-			}
+			$sol_id = null;
 		}
 
 		$created_at = ( new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) ) )->format( 'Y-m-d H:i:s.v' );
@@ -234,15 +227,17 @@ class Logger {
 	}
 
 	/**
-	 * Format a UTC datetime string for the current site timezone.
+	 * Formats a UTC datetime string for the current site timezone.
+	 *
+	 * @since 2.4.0
 	 *
 	 * @param string $datetime UTC datetime in MySQL DATETIME(3) format.
-	 * @param string $format Output format.
-	 * @return string
+	 * @param string $format Optional. Output format. Default 'd-m-Y H:i:s.v'.
+	 * @return string String value.
 	 */
 	public static function scouting_oidc_format_utc_datetime_for_site( string $datetime, string $format = 'd-m-Y H:i:s.v' ): string {
 		$datetime = trim( $datetime );
-		if ( $datetime === '' ) {
+		if ( '' === $datetime ) {
 			return '';
 		}
 
@@ -250,9 +245,9 @@ class Logger {
 		$site_timezone = wp_timezone();
 
 		$parsed_datetime = \DateTimeImmutable::createFromFormat( 'Y-m-d H:i:s.v', $datetime, $utc_timezone );
-		if ( $parsed_datetime === false ) {
+		if ( false === $parsed_datetime ) {
 			$parsed_datetime = \DateTimeImmutable::createFromFormat( 'Y-m-d H:i:s', $datetime, $utc_timezone );
-			if ( $parsed_datetime === false ) {
+			if ( false === $parsed_datetime ) {
 				return $datetime;
 			}
 		}
@@ -261,14 +256,15 @@ class Logger {
 	}
 
 	/**
-	 * Log a WP_Error object at the error level, including all error codes and messages in the log entry.
+	 * Logs a WP_Error object at the error level, including all error codes and messages in the log entry.
+	 *
+	 * @since 2.4.0
 	 *
 	 * @param LogComponent $component Component for this log entry.
 	 * @param LogLevel     $level Severity level for this log entry.
 	 * @param WP_Error     $wp_error The WP_Error object to log.
-	 * @param int|null     $user_id Optional WP user ID to associate with this error.
-	 * @param string|null  $sol_id Optional SOL identifier to associate with this error.
-	 * @return void
+	 * @param int|null     $user_id Optional. WP user ID to associate with this error. Default null.
+	 * @param string|null  $sol_id Optional. SOL identifier to associate with this error. Default null.
 	 */
 	public static function log_wp_error( LogComponent $component, LogLevel $level, WP_Error $wp_error, ?int $user_id = null, ?string $sol_id = null ): void {
 		$codes = $wp_error->get_error_codes();
@@ -281,7 +277,7 @@ class Logger {
 		// Build log lines for each error code, including the generic message if no specific codes are present.
 		$lines = array_map(
 			function ( $code ) use ( $wp_error ) {
-				if ( $code === 'generic' ) {
+				if ( 'generic' === $code ) {
 					$message = $wp_error->get_error_message();
 					$data    = $wp_error->get_error_data();
 					$line    = $message;
@@ -291,9 +287,9 @@ class Logger {
 					$line    = "[{$code}] {$message}";
 				}
 
-				if ( $data !== null ) {
-					$json = json_encode( $data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR );
-					if ( $json !== false ) {
+				if ( null !== $data ) {
+					$json = wp_json_encode( $data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR );
+					if ( false !== $json ) {
 						$line .= "\nData: " . $json;
 					} else {
 						$line .= "\nData: [" . gettype( $data ) . ': Unable to encode]';
@@ -309,7 +305,7 @@ class Logger {
 		$combined = implode( "\n\n", $lines );
 
 		// Prevent extremely large log entries from overwhelming the DB.
-		$max = 65535; // safe default for TEXT fields
+		$max = 65535;
 		if ( strlen( $combined ) > $max ) {
 			$combined = substr( $combined, 0, $max - 24 ) . "\n\n...truncated...";
 		}
@@ -318,114 +314,124 @@ class Logger {
 	}
 
 	/**
-	 * Log an emergency-level message.
+	 * Logs an emergency-level message.
+	 *
+	 * @since 2.4.0
 	 *
 	 * @param LogComponent $component Component for this log entry.
 	 * @param string       $message Emergency message.
-	 * @param int|null     $user_id Optional WP user ID.
-	 * @param string|null  $sol_id Optional SOL identifier.
-	 * @return void
+	 * @param int|null     $user_id Optional. WP user ID. Default null.
+	 * @param string|null  $sol_id Optional. SOL identifier. Default null.
 	 */
 	public static function emergency( LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null ): void {
 		self::log( $component, LogLevel::EMERGENCY, $message, $user_id, $sol_id );
 	}
 
 	/**
-	 * Log an alert-level message.
+	 * Logs an alert-level message.
+	 *
+	 * @since 2.4.0
 	 *
 	 * @param LogComponent $component Component for this log entry.
 	 * @param string       $message Alert message.
-	 * @param int|null     $user_id Optional WP user ID.
-	 * @param string|null  $sol_id Optional SOL identifier.
-	 * @return void
+	 * @param int|null     $user_id Optional. WP user ID. Default null.
+	 * @param string|null  $sol_id Optional. SOL identifier. Default null.
 	 */
 	public static function alert( LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null ): void {
 		self::log( $component, LogLevel::ALERT, $message, $user_id, $sol_id );
 	}
 
 	/**
-	 * Log a critical-level message.
+	 * Logs a critical-level message.
+	 *
+	 * @since 2.4.0
 	 *
 	 * @param LogComponent $component Component for this log entry.
 	 * @param string       $message Critical message.
-	 * @param int|null     $user_id Optional WP user ID.
-	 * @param string|null  $sol_id Optional SOL identifier.
-	 * @return void
+	 * @param int|null     $user_id Optional. WP user ID. Default null.
+	 * @param string|null  $sol_id Optional. SOL identifier. Default null.
 	 */
 	public static function critical( LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null ): void {
 		self::log( $component, LogLevel::CRITICAL, $message, $user_id, $sol_id );
 	}
 
 	/**
-	 * Log an error-level message.
+	 * Logs an error-level message.
+	 *
+	 * @since 2.4.0
 	 *
 	 * @param LogComponent $component Component for this log entry.
 	 * @param string       $message Error message.
-	 * @param int|null     $user_id Optional WP user ID.
-	 * @param string|null  $sol_id Optional SOL identifier.
-	 * @return void
+	 * @param int|null     $user_id Optional. WP user ID. Default null.
+	 * @param string|null  $sol_id Optional. SOL identifier. Default null.
 	 */
 	public static function error( LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null ): void {
 		self::log( $component, LogLevel::ERROR, $message, $user_id, $sol_id );
 	}
 
 	/**
-	 * Log a warning-level message.
+	 * Logs a warning-level message.
+	 *
+	 * @since 2.4.0
 	 *
 	 * @param LogComponent $component Component for this log entry.
 	 * @param string       $message Warning message.
-	 * @param int|null     $user_id Optional WP user ID.
-	 * @param string|null  $sol_id Optional SOL identifier.
-	 * @return void
+	 * @param int|null     $user_id Optional. WP user ID. Default null.
+	 * @param string|null  $sol_id Optional. SOL identifier. Default null.
 	 */
 	public static function warning( LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null ): void {
 		self::log( $component, LogLevel::WARNING, $message, $user_id, $sol_id );
 	}
 
 	/**
-	 * Log a notice-level message.
+	 * Logs a notice-level message.
+	 *
+	 * @since 2.4.0
 	 *
 	 * @param LogComponent $component Component for this log entry.
 	 * @param string       $message Notice message.
-	 * @param int|null     $user_id Optional WP user ID.
-	 * @param string|null  $sol_id Optional SOL identifier.
-	 * @return void
+	 * @param int|null     $user_id Optional. WP user ID. Default null.
+	 * @param string|null  $sol_id Optional. SOL identifier. Default null.
 	 */
 	public static function notice( LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null ): void {
 		self::log( $component, LogLevel::NOTICE, $message, $user_id, $sol_id );
 	}
 
 	/**
-	 * Log an informational message.
+	 * Logs an informational message.
+	 *
+	 * @since 2.4.0
 	 *
 	 * @param LogComponent $component Component for this log entry.
 	 * @param string       $message Informational message.
-	 * @param int|null     $user_id Optional WP user ID.
-	 * @param string|null  $sol_id Optional SOL identifier.
-	 * @return void
+	 * @param int|null     $user_id Optional. WP user ID. Default null.
+	 * @param string|null  $sol_id Optional. SOL identifier. Default null.
 	 */
 	public static function info( LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null ): void {
 		self::log( $component, LogLevel::INFO, $message, $user_id, $sol_id );
 	}
 
 	/**
-	 * Log a debug-level message.
+	 * Logs a debug-level message.
+	 *
+	 * @since 2.4.0
 	 *
 	 * @param LogComponent $component Component for this log entry.
 	 * @param string       $message Debug message.
-	 * @param int|null     $user_id Optional WP user ID to associate with this message.
-	 * @param string|null  $sol_id Optional SOL identifier to associate with this message.
-	 * @return void
+	 * @param int|null     $user_id Optional. WP user ID to associate with this message. Default null.
+	 * @param string|null  $sol_id Optional. SOL identifier to associate with this message. Default null.
 	 */
 	public static function debug( LogComponent $component, string $message, ?int $user_id = null, ?string $sol_id = null ): void {
 		self::log( $component, LogLevel::DEBUG, $message, $user_id, $sol_id );
 	}
 
 	/**
-	 * Check whether the logs table currently exists.
+	 * Checks whether the logs table currently exists.
+	 *
+	 * @since 2.4.0
 	 *
 	 * @param string $logs_table Full logs table name.
-	 * @return bool
+	 * @return bool Whether the operation succeeds.
 	 */
 	private function scouting_oidc_logger_table_exists( string $logs_table ): bool {
 		global $wpdb;
@@ -439,21 +445,24 @@ class Logger {
 	/**
 	 * Whether debug-level entries are enabled for plugin database logging.
 	 *
-	 * @return bool
+	 * @since 2.4.0
+	 *
+	 * @return bool Whether the operation succeeds.
 	 */
 	private static function is_debug_logging_enabled(): bool {
 		return (bool) get_option( 'scouting_oidc_debug_logging_enabled', false );
 	}
 
 	/**
-	 * Mirror plugin logs to the WordPress/PHP error log when WP_DEBUG is enabled.
+	 * Mirrors plugin logs to the WordPress/PHP error log when WP_DEBUG is enabled.
+	 *
+	 * @since 2.4.0
 	 *
 	 * @param LogComponent $component Component for this log entry.
 	 * @param LogLevel     $level Severity level for this log entry.
 	 * @param string       $message Log message content.
 	 * @param int|null     $user_id Optional WP user ID.
 	 * @param string|null  $sol_id Optional SOL identifier.
-	 * @return void
 	 */
 	private static function maybe_log_to_wp_debug( LogComponent $component, LogLevel $level, string $message, ?int $user_id, ?string $sol_id ): void {
 		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
@@ -463,11 +472,11 @@ class Logger {
 		$prefix        = '[Scouting OIDC] [' . strtoupper( $level->value ) . '] [' . strtoupper( $component->value ) . ']';
 		$context_parts = array();
 
-		if ( $user_id !== null ) {
+		if ( null !== $user_id ) {
 			$context_parts[] = 'user_id=' . (string) $user_id;
 		}
 
-		if ( $sol_id !== null && $sol_id !== '' ) {
+		if ( null !== $sol_id && '' !== $sol_id ) {
 			$context_parts[] = 'sol_id=' . $sol_id;
 		}
 

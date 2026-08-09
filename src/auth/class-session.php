@@ -1,8 +1,15 @@
 <?php
+/**
+ * Scouting OpenID Connect plugin file
+ *
+ * @package ScoutingOIDC
+ * @since 1.0.0
+ */
+
 namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
 // Define WordPress constant if not defined.
@@ -10,18 +17,32 @@ if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
 	define( 'HOUR_IN_SECONDS', 3600 );
 }
 
+/**
+ * Manages the Scouting OpenID Connect transient session.
+ *
+ * @since 1.0.0
+ */
 class Session {
+	/**
+	 * Name of the transient-session cookie.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @var string
+	 */
 	private const COOKIE_NAME = '__Host-scouting_oidc_session';
 
 	/**
-	 * Sets value in a transient session for 1 hour
+	 * Sets value in a transient session for 1 hour.
 	 *
-	 * @param string $key the key to set in the transient session
-	 * @param mixed  $value the value to set in the transient session
+	 * @since 1.0.0
+	 *
+	 * @param string $key the key to set in the transient session.
+	 * @param mixed  $value the value to set in the transient session.
 	 */
 	public function scouting_oidc_session_set( string $key, mixed $value ): void {
 		$session_id = $this->scouting_oidc_session_get_session_id();
-		if ( $session_id === '' ) {
+		if ( '' === $session_id ) {
 			return;
 		}
 
@@ -29,14 +50,16 @@ class Session {
 	}
 
 	/**
-	 * Gets value from the transient session
+	 * Gets value from the transient session.
 	 *
-	 * @param string $key the key to get from the transient session
-	 * @return mixed the value from the transient session
+	 * @since 1.0.0
+	 *
+	 * @param string $key the key to get from the transient session.
+	 * @return mixed the value from the transient session.
 	 */
 	public function scouting_oidc_session_get( string $key ): mixed {
 		$session_id = $this->scouting_oidc_session_get_session_id();
-		if ( $session_id === '' ) {
+		if ( '' === $session_id ) {
 			return false;
 		}
 
@@ -44,13 +67,15 @@ class Session {
 	}
 
 	/**
-	 * Delete value from the transient session
+	 * Deletes value from the transient session.
 	 *
-	 * @param string $key the key to delete from the transient session
+	 * @since 1.0.0
+	 *
+	 * @param string $key the key to delete from the transient session.
 	 */
 	public function scouting_oidc_session_delete( string $key ): void {
 		$session_id = $this->scouting_oidc_session_get_session_id();
-		if ( $session_id === '' ) {
+		if ( '' === $session_id ) {
 			return;
 		}
 
@@ -58,28 +83,33 @@ class Session {
 	}
 
 	/**
-	 * Set a unique session ID in the __Host-scouting_oidc_session cookie for 1 hour.
+	 * Sets a unique session ID in the __Host-scouting_oidc_session cookie for 1 hour.
 	 *
-	 * @return bool True when a persistent session cookie is available
+	 * @since 2.2.0
+	 * @since 2.5.0 Updated the return type.
+	 *
+	 * @return bool True when a persistent session cookie is available.
 	 */
 	public function scouting_oidc_session_set_session_id(): bool {
 		$session_id = $this->scouting_oidc_session_get_session_id();
-		if ( $session_id !== '' ) {
+		if ( '' !== $session_id ) {
 			return true;
 		}
 
 		$session_id = $this->generate_session_id();
-		return $session_id !== null && $this->scouting_oidc_session_set_cookie( $session_id );
+		return null !== $session_id && $this->scouting_oidc_session_set_cookie( $session_id );
 	}
 
 	/**
-	 * Rotate the session ID after authentication and discard pre-login state.
+	 * Rotates the session ID after authentication and discard pre-login state.
 	 *
-	 * @return bool True when the session ID was rotated
+	 * @since 2.5.0
+	 *
+	 * @return bool True when the session ID was rotated.
 	 */
 	public function scouting_oidc_session_regenerate_id(): bool {
 		$old_session_id = $this->scouting_oidc_session_get_session_id();
-		if ( $old_session_id === '' ) {
+		if ( '' === $old_session_id ) {
 			return false;
 		}
 
@@ -89,7 +119,7 @@ class Session {
 		);
 
 		$session_id = $this->generate_session_id();
-		if ( $session_id === null || ! $this->scouting_oidc_session_set_cookie( $session_id ) ) {
+		if ( null === $session_id || ! $this->scouting_oidc_session_set_cookie( $session_id ) ) {
 			return false;
 		}
 
@@ -98,7 +128,7 @@ class Session {
 		}
 
 		foreach ( $preserved as $key => $value ) {
-			if ( $value !== false ) {
+			if ( false !== $value ) {
 				$this->scouting_oidc_session_set( $key, $value );
 			}
 		}
@@ -107,9 +137,11 @@ class Session {
 	}
 
 	/**
-	 * Get the scouting_oidc_session session ID value
+	 * Gets the scouting_oidc_session session ID value.
 	 *
-	 * @return string the session ID value or an empty string if the session ID does not exist
+	 * @since 2.2.0
+	 *
+	 * @return string the session ID value or an empty string if the session ID does not exist.
 	 */
 	private function scouting_oidc_session_get_session_id(): string {
 		if ( ! is_ssl() ) {
@@ -125,10 +157,13 @@ class Session {
 	}
 
 	/**
-	 * Set a host-only secure session cookie and expose it to the current request.
+	 * Sets a host-only secure session cookie and expose it to the current request.
 	 *
-	 * @param string $session_id Session identifier
-	 * @return bool True when the cookie was successfully queued
+	 * @since 1.0.0
+	 * @since 2.5.0 Added the `$session_id` parameter. Updated the return type.
+	 *
+	 * @param string $session_id Session identifier.
+	 * @return bool True when the cookie was successfully queued.
 	 */
 	private function scouting_oidc_session_set_cookie( string $session_id ): bool {
 		if ( ! is_ssl() || headers_sent() ) {
@@ -156,9 +191,11 @@ class Session {
 	}
 
 	/**
-	 * Generate a cryptographically secure session identifier.
+	 * Generates a cryptographically secure session identifier.
 	 *
-	 * @return string|null Session identifier, or null when secure randomness is unavailable
+	 * @since 2.5.0
+	 *
+	 * @return string|null Session identifier, or null when secure randomness is unavailable.
 	 */
 	private function generate_session_id(): ?string {
 		try {
@@ -169,11 +206,13 @@ class Session {
 	}
 
 	/**
-	 * Build the transient key for a validated session identifier.
+	 * Builds the transient key for a validated session identifier.
 	 *
-	 * @param string $session_id Session identifier
-	 * @param string $key Session data key
-	 * @return string Transient key
+	 * @since 2.5.0
+	 *
+	 * @param string $session_id Session identifier.
+	 * @param string $key Session data key.
+	 * @return string Transient key.
 	 */
 	private function transient_key( string $session_id, string $key ): string {
 		return 'scouting_oidc_session_' . $session_id . '_' . $key;

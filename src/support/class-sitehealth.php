@@ -1,35 +1,89 @@
 <?php
+/**
+ * Scouting OpenID Connect plugin file
+ *
+ * @package ScoutingOIDC
+ * @since 2.5.0
+ */
+
 namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once plugin_dir_path( __FILE__ ) . 'ProviderHealth.php';
+/**
+ * Loads the class-providerhealth.php implementation.
+ */
+require_once plugin_dir_path( __FILE__ ) . 'class-providerhealth.php';
 
 /**
  * Adds Scouting OpenID Connect checks and diagnostics to WordPress Site Health.
+ *
+ * @since 2.5.0
  */
 class SiteHealth {
+	/**
+	 * Required OpenID Connect scopes.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @var array<string>
+	 */
 	private const REQUIRED_SCOPES = array( 'openid', 'membership', 'profile', 'email' );
 
+	/**
+	 * Installed database schema version.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @var string
+	 */
 	private const LOGS_SCHEMA_VERSION = '1';
 
+	/**
+	 * Format used for Site Health debug timestamps.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @var string
+	 */
 	private const DEBUG_DATE_FORMAT = 'd-m-Y H:i:s T';
 
-	private ProviderHealth $providerHealth;
+	/**
+	 * The provider health check helper.
+	 *
+	 * @since 2.5.0
+	 * @var ProviderHealth
+	 */
+	private ProviderHealth $provider_health;
 
-	private ?bool $logsTableAvailable = null;
+	/**
+	 * Whether the logs table is available.
+	 *
+	 * @since 2.5.0
+	 * @var bool|null
+	 */
+	private ?bool $logs_table_available = null;
 
-	public function __construct( ProviderHealth $providerHealth ) {
-		$this->providerHealth = $providerHealth;
+	/**
+	 * Initializes Site Health checks.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @param ProviderHealth $provider_health The provider health check helper.
+	 */
+	public function __construct( ProviderHealth $provider_health ) {
+		$this->provider_health = $provider_health;
 	}
 
 	/**
-	 * Register direct Site Health tests.
+	 * Registers direct Site Health tests.
+	 *
+	 * @since 2.5.0
 	 *
 	 * @param array $tests Registered Site Health tests.
-	 * @return array
+	 * @return array Result data.
 	 */
 	public function site_health_tests( array $tests ): array {
 		$tests['direct']['scouting_oidc_runtime']       = array(
@@ -67,14 +121,16 @@ class SiteHealth {
 	}
 
 	/**
-	 * Check local runtime requirements used directly by the login flow.
+	 * Checks local runtime requirements used directly by the login flow.
 	 *
-	 * @return array
+	 * @since 2.5.0
+	 *
+	 * @return array Result data.
 	 */
 	public function runtime_test(): array {
 		$required_functions = array( 'hash_equals', 'openssl_pkey_get_public', 'openssl_verify', 'random_bytes' );
 		$missing_functions  = array_values(
-			array_filter( $required_functions, static fn( $function ) => ! function_exists( $function ) )
+			array_filter( $required_functions, static fn( $required_function ) => ! function_exists( $required_function ) )
 		);
 
 		if ( ! empty( $missing_functions ) ) {
@@ -108,9 +164,11 @@ class SiteHealth {
 	}
 
 	/**
-	 * Check whether the credentials needed to start a login are configured.
+	 * Checks whether the credentials needed to start a login are configured.
 	 *
-	 * @return array
+	 * @since 2.5.0
+	 *
+	 * @return array Result data.
 	 */
 	public function configuration_test(): array {
 		$missing = array();
@@ -146,9 +204,11 @@ class SiteHealth {
 	}
 
 	/**
-	 * Check required scopes and scopes needed by enabled profile features.
+	 * Checks required scopes and scopes needed by enabled profile features.
 	 *
-	 * @return array
+	 * @since 2.5.0
+	 *
+	 * @return array Result data.
 	 */
 	public function scopes_test(): array {
 		$scopes           = $this->get_configured_scopes();
@@ -202,9 +262,11 @@ class SiteHealth {
 	}
 
 	/**
-	 * Check whether the configured post-login redirect can be used.
+	 * Checks whether the configured post-login redirect can be used.
 	 *
-	 * @return array
+	 * @since 2.5.0
+	 *
+	 * @return array Result data.
 	 */
 	public function redirect_test(): array {
 		$mode        = $this->get_string_option( 'scouting_oidc_login_redirect' );
@@ -225,7 +287,7 @@ class SiteHealth {
 		}
 
 		$custom_redirect = $this->get_string_option( 'scouting_oidc_custom_redirect' );
-		if ( $mode === 'custom' && ( $custom_redirect === '' || wp_validate_redirect( $custom_redirect, '' ) === '' ) ) {
+		if ( 'custom' === $mode && ( '' === $custom_redirect || wp_validate_redirect( $custom_redirect, '' ) === '' ) ) {
 			return $this->build_result(
 				'scouting_oidc_redirect',
 				__( 'The custom login redirect is not configured correctly', 'scouting-openid-connect' ),
@@ -248,9 +310,11 @@ class SiteHealth {
 	}
 
 	/**
-	 * Check whether the database-backed log storage is present and current.
+	 * Checks whether the database-backed log storage is present and current.
 	 *
-	 * @return array
+	 * @since 2.5.0
+	 *
+	 * @return array Result data.
 	 */
 	public function log_storage_test(): array {
 		if ( ! $this->logs_table_exists() ) {
@@ -274,11 +338,11 @@ class SiteHealth {
 				implode( ', ', $missing_columns )
 			);
 		}
-		if ( $installed_schema !== self::LOGS_SCHEMA_VERSION ) {
+		if ( self::LOGS_SCHEMA_VERSION !== $installed_schema ) {
 			$storage_issues[] = sprintf(
 				/* translators: 1: Installed log schema version. 2: Expected log schema version. */
 				__( 'Installed schema version is %1$s; expected %2$s.', 'scouting-openid-connect' ),
-				$installed_schema === '' ? __( 'not recorded', 'scouting-openid-connect' ) : $installed_schema,
+				'' === $installed_schema ? __( 'not recorded', 'scouting-openid-connect' ) : $installed_schema,
 				self::LOGS_SCHEMA_VERSION
 			);
 		}
@@ -301,9 +365,11 @@ class SiteHealth {
 	}
 
 	/**
-	 * Check whether log retention cleanup is scheduled correctly.
+	 * Checks whether log retention cleanup is scheduled correctly.
 	 *
-	 * @return array
+	 * @since 2.5.0
+	 *
+	 * @return array Result data.
 	 */
 	public function log_cleanup_test(): array {
 		$next_cleanup   = wp_next_scheduled( CronJobs::CLEANUP_CRON_HOOK );
@@ -321,7 +387,7 @@ class SiteHealth {
 			);
 		}
 
-		if ( $next_cleanup === false ) {
+		if ( false === $next_cleanup ) {
 			return $this->build_result(
 				'scouting_oidc_log_cleanup',
 				__( 'Scouting OpenID Connect log cleanup is not scheduled', 'scouting-openid-connect' ),
@@ -333,7 +399,7 @@ class SiteHealth {
 
 		$event           = wp_get_scheduled_event( CronJobs::CLEANUP_CRON_HOOK );
 		$schedule_issues = array();
-		if ( ! is_object( $event ) || $event->schedule !== 'daily' ) {
+		if ( ! is_object( $event ) || 'daily' !== $event->schedule ) {
 			$schedule_issues[] = __( 'The cleanup event is not using the daily schedule.', 'scouting-openid-connect' );
 		}
 		if ( $next_cleanup < time() - DAY_IN_SECONDS ) {
@@ -377,19 +443,23 @@ class SiteHealth {
 	}
 
 	/**
-	 * Check whether provider discovery is reachable and complete enough for login.
+	 * Checks whether provider discovery is reachable and complete enough for login.
 	 *
-	 * @return array
+	 * @since 2.5.0
+	 *
+	 * @return array Result data.
 	 */
 	public function provider_test(): array {
-		return $this->providerHealth->test();
+		return $this->provider_health->test();
 	}
 
 	/**
-	 * Add redacted plugin details to the Site Health information report.
+	 * Adds redacted plugin details to the Site Health information report.
+	 *
+	 * @since 2.5.0
 	 *
 	 * @param array $debug_information Registered debug information sections.
-	 * @return array
+	 * @return array Result data.
 	 */
 	public function debug_information( array $debug_information ): array {
 		$scopes           = $this->get_configured_scopes();
@@ -411,11 +481,11 @@ class SiteHealth {
 		}
 
 		$next_cleanup         = wp_next_scheduled( CronJobs::CLEANUP_CRON_HOOK );
-		$next_cleanup_display = $next_cleanup === false
+		$next_cleanup_display = false === $next_cleanup
 			? __( 'Not scheduled', 'scouting-openid-connect' )
 			: wp_date( self::DEBUG_DATE_FORMAT, $next_cleanup );
 		$last_cleanup         = CronJobs::scouting_oidc_get_last_cleanup_timestamp();
-		$last_cleanup_display = $last_cleanup === null
+		$last_cleanup_display = null === $last_cleanup
 			? __( 'Never recorded', 'scouting-openid-connect' )
 			: wp_date( self::DEBUG_DATE_FORMAT, $last_cleanup );
 
@@ -507,14 +577,16 @@ class SiteHealth {
 	}
 
 	/**
-	 * Build a standard Site Health test result.
+	 * Builds a standard Site Health test result.
+	 *
+	 * @since 2.5.0
 	 *
 	 * @param string $test Test identifier.
 	 * @param string $label Result title.
 	 * @param string $status Site Health status.
 	 * @param string $description Result details.
-	 * @param string $actions Optional action links.
-	 * @return array
+	 * @param string $actions Optional. Action links. Default empty string.
+	 * @return array Result data.
 	 */
 	private function build_result( string $test, string $label, string $status, string $description, string $actions = '' ): array {
 		return array(
@@ -531,9 +603,11 @@ class SiteHealth {
 	}
 
 	/**
-	 * Build a link to the plugin settings page.
+	 * Builds a link to the plugin settings page.
 	 *
-	 * @return string
+	 * @since 2.5.0
+	 *
+	 * @return string String value.
 	 */
 	private function settings_action(): string {
 		return sprintf(
@@ -544,22 +618,27 @@ class SiteHealth {
 	}
 
 	/**
-	 * Return configured scopes as a normalized list.
+	 * Returns configured scopes as a normalized list.
 	 *
-	 * @return array
+	 * @since 2.5.0
+	 *
+	 * @return array Result data.
 	 */
 	private function get_configured_scopes(): array {
 		$scope_option = strtolower( $this->get_string_option( 'scouting_oidc_scopes' ) );
-		$scopes       = preg_split( '/\s+/', trim( $scope_option ) ) ?: array();
+		$scopes       = preg_split( '/\s+/', trim( $scope_option ) );
+		$scopes       = $scopes ? $scopes : array();
 
-		return array_values( array_unique( array_filter( $scopes, static fn( $scope ) => $scope !== '' ) ) );
+		return array_values( array_unique( array_filter( $scopes, static fn( $scope ) => '' !== $scope ) ) );
 	}
 
 	/**
-	 * Read a string option safely.
+	 * Reads a string option safely.
+	 *
+	 * @since 2.5.0
 	 *
 	 * @param string $option Option name.
-	 * @return string
+	 * @return string String value.
 	 */
 	private function get_string_option( string $option ): string {
 		$value = get_option( $option, '' );
@@ -568,15 +647,17 @@ class SiteHealth {
 	}
 
 	/**
-	 * Return whether the plugin log table exists.
+	 * Returns whether the plugin log table exists.
 	 *
-	 * @return bool
+	 * @since 2.5.0
+	 *
+	 * @return bool Whether the operation succeeds.
 	 */
 	private function logs_table_exists(): bool {
 		global $wpdb;
 
-		if ( $this->logsTableAvailable !== null ) {
-			return $this->logsTableAvailable;
+		if ( null !== $this->logs_table_available ) {
+			return $this->logs_table_available;
 		}
 
 		$table = $wpdb->prefix . 'scouting_oidc_logs';
@@ -585,15 +666,17 @@ class SiteHealth {
 			$wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) )
 		);
 
-		$this->logsTableAvailable = is_string( $found_table ) && $found_table === $table;
+		$this->logs_table_available = is_string( $found_table ) && $found_table === $table;
 
-		return $this->logsTableAvailable;
+		return $this->logs_table_available;
 	}
 
 	/**
-	 * Return columns in the plugin log table.
+	 * Returns columns in the plugin log table.
 	 *
-	 * @return array
+	 * @since 2.5.0
+	 *
+	 * @return array Result data.
 	 */
 	private function get_log_columns(): array {
 		global $wpdb;
@@ -606,9 +689,11 @@ class SiteHealth {
 	}
 
 	/**
-	 * Return aggregate log information without exposing log messages or user data.
+	 * Returns aggregate log information without exposing log messages or user data.
 	 *
-	 * @return array
+	 * @since 2.5.0
+	 *
+	 * @return array Result data.
 	 */
 	private function get_log_statistics(): array {
 		global $wpdb;
@@ -639,7 +724,7 @@ class SiteHealth {
 				$statistics['total']         = (string) ( (int) ( $row['total'] ?? 0 ) );
 				$statistics['recent_errors'] = (string) ( (int) ( $row['recent_errors'] ?? 0 ) );
 				$latest                      = $row['latest'] ?? null;
-				$statistics['latest']        = is_string( $latest ) && $latest !== ''
+				$statistics['latest']        = is_string( $latest ) && '' !== $latest
 					? Logger::scouting_oidc_format_utc_datetime_for_site( $latest, self::DEBUG_DATE_FORMAT )
 					: __( 'None', 'scouting-openid-connect' );
 			}
@@ -649,9 +734,11 @@ class SiteHealth {
 	}
 
 	/**
-	 * Count WordPress users managed by this plugin.
+	 * Counts WordPress users managed by this plugin.
 	 *
-	 * @return int
+	 * @since 2.5.0
+	 *
+	 * @return int Integer value.
 	 */
 	private function get_oidc_user_count(): int {
 		$users = new \WP_User_Query(
@@ -670,10 +757,12 @@ class SiteHealth {
 	}
 
 	/**
-	 * Format a boolean setting for diagnostics.
+	 * Formats a boolean setting for diagnostics.
+	 *
+	 * @since 2.5.0
 	 *
 	 * @param bool $enabled Whether the setting is enabled.
-	 * @return string
+	 * @return string String value.
 	 */
 	private function enabled_text( bool $enabled ): string {
 		return $enabled
@@ -682,17 +771,19 @@ class SiteHealth {
 	}
 
 	/**
-	 * Build a Site Health debug field.
+	 * Builds a Site Health debug field.
+	 *
+	 * @since 2.5.0
 	 *
 	 * @param string $label Field label.
 	 * @param string $value Field value.
-	 * @return array
+	 * @return array Result data.
 	 */
 	private function debug_field( string $label, string $value ): array {
 		return array(
 			'label' => $label,
-			'value' => $value === '' ? __( 'Not available', 'scouting-openid-connect' ) : $value,
-			'debug' => $value === '' ? 'not available' : $value,
+			'value' => '' === $value ? __( 'Not available', 'scouting-openid-connect' ) : $value,
+			'debug' => '' === $value ? 'not available' : $value,
 		);
 	}
 }

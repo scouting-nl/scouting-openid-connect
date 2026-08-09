@@ -92,12 +92,8 @@ jobs:
 
         echo "PHPCS_PHAR=${tools_dir}/phpcs.phar" >> "${GITHUB_ENV}"
 
-    - name: Audit complete WordPress Coding Standards
-      continue-on-error: true
+    - name: Enforce complete WordPress Coding Standards
       run: php "${PHPCS_PHAR}" --standard=WordPress --extensions=php --report=summary .
-
-    - name: Enforce migrated WordPress Coding Standards
-      run: php "${PHPCS_PHAR}" --standard=phpcs.xml.dist
 
   plugin-check:
     runs-on: ubuntu-latest

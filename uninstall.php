@@ -1,12 +1,19 @@
 <?php
-// Exit if uninstall constant is not defined
+/**
+ * Scouting OpenID Connect plugin file
+ *
+ * @package ScoutingOIDC
+ * @since 1.0.0
+ */
+
+// Exit if uninstall constant is not defined.
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
 global $wpdb;
 
-// Delete options
+// Delete options.
 $scouting_oidc_options = array(
 	'scouting_oidc_client_id',
 	'scouting_oidc_client_secret',
@@ -55,7 +62,7 @@ $scouting_oidc_delete_transients_sql  = "DELETE FROM {$wpdb->options} WHERE $sco
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
 $wpdb->query( $wpdb->prepare( $scouting_oidc_delete_transients_sql, $scouting_oidc_transient_like_patterns ) );
 
-// Delete user meta
+// Delete user meta.
 $scouting_oidc_metas = array(
 	'scouting_oidc_user',
 	'scouting_oidc_subject',
@@ -71,7 +78,7 @@ $scouting_oidc_metas = array(
 	'scouting_oidc_country_code',
 );
 
-// Prepare placeholders for the IN clause based on the number of meta keys to delete
+// Prepare placeholders for the IN clause based on the number of meta keys to delete.
 $scouting_oidc_metas_placeholders  = implode( ', ', array_fill( 0, count( $scouting_oidc_metas ), '%s' ) );
 $scouting_oidc_delete_usermeta_sql = "DELETE FROM {$wpdb->usermeta} WHERE meta_key IN ($scouting_oidc_metas_placeholders)";
 
@@ -79,7 +86,7 @@ $scouting_oidc_delete_usermeta_sql = "DELETE FROM {$wpdb->usermeta} WHERE meta_k
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 $wpdb->query( $wpdb->prepare( $scouting_oidc_delete_usermeta_sql, $scouting_oidc_metas ) );
 
-// Drop the logs table if it exists
+// Drop the logs table if it exists.
 $scouting_oidc_logs_table = $wpdb->prefix . 'scouting_oidc_logs';
 
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching

@@ -1,18 +1,31 @@
 <?php
+/**
+ * Scouting OpenID Connect plugin file
+ *
+ * @package ScoutingOIDC
+ * @since 2.4.0
+ */
+
 namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
+/**
+ * Exports filtered log entries.
+ *
+ * @since 2.4.0
+ */
 class LoggingDownload {
 
 	/**
-	 * Trigger a .log download for the currently filtered logs.
+	 * Triggers a .log download for the currently filtered logs.
 	 *
-	 * @param Logging              $logging
-	 * @param array<string, mixed> $filters
-	 * @return void
+	 * @since 2.4.0
+	 *
+	 * @param Logging              $logging The logging page instance.
+	 * @param array<string, mixed> $filters The active filters.
 	 */
 	public function download( Logging $logging, array $filters ): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -39,20 +52,20 @@ class LoggingDownload {
 		$output .= '# WordPress time of export: ' . current_time( 'Y-m-d H:i:s e' ) . "\n\n";
 		$output .= "# Filters applied:\n";
 		foreach ( $filters as $key => $value ) {
-			if ( $key === 'user_id' ) {
-				if ( $value === 0 ) {
+			if ( 'user_id' === $key ) {
+				if ( 0 === $value ) {
 					$display = '';
 				} else {
 					$user_info = get_userdata( (int) $value );
-					if ( $user_info !== false ) {
+					if ( false !== $user_info ) {
 						$display = (int) $value . ' (' . $user_info->display_name . ')';
 					} else {
 						$display = (string) $value;
 					}
 				}
-			} elseif ( $key === 'sol_id' ) {
+			} elseif ( 'sol_id' === $key ) {
 				$user_info = get_user_by( 'login', (string) $value );
-				if ( $user_info !== false ) {
+				if ( false !== $user_info ) {
 					$display = (string) $value . ' (' . $user_info->display_name . ')';
 				} else {
 					$display = (string) $value;
@@ -74,7 +87,7 @@ class LoggingDownload {
 
 		$output .= "Format: [created_at] [level] [component] [user_id] [sol_id] message\n\n";
 
-		// Fetch and output logs
+		// Fetch and output logs.
 		$rows    = $logging->get_logs( $filters, $sorting );
 		$padding = $this->determine_padding( $rows );
 		if ( empty( $rows ) ) {
@@ -91,10 +104,12 @@ class LoggingDownload {
 	}
 
 	/**
-	 * Determine the necessary padding length for a given field based on the log rows.
+	 * Determines the necessary padding length for a given field based on the log rows.
 	 *
-	 * @param array<int, array<string, mixed>> $rows
-	 * @return array<string, int>
+	 * @since 2.4.0
+	 *
+	 * @param array<int, array<string, mixed>> $rows The log rows.
+	 * @return array<string, int>.
 	 */
 	private function determine_padding( array $rows ): array {
 		$max_level_length     = 0;
@@ -124,7 +139,7 @@ class LoggingDownload {
 			}
 		}
 
-		// Set minimum padding lengths
+		// Set minimum padding lengths.
 		return array(
 			'created_at' => 23, // "dd-mm-yyyy hh:mm:ss.fff"
 			'level'      => $max_level_length,
@@ -135,11 +150,13 @@ class LoggingDownload {
 	}
 
 	/**
-	 * Format one log row as a single .log line.
+	 * Formats one log row as a single .log line.
 	 *
-	 * @param array<string, mixed> $row
-	 * @param array<string, int>   $padding
-	 * @return string
+	 * @since 2.4.0
+	 *
+	 * @param array<string, mixed> $row The log row.
+	 * @param array<string, int>   $padding The column padding.
+	 * @return string String value.
 	 */
 	private function format_log_line( array $row, array $padding ): string {
 		// Render the stored UTC timestamp in the current site timezone.
@@ -147,7 +164,7 @@ class LoggingDownload {
 		$level      = strtoupper( (string) ( $row['level'] ?? 'unknown' ) );
 		$component  = strtoupper( (string) ( $row['component'] ?? 'unknown' ) );
 
-		$user_id = isset( $row['user_id'] ) && $row['user_id'] !== null && $row['user_id'] !== '' && (int) $row['user_id'] > 0
+		$user_id = isset( $row['user_id'] ) && null !== $row['user_id'] && '' !== $row['user_id'] && (int) $row['user_id'] > 0
 			? (string) ( (int) $row['user_id'] )
 			: ' ';
 
@@ -157,11 +174,11 @@ class LoggingDownload {
 
 		$message = (string) ( $row['message'] ?? '' );
 		$message = str_replace( array( "\r\n", "\r", "\n" ), '\\n', $message );
-		if ( $message === '' ) {
+		if ( '' === $message ) {
 			$message = '-';
 		}
 
-		// Fixed-width/padded fields for monospaced alignment in .log
+		// Fixed-width/padded fields for monospaced alignment in .log.
 		$created_at_padded = str_pad( $created_at, $padding['created_at'] );
 		$level_padded      = str_pad( $level, $padding['level'] );
 		$component_padded  = str_pad( $component, $padding['component'] );

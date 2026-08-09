@@ -1,18 +1,32 @@
 <?php
+/**
+ * Scouting OpenID Connect plugin file
+ *
+ * @package ScoutingOIDC
+ * @since 2.3.0
+ */
+
 namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
+/**
+ * Builds login error redirects.
+ *
+ * @since 2.3.0
+ */
 class ErrorHandler {
 	/**
-	 * Generate a login error URL with the given error details as query parameters.
+	 * Generates a login error URL with the given error details as query parameters.
+	 *
+	 * @since 2.3.0
 	 *
 	 * @param string      $error_description A description of the error that occurred.
 	 * @param string      $hint A hint to help the user understand the error or how to resolve it.
 	 * @param string      $message A user-friendly message to display on the login page.
-	 * @param string|null $error An optional error code or identifier for the error.
+	 * @param string|null $error Optional. An error code or identifier for the error. Default null.
 	 * @return string The generated login error URL with the error details as query parameters.
 	 */
 	public static function login_error_url( string $error_description, string $hint, string $message, ?string $error = null ): string {
@@ -31,13 +45,14 @@ class ErrorHandler {
 	}
 
 	/**
-	 * Redirect to login with a normalized error payload.
+	 * Redirects to login with a normalized error payload.
+	 *
+	 * @since 2.3.0
 	 *
 	 * @param string      $error_description A description of the error that occurred.
 	 * @param string      $hint A hint to help the user understand the error or how to resolve it.
 	 * @param string      $message A user-friendly message to display on the login page.
-	 * @param string|null $error An optional error code or identifier for the error.
-	 * @return void
+	 * @param string|null $error Optional. An error code or identifier for the error. Default null.
 	 */
 	public static function redirect_to_login_error( string $error_description, string $hint, string $message, ?string $error = null ): void {
 		if ( headers_sent() ) {

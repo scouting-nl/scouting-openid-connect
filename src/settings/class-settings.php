@@ -1,42 +1,58 @@
 <?php
+/**
+ * Scouting OpenID Connect plugin file
+ *
+ * @package ScoutingOIDC
+ * @since 1.0.0
+ */
+
 namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
-require_once plugin_dir_path( __FILE__ ) . 'Oidc.php';
-require_once plugin_dir_path( __FILE__ ) . 'General.php';
+/**
+ * Loads the class-settings-oidc.php implementation.
+ */
+require_once plugin_dir_path( __FILE__ ) . 'class-settings-oidc.php';
+/**
+ * Loads the class-settings-general.php implementation.
+ */
+require_once plugin_dir_path( __FILE__ ) . 'class-settings-general.php';
 
 use ScoutingOIDC\Settings_Oidc;
 use ScoutingOIDC\Settings_General;
 
 /**
- * This class manages the settings page for the Scouting OIDC plugin, including rendering the settings page, initializing settings sections and fields, and handling default options.
+ * Manages the Scouting OIDC settings page, including rendering the page,
+ * initializing settings sections and fields, and handling default options.
+ *
+ * @since 1.0.0
  */
 class Settings {
 
 	/**
-	 * Register the settings submenu page under the main menu.
+	 * Registers the settings submenu page under the main menu.
 	 *
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function scouting_oidc_settings_submenu_page(): void {
 		add_submenu_page(
-			'scouting-oidc-settings',                        // Parent slug (matches the main menu slug)
-			'Settings',                                      // Page title
-			'Settings',                                      // Menu title
-			'manage_options',                                // Capability
-			'scouting-oidc-settings',                        // Submenu slug
-			array( $this, 'scouting_oidc_settings_page_callback' ), // Callback function
-			1                                                // Menu position
+			'scouting-oidc-settings',
+			'Settings',
+			'Settings',
+			'manage_options',
+			'scouting-oidc-settings',
+			array( $this, 'scouting_oidc_settings_page_callback' ),
+			1
 		);
 	}
 
 	/**
-	 * Callback function to render the settings page content.
+	 * Renders the settings page content.
 	 *
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function scouting_oidc_settings_page_callback(): void {
 		?>
@@ -49,8 +65,8 @@ class Settings {
 			<?php settings_errors(); ?>
 			<form method="post" action="options.php">
 				<?php
-				settings_fields( 'scouting_oidc_settings_group' ); // Settings group name
-				do_settings_sections( 'scouting-openid-connect-settings' ); // Page slug
+				settings_fields( 'scouting_oidc_settings_group' );
+				do_settings_sections( 'scouting-openid-connect-settings' );
 				submit_button( 'Save Settings' );
 				?>
 			</form>
@@ -59,9 +75,9 @@ class Settings {
 	}
 
 	/**
-	 * Initialize the settings page and register all settings sections and fields.
+	 * Initializes the settings page and register all settings sections and fields.
 	 *
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function scouting_oidc_settings_page_init(): void {
 		$scouting_oidc_settings_oidc = new Settings_Oidc();
@@ -72,36 +88,37 @@ class Settings {
 	}
 
 	/**
-	 * This script renders JavaScript that adds interactivity to the settings page, such as showing/hiding fields based on other field values.
+	 * Enqueues the settings script that shows and hides fields based on other field
+	 * values.
 	 *
-	 * @return void
+	 * @since 2.4.0
 	 */
 	public function scouting_oidc_fields_enqueue_settings_script(): void {
-		// Enqueue the external JavaScript file
+		// Enqueue the external JavaScript file.
 		wp_enqueue_script(
-			'scouting-oidc-settings-script',       // Handle name
-			plugins_url( 'settings.js', __FILE__ ),  // Path to the file
-			array(),                                // No dependencies
-			SCOUTING_OIDC_VERSION,                  // Version number
+			'scouting-oidc-settings-script',
+			plugins_url( 'settings.js', __FILE__ ),
+			array(),
+			SCOUTING_OIDC_VERSION,
 			array(
-				'strategy'  => 'defer',              // Add the defer attribute
-				'in_footer' => true,                 // Load the script in the footer
+				'strategy'  => 'defer',
+				'in_footer' => true,
 			)
 		);
 	}
 
 	/**
-	 * Set default options upon plugin activation.
+	 * Sets default options upon plugin activation.
 	 *
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function scouting_oidc_settings_install(): void {
-		// Set default options for OIDC
+		// Set default options for OIDC.
 		add_option( 'scouting_oidc_client_id', '' );
 		add_option( 'scouting_oidc_client_secret', '' );
 		add_option( 'scouting_oidc_scopes', 'openid membership profile email address phone' );
 
-		// Set default options for general settings
+		// Set default options for general settings.
 		add_option( 'scouting_oidc_user_display_name', 'fullname' );
 		add_option( 'scouting_oidc_user_birthdate', false );
 		add_option( 'scouting_oidc_user_gender', false );

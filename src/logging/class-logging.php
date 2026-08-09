@@ -1,23 +1,51 @@
 <?php
+/**
+ * Scouting OpenID Connect plugin file
+ *
+ * @package ScoutingOIDC
+ * @since 2.4.0
+ */
+
 namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
-require_once plugin_dir_path( __FILE__ ) . '../../src/utilities/Logger.php';
-require_once __DIR__ . '/Settings.php';
-require_once __DIR__ . '/Filters.php';
-require_once __DIR__ . '/Download.php';
-require_once __DIR__ . '/Help.php';
+/**
+ * Loads the class-logger.php implementation.
+ */
+require_once plugin_dir_path( __FILE__ ) . '../../src/utilities/class-logger.php';
+/**
+ * Loads the class-loggingsettings.php implementation.
+ */
+require_once __DIR__ . '/class-loggingsettings.php';
+/**
+ * Loads the class-loggingfilters.php implementation.
+ */
+require_once __DIR__ . '/class-loggingfilters.php';
+/**
+ * Loads the class-loggingdownload.php implementation.
+ */
+require_once __DIR__ . '/class-loggingdownload.php';
+/**
+ * Loads the class-logginghelp.php implementation.
+ */
+require_once __DIR__ . '/class-logginghelp.php';
 
 use ScoutingOIDC\Logger;
 
+/**
+ * Provides the admin logging interface.
+ *
+ * @since 2.4.0
+ */
 class Logging {
 
 	/**
 	 * Hook suffix for the logging screen.
 	 *
+	 * @since 2.4.0
 	 * @var string
 	 */
 	private string $hook_suffix = '';
@@ -25,6 +53,7 @@ class Logging {
 	/**
 	 * Logging screen settings helper.
 	 *
+	 * @since 2.4.0
 	 * @var LoggingSettings
 	 */
 	private LoggingSettings $settings;
@@ -32,6 +61,7 @@ class Logging {
 	/**
 	 * Logging filter parsing/query helper.
 	 *
+	 * @since 2.4.0
 	 * @var LoggingFilters
 	 */
 	private LoggingFilters $filters_helper;
@@ -39,6 +69,7 @@ class Logging {
 	/**
 	 * Logging download helper.
 	 *
+	 * @since 2.4.0
 	 * @var LoggingDownload
 	 */
 	private LoggingDownload $download_helper;
@@ -46,12 +77,15 @@ class Logging {
 	/**
 	 * Logging help tabs helper.
 	 *
+	 * @since 2.4.0
 	 * @var LoggingHelp
 	 */
 	private LoggingHelp $help_helper;
 
 	/**
-	 * @return void
+	 * Initializes the logging page.
+	 *
+	 * @since 2.4.0
 	 */
 	public function __construct() {
 		$this->settings        = new LoggingSettings();
@@ -62,9 +96,9 @@ class Logging {
 	}
 
 	/**
-	 * Handle log download via admin-post endpoint.
+	 * Handles log download via admin-post endpoint.
 	 *
-	 * @return void
+	 * @since 2.4.0
 	 */
 	public function handle_logs_download(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -75,22 +109,23 @@ class Logging {
 		$this->download_helper->download( $this, $filters );
 	}
 
-	/** Register the logging page in the admin menu
+	/**
+	 * Registers the logging page in the admin menu.
 	 *
-	 * @return void
+	 * @since 2.4.0
 	 */
 	public function scouting_oidc_logging_submenu_page(): void {
 		$hook = add_submenu_page(
-			'scouting-oidc-settings',                       // Parent slug (matches the main menu slug)
-			'Logging',                                      // Page title
-			'Logging',                                      // Menu title
-			'manage_options',                               // Capability
-			'scouting-oidc-logging',                        // Submenu slug
-			array( $this, 'scouting_oidc_logging_page_callback' ), // Callback function
-			4                                               // Menu position
+			'scouting-oidc-settings',
+			'Logging',
+			'Logging',
+			'manage_options',
+			'scouting-oidc-logging',
+			array( $this, 'scouting_oidc_logging_page_callback' ),
+			4
 		);
 
-		if ( is_string( $hook ) && $hook !== '' ) {
+		if ( is_string( $hook ) && '' !== $hook ) {
 			$this->hook_suffix = $hook;
 			add_action( "load-$hook", array( $this->settings, 'scouting_oidc_logs_register_screen_options' ) );
 			add_action( "load-$hook", array( $this->help_helper, 'scouting_oidc_logging_register_help_tabs' ) );
@@ -100,10 +135,11 @@ class Logging {
 	}
 
 	/**
-	 * Enqueue logging page specific admin styles and scripts.
+	 * Enqueues logging page specific admin styles and scripts.
+	 *
+	 * @since 2.4.0
 	 *
 	 * @param string $hook Current admin page hook.
-	 * @return void
 	 */
 	public function enqueue_logging_styles_and_scripts( string $hook ): void {
 		if ( $hook !== $this->hook_suffix ) {
@@ -112,27 +148,28 @@ class Logging {
 
 		wp_enqueue_style(
 			'scouting-oidc-logging',
-			plugins_url( 'logging.css', __FILE__ ), // Path to the file
-			array(),                              // No dependencies
-			SCOUTING_OIDC_VERSION,                // Version number
+			plugins_url( 'logging.css', __FILE__ ),
+			array(),
+			SCOUTING_OIDC_VERSION,
 		);
 
-		// Enqueue the external JavaScript file
+		// Enqueue the external JavaScript file.
 		wp_enqueue_script(
-			'logging-script',                    // Handle name
-			plugins_url( 'logging.js', __FILE__ ), // Path to the file
-			array(),                             // No dependencies
-			SCOUTING_OIDC_VERSION,               // Version number
+			'logging-script',
+			plugins_url( 'logging.js', __FILE__ ),
+			array(),
+			SCOUTING_OIDC_VERSION,
 			array(
-				'strategy'  => 'defer',           // Add the defer attribute
-				'in_footer' => true,              // Load the script in the footer
+				'strategy'  => 'defer',
+				'in_footer' => true,
 			)
 		);
 	}
 
-	/** Callback to render logging page content
+	/**
+	 * Renders logging page content.
 	 *
-	 * @return void
+	 * @since 2.4.0
 	 */
 	public function scouting_oidc_logging_page_callback(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -142,29 +179,62 @@ class Logging {
 		$filters = $this->filters_helper->get_filters();
 		$sorting = $this->filters_helper->get_sorting();
 		if ( ! class_exists( 'WP_List_Table' ) ) {
+			/**
+			 * Loads the class-wp-list-table.php implementation.
+			 */
 			require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 		}
 
-		$component_values = array_map( static fn( LogComponent $case ) => $case->value, LogComponent::cases() );
-		$level_values     = array_map( static fn( LogLevel $case ) => $case->value, LogLevel::cases() );
+		$component_values = array_map( static fn( LogComponent $component ) => $component->value, LogComponent::cases() );
+		$level_values     = array_map( static fn( LogLevel $level ) => $level->value, LogLevel::cases() );
 
 		$list_table = new class($this, $filters, $sorting, $component_values, $level_values) extends \WP_List_Table {
+			/**
+			 * The logging page.
+			 *
+			 * @since 2.4.0
+			 * @var Logging
+			 */
 			private Logging $logging;
-			/** @var array<string, mixed> */
+			/**
+			 * The filters.
+			 *
+			 * @since 2.4.0
+			 * @var array<string, mixed>
+			 */
 			private array $filters;
-			/** @var array<string, string> */
+			/**
+			 * The sorting.
+			 *
+			 * @since 2.4.0
+			 * @var array<string, string>
+			 */
 			private array $sorting;
-			/** @var array<int, string> */
+			/**
+			 * The component values.
+			 *
+			 * @since 2.4.0
+			 * @var array<int, string>
+			 */
 			private array $component_values;
-			/** @var array<int, string> */
+			/**
+			 * The level values.
+			 *
+			 * @since 2.4.0
+			 * @var array<int, string>
+			 */
 			private array $level_values;
 
 			/**
-			 * @param Logging               $logging
-			 * @param array<string, mixed>  $filters
-			 * @param array<string, string> $sorting
-			 * @param array<int, string>    $component_values
-			 * @param array<int, string>    $level_values
+			 * Initializes the log table.
+			 *
+			 * @since 2.4.0
+			 *
+			 * @param Logging               $logging The logging page instance.
+			 * @param array<string, mixed>  $filters The active filters.
+			 * @param array<string, string> $sorting The active sorting configuration.
+			 * @param array<int, string>    $component_values The available component values.
+			 * @param array<int, string>    $level_values The available level values.
 			 */
 			public function __construct( Logging $logging, array $filters, array $sorting, array $component_values, array $level_values ) {
 				parent::__construct(
@@ -183,9 +253,11 @@ class Logging {
 			}
 
 			/**
-			 * Define available columns for the logs table.
+			 * Defines available columns for the logs table.
 			 *
-			 * @return array<string, string>
+			 * @since 2.4.0
+			 *
+			 * @return array<string, string>.
 			 */
 			public function get_columns(): array {
 				return array(
@@ -199,9 +271,11 @@ class Logging {
 			}
 
 			/**
-			 * Define sortable columns for the logs table.
+			 * Defines sortable columns for the logs table.
 			 *
-			 * @return array<string, array{0: string, 1: bool}>
+			 * @since 2.4.0
+			 *
+			 * @return array<string, array{0: string, 1: bool}>.
 			 */
 			protected function get_sortable_columns(): array {
 				return array(
@@ -210,9 +284,9 @@ class Logging {
 			}
 
 			/**
-			 * Prepare table rows and pagination arguments.
+			 * Prepares table rows and pagination arguments.
 			 *
-			 * @return void
+			 * @since 2.4.0
 			 */
 			public function prepare_items(): void {
 				$per_page     = $this->get_items_per_page( 'scouting_oidc_logs_per_page', 20 );
@@ -233,18 +307,19 @@ class Logging {
 			}
 
 			/**
-			 * Render custom filter controls inside the built-in table navigation.
+			 * Renders custom filter controls inside the built-in table navigation.
 			 *
-			 * @param string $which
-			 * @return void
+			 * @since 2.4.0
+			 *
+			 * @param string $which The requested view.
 			 */
 			protected function extra_tablenav( $which ): void {
 				if ( ! in_array( $which, array( 'top', 'bottom' ), true ) ) {
 					return;
 				}
 
-				$position         = $which === 'bottom' ? 'bottom' : 'top';
-				$is_submit_source = $which === 'top';
+				$position         = 'bottom' === $which ? 'bottom' : 'top';
+				$is_submit_source = 'top' === $which;
 				?>
 				<div class="alignleft actions">
 					<label class="screen-reader-text" for="date_from_<?php echo esc_attr( $position ); ?>"><?php esc_html_e( 'Date/time from', 'scouting-openid-connect' ); ?></label>
@@ -287,86 +362,92 @@ class Logging {
 			}
 
 			/**
-			 * Default rendering for plain text columns.
+			 * Renders plain text columns by default.
 			 *
-			 * @param array<string, mixed> $item
-			 * @param string               $column_name
-			 * @return string
+			 * @since 2.4.0
+			 *
+			 * @param array<string, mixed> $item The log item.
+			 * @param string               $column_name The column name.
+			 * @return string String value.
 			 */
 			public function column_default( $item, $column_name ): string {
-				// Custom rendering for specific columns
-				if ( $column_name === 'created_at' ) {
+				// Custom rendering for specific columns.
+				if ( 'created_at' === $column_name ) {
 					// Display the stored UTC timestamp in the current site timezone.
 					return esc_html( Logger::scouting_oidc_format_utc_datetime_for_site( (string) ( $item['created_at'] ?? '' ) ) );
 				}
 
-				if ( $column_name === 'component' || $column_name === 'level' ) {
-					// Display component and level in uppercase for better readability
+				if ( 'component' === $column_name || 'level' === $column_name ) {
+					// Display component and level in uppercase for better readability.
 					return esc_html( strtoupper( (string) ( $item[ $column_name ] ?? '—' ) ) );
 				}
 
-				if ( $column_name === 'message' ) {
-					// Display the message column in a preformatted block to preserve formatting and allow line breaks
+				if ( 'message' === $column_name ) {
+					// Display the message column in a preformatted block to preserve formatting and allow line breaks.
 					return '<pre style="margin:0; white-space:pre-wrap;">' . esc_html( (string) ( $item['message'] ?? '—' ) ) . '</pre>';
 				}
 
-				// Default rendering for other columns
+				// Default rendering for other columns.
 				return esc_html( (string) ( $item[ $column_name ] ?? '—' ) );
 			}
 
 			/**
-			 * Custom rendering for the User ID column, with links to user profiles when possible.
+			 * Renders the User ID column with links to user profiles when possible.
 			 *
-			 * @param array<string, mixed> $item
-			 * @return string
+			 * @since 2.4.0
+			 *
+			 * @param array<string, mixed> $item The log item.
+			 * @return string String value.
 			 */
 			public function column_user_id( $item ): string {
 				// The User ID column may contain a reference to a WordPress user. If it does, we attempt to link it to the corresponding user profile in WordPress for easier navigation.
-				$user_id_value = isset( $item['user_id'] ) && $item['user_id'] !== null ? (int) $item['user_id'] : 0;
+				$user_id_value = isset( $item['user_id'] ) && null !== $item['user_id'] ? (int) $item['user_id'] : 0;
 				if ( $user_id_value <= 0 ) {
 					return '—';
 				}
 
-				// Attempt to find a user with the given ID and link to their profile if found
+				// Attempt to find a user with the given ID and link to their profile if found.
 				$url = get_edit_user_link( $user_id_value );
-				if ( is_string( $url ) && $url !== '' ) {
+				if ( is_string( $url ) && '' !== $url ) {
 					return '<a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( (string) $user_id_value ) . '</a>';
 				}
 
-				// If no user is found with the given ID, just display the ID as plain text
+				// If no user is found with the given ID, just display the ID as plain text.
 				return esc_html( (string) $user_id_value );
 			}
 
 			/**
-			 * Custom rendering for the SOL ID column, with links to user profiles when the SOL ID matches a user login.
+			 * Renders the SOL ID column with links to user profiles when the SOL ID matches a user login.
 			 *
-			 * @param array<string, mixed> $item
-			 * @return string
+			 * @since 2.4.0
+			 *
+			 * @param array<string, mixed> $item The log item.
+			 * @return string String value.
 			 */
 			public function column_sol_id( $item ): string {
 				// The SOL ID column may contain a user login. If it does, we attempt to link it to the corresponding user profile in WordPress for easier navigation.
-				$sol_id_value = isset( $item['sol_id'] ) && $item['sol_id'] !== null ? trim( (string) $item['sol_id'] ) : '';
-				if ( $sol_id_value === '' ) {
+				$sol_id_value = isset( $item['sol_id'] ) && null !== $item['sol_id'] ? trim( (string) $item['sol_id'] ) : '';
+				if ( '' === $sol_id_value ) {
 					return '—';
 				}
 
-				// Attempt to find a user with a matching login name and link to their profile if found
+				// Attempt to find a user with a matching login name and link to their profile if found.
 				$user = get_user_by( 'login', $sol_id_value );
-				if ( $user !== false && isset( $user->ID ) ) {
+				if ( false !== $user && isset( $user->ID ) ) {
 					$url = get_edit_user_link( (int) $user->ID );
-					if ( is_string( $url ) && $url !== '' ) {
+					if ( is_string( $url ) && '' !== $url ) {
 						return '<a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( $sol_id_value ) . '</a>';
 					}
 				}
 
-				// If no user is found with the given SOL ID, just display the SOL ID as plain text
+				// If no user is found with the given SOL ID, just display the SOL ID as plain text.
 				return esc_html( $sol_id_value );
 			}
 
 			/**
-			 * Render empty state row text.
+			 * Renders empty state row text.
 			 *
-			 * @return void
+			 * @since 2.4.0
 			 */
 			public function no_items(): void {
 				esc_html_e( 'No log entries found for the selected filters.', 'scouting-openid-connect' );
@@ -394,10 +475,12 @@ class Logging {
 
 
 	/**
-	 * Count filtered logs for pagination.
+	 * Counts filtered logs for pagination.
 	 *
-	 * @param array<string, mixed> $filters
-	 * @return int
+	 * @since 2.4.0
+	 *
+	 * @param array<string, mixed> $filters The active filters.
+	 * @return int Integer value.
 	 */
 	public function get_logs_count( array $filters ): int {
 		global $wpdb;
@@ -411,7 +494,7 @@ class Logging {
 		if ( ! empty( $values ) ) {
             // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$prepared_sql = $wpdb->prepare( $sql, $values );
-			if ( ! is_string( $prepared_sql ) || $prepared_sql === '' ) {
+			if ( ! is_string( $prepared_sql ) || '' === $prepared_sql ) {
 				return 0;
 			}
 			$sql = $prepared_sql;
@@ -424,13 +507,15 @@ class Logging {
 	}
 
 	/**
-	 * Retrieve filtered logs from the database.
+	 * Retrieves filtered logs from the database.
 	 *
-	 * @param array<string, mixed>  $filters
-	 * @param array<string, string> $sorting
-	 * @param int                   $limit
-	 * @param int                   $offset
-	 * @return array<int, array<string, mixed>>
+	 * @since 2.4.0
+	 *
+	 * @param array<string, mixed>  $filters The active filters.
+	 * @param array<string, string> $sorting The active sorting configuration.
+	 * @param int                   $limit Optional. The maximum number of entries. Default 999.
+	 * @param int                   $offset Optional. The starting offset. Default 0.
+	 * @return array<int, array<string, mixed>>.
 	 */
 	public function get_logs( array $filters, array $sorting, int $limit = 999, int $offset = 0 ): array {
 		global $wpdb;
@@ -438,11 +523,11 @@ class Logging {
 		$values    = array();
 		$where_sql = $this->filters_helper->build_logs_where( $filters, $values );
 
-		$order = ( isset( $sorting['order'] ) && $sorting['order'] === 'asc' ) ? 'ASC' : 'DESC';
-		// Limit should be between 1 and 999
+		$order = ( isset( $sorting['order'] ) && 'asc' === $sorting['order'] ) ? 'ASC' : 'DESC';
+		// Limit should be between 1 and 999.
 		$limit = max( 1, min( 999, $limit ) );
 
-		// Offset should be zero or positive
+		// Offset should be zero or positive.
 		$offset = max( 0, $offset );
 
 		$scouting_oidc_logs_table = esc_sql( $wpdb->prefix . 'scouting_oidc_logs' );
@@ -455,7 +540,7 @@ class Logging {
 		if ( ! empty( $values ) ) {
             // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$prepared_sql = $wpdb->prepare( $sql, $values );
-			if ( ! is_string( $prepared_sql ) || $prepared_sql === '' ) {
+			if ( ! is_string( $prepared_sql ) || '' === $prepared_sql ) {
 				return array();
 			}
 			$sql = $prepared_sql;

@@ -1,27 +1,43 @@
 <?php
+/**
+ * Scouting OpenID Connect plugin file
+ *
+ * @package ScoutingOIDC
+ * @since 2.4.0
+ */
+
 namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
+/**
+ * Normalizes logging filters and sorting.
+ *
+ * @since 2.4.0
+ */
 class LoggingFilters {
 
 	/**
 	 * Request key used for the logging filter nonce.
+	 *
+	 * @since 2.4.0
 	 */
 	private const FILTER_NONCE_KEY = 'scouting_oidc_logs_filter_nonce';
 
 	/**
-	 * Get sorting options from the request.
+	 * Gets sorting options from the request.
 	 *
-	 * @return array<string, string>
+	 * @since 2.4.0
+	 *
+	 * @return array<string, string>.
 	 */
 	public function get_sorting(): array {
 		$nonce = isset( $_GET[ self::FILTER_NONCE_KEY ] )
 			? sanitize_text_field( wp_unslash( $_GET[ self::FILTER_NONCE_KEY ] ) )
 			: ( isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '' );
-		if ( $nonce !== '' && ! wp_verify_nonce( $nonce, 'scouting_oidc_logs_filter' ) ) {
+		if ( '' !== $nonce && ! wp_verify_nonce( $nonce, 'scouting_oidc_logs_filter' ) ) {
 			return array(
 				'orderby' => 'id',
 				'order'   => 'desc',
@@ -29,7 +45,7 @@ class LoggingFilters {
 		}
 
 		$order = isset( $_GET['order'] ) ? sanitize_key( wp_unslash( $_GET['order'] ) ) : 'desc';
-		$order = $order === 'asc' ? 'asc' : 'desc';
+		$order = 'asc' === $order ? 'asc' : 'desc';
 
 		return array(
 			'orderby' => 'id',
@@ -38,14 +54,16 @@ class LoggingFilters {
 	}
 
 	/**
-	 * Resolve an HTML datetime-local value to normalized and UTC SQL variants.
+	 * Resolves an HTML datetime-local value to normalized and UTC SQL variants.
+	 *
+	 * @since 2.4.0
 	 *
 	 * @param string $value Raw datetime-local value.
-	 * @return array{normalized: string, utc_sql: string|null}
+	 * @return array{normalized: string, utc_sql: string|null}.
 	 */
 	private function resolve_datetime_local( string $value ): array {
 		$trimmed_value = trim( $value );
-		if ( $trimmed_value === '' ) {
+		if ( '' === $trimmed_value ) {
 			return array(
 				'normalized' => '',
 				'utc_sql'    => null,
@@ -57,7 +75,7 @@ class LoggingFilters {
 
 		foreach ( $formats as $format ) {
 			$datetime = \DateTimeImmutable::createFromFormat( $format, $trimmed_value, $site_timezone );
-			if ( $datetime !== false ) {
+			if ( false !== $datetime ) {
 				return array(
 					'normalized' => $datetime->format( 'Y-m-d\\TH:i:s.v' ),
 					'utc_sql'    => $datetime->setTimezone( new \DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s.v' ),
@@ -72,19 +90,21 @@ class LoggingFilters {
 	}
 
 	/**
-	 * Get and validate filter values from the request.
+	 * Gets and validates filter values from the request.
 	 *
-	 * @return array<string, mixed>
+	 * @since 2.4.0
+	 *
+	 * @return array<string, mixed>.
 	 */
 	public function get_filters(): array {
-		$component_values = array_map( static fn( LogComponent $case ) => $case->value, LogComponent::cases() );
-		$level_values     = array_map( static fn( LogLevel $case ) => $case->value, LogLevel::cases() );
+		$component_values = array_map( static fn( LogComponent $component ) => $component->value, LogComponent::cases() );
+		$level_values     = array_map( static fn( LogLevel $level ) => $level->value, LogLevel::cases() );
 
 		$nonce = isset( $_GET[ self::FILTER_NONCE_KEY ] )
 			? sanitize_text_field( wp_unslash( $_GET[ self::FILTER_NONCE_KEY ] ) )
 			: ( isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '' );
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'scouting_oidc_logs_filter' ) ) {
-			$default_levels = array_values( array_filter( $level_values, fn( $v ) => $v !== 'debug' ) );
+			$default_levels = array_values( array_filter( $level_values, fn( $v ) => 'debug' !== $v ) );
 
 			return array(
 				'date_from'         => '',
@@ -115,8 +135,8 @@ class LoggingFilters {
 				? array_map( 'sanitize_text_field', wp_unslash( $_GET['component'] ) )
 				: array();
 		} else {
-			// Default: all levels except debug, all components
-			$level_raw     = array_values( array_filter( $level_values, fn( $v ) => $v !== 'debug' ) );
+			// Default: all levels except debug, all components.
+			$level_raw     = array_values( array_filter( $level_values, fn( $v ) => 'debug' !== $v ) );
 			$component_raw = $component_values;
 		}
 
@@ -139,11 +159,13 @@ class LoggingFilters {
 	}
 
 	/**
-	 * Build SQL WHERE for filters.
+	 * Builds SQL WHERE for filters.
 	 *
-	 * @param array<string, mixed> $filters
-	 * @param array<int, mixed>    $values
-	 * @return string
+	 * @since 2.4.0
+	 *
+	 * @param array<string, mixed> $filters The active filters.
+	 * @param array<int, mixed>    $values The values to pad.
+	 * @return string String value.
 	 */
 	public function build_logs_where( array $filters, array &$values ): string {
 		global $wpdb;

@@ -1,36 +1,46 @@
 <?php
+/**
+ * Scouting OpenID Connect plugin file
+ *
+ * @package ScoutingOIDC
+ * @since 1.0.0
+ */
+
 namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
 /**
- * This class manages the shortcode page for the Scouting OIDC plugin, including rendering the shortcode page and enqueuing scripts for interactivity.
+ * Manages the Scouting OIDC shortcode page, including rendering the page and
+ * enqueuing interactive scripts.
+ *
+ * @since 1.0.0
  */
 class Shortcode {
 
 	/**
-	 * Register the shortcode submenu page under the main menu.
+	 * Registers the shortcode submenu page under the main menu.
 	 *
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function scouting_oidc_shortcode_submenu_page(): void {
 		add_submenu_page(
-			'scouting-oidc-settings',                         // Parent slug (matches the main menu slug)
-			'Shortcode',                                      // Page title
-			'Shortcode',                                      // Menu title
-			'manage_options',                                 // Capability
-			'scouting-oidc-shortcode',                        // Submenu slug
-			array( $this, 'scouting_oidc_shortcode_page_callback' ), // Callback function
-			2                                                 // Menu position
+			'scouting-oidc-settings',
+			'Shortcode',
+			'Shortcode',
+			'manage_options',
+			'scouting-oidc-shortcode',
+			array( $this, 'scouting_oidc_shortcode_page_callback' ),
+			2
 		);
 	}
 
 	/**
-	 * Callback function to render the shortcode page content.
+	 * Renders the shortcode page content.
 	 *
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function scouting_oidc_shortcode_page_callback(): void {
 		?>
@@ -133,18 +143,18 @@ class Shortcode {
 	/**
 	 * This script renders JavaScript to live preview the shortcode with custom attributes on the shortcode settings page.
 	 *
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function scouting_oidc_shortcode_enqueue_live_script(): void {
-		// Enqueue the external JavaScript file with the defer attribute
+		// Enqueue the external JavaScript file with the defer attribute.
 		wp_enqueue_script(
-			'live-shortcode-script',                    // Handle name
-			plugins_url( 'live-shortcode.js', __FILE__ ), // Path to the file
-			array(),                                    // No dependencies
-			SCOUTING_OIDC_VERSION,                      // Version number
+			'live-shortcode-script',
+			plugins_url( 'live-shortcode.js', __FILE__ ),
+			array(),
+			SCOUTING_OIDC_VERSION,
 			array(
-				'strategy'  => 'defer',                  // Add the defer attribute
-				'in_footer' => true,                     // Load the script in the footer
+				'strategy'  => 'defer',
+				'in_footer' => true,
 			)
 		);
 

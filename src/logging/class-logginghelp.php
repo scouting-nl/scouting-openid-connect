@@ -1,16 +1,28 @@
 <?php
+/**
+ * Scouting OpenID Connect plugin file
+ *
+ * @package ScoutingOIDC
+ * @since 2.4.0
+ */
+
 namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
+/**
+ * Registers contextual help for the logging screen.
+ *
+ * @since 2.4.0
+ */
 class LoggingHelp {
 
 	/**
-	 * Register contextual help tabs for the logging screen.
+	 * Registers contextual help tabs for the logging screen.
 	 *
-	 * @return void
+	 * @since 2.4.0
 	 */
 	public function scouting_oidc_logging_register_help_tabs(): void {
 		$screen = get_current_screen();

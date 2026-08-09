@@ -1,95 +1,105 @@
 <?php
+/**
+ * Scouting OpenID Connect plugin file
+ *
+ * @package ScoutingOIDC
+ * @since 1.0.0
+ */
+
 namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
 /**
- * This class manages the OpenID Connect settings section of the Scouting OIDC plugin, including rendering the settings fields and sanitizing input values.
+ * Manages the OpenID Connect settings section, including rendering fields and
+ * sanitizing input values.
+ *
+ * @since 1.0.0
  */
 class Settings_Oidc {
 
 	/**
-	 * Register OpenID Connect settings, sections, and fields.
+	 * Registers OpenID Connect settings, sections, and fields.
 	 *
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function scouting_oidc_settings_oidc(): void {
-		// Add settings sections
+		// Add settings sections.
 		add_settings_section(
-			'scouting_oidc_settings',                                 // ID
-			__( 'OpenID Connect Settings', 'scouting-openid-connect' ), // Title
-			array( $this, 'scouting_oidc_settings_oidc_callback' ),          // Callback to render section
-			'scouting-openid-connect-settings'                        // Page slug where the section should be added
+			'scouting_oidc_settings',
+			__( 'OpenID Connect Settings', 'scouting-openid-connect' ),
+			array( $this, 'scouting_oidc_settings_oidc_callback' ),
+			'scouting-openid-connect-settings'
 		);
 
-		// Add a settings text field
+		// Add a settings text field.
 		add_settings_field(
-			'scouting_oidc_client_id',                                 // Field ID
-			__( 'Client ID', 'scouting-openid-connect' ),                // Field label
-			array( $this, 'scouting_oidc_settings_oidc_client_id_callback' ), // Callback to render field
-			'scouting-openid-connect-settings',                        // Page slug
-			'scouting_oidc_settings'                                   // Section ID where the field should be added
+			'scouting_oidc_client_id',
+			__( 'Client ID', 'scouting-openid-connect' ),
+			array( $this, 'scouting_oidc_settings_oidc_client_id_callback' ),
+			'scouting-openid-connect-settings',
+			'scouting_oidc_settings'
 		);
 
-		// Add a settings text field
+		// Add a settings text field.
 		add_settings_field(
-			'scouting_oidc_client_secret',                                 // Field ID
-			__( 'Client Secret', 'scouting-openid-connect' ),                // Field label
-			array( $this, 'scouting_oidc_settings_oidc_client_secret_callback' ), // Callback to render field
-			'scouting-openid-connect-settings',                            // Page slug
-			'scouting_oidc_settings'                                       // Section ID where the field should be added
+			'scouting_oidc_client_secret',
+			__( 'Client Secret', 'scouting-openid-connect' ),
+			array( $this, 'scouting_oidc_settings_oidc_client_secret_callback' ),
+			'scouting-openid-connect-settings',
+			'scouting_oidc_settings'
 		);
 
-		// Add a settings text field
+		// Add a settings text field.
 		add_settings_field(
-			'scouting_oidc_scopes',                                 // Field ID
-			__( 'Scopes', 'scouting-openid-connect' ),                // Field label
-			array( $this, 'scouting_oidc_settings_oidc_scopes_callback' ), // Callback to render field
-			'scouting-openid-connect-settings',                     // Page slug
-			'scouting_oidc_settings'                                // Section ID where the field should be added
+			'scouting_oidc_scopes',
+			__( 'Scopes', 'scouting-openid-connect' ),
+			array( $this, 'scouting_oidc_settings_oidc_scopes_callback' ),
+			'scouting-openid-connect-settings',
+			'scouting_oidc_settings'
 		);
 
-		// Register settings
+		// Register settings.
 		register_setting(
-			'scouting_oidc_settings_group',                  // Settings group name
-			'scouting_oidc_client_id',                       // Option name
+			'scouting_oidc_settings_group',
+			'scouting_oidc_client_id',
 			array(
-				'sanitize_callback' => 'sanitize_text_field', // Sanitize the input value as a text field
+				'sanitize_callback' => 'sanitize_text_field',
 			)
 		);
 
-		// Register settings
+		// Register settings.
 		register_setting(
-			'scouting_oidc_settings_group',                  // Settings group name
-			'scouting_oidc_client_secret',                   // Option name
+			'scouting_oidc_settings_group',
+			'scouting_oidc_client_secret',
 			array(
-				'sanitize_callback' => array( $this, 'scouting_oidc_sanitize_client_secret_option' ), // Keep existing secret when field is left blank
+				'sanitize_callback' => array( $this, 'scouting_oidc_sanitize_client_secret_option' ),
 			)
 		);
 
-		// Register settings
+		// Register settings.
 		register_setting(
-			'scouting_oidc_settings_group',                  // Settings group name
-			'scouting_oidc_scopes',                          // Option name
+			'scouting_oidc_settings_group',
+			'scouting_oidc_scopes',
 			array(
-				'sanitize_callback' => array( $this, 'scouting_oidc_sanitize_scopes_option' ), // Keep only supported scopes
+				'sanitize_callback' => array( $this, 'scouting_oidc_sanitize_scopes_option' ),
 			)
 		);
 	}
 
 	/**
-	 * Callback to render section content.
+	 * Renders section content.
 	 *
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function scouting_oidc_settings_oidc_callback(): void {}
 
 	/**
-	 * Callback to render text field.
+	 * Renders text field.
 	 *
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function scouting_oidc_settings_oidc_client_id_callback(): void {
 		$value = get_option( 'scouting_oidc_client_id' );
@@ -97,9 +107,9 @@ class Settings_Oidc {
 	}
 
 	/**
-	 * Callback to render text field.
+	 * Renders text field.
 	 *
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function scouting_oidc_settings_oidc_client_secret_callback(): void {
 		$has_secret = get_option( 'scouting_oidc_client_secret' ) !== '';
@@ -118,9 +128,9 @@ class Settings_Oidc {
 	}
 
 	/**
-	 * Callback to render text field.
+	 * Renders text field.
 	 *
-	 * @return void
+	 * @since 1.0.0
 	 */
 	public function scouting_oidc_settings_oidc_scopes_callback(): void {
 		$value = get_option( 'scouting_oidc_scopes' );
@@ -128,18 +138,20 @@ class Settings_Oidc {
 	}
 
 	/**
-	 * Sanitize client secret while preserving the existing value when blank.
+	 * Sanitizes client secret while preserving the existing value when blank.
 	 *
-	 * @param mixed $input
-	 * @return string
+	 * @since 2.4.0
+	 *
+	 * @param mixed $input The input value.
+	 * @return string String value.
 	 */
 	public function scouting_oidc_sanitize_client_secret_option( mixed $input ): string {
 		$input    = is_string( $input ) ? trim( $input ) : '';
 		$existing = get_option( 'scouting_oidc_client_secret', '' );
 		$existing = is_string( $existing ) ? $existing : '';
 
-		if ( $input === '' ) {
-			if ( $existing === '' ) {
+		if ( '' === $input ) {
+			if ( '' === $existing ) {
 				add_settings_error(
 					'scouting_oidc_client_secret',
 					'scouting_oidc_client_secret_required',
@@ -155,19 +167,21 @@ class Settings_Oidc {
 	}
 
 	/**
-	 * Sanitize scopes option to supported values only.
+	 * Sanitizes scopes option to supported values only.
 	 *
 	 * Supported scopes: openid membership profile email address phone
 	 *
-	 * @param mixed $input
-	 * @return string
+	 * @since 2.4.0
+	 *
+	 * @param mixed $input The input value.
+	 * @return string String value.
 	 */
 	public function scouting_oidc_sanitize_scopes_option( mixed $input ): string {
 		$allowed_scopes = array( 'openid', 'membership', 'profile', 'email', 'address', 'phone' );
 		$input          = is_string( $input ) ? strtolower( trim( $input ) ) : '';
 
 		// If the input is empty, return the default set of scopes.
-		if ( $input === '' ) {
+		if ( '' === $input ) {
 			return implode( ' ', $allowed_scopes );
 		}
 
@@ -184,8 +198,9 @@ class Settings_Oidc {
 		}
 
 		// Split by whitespace, remove duplicates and empty values.
-		$parts = preg_split( '/\s+/', $input ) ?: array();
-		$parts = array_values( array_unique( array_filter( $parts, fn( $scope ) => $scope !== '' ) ) );
+		$parts = preg_split( '/\s+/', $input );
+		$parts = $parts ? $parts : array();
+		$parts = array_values( array_unique( array_filter( $parts, fn( $scope ) => '' !== $scope ) ) );
 
 		// Identify unsupported scopes and show a warning if any were included.
 		$unsupported_scopes = array_values( array_filter( $parts, fn( $scope ) => ! in_array( $scope, $allowed_scopes, true ) ) );

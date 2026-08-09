@@ -1,23 +1,35 @@
 <?php
+/**
+ * Scouting OpenID Connect plugin file
+ *
+ * @package ScoutingOIDC
+ * @since 1.0.0
+ */
+
 namespace ScoutingOIDC;
 
 use WP_User;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
 /**
- * This class manages the user profile fields for the Scouting OIDC plugin, including rendering the fields on the user profile page and making them read-only.
+ * Manages Scouting OIDC user profile fields, including rendering read-only
+ * profile values.
+ *
+ * @since 1.0.0
  */
 class Fields {
 
 	/**
-	 * Add a link to the user's Scouts Online profile to the Users table.
+	 * Adds a link to the user's Scouts Online profile to the Users table.
 	 *
-	 * @param array   $actions Existing row actions
-	 * @param WP_User $user User represented by the row
-	 * @return array Updated row actions
+	 * @since 2.5.0
+	 *
+	 * @param array   $actions Existing row actions.
+	 * @param WP_User $user User represented by the row.
+	 * @return array Updated row actions.
 	 */
 	public function scouting_oidc_fields_user_row_actions( array $actions, WP_User $user ): array {
 		$sol_url = get_user_meta( $user->ID, 'scouting_oidc_sol_url', true );
@@ -28,7 +40,7 @@ class Fields {
 		$view_in_sol   = '<a href="' . esc_url( $sol_url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'View in SOL', 'scouting-openid-connect' ) . '</a>';
 		$view_position = array_search( 'view', array_keys( $actions ), true );
 
-		if ( $view_position === false ) {
+		if ( false === $view_position ) {
 			$actions['scouting_oidc_view_in_sol'] = $view_in_sol;
 			return $actions;
 		}
@@ -39,9 +51,15 @@ class Fields {
 	}
 
 	/**
-	 * Show the user profile fields in the user profile and edit user profile pages, except when WooCommerce WooCommerce synchronization is enabled (because WooCommerce has its own fields for address and phone number)
+	 * Displays user profile fields unless WooCommerce synchronization provides the
+	 * address and phone fields.
 	 *
-	 * @param WP_User $user The user object
+	 * @since 1.0.0
+	 * @since 2.0.0 Removed the separate SOL ID profile field.
+	 * @since 2.2.0 Hid duplicate phone and address fields when WooCommerce is active.
+	 * @since 2.4.0 Updated the parameter type.
+	 *
+	 * @param WP_User $user The user object.
 	 */
 	public function scouting_oidc_fields_user_profile( WP_User $user ): void {
 		?>
@@ -71,9 +89,12 @@ class Fields {
 	}
 
 	/**
-	 * Display the Birthdate field
+	 * Displays the Birthdate field.
 	 *
-	 * @param WP_User $user The user object
+	 * @since 1.0.0
+	 * @since 2.4.0 Updated the parameter type.
+	 *
+	 * @param WP_User $user The user object.
 	 */
 	private function scouting_oidc_fields_birthdate( WP_User $user ): void {
 		?>
@@ -87,9 +108,12 @@ class Fields {
 	}
 
 	/**
-	 * Display the Gender field
+	 * Displays the Gender field.
 	 *
-	 * @param WP_User $user The user object
+	 * @since 1.0.0
+	 * @since 2.4.0 Updated the parameter type.
+	 *
+	 * @param WP_User $user The user object.
 	 */
 	private function scouting_oidc_fields_gender( WP_User $user ): void {
 		if ( get_the_author_meta( 'scouting_oidc_gender', $user->ID ) === '' ) {
@@ -111,9 +135,12 @@ class Fields {
 	}
 
 	/**
-	 * Display the Phone Number field
+	 * Displays the Phone Number field.
 	 *
-	 * @param WP_User $user The user object
+	 * @since 2.2.0
+	 * @since 2.4.0 Updated the parameter type.
+	 *
+	 * @param WP_User $user The user object.
 	 */
 	private function scouting_oidc_fields_phone( WP_User $user ): void {
 		?>
@@ -128,9 +155,12 @@ class Fields {
 
 
 	/**
-	 * Display the Street field
+	 * Displays the Street field.
 	 *
-	 * @param WP_User $user The user object
+	 * @since 2.2.0
+	 * @since 2.4.0 Updated the parameter type.
+	 *
+	 * @param WP_User $user The user object.
 	 */
 	private function scouting_oidc_fields_address_street( WP_User $user ): void {
 		?>
@@ -144,9 +174,12 @@ class Fields {
 	}
 
 	/**
-	 * Display the House Number field
+	 * Displays the House Number field.
 	 *
-	 * @param WP_User $user The user object
+	 * @since 2.2.0
+	 * @since 2.4.0 Updated the parameter type.
+	 *
+	 * @param WP_User $user The user object.
 	 */
 	private function scouting_oidc_fields_address_house_number( WP_User $user ): void {
 		?>
@@ -160,9 +193,12 @@ class Fields {
 	}
 
 	/**
-	 * Display the Postal Code field
+	 * Displays the Postal Code field.
 	 *
-	 * @param WP_User $user The user object
+	 * @since 2.2.0
+	 * @since 2.4.0 Updated the parameter type.
+	 *
+	 * @param WP_User $user The user object.
 	 */
 	private function scouting_oidc_fields_address_postal_code( WP_User $user ): void {
 		?>
@@ -176,9 +212,12 @@ class Fields {
 	}
 
 	/**
-	 * Display the Locality field
+	 * Displays the Locality field.
 	 *
-	 * @param WP_User $user The user object
+	 * @since 2.2.0
+	 * @since 2.4.0 Updated the parameter type.
+	 *
+	 * @param WP_User $user The user object.
 	 */
 	private function scouting_oidc_fields_address_locality( WP_User $user ): void {
 		?>
@@ -192,9 +231,12 @@ class Fields {
 	}
 
 	/**
-	 * Display the Country Code field
+	 * Displays the Country Code field.
 	 *
-	 * @param WP_User $user The user object
+	 * @since 2.2.0
+	 * @since 2.4.0 Updated the parameter type.
+	 *
+	 * @param WP_User $user The user object.
 	 */
 	private function scouting_oidc_fields_address_country_code( WP_User $user ): void {
 		?>

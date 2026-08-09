@@ -1,53 +1,76 @@
 <?php
+/**
+ * Scouting OpenID Connect plugin file
+ *
+ * @package ScoutingOIDC
+ * @since 2.4.0
+ */
+
 namespace ScoutingOIDC;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
 /**
- * Cron utilities for Scouting OIDC maintenance jobs.
+ * Provides cron utilities for Scouting OIDC maintenance jobs.
+ *
+ * @since 2.4.0
  */
 class CronJobs {
 	/**
 	 * Cron hook used for daily log cleanup.
+	 *
+	 * @since 2.4.0
 	 */
 	public const CLEANUP_CRON_HOOK = 'scouting_oidc_logs_cleanup_daily';
 
 	/**
 	 * Admin action used to run log cleanup manually.
+	 *
+	 * @since 2.5.0
 	 */
 	public const RUN_CLEANUP_ACTION = 'scouting_oidc_run_log_cleanup';
 
 	/**
 	 * Default number of days to retain logs.
+	 *
+	 * @since 2.4.0
 	 */
 	private const DEFAULT_LOG_RETENTION_DAYS = 30;
 
 	/**
 	 * Minimum allowed number of days to retain logs.
+	 *
+	 * @since 2.4.0
 	 */
 	private const MIN_LOG_RETENTION_DAYS = 1;
 
 	/**
 	 * Maximum allowed number of days to retain logs.
+	 *
+	 * @since 2.4.0
 	 */
 	private const MAX_LOG_RETENTION_DAYS = 3650;
 
 	/**
 	 * Option key for log retention days.
+	 *
+	 * @since 2.4.0
 	 */
 	private const LOG_RETENTION_OPTION = 'scouting_oidc_log_retention_days';
 
 	/**
 	 * Option key for the last successful cleanup timestamp.
+	 *
+	 * @since 2.5.0
 	 */
 	private const LAST_CLEANUP_OPTION = 'scouting_oidc_last_log_cleanup';
 
 	/**
-	 * Schedule cleanup jobs when plugin is activated.
+	 * Schedules cleanup jobs when plugin is activated.
 	 *
-	 * @return void
+	 * @since 2.4.0
 	 */
 	public function scouting_oidc_cron_activate(): void {
 		$this->scouting_oidc_logger_schedule_cleanup();
@@ -55,14 +78,14 @@ class CronJobs {
 	}
 
 	/**
-	 * Remove scheduled cleanup job when plugin is deactivated.
+	 * Removes scheduled cleanup job when plugin is deactivated.
 	 *
-	 * @return void
+	 * @since 2.4.0
 	 */
 	public function scouting_oidc_cron_deactivate(): void {
 		$cleared = wp_clear_scheduled_hook( self::CLEANUP_CRON_HOOK );
 
-		if ( $cleared === false ) {
+		if ( false === $cleared ) {
 			Logger::warning( LogComponent::CRONJOB, 'Failed to clear cleanup cron hook during deactivation.' );
 			return;
 		}
@@ -71,20 +94,23 @@ class CronJobs {
 	}
 
 	/**
-	 * Ensure the daily cleanup event exists.
+	 * Ensures the daily cleanup event exists.
+	 *
+	 * @since 2.4.0
+	 * @since 2.5.0 Updated the return type.
 	 *
 	 * @return bool Whether a valid daily event exists or was scheduled.
 	 */
 	public function scouting_oidc_logger_schedule_cleanup(): bool {
 		$event = wp_get_scheduled_event( self::CLEANUP_CRON_HOOK );
-		if ( is_object( $event ) && $event->schedule === 'daily' ) {
+		if ( is_object( $event ) && 'daily' === $event->schedule ) {
 			return true;
 		}
 
 		$can_schedule = true;
 		if ( is_object( $event ) ) {
 			$cleared = wp_clear_scheduled_hook( self::CLEANUP_CRON_HOOK );
-			if ( $cleared === false ) {
+			if ( false === $cleared ) {
 				Logger::warning( LogComponent::CRONJOB, 'Failed to clear an invalid cleanup cron schedule.' );
 				$can_schedule = false;
 			} else {
@@ -113,7 +139,10 @@ class CronJobs {
 	}
 
 	/**
-	 * Delete log rows older than the configured retention period.
+	 * Deletes log rows older than the configured retention period.
+	 *
+	 * @since 2.4.0
+	 * @since 2.5.0 Updated the return type.
 	 *
 	 * @return bool Whether the cleanup query succeeded.
 	 */
@@ -133,7 +162,7 @@ class CronJobs {
 			)
 		);
 
-		if ( $result === false ) {
+		if ( false === $result ) {
 			Logger::error( LogComponent::CRONJOB, 'Failed to delete old log rows during cleanup.' );
 			return false;
 		}
@@ -144,9 +173,9 @@ class CronJobs {
 	}
 
 	/**
-	 * Run cleanup immediately from the Site Health recovery action.
+	 * Runs cleanup immediately from the Site Health recovery action.
 	 *
-	 * @return void
+	 * @since 2.5.0
 	 */
 	public function scouting_oidc_logger_run_cleanup_now(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -168,9 +197,11 @@ class CronJobs {
 	}
 
 	/**
-	 * Return the timestamp of the last successful cleanup.
+	 * Returns the timestamp of the last successful cleanup.
 	 *
-	 * @return int|null
+	 * @since 2.5.0
+	 *
+	 * @return int|null Integer value or null.
 	 */
 	public static function scouting_oidc_get_last_cleanup_timestamp(): ?int {
 		$timestamp = get_option( self::LAST_CLEANUP_OPTION, 0 );
@@ -179,9 +210,11 @@ class CronJobs {
 	}
 
 	/**
-	 * Get the configured log retention period in days.
+	 * Gets the configured log retention period in days.
 	 *
-	 * @return int
+	 * @since 2.4.0
+	 *
+	 * @return int Integer value.
 	 */
 	public static function scouting_oidc_get_log_retention_days(): int {
 		$configured_retention_days = get_option( self::LOG_RETENTION_OPTION, self::DEFAULT_LOG_RETENTION_DAYS );
@@ -204,14 +237,16 @@ class CronJobs {
 	}
 
 	/**
-	 * Replace the current cleanup event with a fresh daily schedule.
+	 * Replaces the current cleanup event with a fresh daily schedule.
+	 *
+	 * @since 2.5.0
 	 *
 	 * @return bool Whether the replacement schedule was created.
 	 */
 	private function scouting_oidc_logger_reset_cleanup_schedule(): bool {
 		$cleared = wp_clear_scheduled_hook( self::CLEANUP_CRON_HOOK );
 
-		if ( $cleared === false ) {
+		if ( false === $cleared ) {
 			Logger::warning( LogComponent::CRONJOB, 'Manual cleanup succeeded, but its old cron schedule could not be cleared.' );
 			return false;
 		}
@@ -220,9 +255,11 @@ class CronJobs {
 	}
 
 	/**
-	 * Compute the next run timestamp around 02:30 in the site timezone.
+	 * Computes the next run timestamp around 02:30 in the site timezone.
 	 *
-	 * @return int
+	 * @since 2.4.0
+	 *
+	 * @return int Integer value.
 	 */
 	private function get_next_cleanup_timestamp(): int {
 		$timezone = wp_timezone();
