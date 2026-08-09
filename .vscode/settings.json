@@ -1,0 +1,22 @@
+{
+    "[php]": {
+        "editor.defaultFormatter": "ValeryanM.vscode-phpsab",
+        "editor.formatOnSave": true,
+        "editor.insertSpaces": false,
+        "editor.tabSize": 4
+    },
+    "phpsab.allowedAutoRulesets": [
+        "phpcs.xml.dist"
+    ],
+    "phpsab.autoRulesetSearch": true,
+    "phpsab.excludeGlobs": [
+        "**/node_modules/**",
+        "**/vendor/**"
+    ],
+    "phpsab.fixerEnable": true,
+    "phpsab.snifferEnable": true,
+    "phpsab.snifferMode": "onSave",
+    "phpsab.snifferShowFixabilityIcons": true,
+    "phpsab.snifferShowSources": true,
+    "phpsab.standard": "./phpcs.xml.dist"
+}

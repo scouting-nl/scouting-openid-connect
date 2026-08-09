@@ -7,6 +7,98 @@ on:
       - '**'
 
 jobs:
+  php-lint:
+    name: PHP syntax
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7.0.1
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        coverage: none
+
+    - name: Lint PHP files
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        while IFS= read -r -d '' file; do
+          php -l "$file"
+        done < <(find . -type f -name '*.php' -not -path './vendor/*' -print0)
+
+  wordpress-coding-standards:
+    name: WordPress Coding Standards
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7.0.1
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        coverage: none
+        extensions: filter, libxml, tokenizer, xmlreader, iconv, mbstring
+
+    - name: Install PHPCS and WordPress Coding Standards
+      shell: bash
+      env:
+        PHPCS_VERSION: '3.13.6'
+        PHPCS_SHA256: 'aed4148cee26285a73e694a98d4675b84f81ef86b2581f811d3c402c0d3d7d23'
+        WPCS_VERSION: '3.4.1'
+        WPCS_COMMIT: 'ec2ff942335f33683a5957a85d138753876a05cf'
+        PHPCSUTILS_VERSION: '1.2.3'
+        PHPCSUTILS_COMMIT: '5f35d9408c54d7b529501f3c688b6eae562aea1f'
+        PHPCSEXTRA_VERSION: '1.5.1'
+        PHPCSEXTRA_COMMIT: '39467533fdb742446d68c1d10ac33d625ee0311c'
+      run: |
+        set -euo pipefail
+
+        tools_dir="${RUNNER_TEMP}/phpcs-tools"
+        mkdir -p "${tools_dir}"
+
+        curl --fail-with-body --location --retry 3 \
+          --output "${tools_dir}/phpcs.phar" \
+          "https://github.com/PHPCSStandards/PHP_CodeSniffer/releases/download/${PHPCS_VERSION}/phpcs.phar"
+        echo "${PHPCS_SHA256}  ${tools_dir}/phpcs.phar" | sha256sum --check
+
+        clone_and_verify() {
+          local repository="$1"
+          local version="$2"
+          local expected_commit="$3"
+          local destination="$4"
+
+          git clone --quiet --depth 1 --branch "${version}" "${repository}" "${destination}"
+          test "$(git -C "${destination}" rev-parse HEAD)" = "${expected_commit}"
+          rm -rf "${destination}/.git"
+        }
+
+        clone_and_verify \
+          'https://github.com/WordPress/WordPress-Coding-Standards.git' \
+          "${WPCS_VERSION}" "${WPCS_COMMIT}" "${tools_dir}/wpcs"
+        clone_and_verify \
+          'https://github.com/PHPCSStandards/PHPCSUtils.git' \
+          "${PHPCSUTILS_VERSION}" "${PHPCSUTILS_COMMIT}" "${tools_dir}/phpcsutils"
+        clone_and_verify \
+          'https://github.com/PHPCSStandards/PHPCSExtra.git' \
+          "${PHPCSEXTRA_VERSION}" "${PHPCSEXTRA_COMMIT}" "${tools_dir}/phpcsextra"
+
+        installed_paths="${tools_dir}/wpcs,${tools_dir}/phpcsutils,${tools_dir}/phpcsextra"
+        php "${tools_dir}/phpcs.phar" --config-set installed_paths "${installed_paths}"
+        php "${tools_dir}/phpcs.phar" -i | grep -q 'WordPress'
+
+        echo "PHPCS_PHAR=${tools_dir}/phpcs.phar" >> "${GITHUB_ENV}"
+
+    - name: Audit complete WordPress Coding Standards
+      continue-on-error: true
+      run: php "${PHPCS_PHAR}" --standard=WordPress --extensions=php --report=summary .
+
+    - name: Enforce migrated WordPress Coding Standards
+      run: php "${PHPCS_PHAR}" --standard=phpcs.xml.dist
+
   plugin-check:
     runs-on: ubuntu-latest
     steps:
@@ -17,6 +109,7 @@ jobs:
       uses: wordpress/plugin-check-action@v1.1.7
       with:
         exclude-files: |
+          .editorconfig
           .gitignore
           .gitattributes
           .wp-env.json
@@ -24,7 +117,9 @@ jobs:
           CHANGELOG.md
           CODE_OF_CONDUCT.md
           CONTRIBUTING.md
+          phpcs.xml.dist
           README.md
           SECURITY.md
         exclude-directories: |
           .github
+          .vscode

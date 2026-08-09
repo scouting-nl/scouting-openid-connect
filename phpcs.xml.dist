@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	name="Scouting OpenID Connect"
+	xsi:noNamespaceSchemaLocation="https://schema.phpcodesniffer.com/phpcs.xsd">
+
+	<description>WordPress Coding Standards checks supported by the current codebase.</description>
+
+	<file>scouting-openid-connect.php</file>
+	<file>uninstall.php</file>
+	<file>src</file>
+
+	<arg name="basepath" value="." />
+	<arg name="colors" />
+	<arg name="extensions" value="php" />
+	<arg value="ps" />
+
+	<!-- Load WordPress-specific sniff configuration without enforcing the legacy baseline. -->
+	<rule ref="WordPress">
+		<severity>0</severity>
+	</rule>
+
+	<!-- Enforce the standards already migrated in this codebase. -->
+	<rule ref="Generic.Classes.OpeningBraceSameLine.BraceOnNewLine"><severity>5</severity></rule>
+	<rule ref="Generic.Commenting.DocComment.SpacingAfter"><severity>5</severity></rule>
+	<rule ref="Generic.ControlStructures.InlineControlStructure.NotAllowed"><severity>5</severity></rule>
+	<rule ref="Generic.Formatting.MultipleStatementAlignment.IncorrectWarning"><severity>5</severity></rule>
+	<rule ref="Generic.Formatting.MultipleStatementAlignment.NotSameWarning"><severity>5</severity></rule>
+	<rule ref="Generic.Functions.OpeningFunctionBraceKernighanRitchie.BraceOnNewLine"><severity>5</severity></rule>
+	<rule ref="Generic.WhiteSpace.ArbitraryParenthesesSpacing.SpaceAfterOpen"><severity>5</severity></rule>
+	<rule ref="Generic.WhiteSpace.ArbitraryParenthesesSpacing.SpaceBeforeClose"><severity>5</severity></rule>
+	<rule ref="Generic.WhiteSpace.DisallowSpaceIndent.SpacesUsed"><severity>5</severity></rule>
+	<rule ref="Generic.WhiteSpace.ScopeIndent.Incorrect"><severity>5</severity></rule>
+	<rule ref="NormalizedArrays.Arrays.ArrayBraceSpacing.SpaceAfterArrayOpenerSingleLine"><severity>5</severity></rule>
+	<rule ref="NormalizedArrays.Arrays.ArrayBraceSpacing.SpaceBeforeArrayCloserSingleLine"><severity>5</severity></rule>
+	<rule ref="NormalizedArrays.Arrays.CommaAfterLast.MissingMultiLine"><severity>5</severity></rule>
+	<rule ref="PEAR.Files.IncludingFile.BracketsNotRequired"><severity>5</severity></rule>
+	<rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine"><severity>5</severity></rule>
+	<rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket"><severity>5</severity></rule>
+	<rule ref="PEAR.Functions.FunctionCallSignature.Indent"><severity>5</severity></rule>
+	<rule ref="PEAR.Functions.FunctionCallSignature.MultipleArguments"><severity>5</severity></rule>
+	<rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterOpenBracket"><severity>5</severity></rule>
+	<rule ref="PEAR.Functions.FunctionCallSignature.SpaceBeforeCloseBracket"><severity>5</severity></rule>
+	<rule ref="PSR2.Files.ClosingTag.NotAllowed"><severity>5</severity></rule>
+	<rule ref="PSR2.Files.EndFileNewline.NoneFound"><severity>5</severity></rule>
+	<rule ref="Squiz.Commenting.BlockComment.WrongEnd"><severity>5</severity></rule>
+	<rule ref="Squiz.Commenting.DocCommentAlignment.SpaceBeforeStar"><severity>5</severity></rule>
+	<rule ref="Squiz.Commenting.FunctionComment.SpacingAfterParamType"><severity>5</severity></rule>
+	<rule ref="Squiz.Commenting.InlineComment.NoSpaceBefore"><severity>5</severity></rule>
+	<rule ref="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseParenthesis"><severity>5</severity></rule>
+	<rule ref="Squiz.ControlStructures.ControlSignature.SpaceAfterKeyword"><severity>5</severity></rule>
+	<rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing.SpacingAfterOpen"><severity>5</severity></rule>
+	<rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing.SpacingBeforeClose"><severity>5</severity></rule>
+	<rule ref="Squiz.Functions.MultiLineFunctionDeclaration.SpaceAfterFunction"><severity>5</severity></rule>
+	<rule ref="Squiz.Functions.MultiLineFunctionDeclaration.SpaceBeforeOpenParen"><severity>5</severity></rule>
+	<rule ref="Squiz.Strings.ConcatenationSpacing.PaddingFound"><severity>5</severity></rule>
+	<rule ref="Squiz.Strings.DoubleQuoteUsage.NotRequired"><severity>5</severity></rule>
+	<rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EndLine"><severity>5</severity></rule>
+	<rule ref="Universal.Arrays.DisallowShortArraySyntax.Found"><severity>5</severity></rule>
+	<rule ref="Universal.Operators.DisallowStandalonePostIncrementDecrement.PostIncrementFound"><severity>5</severity></rule>
+	<rule ref="Universal.Operators.StrictComparisons.LooseEqual"><severity>5</severity></rule>
+	<rule ref="Universal.WhiteSpace.PrecisionAlignment.Found"><severity>5</severity></rule>
+	<rule ref="WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound"><severity>5</severity></rule>
+	<rule ref="WordPress.Arrays.ArrayIndentation.CloseBraceNotAligned"><severity>5</severity></rule>
+	<rule ref="WordPress.Arrays.ArrayKeySpacingRestrictions.NoSpacesAroundArrayKeys"><severity>5</severity></rule>
+	<rule ref="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned"><severity>5</severity></rule>
+	<rule ref="WordPress.NamingConventions.ValidFunctionName"><severity>5</severity></rule>
+	<rule ref="WordPress.WhiteSpace.CastStructureSpacing.NoSpaceBeforeOpenParenthesis"><severity>5</severity></rule>
+	<rule ref="WordPress.WhiteSpace.ControlStructureSpacing.ExtraSpaceBeforeOpenParenthesis"><severity>5</severity></rule>
+	<rule ref="WordPress.WhiteSpace.ControlStructureSpacing.NoSpaceAfterOpenParenthesis"><severity>5</severity></rule>
+	<rule ref="WordPress.WhiteSpace.ControlStructureSpacing.NoSpaceBeforeCloseParenthesis"><severity>5</severity></rule>
+	<rule ref="WordPress.WhiteSpace.ControlStructureSpacing.NoSpaceBetweenStructureColon"><severity>5</severity></rule>
+	<rule ref="WordPress.WhiteSpace.ControlStructureSpacing.OpenBraceNotSameLine"><severity>5</severity></rule>
+	<rule ref="WordPress.WhiteSpace.OperatorSpacing.NoSpaceAfter"><severity>5</severity></rule>
+	<rule ref="WordPress.WhiteSpace.OperatorSpacing.NoSpaceBefore"><severity>5</severity></rule>
+	<rule ref="WordPress.WP.CapitalPDangit.MisspelledInText"><severity>5</severity></rule>
+</ruleset>
