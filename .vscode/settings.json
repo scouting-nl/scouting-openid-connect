@@ -5,6 +5,11 @@
         "editor.insertSpaces": false,
         "editor.tabSize": 4
     },
+    "[javascript]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": false,
+        "editor.tabSize": 4
+    },
     "phpsab.allowedAutoRulesets": [
         "phpcs.xml.dist"
     ],
