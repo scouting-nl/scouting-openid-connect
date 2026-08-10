@@ -4,13 +4,13 @@ This repository is a WordPress plugin targeting PHP 8.2. Keep changes narrowly s
 
 ## PHP
 
-- All new or changed PHP must follow the [WordPress PHP Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/) and WordPress PHPDoc conventions.
+- All new or changed PHP must follow the [WordPress PHP Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/) and [PHP Documentation Standards](https://developer.wordpress.org/coding-standards/inline-documentation-standards/php/).
 - Do not use Composer or add Composer files. The workflow installs pinned PHPCS and WPCS without Composer.
 - Validate touched PHP with PHP lint and cache-free WPCS. Use `--no-cache` with PHPCS because cached results can reference renamed or deleted files.
-- Follow WordPress security conventions: authorize actions, verify nonces where applicable, sanitize input, validate data, and escape output at the point of rendering. Use WordPress localization APIs for user-facing strings.
+- Follow WordPress security conventions: authorize actions, verify nonces where applicable, sanitize input, validate data, and escape output at the point of rendering.
 - Use DocBlocks for files, classes, methods, properties, constants, hooks, and includes when they are introduced or changed. Write useful comments before code; do not add trailing comments or comments that merely restate code.
-- Treat Git release history as the source of truth for PHPDoc `@since` values. The first tag identifies the release that introduced a symbol. Use `@since Unreleased Description.` for an unreleased public API change, then replace it before tagging a release.
-- Add a second `@since x.y.z Description.` only for meaningful released API or behavior changes.
+- Use `@since Unreleased Description.` for an unreleased change, then replace it before tagging a release.
+- Add a second `@since x.y.z Description.` only for meaningful behavior changes.
 
 ## JavaScript
 
