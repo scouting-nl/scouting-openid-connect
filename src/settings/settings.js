@@ -10,7 +10,7 @@
  *
  * @since 2.4.0
  */
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener( 'DOMContentLoaded', function() {
 	/**
 	 * Toggles visibility of the custom redirect setting.
 	 *
@@ -18,9 +18,9 @@ document.addEventListener('DOMContentLoaded', function () {
 	 * @return {void} Does not return a value.
 	 */
 	function toggleCustomRedirect() {
-		var select = document.getElementById('scouting_oidc_login_redirect');
-		var customRow = document.querySelector('.scouting-oidc-custom-redirect-tr');
-		if (select === null || customRow === null) {
+		const select = document.getElementById( 'scouting_oidc_login_redirect' );
+		const customRow = document.querySelector( '.scouting-oidc-custom-redirect-tr' );
+		if ( select === null || customRow === null ) {
 			return;
 		}
 
@@ -31,21 +31,21 @@ document.addEventListener('DOMContentLoaded', function () {
 	 * Shows or hides a settings field from dependent control values.
 	 *
 	 * @since  2.4.0
-	 * @param  {string}          fieldTrClass      CSS selector for the field row.
-	 * @param  {string|string[]} conditionFieldIds IDs of the dependent controls.
+	 * @param {string}          fieldTrClass      CSS selector for the field row.
+	 * @param {string|string[]} conditionFieldIds IDs of the dependent controls.
 	 * @return {void} Does not return a value.
 	 */
-	function showField(fieldTrClass, conditionFieldIds) {
-		var ids = Array.isArray(conditionFieldIds) ? conditionFieldIds : [conditionFieldIds];
-		var fieldRow = document.querySelector(fieldTrClass);
-		if (fieldRow === null) {
+	function showField( fieldTrClass, conditionFieldIds ) {
+		const ids = Array.isArray( conditionFieldIds ) ? conditionFieldIds : [ conditionFieldIds ];
+		const fieldRow = document.querySelector( fieldTrClass );
+		if ( fieldRow === null ) {
 			return;
 		}
 
-		var shouldShow = ids.some(function (id) {
-			var field = document.getElementById(id);
+		const shouldShow = ids.some( function( id ) {
+			const field = document.getElementById( id );
 			return field && field.checked;
-		});
+		} );
 
 		fieldRow.style.display = shouldShow ? '' : 'none';
 	}
@@ -57,14 +57,14 @@ document.addEventListener('DOMContentLoaded', function () {
 	 * @return {void} Does not return a value.
 	 */
 	function setupClientSecretToggle() {
-		var input = document.getElementById('scouting_oidc_client_secret');
-		var toggle = document.getElementById('scouting_oidc_client_secret_toggle');
-		if (input === null || toggle === null) {
+		const input = document.getElementById( 'scouting_oidc_client_secret' );
+		const toggle = document.getElementById( 'scouting_oidc_client_secret_toggle' );
+		if ( input === null || toggle === null ) {
 			return;
 		}
 
-		var showText = toggle.getAttribute('data-show-text') || 'Show';
-		var hideText = toggle.getAttribute('data-hide-text') || 'Hide';
+		const showText = toggle.getAttribute( 'data-show-text' ) || 'Show';
+		const hideText = toggle.getAttribute( 'data-hide-text' ) || 'Hide';
 
 		/**
 		 * Synchronizes the client-secret toggle state.
@@ -73,50 +73,50 @@ document.addEventListener('DOMContentLoaded', function () {
 		 * @return {void} Does not return a value.
 		 */
 		function syncToggleState() {
-			var hasValue = input.value.length > 0;
-			toggle.disabled = !hasValue;
+			const hasValue = input.value.length > 0;
+			toggle.disabled = ! hasValue;
 
-			if (!hasValue) {
+			if ( ! hasValue ) {
 				input.type = 'password';
 				toggle.textContent = showText;
 			}
 		}
 
-		toggle.addEventListener('click', function () {
-			var shown = input.type === 'text';
+		toggle.addEventListener( 'click', function() {
+			const shown = input.type === 'text';
 			input.type = shown ? 'password' : 'text';
 			toggle.textContent = shown ? showText : hideText;
-		});
+		} );
 
-		input.addEventListener('input', syncToggleState);
+		input.addEventListener( 'input', syncToggleState );
 		syncToggleState();
 	}
 
-	var select = document.getElementById('scouting_oidc_login_redirect');
-	var checkBox1 = document.getElementById('scouting_oidc_user_address');
-	var checkBox2 = document.getElementById('scouting_oidc_user_phone');
+	const select = document.getElementById( 'scouting_oidc_login_redirect' );
+	const checkBox1 = document.getElementById( 'scouting_oidc_user_address' );
+	const checkBox2 = document.getElementById( 'scouting_oidc_user_phone' );
 
-	if (select !== null && checkBox1 !== null && checkBox2 !== null) {
+	if ( select !== null && checkBox1 !== null && checkBox2 !== null ) {
 		showField(
 			'.scouting-oidc-user-woocommerce-sync-tr',
-			['scouting_oidc_user_phone', 'scouting_oidc_user_address']
+			[ 'scouting_oidc_user_phone', 'scouting_oidc_user_address' ],
 		);
 		toggleCustomRedirect();
 
-		select.addEventListener('change', toggleCustomRedirect);
-		checkBox1.addEventListener('change', function () {
+		select.addEventListener( 'change', toggleCustomRedirect );
+		checkBox1.addEventListener( 'change', function() {
 			showField(
 				'.scouting-oidc-user-woocommerce-sync-tr',
-				['scouting_oidc_user_phone', 'scouting_oidc_user_address']
+				[ 'scouting_oidc_user_phone', 'scouting_oidc_user_address' ],
 			);
-		});
-		checkBox2.addEventListener('change', function () {
+		} );
+		checkBox2.addEventListener( 'change', function() {
 			showField(
 				'.scouting-oidc-user-woocommerce-sync-tr',
-				['scouting_oidc_user_phone', 'scouting_oidc_user_address']
+				[ 'scouting_oidc_user_phone', 'scouting_oidc_user_address' ],
 			);
-		});
+		} );
 	}
 
 	setupClientSecretToggle();
-});
+} );

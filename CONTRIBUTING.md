@@ -22,14 +22,13 @@ Keep changes focused and consistent with the existing WordPress coding and secur
 - Update translations when changing user-facing strings.
 - Update [README.md](README.md), [CHANGELOG.md](CHANGELOG.md), or other documentation when user-visible behavior or configuration changes.
 
-## PHPDoc Release History
+## Coding Standards
 
-PHPDoc entries use the release history as their source of truth:
+Follow [`.editorconfig`](.editorconfig) and the [WordPress Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/), including the Accessibility, HTML, CSS, and GitHub Actions Workflow standards relevant to every changed file and its rendered output. New or changed user-facing interfaces must conform to WCAG 2.2 Level AA.
 
-- The first `@since` tag on a file, class, method, property, constant, hook, or include identifies the first plugin release that shipped it.
-- Add another `@since x.y.z Description.` entry when a released API contract changes, including added, renamed, or newly optional parameters, changed defaults, wrappers around new APIs, or changed expected behavior.
-- For a pull request that introduces an unreleased public signature change, add `@since Unreleased Description.`. Replace it with the tagged release version before creating the release tag.
-- Review behavior-only changes manually. Git history can detect signatures reliably, but it cannot determine whether every implementation change is behaviorally significant.
+## Documentation
+
+Keep documentation up to date and follow the [WordPress Inline Documentation Standards](https://developer.wordpress.org/coding-standards/inline-documentation-standards/).
 
 ## Pull Requests
 

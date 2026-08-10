@@ -6,10 +6,23 @@
         "editor.tabSize": 4
     },
     "[javascript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
         "editor.detectIndentation": false,
+        "editor.formatOnPaste": false,
+        "editor.formatOnSave": true,
         "editor.insertSpaces": false,
         "editor.tabSize": 4
     },
+    "eslint.format.enable": true,
+    "eslint.validate": [
+        "javascript"
+    ],
+    "eslint.workingDirectories": [
+        {
+            "mode": "location"
+        }
+    ],
+    "js/ts.format.enabled": false,
     "phpsab.allowedAutoRulesets": [
         "phpcs.xml.dist"
     ],
