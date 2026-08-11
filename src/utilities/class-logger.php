@@ -14,13 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use WP_Error;
 
-/**
- * Loads the class-logcomponent.php implementation.
- */
 require_once __DIR__ . '/class-logcomponent.php';
-/**
- * Loads the class-loglevel.php implementation.
- */
 require_once __DIR__ . '/class-loglevel.php';
 
 /**
@@ -110,9 +104,6 @@ class Logger {
             KEY created_at (created_at)
         ) $charset_collate;";
 
-		/**
-		 * Loads the upgrade.php implementation.
-		 */
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 
@@ -125,9 +116,9 @@ class Logger {
 		$existing_fk = $wpdb->get_var(
 			$wpdb->prepare(
 				'
-                SELECT CONSTRAINT_NAME 
-                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
-                WHERE TABLE_SCHEMA = DATABASE() 
+                SELECT CONSTRAINT_NAME
+                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                WHERE TABLE_SCHEMA = DATABASE()
                 AND TABLE_NAME = %s
                 AND COLUMN_NAME = %s
                 AND REFERENCED_TABLE_NAME = %s

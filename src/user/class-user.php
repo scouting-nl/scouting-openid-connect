@@ -12,17 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Loads the class-errorhandler.php implementation.
- */
 require_once plugin_dir_path( __FILE__ ) . '../../src/utilities/class-errorhandler.php';
-/**
- * Loads the class-logger.php implementation.
- */
 require_once plugin_dir_path( __FILE__ ) . '../../src/utilities/class-logger.php';
-/**
- * Loads the class-mail.php implementation.
- */
 require_once plugin_dir_path( __FILE__ ) . '../../src/utilities/class-mail.php';
 
 use ScoutingOIDC\ErrorHandler;

@@ -12,25 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Loads the class-logger.php implementation.
- */
 require_once plugin_dir_path( __FILE__ ) . '../../src/utilities/class-logger.php';
-/**
- * Loads the class-loggingsettings.php implementation.
- */
 require_once __DIR__ . '/class-loggingsettings.php';
-/**
- * Loads the class-loggingfilters.php implementation.
- */
 require_once __DIR__ . '/class-loggingfilters.php';
-/**
- * Loads the class-loggingdownload.php implementation.
- */
 require_once __DIR__ . '/class-loggingdownload.php';
-/**
- * Loads the class-logginghelp.php implementation.
- */
 require_once __DIR__ . '/class-logginghelp.php';
 
 use ScoutingOIDC\Logger;
@@ -179,9 +164,6 @@ class Logging {
 		$filters = $this->filters_helper->get_filters();
 		$sorting = $this->filters_helper->get_sorting();
 		if ( ! class_exists( 'WP_List_Table' ) ) {
-			/**
-			 * Loads the class-wp-list-table.php implementation.
-			 */
 			require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 		}
 

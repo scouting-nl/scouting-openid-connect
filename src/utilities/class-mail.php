@@ -12,9 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Loads the class-logger.php implementation.
- */
 require_once plugin_dir_path( __FILE__ ) . 'class-logger.php';
 
 use ScoutingOIDC\Logger;

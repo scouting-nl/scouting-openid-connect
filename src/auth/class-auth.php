@@ -12,25 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Loads the class-openidconnectclient.php implementation.
- */
 require_once plugin_dir_path( __FILE__ ) . 'class-openidconnectclient.php';
-/**
- * Loads the class-user.php implementation.
- */
 require_once plugin_dir_path( __FILE__ ) . '../../src/user/class-user.php';
-/**
- * Loads the class-errorhandler.php implementation.
- */
 require_once plugin_dir_path( __FILE__ ) . '../../src/utilities/class-errorhandler.php';
-/**
- * Loads the class-wp-filesystem-base.php implementation.
- */
 require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
-/**
- * Loads the class-wp-filesystem-direct.php implementation.
- */
 require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
 
 use ScoutingOIDC\User;

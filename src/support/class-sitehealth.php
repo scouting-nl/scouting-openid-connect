@@ -12,9 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Loads the class-providerhealth.php implementation.
- */
 require_once plugin_dir_path( __FILE__ ) . 'class-providerhealth.php';
 
 /**

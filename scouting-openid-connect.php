@@ -33,61 +33,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 define( 'SCOUTING_OIDC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SCOUTING_OIDC_VERSION', '2.5.0' );
-/**
- * Loads the class-auth.php implementation.
- */
 require_once SCOUTING_OIDC_PATH . 'src/auth/class-auth.php';
-/**
- * Loads the class-session.php implementation.
- */
 require_once SCOUTING_OIDC_PATH . 'src/auth/class-session.php';
-/**
- * Loads the class-menu.php implementation.
- */
 require_once SCOUTING_OIDC_PATH . 'src/menu/class-menu.php';
-/**
- * Loads the class-settings.php implementation.
- */
 require_once SCOUTING_OIDC_PATH . 'src/settings/class-settings.php';
-/**
- * Loads the class-shortcode.php implementation.
- */
 require_once SCOUTING_OIDC_PATH . 'src/shortcode/class-shortcode.php';
-/**
- * Loads the class-support.php implementation.
- */
 require_once SCOUTING_OIDC_PATH . 'src/support/class-support.php';
-/**
- * Loads the class-sitehealth.php implementation.
- */
 require_once SCOUTING_OIDC_PATH . 'src/support/class-sitehealth.php';
-/**
- * Loads the class-logging.php implementation.
- */
 require_once SCOUTING_OIDC_PATH . 'src/logging/class-logging.php';
-/**
- * Loads the class-actions.php implementation.
- */
 require_once SCOUTING_OIDC_PATH . 'src/plugin/class-actions.php';
-/**
- * Loads the class-description.php implementation.
- */
 require_once SCOUTING_OIDC_PATH . 'src/plugin/class-description.php';
-/**
- * Loads the class-fields.php implementation.
- */
 require_once SCOUTING_OIDC_PATH . 'src/user/class-fields.php';
-/**
- * Loads the class-logger.php implementation.
- */
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-logger.php';
-/**
- * Loads the class-cronjobs.php implementation.
- */
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-cronjobs.php';
-/**
- * Loads the class-mail.php implementation.
- */
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-mail.php';
 
 use ScoutingOIDC\Auth;

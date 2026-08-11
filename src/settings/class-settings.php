@@ -12,13 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Loads the class-settings-oidc.php implementation.
- */
 require_once plugin_dir_path( __FILE__ ) . 'class-settings-oidc.php';
-/**
- * Loads the class-settings-general.php implementation.
- */
 require_once plugin_dir_path( __FILE__ ) . 'class-settings-general.php';
 
 use ScoutingOIDC\Settings_Oidc;
