@@ -1,30 +1,212 @@
 name: 'build-test'
 
-on: 
+on:
   pull_request:
   push:
     branches:
       - '**'
 
+permissions: {}
+
 jobs:
+  workflow-checks:
+    name: GitHub Actions workflows
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Run Actionlint
+        shell: bash
+        env:
+          ACTIONLINT_VERSION: '1.7.12'
+          ACTIONLINT_SHA256: '8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8'
+        run: |
+          set -euo pipefail
+
+          archive="${RUNNER_TEMP}/actionlint.tar.gz"
+          destination="${RUNNER_TEMP}/actionlint"
+          mkdir -p "${destination}"
+
+          curl --fail-with-body --location --retry 3 \
+            --output "${archive}" \
+            "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          echo "${ACTIONLINT_SHA256}  ${archive}" | sha256sum --check
+          tar -xzf "${archive}" -C "${destination}" actionlint
+
+          "${destination}/actionlint" -color
+
+      - name: Run Zizmor
+        uses: zizmorcore/zizmor-action@3dc1ecc9bcb9e94e9b2c709687979e1298497054 # v0.6.2
+        with:
+          advanced-security: false
+          persona: regular
+          version: '1.29.0'
+
+  javascript-coding-standards:
+    name: JavaScript Coding Standards
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install ESLint
+        shell: bash
+        env:
+          BABEL_CORE_VERSION: '7.29.7'
+          ESLINT_VERSION: '9.39.2'
+          WORDPRESS_ESLINT_PLUGIN_VERSION: '25.8.0'
+        run: | # zizmor: ignore[adhoc-packages] One-config policy forbids a lockfile.
+          set -euo pipefail
+
+          tools_dir="${RUNNER_TEMP}/eslint-tools"
+          npm install \
+            --prefix "${tools_dir}" \
+            --no-save \
+            --no-package-lock \
+            --ignore-scripts \
+            --omit=peer \
+            --no-audit \
+            --no-fund \
+            "@babel/core@${BABEL_CORE_VERSION}" \
+            "eslint@${ESLINT_VERSION}" \
+            "@wordpress/eslint-plugin@${WORDPRESS_ESLINT_PLUGIN_VERSION}"
+
+          echo "ESLINT_MODULE_ROOT=${tools_dir}/node_modules" >> "${GITHUB_ENV}"
+
+      - name: Enforce WordPress JavaScript Coding Standards
+        run: node "${ESLINT_MODULE_ROOT}/eslint/bin/eslint.js" src
+
+  php-lint:
+    name: PHP syntax
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.2'
+          coverage: none
+
+      - name: Lint PHP files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          while IFS= read -r -d '' file; do
+            php -l "$file"
+          done < <(find . -type f -name '*.php' -not -path './vendor/*' -print0)
+
+  wordpress-coding-standards:
+    name: WordPress Coding Standards
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.2'
+          coverage: none
+          extensions: filter, libxml, tokenizer, xmlreader, iconv, mbstring
+
+      - name: Install PHPCS and WordPress Coding Standards
+        shell: bash
+        env:
+          PHPCS_VERSION: '3.13.6'
+          PHPCS_SHA256: 'aed4148cee26285a73e694a98d4675b84f81ef86b2581f811d3c402c0d3d7d23'
+          WPCS_VERSION: '3.4.1'
+          WPCS_COMMIT: 'ec2ff942335f33683a5957a85d138753876a05cf'
+          PHPCSUTILS_VERSION: '1.2.3'
+          PHPCSUTILS_COMMIT: '5f35d9408c54d7b529501f3c688b6eae562aea1f'
+          PHPCSEXTRA_VERSION: '1.5.1'
+          PHPCSEXTRA_COMMIT: '39467533fdb742446d68c1d10ac33d625ee0311c'
+        run: |
+          set -euo pipefail
+
+          tools_dir="${RUNNER_TEMP}/phpcs-tools"
+          mkdir -p "${tools_dir}"
+
+          curl --fail-with-body --location --retry 3 \
+            --output "${tools_dir}/phpcs.phar" \
+            "https://github.com/PHPCSStandards/PHP_CodeSniffer/releases/download/${PHPCS_VERSION}/phpcs.phar"
+          echo "${PHPCS_SHA256}  ${tools_dir}/phpcs.phar" | sha256sum --check
+
+          clone_and_verify() {
+            local repository="$1"
+            local version="$2"
+            local expected_commit="$3"
+            local destination="$4"
+
+            git clone --quiet --depth 1 --branch "${version}" "${repository}" "${destination}"
+            test "$(git -C "${destination}" rev-parse HEAD)" = "${expected_commit}"
+            rm -rf "${destination}/.git"
+          }
+
+          clone_and_verify \
+            'https://github.com/WordPress/WordPress-Coding-Standards.git' \
+            "${WPCS_VERSION}" "${WPCS_COMMIT}" "${tools_dir}/wpcs"
+          clone_and_verify \
+            'https://github.com/PHPCSStandards/PHPCSUtils.git' \
+            "${PHPCSUTILS_VERSION}" "${PHPCSUTILS_COMMIT}" "${tools_dir}/phpcsutils"
+          clone_and_verify \
+            'https://github.com/PHPCSStandards/PHPCSExtra.git' \
+            "${PHPCSEXTRA_VERSION}" "${PHPCSEXTRA_COMMIT}" "${tools_dir}/phpcsextra"
+
+          installed_paths="${tools_dir}/wpcs,${tools_dir}/phpcsutils,${tools_dir}/phpcsextra"
+          php "${tools_dir}/phpcs.phar" --config-set installed_paths "${installed_paths}"
+          php "${tools_dir}/phpcs.phar" -i | grep -q 'WordPress'
+
+          echo "PHPCS_PHAR=${tools_dir}/phpcs.phar" >> "${GITHUB_ENV}"
+
+      - name: Enforce complete WordPress Coding Standards
+        run: php "${PHPCS_PHAR}" --standard=WordPress --extensions=php --report=summary .
+
   plugin-check:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-    - name: Checkout
-      uses: actions/checkout@v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
-    - name: Run plugin check
-      uses: wordpress/plugin-check-action@v1.1.7
-      with:
-        exclude-files: |
-          .gitignore
-          .gitattributes
-          .wp-env.json
-          .distignore
-          CHANGELOG.md
-          CODE_OF_CONDUCT.md
-          CONTRIBUTING.md
-          README.md
-          SECURITY.md
-        exclude-directories: |
-          .github
+      - name: Run plugin check
+        uses: wordpress/plugin-check-action@98a1788320d0add90df2d8183934ecccbc4e05d2 # v1.1.7
+        with:
+          exclude-files: |
+            .editorconfig
+            .gitignore
+            .gitattributes
+            .wp-env.json
+            .distignore
+            CHANGELOG.md
+            CODE_OF_CONDUCT.md
+            CONTRIBUTING.md
+            eslint.config.mjs
+            phpcs.xml.dist
+            README.md
+            SECURITY.md
+          exclude-directories: |
+            .github
+            .vscode

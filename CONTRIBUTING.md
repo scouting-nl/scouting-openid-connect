@@ -22,6 +22,14 @@ Keep changes focused and consistent with the existing WordPress coding and secur
 - Update translations when changing user-facing strings.
 - Update [README.md](README.md), [CHANGELOG.md](CHANGELOG.md), or other documentation when user-visible behavior or configuration changes.
 
+## Coding Standards
+
+Follow [`.editorconfig`](.editorconfig) and the [WordPress Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/), including the Accessibility, HTML, CSS, and GitHub Actions Workflow standards relevant to every changed file and its rendered output. New or changed user-facing interfaces must conform to WCAG 2.2 Level AA.
+
+## Documentation
+
+Keep documentation up to date and follow the [WordPress Inline Documentation Standards](https://developer.wordpress.org/coding-standards/inline-documentation-standards/).
+
 ## Pull Requests
 
 Before opening a pull request:

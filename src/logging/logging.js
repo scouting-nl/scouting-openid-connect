@@ -1,180 +1,255 @@
-document.addEventListener('DOMContentLoaded', function () {
-    // The logging filters live inside this form. If it is missing, nothing on this page
-    // should be initialized because all behavior below depends on form controls.
-    var form = document.getElementById('scouting-oidc-logs-filter');
-    if (!form) { return; }
+/**
+ * Synchronizes filters and date constraints on the logging page.
+ *
+ * @file  Defines filter synchronization on the logging page.
+ * @since 2.4.0
+ */
 
-    // Ensure sorting URL params exist for a stable default sort state.
-    // This only updates the browser URL and table header classes; it does not submit the form.
-    var params = new URLSearchParams(window.location.search);
-    var hasExplicitSort = params.has('orderby') || params.has('order');
-    if (!hasExplicitSort) {
-        var createdAtHeader = document.querySelector('th#created_at');
-        if (createdAtHeader) {
-            // Set default sorting to id descending (newest first) by updating the URL parameters without reloading the page
-            params.set('orderby', 'id');
-            params.set('order', 'desc');
-            var newUrl = window.location.pathname + '?' + params.toString();
-            window.history.replaceState({}, '', newUrl);
+/**
+ * Initializes logging filter controls after the DOM is ready.
+ *
+ * @since 2.4.0
+ */
+document.addEventListener( 'DOMContentLoaded', function() {
+	// Stops initialization when the logging filter form is unavailable.
+	const form = document.getElementById( 'scouting-oidc-logs-filter' );
+	if ( ! form ) {
+		return;
+	}
 
-            // Update the aria-sort attribute to indicate the default sorting state for accessibility
-            createdAtHeader.setAttribute('aria-sort', 'descending');
+	// Sets a stable default sorting state without submitting the filter form.
+	const params = new URLSearchParams( window.location.search );
+	const hasExplicitSort = params.has( 'orderby' ) || params.has( 'order' );
+	if ( ! hasExplicitSort ) {
+		const createdAtHeader = document.querySelector( 'th#created_at' );
+		if ( createdAtHeader ) {
+			// Sets the default sorting parameters without reloading the page.
+			params.set( 'orderby', 'id' );
+			params.set( 'order', 'desc' );
+			const newUrl = window.location.pathname + '?' + params.toString();
+			window.history.replaceState( {}, '', newUrl );
 
-            // Update class to reflect default sorting state (remove sortable and add sorted and desc)
-            createdAtHeader.classList.remove('sortable', 'asc');
-            createdAtHeader.classList.add('sorted', 'desc');
-        }
-    }
+			// Marks the default sorting state for assistive technology.
+			createdAtHeader.setAttribute( 'aria-sort', 'descending' );
 
-    // Build a local datetime string in the format expected by datetime-local controls.
-    // Example: 2026-03-14T18:42:09
-    function nowLocalISO() {
-        var d = new Date();
-        var pad = function (n) { return String(n).padStart(2, '0'); };
-        return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
-            'T' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
-    }
+			// Updates the table-header classes to show descending sorting.
+			createdAtHeader.classList.remove( 'sortable', 'asc' );
+			createdAtHeader.classList.add( 'sorted', 'desc' );
+		}
+	}
 
-    // Collect all mirrored controls and group them by data-sync-key.
-    // Each key typically has two controls: one in the top tablenav and one in the bottom tablenav.
-    function getSyncGroups() {
-        var controls = form.querySelectorAll('[data-sync-key]');
-        var groups = {};
+	/**
+	 * Builds a local datetime string for datetime-local controls.
+	 *
+	 * @since  2.4.0
+	 * @return {string} Local datetime string.
+	 */
+	function nowLocalISO() {
+		const date = new Date();
 
-        controls.forEach(function (control) {
-            var key = control.getAttribute('data-sync-key');
-            if (!key) { return; }
+		/**
+		 * Pads a number to two digits.
+		 *
+		 * @since  2.4.0
+		 * @param {number} number Number to pad.
+		 * @return {string} Padded number.
+		 */
+		const pad = function( number ) {
+			return String( number ).padStart( 2, '0' );
+		};
 
-            if (!groups[key]) {
-                groups[key] = [];
-            }
-            groups[key].push(control);
-        });
+		return date.getFullYear() + '-' + pad( date.getMonth() + 1 ) + '-' +
+			pad( date.getDate() ) + 'T' + pad( date.getHours() ) + ':' +
+			pad( date.getMinutes() ) + ':' + pad( date.getSeconds() );
+	}
 
-        return groups;
-    }
+	/**
+	 * Groups mirrored filter controls by their synchronization key.
+	 *
+	 * @since  2.4.0
+	 * @return {Object} Controls grouped by synchronization key.
+	 */
+	function getSyncGroups() {
+		const controls = form.querySelectorAll( '[data-sync-key]' );
+		const groups = {};
 
-    // Read a control value in a normalized way so we can mirror values across control types.
-    // Multi-select controls return an array of selected option values.
-    function getControlValue(control) {
-        if (control.tagName === 'SELECT' && control.multiple) {
-            return Array.from(control.options)
-                .filter(function (option) { return option.selected; })
-                .map(function (option) { return option.value; });
-        }
-        // For input controls and single selects, return the scalar string value.
-        return control.value;
-    }
+		controls.forEach( function( control ) {
+			const key = control.getAttribute( 'data-sync-key' );
+			if ( ! key ) {
+				return;
+			}
 
-    // Apply a normalized value back to a control.
-    // For multi-select controls we update selected state option-by-option.
-    function setControlValue(control, value) {
-        if (control.tagName === 'SELECT' && control.multiple) {
-            var selectedValues = Array.isArray(value) ? value : [];
-            Array.from(control.options).forEach(function (option) {
-                option.selected = selectedValues.indexOf(option.value) !== -1;
-            });
-            return;
-        }
+			if ( ! groups[ key ] ) {
+				groups[ key ] = [];
+			}
+			groups[ key ].push( control );
+		} );
 
-        // For scalar controls, ensure we always assign a string.
-        control.value = typeof value === 'string' ? value : '';
-    }
+		return groups;
+	}
 
-    // Mirror the changed value from one control to all sibling controls with the same sync key.
-    function syncByKey(sourceControl) {
-        var key = sourceControl.getAttribute('data-sync-key');
-        if (!key || !syncGroups[key]) { return; }
+	/**
+	 * Gets a normalized value from a filter control.
+	 *
+	 * @since  2.4.0
+	 * @param {HTMLElement} control Filter control.
+	 * @return {string|string[]} Normalized control value.
+	 */
+	function getControlValue( control ) {
+		if ( control.tagName === 'SELECT' && control.multiple ) {
+			return Array.from( control.options )
+				.filter( function( option ) {
+					return option.selected;
+				} )
+				.map( function( option ) {
+					return option.value;
+				} );
+		}
 
-        var sourceValue = getControlValue(sourceControl);
-        syncGroups[key].forEach(function (control) {
-            if (control === sourceControl) { return; }
-            setControlValue(control, sourceValue);
-        });
-    }
+		return control.value;
+	}
 
-    // Build a map like { date_from: [topInput, bottomInput], level: [topSelect, bottomSelect], ... }.
-    var syncGroups = getSyncGroups();
+	/**
+	 * Applies a normalized value to a filter control.
+	 *
+	 * @since  2.4.0
+	 * @param {HTMLElement}     control Filter control.
+	 * @param {string|string[]} value   Normalized control value.
+	 * @return {void} Does not return a value.
+	 */
+	function setControlValue( control, value ) {
+		if ( control.tagName === 'SELECT' && control.multiple ) {
+			const selectedValues = Array.isArray( value ) ? value : [];
+			Array.from( control.options ).forEach( function( option ) {
+				option.selected = selectedValues.indexOf( option.value ) !== -1;
+			} );
+			return;
+		}
 
-    // Keep top and bottom controls synchronized while typing/changing.
-    // Listening to both input and change covers text-like inputs and select interactions.
-    Object.keys(syncGroups).forEach(function (key) {
-        syncGroups[key].forEach(function (control) {
-            control.addEventListener('input', function () {
-                syncByKey(control);
-            });
-            control.addEventListener('change', function () {
-                syncByKey(control);
-            });
-        });
-    });
+		control.value = typeof value === 'string' ? value : '';
+	}
 
-    var dateFromInputs = syncGroups.date_from || [];
-    var dateToInputs = syncGroups.date_to || [];
+	/**
+	 * Synchronizes controls that share a synchronization key.
+	 *
+	 * @since  2.4.0
+	 * @param {HTMLElement} sourceControl Changed filter control.
+	 * @return {void} Does not return a value.
+	 */
+	function syncByKey( sourceControl ) {
+		const key = sourceControl.getAttribute( 'data-sync-key' );
+		if ( ! key || ! syncGroups[ key ] ) {
+			return;
+		}
 
-    // Date constraint logic depends on both date controls being present.
-    if (dateFromInputs.length === 0 || dateToInputs.length === 0) { return; }
+		const sourceValue = getControlValue( sourceControl );
+		syncGroups[ key ].forEach( function( control ) {
+			if ( control === sourceControl ) {
+				return;
+			}
+			setControlValue( control, sourceValue );
+		} );
+	}
 
-    // Clamp a datetime-local value to the current min/max bounds if it falls outside them.
-    function clampInput(input) {
-        if (!input.value) return;
-        if (input.min && input.value < input.min) input.value = input.min;
-        if (input.max && input.value > input.max) input.value = input.max;
-    }
+	// Groups controls such as date_from and date_to by their synchronization key.
+	const syncGroups = getSyncGroups();
 
-    // Enforce cross-field constraints:
-    // - date_to cannot be earlier than date_from
-    // - date_from cannot be later than date_to
-    // The first control in each group is used as source of truth because top/bottom are synced.
-    function applyDateConstraints() {
-        var dateFromValue = dateFromInputs.length > 0 ? dateFromInputs[0].value : '';
-        var dateToValue = dateToInputs.length > 0 ? dateToInputs[0].value : '';
+	// Synchronizes matching controls while users type or change values.
+	Object.keys( syncGroups ).forEach( function( key ) {
+		syncGroups[ key ].forEach( function( control ) {
+			control.addEventListener( 'input', function() {
+				syncByKey( control );
+			} );
+			control.addEventListener( 'change', function() {
+				syncByKey( control );
+			} );
+		} );
+	} );
 
-        dateToInputs.forEach(function (input) {
-            if (dateFromValue) input.min = dateFromValue;
-            else input.removeAttribute('min');
-            clampInput(input);
-        });
+	const dateFromInputs = syncGroups.date_from || [];
+	const dateToInputs = syncGroups.date_to || [];
 
-        dateFromInputs.forEach(function (input) {
-            if (dateToValue) input.max = dateToValue;
-            else input.removeAttribute('max');
-            clampInput(input);
-        });
-    }
+	if ( dateFromInputs.length === 0 || dateToInputs.length === 0 ) {
+		return;
+	}
 
-    // On page load, set min/max attributes to enforce valid date ranges.
-    applyDateConstraints();
+	/**
+	 * Clamps a datetime-local control to its current bounds.
+	 *
+	 * @since  2.4.0
+	 * @param {HTMLInputElement} input Datetime-local input control.
+	 * @return {void} Does not return a value.
+	 */
+	function clampInput( input ) {
+		if ( ! input.value ) {
+			return;
+		}
+		if ( input.min && input.value < input.min ) {
+			input.value = input.min;
+		}
+		if ( input.max && input.value > input.max ) {
+			input.value = input.max;
+		}
+	}
 
-    // Re-apply date rules whenever either mirrored "from" control changes.
-    dateFromInputs.forEach(function (input) {
-        input.addEventListener('change', function () {
-            applyDateConstraints();
-        });
-    });
+	/**
+	 * Applies matching minimum and maximum values to date filters.
+	 *
+	 * @since  2.4.0
+	 * @return {void} Does not return a value.
+	 */
+	function applyDateConstraints() {
+		const dateFromValue = dateFromInputs.length > 0 ? dateFromInputs[ 0 ].value : '';
+		const dateToValue = dateToInputs.length > 0 ? dateToInputs[ 0 ].value : '';
 
-    // Re-apply date rules whenever either mirrored "to" control changes.
-    dateToInputs.forEach(function (input) {
-        input.addEventListener('change', function () {
-            applyDateConstraints();
-        });
-    });
+		dateToInputs.forEach( function( input ) {
+			if ( dateFromValue ) {
+				input.min = dateFromValue;
+			} else {
+				input.removeAttribute( 'min' );
+			}
+			clampInput( input );
+		} );
 
-    // On form submit, prevent future dates and clamp values on all mirrored controls.
-    form.addEventListener('submit', function () {
-        const now = nowLocalISO();
+		dateFromInputs.forEach( function( input ) {
+			if ( dateToValue ) {
+				input.max = dateToValue;
+			} else {
+				input.removeAttribute( 'max' );
+			}
+			clampInput( input );
+		} );
+	}
 
-        // Prevent selecting/submitting future timestamps.
-        dateFromInputs.forEach(function (input) {
-            input.max = now;
-            clampInput(input);
-        });
-        dateToInputs.forEach(function (input) {
-            input.max = now;
-            clampInput(input);
-        });
+	applyDateConstraints();
 
-        // Final consistency pass before submission.
-        applyDateConstraints();
-    });
-});
+	// Re-applies date rules when a mirrored start-date control changes.
+	dateFromInputs.forEach( function( input ) {
+		input.addEventListener( 'change', function() {
+			applyDateConstraints();
+		} );
+	} );
+
+	// Re-applies date rules when a mirrored end-date control changes.
+	dateToInputs.forEach( function( input ) {
+		input.addEventListener( 'change', function() {
+			applyDateConstraints();
+		} );
+	} );
+
+	form.addEventListener( 'submit', function() {
+		const now = nowLocalISO();
+
+		// Prevents future timestamps in both mirrored date filters.
+		dateFromInputs.forEach( function( input ) {
+			input.max = now;
+			clampInput( input );
+		} );
+		dateToInputs.forEach( function( input ) {
+			input.max = now;
+			clampInput( input );
+		} );
+
+		applyDateConstraints();
+	} );
+} );
