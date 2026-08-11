@@ -1,40 +1,40 @@
 {
-    "[php]": {
-        "editor.defaultFormatter": "ValeryanM.vscode-phpsab",
-        "editor.formatOnSave": true,
-        "editor.insertSpaces": false,
-        "editor.tabSize": 4
-    },
-    "[javascript]": {
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-        "editor.detectIndentation": false,
-        "editor.formatOnPaste": false,
-        "editor.formatOnSave": true,
-        "editor.insertSpaces": false,
-        "editor.tabSize": 4
-    },
-    "eslint.format.enable": true,
-    "eslint.validate": [
-        "javascript"
-    ],
-    "eslint.workingDirectories": [
-        {
-            "mode": "location"
-        }
-    ],
-    "js/ts.format.enabled": false,
-    "phpsab.allowedAutoRulesets": [
-        "phpcs.xml.dist"
-    ],
-    "phpsab.autoRulesetSearch": true,
-    "phpsab.excludeGlobs": [
-        "**/node_modules/**",
-        "**/vendor/**"
-    ],
-    "phpsab.fixerEnable": true,
-    "phpsab.snifferEnable": true,
-    "phpsab.snifferMode": "onSave",
-    "phpsab.snifferShowFixabilityIcons": true,
-    "phpsab.snifferShowSources": true,
-    "phpsab.standard": "./phpcs.xml.dist"
+  "[php]": {
+    "editor.defaultFormatter": "ValeryanM.vscode-phpsab",
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": false,
+    "editor.tabSize": 4
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.detectIndentation": false,
+    "editor.formatOnPaste": false,
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": false,
+    "editor.tabSize": 4
+  },
+  "eslint.format.enable": true,
+  "eslint.options": {
+    "overrideConfigFile": ".config/eslint.config.mjs"
+  },
+  "eslint.validate": [
+    "javascript"
+  ],
+  "eslint.workingDirectories": [
+    {
+      "mode": "location"
+    }
+  ],
+  "js/ts.format.enabled": false,
+  "phpsab.autoRulesetSearch": false,
+  "phpsab.excludeGlobs": [
+    "**/node_modules/**",
+    "**/vendor/**"
+  ],
+  "phpsab.fixerEnable": true,
+  "phpsab.snifferEnable": true,
+  "phpsab.snifferMode": "onSave",
+  "phpsab.snifferShowFixabilityIcons": true,
+  "phpsab.snifferShowSources": true,
+  "phpsab.standard": "./.config/phpcs.xml.dist"
 }
