@@ -1,7 +1,7 @@
 {
-    "recommendations": [
-        "dbaeumer.vscode-eslint",
-        "EditorConfig.EditorConfig",
-        "ValeryanM.vscode-phpsab"
-    ]
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "EditorConfig.EditorConfig",
+    "ValeryanM.vscode-phpsab"
+  ]
 }
