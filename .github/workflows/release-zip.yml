@@ -30,7 +30,6 @@ jobs:
 
           mkdir -p "${STAGING}"
           rsync -av . "${STAGING}" \
-            --exclude ".config" \
             --exclude ".git" \
             --exclude ".github" \
             --exclude ".vscode" \
@@ -38,6 +37,8 @@ jobs:
             --exclude ".editorconfig" \
             --exclude ".gitattributes" \
             --exclude "CHANGELOG.md" \
+            --exclude "eslint.config.mjs" \
+            --exclude "phpcs.xml.dist" \
             --exclude "README.md" \
             --include "assets/" \
             --include "assets/icon.svg" \

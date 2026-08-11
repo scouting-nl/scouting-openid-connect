@@ -83,7 +83,7 @@ jobs:
           echo "ESLINT_MODULE_ROOT=${tools_dir}/node_modules" >> "${GITHUB_ENV}"
 
       - name: Enforce WordPress JavaScript Coding Standards
-        run: node "${ESLINT_MODULE_ROOT}/eslint/bin/eslint.js" --config .config/eslint.config.mjs src
+        run: node "${ESLINT_MODULE_ROOT}/eslint/bin/eslint.js" src
 
   php-lint:
     name: PHP syntax
@@ -202,8 +202,9 @@ jobs:
             .wp-env.json
             .distignore
             CHANGELOG.md
+            eslint.config.mjs
+            phpcs.xml.dist
             README.md
           exclude-directories: |
-            .config
             .github
             .vscode

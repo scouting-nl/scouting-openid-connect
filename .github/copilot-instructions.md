@@ -38,7 +38,7 @@ This repository is a WordPress plugin targeting PHP 8.2. Keep changes narrowly s
 - Use literal tabs for indentation. Do not replace them with spaces. The workspace JavaScript settings disable indentation detection so formatting preserves this rule.
 - Use single-quoted strings, semicolons, strict equality, braces for control blocks, spaced function calls and array access, a space after `!`, no trailing whitespace, and readable line wrapping. Prefer `const` and `let` for new ES2015+ code; do not refactor untouched legacy code only to replace `var`.
 - Add a descriptive file-header DocBlock and JSDoc for named functions and significant constants, objects, closures, events, and globals. Include accurate `@since`, `@param`, and `@return` tags where applicable; derive release versions from Git history.
-- Keep [`.config/eslint.config.mjs`](../.config/eslint.config.mjs) as the only persistent JavaScript tooling file. Do not add `package.json`, lockfiles, committed `node_modules`, Prettier, or JSHint unless explicitly requested; CI installs its pinned ESLint dependencies under `RUNNER_TEMP`.
+- Keep [`eslint.config.mjs`](../eslint.config.mjs) as the only persistent JavaScript tooling file. Do not add `package.json`, lockfiles, committed `node_modules`, Prettier, or JSHint unless explicitly requested; CI installs its pinned ESLint dependencies under `RUNNER_TEMP`.
 
 ## GitHub Actions
 
@@ -52,7 +52,7 @@ This repository is a WordPress plugin targeting PHP 8.2. Keep changes narrowly s
 ## Validation
 
 - For PHP changes, run the narrowest available PHP lint and cache-free WPCS check before broadening validation.
-- For JavaScript changes, run the pinned ESLint toolchain from [`.github/workflows/build-test.yml`](workflows/build-test.yml) with [`.config/eslint.config.mjs`](../.config/eslint.config.mjs), then run `node --check` on each touched `.js` file.
+- For JavaScript changes, run the pinned ESLint toolchain from [`.github/workflows/build-test.yml`](workflows/build-test.yml) with [`eslint.config.mjs`](../eslint.config.mjs), then run `node --check` on each touched `.js` file.
 - For rendered HTML or interface changes, validate complete markup with the W3C validator when practical and manually check keyboard operation, focus behavior, labels, status and error feedback, text alternatives, and contrast. Automated checks do not replace manual review.
 - For CSS changes, manually confirm the WordPress formatting rules and test affected states and layouts above and below relevant responsive breakpoints.
 - For workflow changes, run Actionlint and `zizmor .` when available, then resolve correctness and security findings rather than suppressing them without a documented reason.

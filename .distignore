@@ -1,6 +1,5 @@
 # Distribution exclusions
 
-/.config
 /.git
 /.github
 /.vscode
@@ -10,6 +9,8 @@
 /.wordpress-org
 /.wp-env.json
 /CHANGELOG.md
+/eslint.config.mjs
+/phpcs.xml.dist
 /README.md
 /.distignore
 /node_modules

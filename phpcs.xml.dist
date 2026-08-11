@@ -5,11 +5,11 @@
 
 	<description>WordPress Coding Standards checks supported by the current codebase.</description>
 
-	<file>../scouting-openid-connect.php</file>
-	<file>../uninstall.php</file>
-	<file>../src</file>
+	<file>scouting-openid-connect.php</file>
+	<file>uninstall.php</file>
+	<file>src</file>
 
-	<arg name="basepath" value=".." />
+	<arg name="basepath" value="." />
 	<arg name="colors" />
 	<arg name="extensions" value="php" />
 	<arg value="ps" />

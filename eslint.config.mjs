@@ -15,7 +15,7 @@ const wordpress = require( '@wordpress/eslint-plugin' );
 
 export default [
 	{
-		ignores: [ '.config/eslint.config.mjs', '**/node_modules/**', '**/vendor/**' ],
+		ignores: [ 'eslint.config.mjs', '**/node_modules/**', '**/vendor/**' ],
 	},
 	...wordpress.configs[ 'recommended-with-formatting' ],
 	{

@@ -14,9 +14,6 @@
     "editor.tabSize": 4
   },
   "eslint.format.enable": true,
-  "eslint.options": {
-    "overrideConfigFile": ".config/eslint.config.mjs"
-  },
   "eslint.validate": [
     "javascript"
   ],
@@ -26,7 +23,10 @@
     }
   ],
   "js/ts.format.enabled": false,
-  "phpsab.autoRulesetSearch": false,
+  "phpsab.allowedAutoRulesets": [
+    "phpcs.xml.dist"
+  ],
+  "phpsab.autoRulesetSearch": true,
   "phpsab.excludeGlobs": [
     "**/node_modules/**",
     "**/vendor/**"
@@ -36,5 +36,5 @@
   "phpsab.snifferMode": "onSave",
   "phpsab.snifferShowFixabilityIcons": true,
   "phpsab.snifferShowSources": true,
-  "phpsab.standard": "./.config/phpcs.xml.dist"
+  "phpsab.standard": "./phpcs.xml.dist"
 }
