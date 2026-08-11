@@ -192,7 +192,7 @@ jobs:
           persist-credentials: false
 
       - name: Run plugin check
-        uses: wordpress/plugin-check-action@532794907ac28f4e76d043b89fcadc494e97b6ab # v1.1.8
+        uses: wordpress/plugin-check-action@98a1788320d0add90df2d8183934ecccbc4e05d2 # v1.1.7
         with:
           strict: true
           exclude-files: |
