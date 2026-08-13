@@ -9,11 +9,8 @@
 /.wordpress-org
 /.wp-env.json
 /CHANGELOG.md
-/CODE_OF_CONDUCT.md
-/CONTRIBUTING.md
 /eslint.config.mjs
 /phpcs.xml.dist
 /README.md
-/SECURITY.md
 /.distignore
 /node_modules

@@ -41,7 +41,7 @@ With this plugin, users can seamlessly integrate their Scouting Nederland accoun
 
 Bugs and feature requests can go to [GitHub](https://github.com/Scouting-nl/scouting-openid-connect/issues) or [WordPress](https://wordpress.org/support/plugin/scouting-openid-connect).
 
-Do not report security vulnerabilities publicly. Follow the [security policy](SECURITY.md) to submit a private report.
+Do not report security vulnerabilities publicly. Follow the [security policy](.github/SECURITY.md) to submit a private report.
 
 ## Screenshots
 
@@ -147,7 +147,7 @@ Currently not, but this is planned for a future update of this plugin.
 
 ## Security
 
-Report suspected vulnerabilities privately through the repository's [security policy](SECURITY.md). Do not include vulnerability details, secrets, tokens, or personal data in public issues or support topics.
+Report suspected vulnerabilities privately through the repository's [security policy](.github/SECURITY.md). Do not include vulnerability details, secrets, tokens, or personal data in public issues or support topics.
 
 ## Translations
 

@@ -13,18 +13,18 @@ Do not include client secrets, access tokens, ID tokens, passwords, personal dat
 
 ## Development
 
-Use a WordPress test installation and a client configuration that you are authorized to use. Refer to [README.md](README.md) for the required plugin configuration and supported WordPress and PHP versions.
+Use a WordPress test installation and a client configuration that you are authorized to use. Refer to [README.md](../README.md) for the required plugin configuration and supported WordPress and PHP versions.
 
 Keep changes focused and consistent with the existing WordPress coding and security practices. In particular:
 
 - Sanitize input, validate authorization and nonces where applicable, and escape output in its rendering context.
 - Preserve the OpenID Connect protections around state, nonce, PKCE, and session handling.
 - Update translations when changing user-facing strings.
-- Update [README.md](README.md), [CHANGELOG.md](CHANGELOG.md), or other documentation when user-visible behavior or configuration changes.
+- Update [README.md](../README.md), [CHANGELOG.md](../CHANGELOG.md), or other documentation when user-visible behavior or configuration changes.
 
 ## Coding Standards
 
-Follow [`.editorconfig`](.editorconfig) and the [WordPress Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/), including the Accessibility, HTML, CSS, and GitHub Actions Workflow standards relevant to every changed file and its rendered output. New or changed user-facing interfaces must conform to WCAG 2.2 Level AA.
+Follow [`.editorconfig`](../.editorconfig) and the [WordPress Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/), including the Accessibility, HTML, CSS, and GitHub Actions Workflow standards relevant to every changed file and its rendered output. New or changed user-facing interfaces must conform to WCAG 2.2 Level AA.
 
 ## Documentation
 
