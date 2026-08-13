@@ -59,6 +59,7 @@ class ProviderHealth {
 		 *
 		 * @param array $result Site Health test result.
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core filter.
 		$result = apply_filters( 'site_status_test_result', $this->test() );
 
 		return rest_ensure_response( $result );
