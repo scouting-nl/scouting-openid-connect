@@ -11,5 +11,7 @@ updates:
       - "copilot"
     assignees:
       - "jobvk"
+    cooldown:
+      default-days: 7
     schedule:
       interval: "weekly"

@@ -1,10 +1,10 @@
 #scouting-oidc-logs-filter .wp-list-table {
-    table-layout: auto;
+	table-layout: auto;
 }
 
 #scouting-oidc-logs-filter .wp-list-table td,
 #scouting-oidc-logs-filter .wp-list-table th {
-    vertical-align: top;
+	vertical-align: top;
 }
 
 #scouting-oidc-logs-filter .wp-list-table .column-created_at,
@@ -12,43 +12,43 @@
 #scouting-oidc-logs-filter .wp-list-table .column-level,
 #scouting-oidc-logs-filter .wp-list-table .column-user_id,
 #scouting-oidc-logs-filter .wp-list-table .column-sol_id {
-    width: 1%;
-    white-space: nowrap;
+	width: 1%;
+	white-space: nowrap;
 }
 
 #scouting-oidc-logs-filter .wp-list-table .column-message {
-    width: auto;
-    white-space: normal;
+	width: auto;
+	white-space: normal;
 }
 
 #scouting-oidc-logs-filter .tablenav .actions select,
 #scouting-oidc-logs-filter .tablenav .actions input,
 #scouting-oidc-logs-filter .tablenav .actions .button {
-    float: none;
+	float: none;
 }
 
 #scouting-oidc-logs-filter .tablenav .actions input[type="datetime-local"] {
-    width: 210px;
+	width: 210px;
 }
 
 #scouting-oidc-logs-filter .tablenav .actions input[data-sync-key="user_id"],
 #scouting-oidc-logs-filter .tablenav .actions input[data-sync-key="sol_id"] {
-    width: 110px;
+	width: 110px;
 }
 
 #scouting-oidc-logs-filter .tablenav .actions select {
-    margin-bottom: 5px;
+	margin-bottom: 5px;
 }
 
 #scouting-oidc-logs-filter .tablenav .actions select[data-sync-key="level"] {
-    margin-right: 0.5px;
+	margin-right: 0.5px;
 }
 
 #scouting-oidc-logs-filter .tablenav .actions select[data-sync-key="component"] {
-    margin-right: 1px;
+	margin-right: 1px;
 }
 
 #scouting-oidc-logs-filter .tablenav .actions input[type="submit"] {
-    margin-left: 0.5px;
-    margin-right: 2px;
+	margin-left: 0.5px;
+	margin-right: 2px;
 }

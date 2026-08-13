@@ -4,11 +4,15 @@
 [![Wordpress-Version](https://img.shields.io/wordpress/plugin/v/scouting-openid-connect.svg)](https://wordpress.org/plugins/scouting-openid-connect/)
 [![Wordpress-Downloads](https://img.shields.io/wordpress/plugin/dt/scouting-openid-connect.svg)](https://wordpress.org/plugins/scouting-openid-connect/)
 [![Wordpress-Active-Installs](https://img.shields.io/wordpress/plugin/installs/scouting-openid-connect.svg)](https://wordpress.org/plugins/scouting-openid-connect/)
+[![License](https://img.shields.io/github/license/scouting-nl/scouting-openid-connect)](https://github.com/scouting-nl/scouting-openid-connect/blob/main/LICENSE)
+
+[![CI](https://github.com/scouting-nl/scouting-openid-connect/actions/workflows/build-test.yml/badge.svg)](https://github.com/scouting-nl/scouting-openid-connect/actions/workflows/build-test.yml)
+[![CodeQL](https://github.com/scouting-nl/scouting-openid-connect/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/scouting-nl/scouting-openid-connect/actions/workflows/github-code-scanning/codeql)
 
 **Contributors:** [jobvk](https://github.com/jobvk) \
 **Requires at least:** 6.9.5 \
-**Tested up to:** 7.0 \
-**Stable tag:** 2.5.0 \
+**Tested up to:** 7.1 \
+**Stable tag:** 2.6.0 \
 **Tags:** scouting, scouting nederland, sol, openid connect, oidc \
 **License:** GPLv3 \
 **License URI:** <https://www.gnu.org/licenses/gpl-3.0.html>
@@ -37,7 +41,7 @@ With this plugin, users can seamlessly integrate their Scouting Nederland accoun
 
 Bugs and feature requests can go to [GitHub](https://github.com/Scouting-nl/scouting-openid-connect/issues) or [WordPress](https://wordpress.org/support/plugin/scouting-openid-connect).
 
-Do not report security vulnerabilities publicly. Follow the [security policy](SECURITY.md) to submit a private report.
+Do not report security vulnerabilities publicly. Follow the [security policy](.github/SECURITY.md) to submit a private report.
 
 ## Screenshots
 
@@ -143,7 +147,7 @@ Currently not, but this is planned for a future update of this plugin.
 
 ## Security
 
-Report suspected vulnerabilities privately through the repository's [security policy](SECURITY.md). Do not include vulnerability details, secrets, tokens, or personal data in public issues or support topics.
+Report suspected vulnerabilities privately through the repository's [security policy](.github/SECURITY.md). Do not include vulnerability details, secrets, tokens, or personal data in public issues or support topics.
 
 ## Translations
 

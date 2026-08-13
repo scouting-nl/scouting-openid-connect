@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [[2.6.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.6.0)] - 13/08/2026
+
+- Refactored the plugin's PHP and JavaScript codebase for improved readability and consistency.
+- Standardized source file names and the internal plugin structure.
+- Tested up to: `7.1`.
+
 ## [[2.5.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.5.0)] - 07/08/2026
 
 - Added a `subject` property to the User class to store the OpenID Connect subject, enforced that it must be present.

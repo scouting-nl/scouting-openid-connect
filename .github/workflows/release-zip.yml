@@ -5,6 +5,8 @@ on:
     tags:
       - '*.*.*'
 
+permissions: {}
+
 jobs:
   package:
     name: Build plugin zip
@@ -13,9 +15,10 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Build zip archive
         run: |
@@ -29,13 +32,14 @@ jobs:
           rsync -av . "${STAGING}" \
             --exclude ".git" \
             --exclude ".github" \
+            --exclude ".vscode" \
             --exclude ".distignore" \
+            --exclude ".editorconfig" \
             --exclude ".gitattributes" \
             --exclude "CHANGELOG.md" \
-            --exclude "CODE_OF_CONDUCT.md" \
-            --exclude "CONTRIBUTING.md" \
+            --exclude "eslint.config.mjs" \
+            --exclude "phpcs.xml.dist" \
             --exclude "README.md" \
-            --exclude "SECURITY.md" \
             --include "assets/" \
             --include "assets/icon.svg" \
             --exclude "assets/*"
@@ -47,14 +51,20 @@ jobs:
           echo "ZIP_NAME=${ZIP_NAME}" >> "${GITHUB_ENV}"
 
       - name: Upload zip as artifact
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ env.ZIP_NAME }}
           path: ${{ env.ZIP_PATH }}
           if-no-files-found: error
 
       - name: Attach zip to release
-        uses: softprops/action-gh-release@v3.0.2
-        with:
-          files: ${{ env.ZIP_PATH }}
-          generate_release_notes: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          if gh release view "${GITHUB_REF_NAME}" --json id >/dev/null 2>&1; then
+            gh release upload "${GITHUB_REF_NAME}" "${ZIP_PATH}" --clobber
+          else
+            gh release create "${GITHUB_REF_NAME}" "${ZIP_PATH}" --generate-notes --verify-tag
+          fi

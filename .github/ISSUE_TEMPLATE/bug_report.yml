@@ -8,7 +8,7 @@ body:
     attributes:
       value: |
         # Bug Report
-        
+
         This issue form is for reporting bugs only!
 
         If this bug may have a security impact, do not continue with this public form. Submit a [private vulnerability report](https://github.com/scouting-nl/scouting-openid-connect/security/advisories/new) instead.

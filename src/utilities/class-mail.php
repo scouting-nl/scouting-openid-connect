@@ -1,0 +1,495 @@
+<?php
+/**
+ * Scouting OpenID Connect plugin file
+ *
+ * @package ScoutingOIDC
+ * @since 2.3.0
+ */
+
+namespace ScoutingOIDC;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+require_once plugin_dir_path( __FILE__ ) . 'class-logger.php';
+
+use ScoutingOIDC\Logger;
+
+/**
+ * Normalizes Scouting OpenID Connect mail recipients.
+ *
+ * @since 2.3.0
+ */
+class Mail {
+	/**
+	 * In-memory cache for SOL user checks during a single request.
+	 *
+	 * @since 2.3.0
+	 * @var array<string, bool>
+	 */
+	private static array $scouting_oidc_mail_sol_user_cache = array();
+
+	/**
+	 * Creates a plus-addressed email (name+SOL_ID@example.com).
+	 *
+	 * Returns the original email when input is invalid.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $email Base email address.
+	 * @param string $sol_id SOL member ID.
+	 * @return string Plus-addressed email or original email on invalid input.
+	 */
+	public static function scouting_oidc_mail_create_plus_address( string $email, string $sol_id ): string {
+		if ( ! is_email( $email ) || '' === $sol_id ) {
+			return $email;
+		}
+
+		[$local_part, $domain] = explode( '@', $email, 2 );
+
+		$plus_address = "{$local_part}+{$sol_id}@{$domain}";
+		Logger::debug( LogComponent::MAIL, "Created plus-addressed email: {$plus_address} from base email: {$email}", null, $sol_id );
+
+		return $plus_address;
+	}
+
+	/**
+	 * Normalizes mail recipients so plus-addressed Scouting OIDC aliases
+	 * (name+SOL_ID@example.com) are sent to the base email address.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array $args wp_mail arguments.
+	 * @return array Modified wp_mail arguments with normalized recipients.
+	 */
+	public static function scouting_oidc_mail_filter_wp_mail( array $args ): array {
+		// Define the recipient fields to normalize.
+		$supported_fields = array( 'to', 'cc', 'bcc' );
+
+		Logger::debug( LogComponent::MAIL, "Email with subject '" . ( $args['subject'] ?? '' ) . "' is being processed for normalization with supported fields ('" . implode( ', ', $supported_fields ) . "')" );
+
+		// Check for plus-addressing markers in recipients and headers.
+		[$recipient_has_plus, $headers_has_plus] = self::scouting_oidc_mail_value_contains_plus( $args, $supported_fields );
+
+		// Skip normalization work when no plus-addressing markers are present.
+		if ( ! $recipient_has_plus && ! $headers_has_plus ) {
+			Logger::debug( LogComponent::MAIL, 'Skipping normalization as no plus-addressing markers were detected in recipients or headers' );
+			return $args;
+		}
+
+		// Normalize recipient fields (to/cc/bcc) in wp_mail arguments if needed.
+		if ( $recipient_has_plus ) {
+			$args = self::scouting_oidc_mail_normalize_recipient_fields( $args, $supported_fields );
+		}
+
+		// Normalize email addresses found in headers as well if needed.
+		if ( $headers_has_plus && ! empty( $args['headers'] ) ) {
+			$args['headers'] = self::scouting_oidc_mail_normalize_headers( $args['headers'] );
+		}
+
+		Logger::debug( LogComponent::MAIL, "Email with subject '" . ( $args['subject'] ?? '' ) . "' has been processed for normalization" );
+
+		// Return the modified arguments.
+		return $args;
+	}
+
+	/**
+	 * Determines whether any relevant wp_mail field contains a plus sign used by plus-addressing.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array $args wp_mail arguments.
+	 * @param array $supported_fields Recipient fields to inspect.
+	 * @return array{0: bool, 1: bool} Tuple indicating whether recipient and header
+	 *                                  fields contain a plus sign.
+	 */
+	private static function scouting_oidc_mail_value_contains_plus( array $args, array $supported_fields ): array {
+		$recipient_has_plus = false;
+		$headers_has_plus   = false;
+
+		// Check recipient fields for plus signs.
+		foreach ( $supported_fields as $field ) {
+			if ( ! isset( $args[ $field ] ) ) {
+				continue;
+			}
+
+			$value = $args[ $field ];
+
+			// Single string recipient.
+			if ( is_string( $value ) && str_contains( $value, '+' ) ) {
+				Logger::debug( LogComponent::MAIL, 'Plus sign detected in recipient field' );
+				$recipient_has_plus = true;
+				break;
+			}
+
+			// Array of recipients.
+			if ( is_array( $value ) ) {
+				foreach ( $value as $item ) {
+					if ( is_string( $item ) && str_contains( $item, '+' ) ) {
+						Logger::debug( LogComponent::MAIL, 'Plus sign detected in recipient field in array format' );
+						$recipient_has_plus = true;
+						break 2;
+					}
+				}
+			}
+		}
+
+		// Check headers for plus signs as well, since they can contain recipient-like values.
+		if ( ! empty( $args['headers'] ) ) {
+			$headers = $args['headers'];
+
+			// Single string header.
+			if ( is_string( $headers ) && str_contains( $headers, '+' ) ) {
+				Logger::debug( LogComponent::MAIL, 'Plus sign detected in headers' );
+				$headers_has_plus = true;
+			}
+
+			// Array of headers.
+			if ( is_array( $headers ) ) {
+				foreach ( $headers as $header_item ) {
+					if ( is_string( $header_item ) && str_contains( $header_item, '+' ) ) {
+						Logger::debug( LogComponent::MAIL, 'Plus sign detected in headers in array format' );
+						$headers_has_plus = true;
+						break;
+					}
+				}
+			}
+		}
+
+		return array( $recipient_has_plus, $headers_has_plus );
+	}
+
+	/**
+	 * Normalizes recipient fields (to/cc/bcc) in wp_mail arguments.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array $args wp_mail arguments.
+	 * @param array $supported_fields Recipient fields to inspect and normalize.
+	 * @return array Modified wp_mail arguments.
+	 */
+	private static function scouting_oidc_mail_normalize_recipient_fields( array $args, array $supported_fields ): array {
+		Logger::debug( LogComponent::MAIL, "Plus-addressing detected in recipient fields and will be normalized; inspecting fields ('" . implode( ', ', $supported_fields ) . "') for normalization" );
+		// Normalize each supported recipient field (to/cc/bcc) if it exists in the arguments.
+		foreach ( $supported_fields as $field ) {
+			// Skip if the field is not set or empty.
+			if ( empty( $args[ $field ] ) ) {
+				continue;
+			}
+
+			// Determine if the field is an array or a comma-separated string and normalize it to an array.
+			$original_is_array = is_array( $args[ $field ] );
+
+			// Normalize recipients to an array for processing.
+			$recipients = $original_is_array ? $args[ $field ] : wp_parse_list( (string) $args[ $field ] );
+
+			Logger::debug( LogComponent::MAIL, 'Normalizing ' . count( $recipients ) . " recipients in field '{$field}'" );
+
+			$normalized_recipients           = array();
+			$amount_of_normalized_recipients = 0;
+			$amount_of_skipped_recipients    = 0;
+
+			// Strip +SOL_ID from each recipient if it belongs to a Scouting OIDC user.
+			foreach ( $recipients as $recipient ) {
+				[$normalized, $result_recipient] = self::scouting_oidc_mail_strip_sol_alias_from_recipient( $recipient );
+				if ( $normalized ) {
+					++$amount_of_normalized_recipients;
+				} else {
+					++$amount_of_skipped_recipients;
+				}
+				$normalized_recipients[] = $result_recipient;
+			}
+
+			Logger::debug( LogComponent::MAIL, "Normalized {$amount_of_normalized_recipients} recipients and skipped normalization for {$amount_of_skipped_recipients} recipients in field '{$field}'" );
+
+			// Convert back to original format (array or comma-separated string).
+			$args[ $field ] = $original_is_array ? $normalized_recipients : implode( ', ', $normalized_recipients );
+		}
+
+		Logger::debug( LogComponent::MAIL, 'Recipient fields normalized successfully' );
+
+		// Return the modified arguments.
+		return $args;
+	}
+
+	/**
+	 * Normalizes recipient-like headers in wp_mail arguments.
+	 *
+	 * Supports string and array header formats.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string|array $headers wp_mail headers.
+	 * @return string|array Normalized headers.
+	 */
+	private static function scouting_oidc_mail_normalize_headers( string|array $headers ): string|array {
+		// Define supported recipient-like headers for normalization.
+		$supported_headers = array( 'to', 'cc', 'bcc', 'from', 'reply-to' );
+
+		Logger::debug( LogComponent::MAIL, 'Normalizing headers for supported recipient-like headers (' . implode( ', ', $supported_headers ) . ')' );
+
+		// If headers are in array format, normalize only supported recipient-like headers and return the modified array.
+		if ( is_array( $headers ) ) {
+			Logger::debug( LogComponent::MAIL, 'Normalizing headers in array format' );
+			foreach ( $headers as $key => $value ) {
+				Logger::debug( LogComponent::MAIL, "Inspecting header with key '{$key}' for normalization" );
+
+				// Check if the header key is a supported recipient-like header (case-insensitive).
+				if ( is_string( $key ) && in_array( strtolower( $key ), $supported_headers, true ) ) {
+					Logger::debug( LogComponent::MAIL, "Header key '{$key}' is a supported recipient-like header and will be normalized" );
+					$headers[ $key ] = self::scouting_oidc_mail_normalize_header_value( (string) $value );
+					Logger::debug( LogComponent::MAIL, "Header key '{$key}' normalized to: {$headers[$key]}" );
+					continue;
+				}
+
+				// For non-supported headers, we can still check if the value contains plus-addressing markers and attempt normalization if it's a string, but we will not modify the header key.
+				if ( is_string( $value ) ) {
+					Logger::debug( LogComponent::MAIL, "Normalizing header line for key '{$key}': {$value}" );
+					[$normalized, $result_line] = self::scouting_oidc_mail_normalize_header_line( $value, $supported_headers );
+					if ( $normalized ) {
+						Logger::debug( LogComponent::MAIL, "Header line for key '{$key}' was normalized to: {$result_line}" );
+						$headers[ $key ] = $result_line;
+					} else {
+						Logger::debug( LogComponent::MAIL, "Header line for key '{$key}' was not normalized and left unchanged: {$value}" );
+					}
+				}
+			}
+
+			Logger::debug( LogComponent::MAIL, 'Normalized headers in array format' );
+
+			return $headers;
+		}
+
+		// If headers are in string format, split into lines and normalize each line.
+		Logger::debug( LogComponent::MAIL, 'Normalizing headers in string format' );
+		$header_lines = preg_split( '/\r\n|\r|\n/', $headers );
+		if ( ! is_array( $header_lines ) ) {
+			Logger::debug( LogComponent::MAIL, 'Failed to split headers into lines' );
+			return $headers;
+		}
+
+		Logger::debug( LogComponent::MAIL, 'Normalizing ' . count( $header_lines ) . ' header lines in string format' );
+
+		$normalized_lines           = array();
+		$amount_of_normalized_lines = 0;
+		$amount_of_skipped_lines    = 0;
+
+		// Normalize each header line and reconstruct the headers string.
+		foreach ( $header_lines as $line ) {
+			[$normalized, $result_line] = self::scouting_oidc_mail_normalize_header_line( $line, $supported_headers );
+			if ( $normalized ) {
+				++$amount_of_normalized_lines;
+				Logger::debug( LogComponent::MAIL, "Header line normalized to: {$result_line}" );
+			} else {
+				++$amount_of_skipped_lines;
+				Logger::debug( LogComponent::MAIL, "Header line skipped: {$result_line}" );
+			}
+			$normalized_lines[] = $result_line;
+		}
+
+		// Reconstruct the headers string with normalized lines.
+		Logger::debug( LogComponent::MAIL, "Normalized {$amount_of_normalized_lines} header lines and skipped {$amount_of_skipped_lines} header lines in string format" );
+		return implode( "\r\n", $normalized_lines );
+	}
+
+	/**
+	 * Normalizes a single header line if it is a supported recipient-like header.
+	 *
+	 * @since 2.3.0
+	 * @since 2.4.0 Updated the return type.
+	 *
+	 * @param string $line Header line in the format "Header-Name: value".
+	 * @param array  $supported_headers Supported lowercase header names.
+	 * @return array{0: bool, 1: string} [normalized, header_line] Whether the line was
+	 *                                     normalized and the resulting header line.
+	 */
+	private static function scouting_oidc_mail_normalize_header_line( string $line, array $supported_headers ): array {
+		// Skip lines that are empty, contain only whitespace, or do not match the "Header-Name: value" format.
+		if ( '' === $line || preg_match( '/^\s+/', $line ) ) {
+			return array( false, $line );
+		}
+
+		// Parse the header line into name and value.
+		if ( ! preg_match( '/^([A-Za-z0-9-]+)\s*:(.*)$/', $line, $matches ) ) {
+			Logger::debug( LogComponent::MAIL, "Header line did not match name-value format; skipping normalization for line: '{$line}'" );
+			return array( false, $line );
+		}
+
+		// Check if the header name is in the list of supported headers for normalization.
+		$name            = $matches[1];
+		$value           = $matches[2];
+		$normalized_name = strtolower( $name );
+		if ( ! in_array( $normalized_name, $supported_headers, true ) ) {
+			Logger::debug( LogComponent::MAIL, "Header '{$name}' is not a supported recipient-like header; skipping normalization for line: '{$line}'" );
+			return array( false, $line );
+		}
+
+		// Normalize the header value and reconstruct the header line.
+		$normalized_value = self::scouting_oidc_mail_normalize_header_value( $value );
+		Logger::debug( LogComponent::MAIL, "Header line with name '{$name}' normalized from value '{$value}' to '{$normalized_value}'" );
+		return array( true, $name . ': ' . $normalized_value );
+	}
+
+	/**
+	 * Normalizes one header value containing one or more recipients.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $value Header value.
+	 * @return string Normalized header value.
+	 */
+	private static function scouting_oidc_mail_normalize_header_value( string $value ): string {
+		// Parse the header value as a list of recipients and normalize each one.
+		$recipients = wp_parse_list( $value );
+
+		Logger::debug( LogComponent::MAIL, 'Normalizing ' . count( $recipients ) . " recipients in header value: '{$value}'" );
+
+		$normalized_recipients           = array();
+		$amount_of_normalized_recipients = 0;
+		$amount_of_skipped_recipients    = 0;
+
+		// Strip +SOL_ID from each recipient if it belongs to a Scouting OIDC user.
+		foreach ( $recipients as $recipient ) {
+			[$normalized, $result_recipient] = self::scouting_oidc_mail_strip_sol_alias_from_recipient( $recipient );
+			if ( $normalized ) {
+				++$amount_of_normalized_recipients;
+			} else {
+				++$amount_of_skipped_recipients;
+			}
+			$normalized_recipients[] = $result_recipient;
+		}
+
+		Logger::debug( LogComponent::MAIL, "Normalized {$amount_of_normalized_recipients} recipients and skipped normalization for {$amount_of_skipped_recipients} recipients in header value: '{$value}'" );
+
+		// Return the normalized recipients as a comma-separated string.
+		return implode( ', ', $normalized_recipients );
+	}
+
+	/**
+	 * Strips +SOL_ID from recipient email when SOL_ID belongs to a Scouting OIDC user.
+	 *
+	 * The parser uses the rightmost '+' in the local-part as delimiter for SOL_ID.
+	 * Example: user+group+123456@example.com => SOL_ID is interpreted as 123456,
+	 * and the normalized address becomes user+group@example.com when valid.
+	 *
+	 * @since 2.3.0
+	 * @since 2.4.0 Updated the return type.
+	 *
+	 * @param string $recipient Mail recipient (email or "Name <email>").
+	 * @return array{0: bool, 1: string} [normalized, recipient] Whether the recipient
+	 *                                     was normalized and the resulting recipient.
+	 */
+	private static function scouting_oidc_mail_strip_sol_alias_from_recipient( string $recipient ): array {
+		// Extract and validate email address from recipient string.
+		$email = self::scouting_oidc_mail_extract_valid_email_from_recipient( $recipient );
+		if ( null === $email ) {
+			Logger::debug( LogComponent::MAIL, "Recipient '{$recipient}' does not contain a valid email address; skipping normalization" );
+			return array( false, $recipient );
+		}
+
+		// Split the email into local part and domain.
+		[$local_part, $domain] = explode( '@', $email, 2 );
+		$plus_position         = strrpos( $local_part, '+' );
+		if ( false === $plus_position ) {
+			Logger::debug( LogComponent::MAIL, "Email '{$email}' does not contain a plus sign in the local part; skipping normalization" );
+			return array( false, $recipient );
+		}
+
+		// Extract the possible SOL_ID from the local part (after the rightmost '+').
+		$possible_sol_id = substr( $local_part, $plus_position + 1 );
+		if ( '' === $possible_sol_id ) {
+			Logger::debug( LogComponent::MAIL, "Email '{$email}' has a plus sign but no SOL ID after it; skipping normalization" );
+			return array( false, $recipient );
+		}
+
+		// Validate SOL_ID format (e.g., ensure it is numeric) before performing user lookup.
+		if ( ! ctype_digit( $possible_sol_id ) ) {
+			Logger::debug( LogComponent::MAIL, "Email '{$email}' has a plus sign but the SOL ID '{$possible_sol_id}' is not numeric; skipping normalization" );
+			return array( false, $recipient );
+		}
+		// Check if the SOL_ID belongs to a Scouting OIDC user.
+		Logger::debug( LogComponent::MAIL, "Email '{$email}' has a plus sign with possible SOL ID '{$possible_sol_id}'; checking if it belongs to a Scouting OIDC user" );
+		if ( ! self::scouting_oidc_mail_is_sol_oidc_user( $possible_sol_id ) ) {
+			Logger::debug( LogComponent::MAIL, "Email '{$email}' has a plus sign with possible SOL ID '{$possible_sol_id}', but it does not belong to a Scouting OIDC user; skipping normalization" );
+			return array( false, $recipient );
+		}
+
+		// Construct the normalized email by removing the +SOL_ID part.
+		$normalized_email = substr( $local_part, 0, $plus_position ) . '@' . $domain;
+		$user             = get_user_by( 'login', $possible_sol_id );
+		$user_id          = $user ? $user->ID : null;
+
+		Logger::debug( LogComponent::MAIL, "Email '{$email}' is identified as a plus-addressed alias for SOL ID '{$possible_sol_id}' belonging to user ID {$user_id} and will be normalized to '{$normalized_email}'", $user_id, $possible_sol_id );
+		// Replace the original email in the recipient string with the normalized email.
+		return array( true, str_replace( $email, $normalized_email, $recipient ) );
+	}
+
+	/**
+	 * Extracts a valid email address from recipient text.
+	 *
+	 * Supports common formats like "email@example.com" and "Name <email@example.com>".
+	 * Returns null when no valid email can be extracted.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $recipient Mail recipient value.
+	 * @return string|null Extracted email when valid, otherwise null.
+	 */
+	private static function scouting_oidc_mail_extract_valid_email_from_recipient( string $recipient ): ?string {
+		// First, prefer the angle-bracket format: Name <email@example.com>.
+		if ( preg_match( '/<([^<>]+)>/', $recipient, $matches ) ) {
+			$candidate = trim( $matches[1] );
+			if ( is_email( $candidate ) ) {
+				Logger::debug( LogComponent::MAIL, "Email '{$candidate}' extracted from angle-bracket format in recipient: '{$recipient}'" );
+				return $candidate;
+			}
+		}
+
+		// Then parse simple recipient lists and validate each candidate with WordPress.
+		$tokens = wp_parse_list( $recipient );
+		foreach ( $tokens as $token ) {
+			$candidate = trim( (string) $token, " \t\n\r\0\x0B\"'<>();" );
+			if ( is_email( $candidate ) ) {
+				Logger::debug( LogComponent::MAIL, "Email '{$candidate}' extracted from token list in recipient: '{$recipient}'" );
+				return $candidate;
+			}
+		}
+
+		// Finally, allow direct single-value recipients that are already clean.
+		$recipient_trimmed = trim( $recipient );
+		if ( is_email( $recipient_trimmed ) ) {
+			Logger::debug( LogComponent::MAIL, "Email '{$recipient_trimmed}' is a direct valid email in recipient: '{$recipient}'" );
+			return $recipient_trimmed;
+		}
+
+		Logger::debug( LogComponent::MAIL, "No valid email could be extracted from recipient: '{$recipient}'" );
+		return null;
+	}
+
+	/**
+	 * Determines whether a SOL ID belongs to a Scouting OIDC user, with request-level cache.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $sol_id SOL ID.
+	 * @return bool True when SOL ID exists and is marked as scouting_oidc_user=true.
+	 */
+	private static function scouting_oidc_mail_is_sol_oidc_user( string $sol_id ): bool {
+		if ( isset( self::$scouting_oidc_mail_sol_user_cache[ $sol_id ] ) ) {
+			Logger::debug( LogComponent::MAIL, "Cache hit for SOL ID '{$sol_id}' " . ( self::$scouting_oidc_mail_sol_user_cache[ $sol_id ] ? 'is a Scouting OIDC user' : 'is not a Scouting OIDC user' ) );
+			return self::$scouting_oidc_mail_sol_user_cache[ $sol_id ];
+		}
+
+		Logger::debug( LogComponent::MAIL, "Cache miss for SOL ID '{$sol_id}'; performing database lookup to determine if it belongs to a Scouting OIDC user" );
+
+		$user             = get_user_by( 'login', $sol_id );
+		$is_sol_oidc_user = false !== $user && 'true' === get_user_meta( $user->ID, 'scouting_oidc_user', true );
+
+		Logger::debug( LogComponent::MAIL, "Database lookup result for SOL ID '{$sol_id}' " . ( $is_sol_oidc_user ? 'is a Scouting OIDC user' : 'is not a Scouting OIDC user' ) );
+
+		self::$scouting_oidc_mail_sol_user_cache[ $sol_id ] = (bool) $is_sol_oidc_user;
+
+		return $is_sol_oidc_user;
+	}
+}
