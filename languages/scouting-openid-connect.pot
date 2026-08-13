@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Scouting OpenID Connect 2.6.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/issues\n"
-"POT-Creation-Date: 2026-08-07 17:27+0200\n"
+"POT-Creation-Date: 2026-08-13 20:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
@@ -18,1335 +18,1342 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: auth/Auth.php:60 auth/Auth.php:130 shortcode/Page.php:153
+#: auth/class-auth.php:82 auth/class-auth.php:160
+#: shortcode/class-shortcode.php:165
 msgid "Login with Scouts Online"
 msgstr ""
 
-#: auth/Auth.php:106 shortcode/Page.php:154
+#: auth/class-auth.php:136 shortcode/class-shortcode.php:166
 msgid "Logout"
 msgstr ""
 
-#: auth/Auth.php:173
+#: auth/class-auth.php:207
 msgid "Client ID or Client Secret are missing in the configuration"
 msgstr ""
 
-#: auth/Auth.php:249
+#: auth/class-auth.php:284
 msgid "State is invalid"
 msgstr ""
 
-#: auth/Auth.php:255 auth/Auth.php:262
+#: auth/class-auth.php:290 auth/class-auth.php:297
 msgid "Code is missing"
 msgstr ""
 
-#: auth/Auth.php:298
+#: auth/class-auth.php:332
 msgid "Webmaster disabled creation of new accounts"
 msgstr ""
 
-#: auth/Auth.php:337
+#: auth/class-auth.php:372
 msgid "The user denied the request"
 msgstr ""
 
-#: auth/Auth.php:341 auth/OpenIDConnectClient.php:685
-#: auth/OpenIDConnectClient.php:722 auth/OpenIDConnectClient.php:744
+#: auth/class-auth.php:376 auth/class-openidconnectclient.php:755
+#: auth/class-openidconnectclient.php:792
+#: auth/class-openidconnectclient.php:814
 msgid "Details:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:116 auth/OpenIDConnectClient.php:987
+#: auth/class-openidconnectclient.php:166
+#: auth/class-openidconnectclient.php:1082
 msgid "A secure login session could not be started. Please use HTTPS and try again."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:128
+#: auth/class-openidconnectclient.php:178
 msgid "The identity provider does not support the required S256 code challenge method for PKCE."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:134
+#: auth/class-openidconnectclient.php:184
 msgid "The authorization_endpoint is not available in the well-known data."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:148
+#: auth/class-openidconnectclient.php:198
 msgid "The following scopes are not supported:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:148
+#: auth/class-openidconnectclient.php:198
 msgid "The supported scopes are:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:207
+#: auth/class-openidconnectclient.php:262
 msgid "The token_endpoint is not available in the well-known data."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:217
+#: auth/class-openidconnectclient.php:272
 msgid "The code_verifier for PKCE is missing from the session."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:254
+#: auth/class-openidconnectclient.php:309
 #, php-format
 msgid "Token endpoint error %1$s: %2$s"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:306
+#: auth/class-openidconnectclient.php:366
 msgid "The ID token is not available in the tokens."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:312
+#: auth/class-openidconnectclient.php:372
 msgid "The JSON Web Key Set (JWKS) is not available."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:319
+#: auth/class-openidconnectclient.php:379
 msgid "The ID token has an invalid structure."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:333
+#: auth/class-openidconnectclient.php:393
 msgid "The ID token uses an unexpected signing algorithm."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:348
+#: auth/class-openidconnectclient.php:408
 msgid "The certificate chain (x5c) for the key ID (kid) specified in the header was not found."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:363
+#: auth/class-openidconnectclient.php:423
 msgid "The signing certificate used to validate the ID token is invalid or unsupported."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:370
+#: auth/class-openidconnectclient.php:430
 msgid "The signature in the ID token is not valid."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:376
+#: auth/class-openidconnectclient.php:436
 msgid "The ID token payload could not be decoded."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:382
+#: auth/class-openidconnectclient.php:442
 msgid "The ID token was issued by an unexpected issuer."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:389
+#: auth/class-openidconnectclient.php:449
 msgid "The ID token was not issued for this client."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:395
+#: auth/class-openidconnectclient.php:455
 msgid "The ID token has expired."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:401
+#: auth/class-openidconnectclient.php:461
 msgid "The ID token has an invalid issued-at timestamp."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:407
+#: auth/class-openidconnectclient.php:467
 msgid "The ID token is missing the required sub claim."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:413
+#: auth/class-openidconnectclient.php:473
 msgid "The login session is invalid or has expired."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:419
+#: auth/class-openidconnectclient.php:479
 msgid "The ID token is missing the required nonce claim."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:424
+#: auth/class-openidconnectclient.php:484
 msgid "The ID token nonce is invalid."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:446
+#: auth/class-openidconnectclient.php:508
 msgid "The userinfo_endpoint is not available in the well-known data."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:458
+#: auth/class-openidconnectclient.php:520
 msgid "The access token is not available in the tokens."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:487
+#: auth/class-openidconnectclient.php:549
 msgid "The UserInfo endpoint returned an unexpected response."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:497
+#: auth/class-openidconnectclient.php:559
 msgid "The UserInfo endpoint returned invalid user data."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:507
+#: auth/class-openidconnectclient.php:569
 msgid "The UserInfo response is missing the required sub claim."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:516
+#: auth/class-openidconnectclient.php:578
 msgid "The UserInfo response belongs to a different subject."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:684 auth/OpenIDConnectClient.php:743
+#: auth/class-openidconnectclient.php:754
+#: auth/class-openidconnectclient.php:813
 msgid "No additional details provided."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:685
+#: auth/class-openidconnectclient.php:755
 msgid "When retrieving well-known data, the status code was:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:716
+#: auth/class-openidconnectclient.php:786
 msgid "The jwks_uri is not available in the well-known data."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:722
+#: auth/class-openidconnectclient.php:792
 msgid "The jwks_uri is not a valid URL."
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:722
+#: auth/class-openidconnectclient.php:792
 msgid "The jwks_uri is not valid:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:744
+#: auth/class-openidconnectclient.php:814
 msgid "When retrieving JWKS data, the status code was:"
 msgstr ""
 
-#: auth/OpenIDConnectClient.php:792
+#: auth/class-openidconnectclient.php:866
 msgid "Authentication is temporarily unavailable. Please try again later."
 msgstr ""
 
-#: logging/Download.php:17 logging/Page.php:69
+#: logging/class-logging.php:90 logging/class-loggingdownload.php:32
 msgid "You do not have sufficient permissions to export logs."
 msgstr ""
 
-#: logging/Help.php:21
+#: logging/class-logging.php:246 logging/class-loggingsettings.php:90
+msgid "Date/Time"
+msgstr ""
+
+#: logging/class-logging.php:247 logging/class-loggingsettings.php:91
+msgid "Level"
+msgstr ""
+
+#: logging/class-logging.php:248 logging/class-loggingsettings.php:92
+msgid "Component"
+msgstr ""
+
+#: logging/class-logging.php:249 logging/class-loggingsettings.php:93
+msgid "User ID"
+msgstr ""
+
+#: logging/class-logging.php:250 logging/class-loggingsettings.php:94
+msgid "SOL ID"
+msgstr ""
+
+#: logging/class-logging.php:251 logging/class-loggingsettings.php:95
+msgid "Message"
+msgstr ""
+
+#: logging/class-logging.php:307
+msgid "Date/time from"
+msgstr ""
+
+#: logging/class-logging.php:310
+msgid "Date/time to"
+msgstr ""
+
+#: logging/class-logging.php:313
+msgid "Filter by level"
+msgstr ""
+
+#: logging/class-logging.php:322
+msgid "Filter by component"
+msgstr ""
+
+#: logging/class-logging.php:331
+msgid "Filter by user ID"
+msgstr ""
+
+#: logging/class-logging.php:334
+msgid "Filter by SOL ID"
+msgstr ""
+
+#: logging/class-logging.php:339
+msgid "Download .log"
+msgstr ""
+
+#: logging/class-logging.php:341
+msgid "Reset"
+msgstr ""
+
+#: logging/class-logging.php:435
+msgid "No log entries found for the selected filters."
+msgstr ""
+
+#: logging/class-logging.php:443
+msgid "Logging"
+msgstr ""
+
+#: logging/class-logging.php:451
+msgid "Search Logs"
+msgstr ""
+
+#: logging/class-logginghelp.php:36
 msgid "Overview"
 msgstr ""
 
-#: logging/Help.php:23
+#: logging/class-logginghelp.php:38
 msgid "This screen shows the plugin logs stored in the database table scouting_oidc_logs."
 msgstr ""
 
-#: logging/Help.php:24
+#: logging/class-logginghelp.php:39
 msgid "Each row contains a timestamp, severity level, component, optional user details, and the log message."
 msgstr ""
 
-#: logging/Help.php:25
+#: logging/class-logginghelp.php:40
 msgid "Log timestamps are stored in UTC in the database and displayed using the WordPress site timezone."
 msgstr ""
 
-#: logging/Help.php:30
+#: logging/class-logginghelp.php:47
 msgid "Filtering and Search"
 msgstr ""
 
-#: logging/Help.php:32
+#: logging/class-logginghelp.php:49
 msgid "Use the filter controls to narrow results by date/time range, level, component, user ID or SOL ID."
 msgstr ""
 
-#: logging/Help.php:33
+#: logging/class-logginghelp.php:50
 msgid "Use the search box to find text in the message field."
 msgstr ""
 
-#: logging/Help.php:34
+#: logging/class-logginghelp.php:51
 msgid "The Reset button clears filters and returns to the latest entries."
 msgstr ""
 
-#: logging/Help.php:39
+#: logging/class-logginghelp.php:58
 msgid "Export and Retention"
 msgstr ""
 
-#: logging/Help.php:41
+#: logging/class-logginghelp.php:60
 msgid "Use the Download .log button to export the currently filtered logs."
 msgstr ""
 
-#: logging/Help.php:45
+#: logging/class-logginghelp.php:64
 #, php-format
 msgid "A daily cleanup task removes log entries older than %d day(s)."
 msgstr ""
 
-#: logging/Help.php:53
+#: logging/class-logginghelp.php:74
 msgid "Debug Logging"
 msgstr ""
 
-#: logging/Help.php:55
+#: logging/class-logginghelp.php:76
 msgid "Debug-level entries are stored only when Enable debug logs is checked in General Settings."
 msgstr ""
 
-#: logging/Help.php:56
+#: logging/class-logginghelp.php:77
 msgid "When WP_DEBUG is enabled, plugin log messages are also mirrored to the WordPress/PHP error log."
 msgstr ""
 
-#: logging/Help.php:60
+#: logging/class-logginghelp.php:82
 msgid "Need more help?"
 msgstr ""
 
-#: logging/Help.php:61
+#: logging/class-logginghelp.php:83
 msgid "Open the Support page"
 msgstr ""
 
-#: logging/Page.php:188 logging/Settings.php:65
-msgid "Date/Time"
-msgstr ""
-
-#: logging/Page.php:189 logging/Settings.php:66
-msgid "Level"
-msgstr ""
-
-#: logging/Page.php:190 logging/Settings.php:67
-msgid "Component"
-msgstr ""
-
-#: logging/Page.php:191 logging/Settings.php:68
-msgid "User ID"
-msgstr ""
-
-#: logging/Page.php:192 logging/Settings.php:69
-msgid "SOL ID"
-msgstr ""
-
-#: logging/Page.php:193 logging/Settings.php:70
-msgid "Message"
-msgstr ""
-
-#: logging/Page.php:244
-msgid "Date/time from"
-msgstr ""
-
-#: logging/Page.php:247
-msgid "Date/time to"
-msgstr ""
-
-#: logging/Page.php:250
-msgid "Filter by level"
-msgstr ""
-
-#: logging/Page.php:259
-msgid "Filter by component"
-msgstr ""
-
-#: logging/Page.php:268
-msgid "Filter by user ID"
-msgstr ""
-
-#: logging/Page.php:271
-msgid "Filter by SOL ID"
-msgstr ""
-
-#: logging/Page.php:276
-msgid "Download .log"
-msgstr ""
-
-#: logging/Page.php:278
-msgid "Reset"
-msgstr ""
-
-#: logging/Page.php:366
-msgid "No log entries found for the selected filters."
-msgstr ""
-
-#: logging/Page.php:374
-msgid "Logging"
-msgstr ""
-
-#: logging/Page.php:382
-msgid "Search Logs"
-msgstr ""
-
-#: logging/Settings.php:51
+#: logging/class-loggingsettings.php:71
 msgid "Logs per page"
 msgstr ""
 
-#: plugin/Actions.php:18 settings/Page.php:42
+#: plugin/class-actions.php:32 settings/class-settings.php:54
 msgid "Settings"
 msgstr ""
 
-#: plugin/Description.php:19
+#: plugin/class-description.php:32
 msgid "WordPress plugin for logging in with Scouting Nederland OpenID Connect Server."
 msgstr ""
 
-#: settings/General.php:20
+#: settings/class-settings-general.php:32
 msgid "General Settings"
 msgstr ""
 
-#: settings/General.php:28
+#: settings/class-settings-general.php:40
 msgid "Set display name"
 msgstr ""
 
-#: settings/General.php:37
+#: settings/class-settings-general.php:49
 msgid "Store birthdate to local profile"
 msgstr ""
 
-#: settings/General.php:46
+#: settings/class-settings-general.php:58
 msgid "Store gender to local profile"
 msgstr ""
 
-#: settings/General.php:55
+#: settings/class-settings-general.php:67
 msgid "Store phone number to local profile"
 msgstr ""
 
-#: settings/General.php:64
+#: settings/class-settings-general.php:76
 msgid "Store address to local profile"
 msgstr ""
 
-#: settings/General.php:74
+#: settings/class-settings-general.php:86
 msgid "Use WooCommerce phone number and address fields"
 msgstr ""
 
-#: settings/General.php:87
+#: settings/class-settings-general.php:99
 msgid "Allow new user accounts"
 msgstr ""
 
-#: settings/General.php:96
+#: settings/class-settings-general.php:108
 msgid "When an email already exists"
 msgstr ""
 
-#: settings/General.php:105
+#: settings/class-settings-general.php:117
 msgid "Redirect only SOL users"
 msgstr ""
 
-#: settings/General.php:114
+#: settings/class-settings-general.php:126
 msgid "After a successful login redirect user to"
 msgstr ""
 
-#: settings/General.php:123
+#: settings/class-settings-general.php:135
 msgid "Url to custom redirect after a successful login"
 msgstr ""
 
-#: settings/General.php:135
+#: settings/class-settings-general.php:147
 msgid "Enable debug logs"
 msgstr ""
 
-#: settings/General.php:144
+#: settings/class-settings-general.php:156
 msgid "Log retention (days)"
 msgstr ""
 
-#: settings/General.php:440
+#: settings/class-settings-general.php:467
 msgid "Full name"
 msgstr ""
 
-#: settings/General.php:441
+#: settings/class-settings-general.php:468
 msgid "First name"
 msgstr ""
 
-#: settings/General.php:442
+#: settings/class-settings-general.php:469
 msgid "Last name"
 msgstr ""
 
-#: settings/General.php:535
+#: settings/class-settings-general.php:569
 msgid "Add plus addressing to email"
 msgstr ""
 
-#: settings/General.php:536
+#: settings/class-settings-general.php:570
 msgid "Stop creation of user with an error"
 msgstr ""
 
-#: settings/General.php:548
+#: settings/class-settings-general.php:583
 msgid "When a user tries to log in with an email that already exists in the system, this setting determines how to handle it. The default option is to add plus addressing."
 msgstr ""
 
-#: settings/General.php:570
+#: settings/class-settings-general.php:606
 msgid "Default (no action)"
 msgstr ""
 
-#: settings/General.php:571
+#: settings/class-settings-general.php:607
 msgid "Frontpage"
 msgstr ""
 
-#: settings/General.php:572
+#: settings/class-settings-general.php:608
 msgid "Dashboard"
 msgstr ""
 
-#: settings/General.php:573
+#: settings/class-settings-general.php:609
 msgid "Custom URL"
 msgstr ""
 
-#: settings/General.php:605
+#: settings/class-settings-general.php:642
 msgid "Enter the slug to append to the base URL where users should be redirected after login."
 msgstr ""
 
-#: settings/General.php:620
+#: settings/class-settings-general.php:657
 msgid "Logs may contain personal data such as user IDs and SOL IDs. Set how many days logs are retained before daily cleanup removes older entries."
 msgstr ""
 
-#: settings/General.php:634
+#: settings/class-settings-general.php:672
 msgid "Debug logs are stored in the plugin logs table only when enabled. If WP_DEBUG is enabled, plugin logs are also mirrored to the WordPress/PHP error log."
 msgstr ""
 
-#: settings/Oidc.php:20
+#: settings/class-settings-oidc.php:32
 msgid "OpenID Connect Settings"
 msgstr ""
 
-#: settings/Oidc.php:28 support/SiteHealth.php:119 support/SiteHealth.php:436
+#: settings/class-settings-oidc.php:40 support/class-sitehealth.php:174
+#: support/class-sitehealth.php:503
 msgid "Client ID"
 msgstr ""
 
-#: settings/Oidc.php:37 support/SiteHealth.php:123 support/SiteHealth.php:442
+#: settings/class-settings-oidc.php:49 support/class-sitehealth.php:178
+#: support/class-sitehealth.php:509
 msgid "Client Secret"
 msgstr ""
 
-#: settings/Oidc.php:46
+#: settings/class-settings-oidc.php:58
 msgid "Scopes"
 msgstr ""
 
-#: settings/Oidc.php:106
+#: settings/class-settings-oidc.php:118
 msgid "Show"
 msgstr ""
 
-#: settings/Oidc.php:107
+#: settings/class-settings-oidc.php:119
 msgid "Hide"
 msgstr ""
 
-#: settings/Oidc.php:112
+#: settings/class-settings-oidc.php:124
 msgid "A client secret is already stored. Leave this field empty to keep the current secret. For security reasons, the stored value cannot be shown here."
 msgstr ""
 
-#: settings/Oidc.php:114
+#: settings/class-settings-oidc.php:126
 msgid "No client secret stored yet."
 msgstr ""
 
-#: settings/Oidc.php:144
+#: settings/class-settings-oidc.php:158
 msgid "Client secret is required."
 msgstr ""
 
-#: settings/Oidc.php:177
+#: settings/class-settings-oidc.php:193
 msgid "Scopes should be separated by spaces. Commas and semicolons were converted automatically."
 msgstr ""
 
-#: settings/Oidc.php:195
+#: settings/class-settings-oidc.php:212
 msgid "Unsupported scopes were removed:"
 msgstr ""
 
-#: settings/Oidc.php:195
+#: settings/class-settings-oidc.php:212
 msgid "Supported scopes are:"
 msgstr ""
 
-#: settings/Page.php:44
+#: settings/class-settings.php:56
 msgid "Need help with setting up?"
 msgstr ""
 
-#: settings/Page.php:45
+#: settings/class-settings.php:57
 msgid "Go to the support page"
 msgstr ""
 
-#: shortcode/Page.php:36
+#: shortcode/class-shortcode.php:48
 msgid "Shortcode"
 msgstr ""
 
-#: shortcode/Page.php:39
+#: shortcode/class-shortcode.php:51
 msgid "Shortcodes are small pieces of code that allow you to easily add dynamic content to your WordPress site, enabling you to embed files or create objects with just one line of code."
 msgstr ""
 
-#: shortcode/Page.php:41
+#: shortcode/class-shortcode.php:53
 msgid "They can be used for various purposes, such as adding galleries, embedding videos, or displaying specific content types."
 msgstr ""
 
-#: shortcode/Page.php:43
+#: shortcode/class-shortcode.php:55
 msgid "To use a shortcode, simply insert it into the content area of your post or page, and WordPress will parse it, replacing it with the corresponding content when viewed."
 msgstr ""
 
-#: shortcode/Page.php:45
+#: shortcode/class-shortcode.php:57
 msgid "For more information on how to use shortcodes and their benefits, visit the following link: "
 msgstr ""
 
-#: shortcode/Page.php:46
+#: shortcode/class-shortcode.php:58
 msgid "WordPress Shortcode Block Support"
 msgstr ""
 
-#: shortcode/Page.php:49
+#: shortcode/class-shortcode.php:61
 msgid "Shortcodes for OpenID Connect"
 msgstr ""
 
-#: shortcode/Page.php:51
+#: shortcode/class-shortcode.php:63
 msgid "OpenID Connect Button"
 msgstr ""
 
-#: shortcode/Page.php:54
+#: shortcode/class-shortcode.php:66
 msgid "Button Example"
 msgstr ""
 
-#: shortcode/Page.php:56
+#: shortcode/class-shortcode.php:68
 msgid "The OpenID Connect button shortcode allows you to add a button to your WordPress site that users can click to log in using their Scouts Online account."
 msgstr ""
 
-#: shortcode/Page.php:58
+#: shortcode/class-shortcode.php:70
 msgid "To add the OpenID Connect button to your site, use the following shortcode:"
 msgstr ""
 
-#: shortcode/Page.php:61
+#: shortcode/class-shortcode.php:73
 msgid "You can customize the appearance of the button by adding attributes to the shortcode. The following attributes are available:"
 msgstr ""
 
-#: shortcode/Page.php:63
+#: shortcode/class-shortcode.php:75
 msgid "The width of the button in pixels."
 msgstr ""
 
-#: shortcode/Page.php:64
+#: shortcode/class-shortcode.php:76
 msgid "The height of the button in pixels."
 msgstr ""
 
-#: shortcode/Page.php:65
+#: shortcode/class-shortcode.php:77
 msgid "The background color of the button."
 msgstr ""
 
-#: shortcode/Page.php:66
+#: shortcode/class-shortcode.php:78
 msgid "The text color of the button."
 msgstr ""
 
-#: shortcode/Page.php:67
+#: shortcode/class-shortcode.php:79
 msgid "Set to true to hide the logo."
 msgstr ""
 
-#: shortcode/Page.php:68
+#: shortcode/class-shortcode.php:80
 msgid "Set to true to return the user to the page with the button after login. This overrides login redirection settings."
 msgstr ""
 
-#: shortcode/Page.php:72
+#: shortcode/class-shortcode.php:84
 msgid "Live Shortcode Editor"
 msgstr ""
 
-#: shortcode/Page.php:76
+#: shortcode/class-shortcode.php:88
 msgid "Default is 250px, minimum is 120px. If the width is smaller than 225px, the logo will be removed."
 msgstr ""
 
-#: shortcode/Page.php:80
+#: shortcode/class-shortcode.php:92
 msgid "Default is 40px, minimum is 40px."
 msgstr ""
 
-#: shortcode/Page.php:84
+#: shortcode/class-shortcode.php:96
 msgid "The default color is #4caf50."
 msgstr ""
 
-#: shortcode/Page.php:88
+#: shortcode/class-shortcode.php:100
 msgid "The default color is #ffffff."
 msgstr ""
 
-#: shortcode/Page.php:92
+#: shortcode/class-shortcode.php:104
 msgid "Check this box to hide the logo on the button."
 msgstr ""
 
-#: shortcode/Page.php:96
+#: shortcode/class-shortcode.php:108
 msgid "Check this box to add redirect_back=\"true\" to the generated shortcodes."
 msgstr ""
 
-#: shortcode/Page.php:100
+#: shortcode/class-shortcode.php:112
 msgid "For demo purposes only: check this box to preview the logout button text."
 msgstr ""
 
-#: shortcode/Page.php:106
+#: shortcode/class-shortcode.php:118
 msgid "Generated shortcode (default attributes shown below until edited):"
 msgstr ""
 
-#: shortcode/Page.php:108
+#: shortcode/class-shortcode.php:120
 msgid "Example of the shortcode above:"
 msgstr ""
 
-#: shortcode/Page.php:112
+#: shortcode/class-shortcode.php:124
 msgid "Note: The button is not interactive in this preview."
 msgstr ""
 
-#: shortcode/Page.php:117
+#: shortcode/class-shortcode.php:129
 msgid "OpenID Connect Link"
 msgstr ""
 
-#: shortcode/Page.php:119
+#: shortcode/class-shortcode.php:131
 msgid "The OpenID Connect link shortcode allows you to add a text link to your WordPress site that users can click to log in using their Scouts Online account."
 msgstr ""
 
-#: shortcode/Page.php:121
+#: shortcode/class-shortcode.php:133
 msgid "To add the OpenID Connect link to your site, use the following shortcode:"
 msgstr ""
 
-#: shortcode/Page.php:124
+#: shortcode/class-shortcode.php:136
 msgid "You cannot customize the appearance of the link, but you can add redirect_back=\"true\" to return the user to the current page after login."
 msgstr ""
 
-#: shortcode/Page.php:125
+#: shortcode/class-shortcode.php:137
 msgid "Example of the link shortcode:"
 msgstr ""
 
-#: shortcode/Page.php:126
+#: shortcode/class-shortcode.php:138
 msgid "Note: Do not copy this link, it will not work. This is just an example of how the link will look like."
 msgstr ""
 
-#: support/Page.php:36 support/Page.php:78
-msgid "Support"
-msgstr ""
-
-#: support/Page.php:37
-msgid "Before you start make sure you have the role \"webmaster\" in"
-msgstr ""
-
-#: support/Page.php:41
-msgid "Setting up OpenID Connect"
-msgstr ""
-
-#: support/Page.php:43
-msgid "Go to"
-msgstr ""
-
-#: support/Page.php:43
-msgid "click on \"Managed websites\" and click on \"Add OpenID Connect connection\"."
-msgstr ""
-
-#: support/Page.php:44
-msgid "Add the name of your group/website."
-msgstr ""
-
-#: support/Page.php:45
-msgid "Add the Redirect URI:"
-msgstr ""
-
-#: support/Page.php:46
-msgid "Add the Post Logout Redirect URI:"
-msgstr ""
-
-#: support/Page.php:47
-msgid "Select the scopes you want to use. The `Email`, `Personal` and `Membership` scopes are required;"
-msgstr ""
-
-#: support/Page.php:48
-msgid "The `Address`, `Phone number` scope is optional."
-msgstr ""
-
-#: support/Page.php:49
-msgid "Currently the `Parents/guardians` scope is not supported."
-msgstr ""
-
-#: support/Page.php:50
-msgid "Select the organizations that can log in."
-msgstr ""
-
-#: support/Page.php:51
-msgid "If your organization has sub-organizations, you can also select \"Allow suborganizations\"."
-msgstr ""
-
-#: support/Page.php:52
-msgid "Select to use the PKCE (code challenge)."
-msgstr ""
-
-#: support/Page.php:53
-msgid "Press \"Add Website\"."
-msgstr ""
-
-#: support/Page.php:54
-msgid "Find the website you just created and click on ⓘ."
-msgstr ""
-
-#: support/Page.php:55
-msgid "Copy the \"Client ID\", \"Client Secret\", and the \"Scopes\" to the"
-msgstr ""
-
-#: support/Page.php:59
-msgid "Fill in the OpenID Connect Settings with the copied data."
-msgstr ""
-
-#: support/Page.php:60
-msgid "Required scopes:"
-msgstr ""
-
-#: support/Page.php:67
-msgid "Optional scopes:"
-msgstr ""
-
-#: support/Page.php:73
-msgid "Fill in the General Settings."
-msgstr ""
-
-#: support/Page.php:74
-msgid "Press \"Save Settings\""
-msgstr ""
-
-#: support/Page.php:75
-msgid "Log out and try to log in with the Scouts Login button."
-msgstr ""
-
-#: support/Page.php:79
-msgid "If you need help, please contact"
-msgstr ""
-
-#: support/Page.php:81
-msgid "(developer of the plugin)"
-msgstr ""
-
-#: support/ProviderHealth.php:59
+#: support/class-providerhealth.php:87
 msgid "The Scouts Online OpenID Connect provider could not be reached"
 msgstr ""
 
-#: support/ProviderHealth.php:63
+#: support/class-providerhealth.php:91
 #, php-format
 msgid "Provider discovery failed: %s"
 msgstr ""
 
-#: support/ProviderHealth.php:69
+#: support/class-providerhealth.php:97
 msgid "The Scouts Online provider returned an unexpected response"
 msgstr ""
 
-#: support/ProviderHealth.php:73
+#: support/class-providerhealth.php:101
 #, php-format
 msgid "Provider discovery returned HTTP status %d instead of 200."
 msgstr ""
 
-#: support/ProviderHealth.php:82
+#: support/class-providerhealth.php:110
 msgid "The Scouts Online provider returned invalid discovery data"
 msgstr ""
 
-#: support/ProviderHealth.php:84
+#: support/class-providerhealth.php:112
 msgid "The provider response was not a valid JSON object."
 msgstr ""
 
-#: support/ProviderHealth.php:111
+#: support/class-providerhealth.php:141
 msgid "The provider does not advertise a logout endpoint"
 msgstr ""
 
-#: support/ProviderHealth.php:113
+#: support/class-providerhealth.php:143
 msgid "Login is available, but provider logout will fall back to the site home page."
 msgstr ""
 
-#: support/ProviderHealth.php:135
+#: support/class-providerhealth.php:167
 msgid "The provider discovery issuer does not match"
 msgstr ""
 
-#: support/ProviderHealth.php:137
+#: support/class-providerhealth.php:169
 msgid "The discovered issuer does not match the issuer expected by Scouting OpenID Connect."
 msgstr ""
 
-#: support/ProviderHealth.php:168
+#: support/class-providerhealth.php:202
 msgid "The provider discovery data is incomplete"
 msgstr ""
 
-#: support/ProviderHealth.php:172
+#: support/class-providerhealth.php:206
 #, php-format
 msgid "These required endpoints are missing or invalid: %s."
 msgstr ""
 
-#: support/ProviderHealth.php:187
+#: support/class-providerhealth.php:223
 msgid "The provider does not advertise the required PKCE method"
 msgstr ""
 
-#: support/ProviderHealth.php:189
+#: support/class-providerhealth.php:225
 msgid "Scouting OpenID Connect requires the S256 code challenge method."
 msgstr ""
 
-#: support/ProviderHealth.php:212
+#: support/class-providerhealth.php:248
 msgid "The provider is missing required OpenID Connect capabilities"
 msgstr ""
 
-#: support/ProviderHealth.php:216
+#: support/class-providerhealth.php:252
 #, php-format
 msgid "These capabilities are not advertised: %s."
 msgstr ""
 
-#: support/ProviderHealth.php:239
+#: support/class-providerhealth.php:277
 msgid "Configured scopes are not advertised by the provider"
 msgstr ""
 
-#: support/ProviderHealth.php:243
+#: support/class-providerhealth.php:281
 #, php-format
 msgid "Review these scopes: %s."
 msgstr ""
 
-#: support/ProviderHealth.php:280
+#: support/class-providerhealth.php:322
 msgid "The provider signing keys could not be reached"
 msgstr ""
 
-#: support/ProviderHealth.php:284
+#: support/class-providerhealth.php:326
 #, php-format
 msgid "Signing-key retrieval failed: %s"
 msgstr ""
 
-#: support/ProviderHealth.php:290
+#: support/class-providerhealth.php:332
 msgid "The provider signing keys returned an unexpected response"
 msgstr ""
 
-#: support/ProviderHealth.php:294
+#: support/class-providerhealth.php:336
 #, php-format
 msgid "Signing-key retrieval returned HTTP status %d instead of 200."
 msgstr ""
 
-#: support/ProviderHealth.php:303
+#: support/class-providerhealth.php:345
 msgid "The Scouts Online OpenID Connect provider is available"
 msgstr ""
 
-#: support/ProviderHealth.php:305
+#: support/class-providerhealth.php:347
 msgid "Discovery, required protocol capabilities, endpoints, and signing keys are available."
 msgstr ""
 
-#: support/ProviderHealth.php:308
+#: support/class-providerhealth.php:350
 msgid "The provider signing-key set is empty or invalid"
 msgstr ""
 
-#: support/ProviderHealth.php:310
+#: support/class-providerhealth.php:352
 msgid "The provider did not return an RSA/RS256 signing key with the certificate chain required to validate ID tokens."
 msgstr ""
 
-#: support/ProviderHealth.php:373 support/SiteHealth.php:423
-#: support/SiteHealth.php:524
+#: support/class-providerhealth.php:421 support/class-sitehealth.php:490
+#: support/class-sitehealth.php:593
 msgid "Scouting OpenID Connect"
 msgstr ""
 
-#: support/ProviderHealth.php:391 support/SiteHealth.php:542
+#: support/class-providerhealth.php:441 support/class-sitehealth.php:613
 msgid "Review Scouting OpenID Connect settings"
 msgstr ""
 
-#: support/SiteHealth.php:36
+#: support/class-sitehealth.php:87
 msgid "Scouting OpenID Connect runtime"
 msgstr ""
 
-#: support/SiteHealth.php:40
+#: support/class-sitehealth.php:91
 msgid "Scouting OpenID Connect configuration"
 msgstr ""
 
-#: support/SiteHealth.php:44
+#: support/class-sitehealth.php:95
 msgid "Scouting OpenID Connect scopes"
 msgstr ""
 
-#: support/SiteHealth.php:48
+#: support/class-sitehealth.php:99
 msgid "Scouting OpenID Connect provider"
 msgstr ""
 
-#: support/SiteHealth.php:54
+#: support/class-sitehealth.php:105
 msgid "Scouting OpenID Connect login redirect"
 msgstr ""
 
-#: support/SiteHealth.php:58
+#: support/class-sitehealth.php:109
 msgid "Scouting OpenID Connect log storage"
 msgstr ""
 
-#: support/SiteHealth.php:62
+#: support/class-sitehealth.php:113
 msgid "Scouting OpenID Connect log cleanup"
 msgstr ""
 
-#: support/SiteHealth.php:83
+#: support/class-sitehealth.php:136
 msgid "The server is missing functions required for Scouts Online login"
 msgstr ""
 
-#: support/SiteHealth.php:87
+#: support/class-sitehealth.php:140
 #, php-format
 msgid "Ask the hosting provider to enable the PHP functions or extensions that provide: %s."
 msgstr ""
 
-#: support/SiteHealth.php:96
+#: support/class-sitehealth.php:149
 msgid "Scouting OpenID Connect requires the site to use HTTPS"
 msgstr ""
 
-#: support/SiteHealth.php:98
+#: support/class-sitehealth.php:151
 msgid "The login flow needs HTTPS to create its secure session cookie. Update both WordPress URLs to use HTTPS."
 msgstr ""
 
-#: support/SiteHealth.php:104
+#: support/class-sitehealth.php:157
 msgid "The server meets the Scouting OpenID Connect runtime requirements"
 msgstr ""
 
-#: support/SiteHealth.php:106
+#: support/class-sitehealth.php:159
 msgid "HTTPS and the PHP functions required for sessions and ID token validation are available."
 msgstr ""
 
-#: support/SiteHealth.php:129
+#: support/class-sitehealth.php:184
 msgid "Scouting OpenID Connect is not fully configured"
 msgstr ""
 
-#: support/SiteHealth.php:133
+#: support/class-sitehealth.php:188
 #, php-format
 msgid "Add the following value(s) before users can log in with Scouts Online: %s."
 msgstr ""
 
-#: support/SiteHealth.php:142
+#: support/class-sitehealth.php:197
 msgid "Scouting OpenID Connect credentials are configured"
 msgstr ""
 
-#: support/SiteHealth.php:144
+#: support/class-sitehealth.php:199
 msgid "A Client ID and Client Secret are stored. Site Health never displays the Client Secret."
 msgstr ""
 
-#: support/SiteHealth.php:160
+#: support/class-sitehealth.php:217
 msgid "Required OpenID Connect scopes are missing"
 msgstr ""
 
-#: support/SiteHealth.php:164
+#: support/class-sitehealth.php:221
 #, php-format
 msgid "Add these required scopes to the plugin and the connection in Scouts Online: %s."
 msgstr ""
 
-#: support/SiteHealth.php:173
+#: support/class-sitehealth.php:230
 msgid "Phone storage is enabled without the phone scope."
 msgstr ""
 
-#: support/SiteHealth.php:176
+#: support/class-sitehealth.php:233
 msgid "Address storage is enabled without the address scope."
 msgstr ""
 
-#: support/SiteHealth.php:179
+#: support/class-sitehealth.php:236
 msgid "WooCommerce synchronization is enabled while WooCommerce is not available."
 msgstr ""
 
-#: support/SiteHealth.php:185
+#: support/class-sitehealth.php:242
 msgid "Enabled profile features do not match the configured scopes"
 msgstr ""
 
-#: support/SiteHealth.php:194
+#: support/class-sitehealth.php:251
 msgid "OpenID Connect scopes match the enabled features"
 msgstr ""
 
-#: support/SiteHealth.php:198
+#: support/class-sitehealth.php:255
 #, php-format
 msgid "All required scopes are configured. Current scopes: %s."
 msgstr ""
 
-#: support/SiteHealth.php:216
+#: support/class-sitehealth.php:275
 msgid "The login redirect mode is invalid"
 msgstr ""
 
-#: support/SiteHealth.php:220
+#: support/class-sitehealth.php:279
 #, php-format
 msgid "The stored redirect mode \"%s\" is not recognized."
 msgstr ""
 
-#: support/SiteHealth.php:231
+#: support/class-sitehealth.php:290
 msgid "The custom login redirect is not configured correctly"
 msgstr ""
 
-#: support/SiteHealth.php:233
+#: support/class-sitehealth.php:292
 msgid "Choose a valid page on this site or select another login redirect mode."
 msgstr ""
 
-#: support/SiteHealth.php:240
+#: support/class-sitehealth.php:299
 msgid "The login redirect is configured"
 msgstr ""
 
-#: support/SiteHealth.php:244
+#: support/class-sitehealth.php:303
 #, php-format
 msgid "The current post-login redirect mode is %s."
 msgstr ""
 
-#: support/SiteHealth.php:259
+#: support/class-sitehealth.php:320
 msgid "The Scouting OpenID Connect log table is missing"
 msgstr ""
 
-#: support/SiteHealth.php:261
+#: support/class-sitehealth.php:322
 msgid "Deactivate and reactivate the plugin to recreate its log storage."
 msgstr ""
 
-#: support/SiteHealth.php:273
+#: support/class-sitehealth.php:334
 #, php-format
 msgid "Missing database columns: %s."
 msgstr ""
 
-#: support/SiteHealth.php:280
+#: support/class-sitehealth.php:341
 #, php-format
 msgid "Installed schema version is %1$s; expected %2$s."
 msgstr ""
 
-#: support/SiteHealth.php:281
+#: support/class-sitehealth.php:342
 msgid "not recorded"
 msgstr ""
 
-#: support/SiteHealth.php:289
+#: support/class-sitehealth.php:350
 msgid "The Scouting OpenID Connect log storage needs attention"
 msgstr ""
 
-#: support/SiteHealth.php:297
+#: support/class-sitehealth.php:358
 msgid "The Scouting OpenID Connect log storage is ready"
 msgstr ""
 
-#: support/SiteHealth.php:299
+#: support/class-sitehealth.php:360
 msgid "The log table exists with the expected schema and columns."
 msgstr ""
 
-#: support/SiteHealth.php:320
+#: support/class-sitehealth.php:383
 msgid "Run log cleanup now"
 msgstr ""
 
-#: support/SiteHealth.php:327
+#: support/class-sitehealth.php:390
 msgid "Scouting OpenID Connect log cleanup is not scheduled"
 msgstr ""
 
-#: support/SiteHealth.php:329
+#: support/class-sitehealth.php:392
 msgid "The plugin could not find its daily cleanup event. Run cleanup now to recreate the schedule."
 msgstr ""
 
-#: support/SiteHealth.php:337
+#: support/class-sitehealth.php:400
 msgid "The cleanup event is not using the daily schedule."
 msgstr ""
 
-#: support/SiteHealth.php:344
+#: support/class-sitehealth.php:407
 #, php-format
 msgid "Automatic WP-Cron spawning is disabled, and the external cron runner has not processed the cleanup scheduled for %s."
 msgstr ""
 
-#: support/SiteHealth.php:350
+#: support/class-sitehealth.php:413
 #, php-format
 msgid "WordPress has not dispatched the cleanup scheduled for %s. Check the core scheduled-events and loopback-request Site Health tests."
 msgstr ""
 
-#: support/SiteHealth.php:359
+#: support/class-sitehealth.php:422
 msgid "Scouting OpenID Connect log cleanup needs attention"
 msgstr ""
 
-#: support/SiteHealth.php:368
+#: support/class-sitehealth.php:431
 msgid "Scouting OpenID Connect log cleanup is scheduled"
 msgstr ""
 
-#: support/SiteHealth.php:372
+#: support/class-sitehealth.php:435
 #, php-format
 msgid "The next cleanup is scheduled for %1$s and will retain %2$d days of logs."
 msgstr ""
 
-#: support/SiteHealth.php:402 user/Fields.php:79
+#: support/class-sitehealth.php:469 user/class-fields.php:102
 msgid "Birthdate"
 msgstr ""
 
-#: support/SiteHealth.php:403 user/Fields.php:98
+#: support/class-sitehealth.php:470 user/class-fields.php:124
 msgid "Gender"
 msgstr ""
 
-#: support/SiteHealth.php:404
+#: support/class-sitehealth.php:471
 msgid "Phone"
 msgstr ""
 
-#: support/SiteHealth.php:405
+#: support/class-sitehealth.php:472
 msgid "Address"
 msgstr ""
 
-#: support/SiteHealth.php:415
+#: support/class-sitehealth.php:482
 msgid "Not scheduled"
 msgstr ""
 
-#: support/SiteHealth.php:419
+#: support/class-sitehealth.php:486
 msgid "Never recorded"
 msgstr ""
 
-#: support/SiteHealth.php:424
+#: support/class-sitehealth.php:491
 msgid "Configuration and operational details. Client secrets and personal user claims are never included."
 msgstr ""
 
-#: support/SiteHealth.php:427
+#: support/class-sitehealth.php:494
 msgid "Plugin version"
 msgstr ""
 
-#: support/SiteHealth.php:428
+#: support/class-sitehealth.php:495
 msgid "Issuer"
 msgstr ""
 
-#: support/SiteHealth.php:429
+#: support/class-sitehealth.php:496
 msgid "Redirect URI"
 msgstr ""
 
-#: support/SiteHealth.php:430
+#: support/class-sitehealth.php:497
 msgid "Site uses HTTPS"
 msgstr ""
 
-#: support/SiteHealth.php:432
+#: support/class-sitehealth.php:499
 msgid "PHP OpenSSL library"
 msgstr ""
 
-#: support/SiteHealth.php:433 support/SiteHealth.php:616
-#: support/SiteHealth.php:694
+#: support/class-sitehealth.php:500 support/class-sitehealth.php:698
+#: support/class-sitehealth.php:782
 msgid "Not available"
 msgstr ""
 
-#: support/SiteHealth.php:438 support/SiteHealth.php:444
+#: support/class-sitehealth.php:505 support/class-sitehealth.php:511
 msgid "Not configured"
 msgstr ""
 
-#: support/SiteHealth.php:439 support/SiteHealth.php:445
+#: support/class-sitehealth.php:506 support/class-sitehealth.php:512
 msgid "Configured"
 msgstr ""
 
-#: support/SiteHealth.php:447
+#: support/class-sitehealth.php:514
 msgid "Configured scopes"
 msgstr ""
 
-#: support/SiteHealth.php:449
+#: support/class-sitehealth.php:516
 msgid "Required scopes"
 msgstr ""
 
-#: support/SiteHealth.php:451
+#: support/class-sitehealth.php:518
 msgid "All present"
 msgstr ""
 
-#: support/SiteHealth.php:454
+#: support/class-sitehealth.php:521
 #, php-format
 msgid "Missing: %s"
 msgstr ""
 
-#: support/SiteHealth.php:459
+#: support/class-sitehealth.php:526
 msgid "Stored profile fields"
 msgstr ""
 
-#: support/SiteHealth.php:460 support/SiteHealth.php:644
+#: support/class-sitehealth.php:527 support/class-sitehealth.php:726
 msgid "None"
 msgstr ""
 
-#: support/SiteHealth.php:462
+#: support/class-sitehealth.php:529
 msgid "Automatic account creation"
 msgstr ""
 
-#: support/SiteHealth.php:463
+#: support/class-sitehealth.php:530
 msgid "Duplicate email handling"
 msgstr ""
 
-#: support/SiteHealth.php:464
+#: support/class-sitehealth.php:531
 msgid "Login redirect mode"
 msgstr ""
 
-#: support/SiteHealth.php:465
+#: support/class-sitehealth.php:532
 msgid "Custom login redirect"
 msgstr ""
 
-#: support/SiteHealth.php:466
+#: support/class-sitehealth.php:533
 msgid "Scouting OpenID Connect users"
 msgstr ""
 
-#: support/SiteHealth.php:467
+#: support/class-sitehealth.php:534
 msgid "WooCommerce available"
 msgstr ""
 
-#: support/SiteHealth.php:468
+#: support/class-sitehealth.php:535
 msgid "WooCommerce synchronization"
 msgstr ""
 
-#: support/SiteHealth.php:469
+#: support/class-sitehealth.php:536
 msgid "Debug logging"
 msgstr ""
 
-#: support/SiteHealth.php:471
+#: support/class-sitehealth.php:538
 msgid "Log retention"
 msgstr ""
 
-#: support/SiteHealth.php:474
+#: support/class-sitehealth.php:541
 #, php-format
 msgid "%d days"
 msgstr ""
 
-#: support/SiteHealth.php:478
+#: support/class-sitehealth.php:545
 msgid "Log table"
 msgstr ""
 
-#: support/SiteHealth.php:478
+#: support/class-sitehealth.php:545
 msgid "Available"
 msgstr ""
 
-#: support/SiteHealth.php:478
+#: support/class-sitehealth.php:545
 msgid "Missing"
 msgstr ""
 
-#: support/SiteHealth.php:479
+#: support/class-sitehealth.php:546
 msgid "Log database schema"
 msgstr ""
 
-#: support/SiteHealth.php:480
+#: support/class-sitehealth.php:547
 msgid "Log entries"
 msgstr ""
 
-#: support/SiteHealth.php:481
+#: support/class-sitehealth.php:548
 msgid "Errors in the last 24 hours"
 msgstr ""
 
-#: support/SiteHealth.php:482
+#: support/class-sitehealth.php:549
 msgid "Latest log entry"
 msgstr ""
 
-#: support/SiteHealth.php:483
+#: support/class-sitehealth.php:550
 msgid "Last successful log cleanup"
 msgstr ""
 
-#: support/SiteHealth.php:484
+#: support/class-sitehealth.php:551
 msgid "Next log cleanup"
 msgstr ""
 
-#: support/SiteHealth.php:486
+#: support/class-sitehealth.php:553
 msgid "WordPress cron spawning"
 msgstr ""
 
-#: support/SiteHealth.php:488
+#: support/class-sitehealth.php:555
 msgid "Disabled by configuration"
 msgstr ""
 
-#: support/SiteHealth.php:489 support/SiteHealth.php:680
+#: support/class-sitehealth.php:556 support/class-sitehealth.php:766
 msgid "Enabled"
 msgstr ""
 
-#: support/SiteHealth.php:492
+#: support/class-sitehealth.php:559
 msgid "Provider discovery cache"
 msgstr ""
 
-#: support/SiteHealth.php:494 support/SiteHealth.php:500
+#: support/class-sitehealth.php:561 support/class-sitehealth.php:567
 msgid "Empty"
 msgstr ""
 
-#: support/SiteHealth.php:495 support/SiteHealth.php:501
+#: support/class-sitehealth.php:562 support/class-sitehealth.php:568
 msgid "Populated"
 msgstr ""
 
-#: support/SiteHealth.php:498
+#: support/class-sitehealth.php:565
 msgid "Provider signing-key cache"
 msgstr ""
 
-#: support/SiteHealth.php:681
+#: support/class-sitehealth.php:767
 msgid "Disabled"
 msgstr ""
 
-#: user/Fields.php:26
+#: support/class-support.php:48 support/class-support.php:90
+msgid "Support"
+msgstr ""
+
+#: support/class-support.php:49
+msgid "Before you start make sure you have the role \"webmaster\" in"
+msgstr ""
+
+#: support/class-support.php:53
+msgid "Setting up OpenID Connect"
+msgstr ""
+
+#: support/class-support.php:55
+msgid "Go to"
+msgstr ""
+
+#: support/class-support.php:55
+msgid "click on \"Managed websites\" and click on \"Add OpenID Connect connection\"."
+msgstr ""
+
+#: support/class-support.php:56
+msgid "Add the name of your group/website."
+msgstr ""
+
+#: support/class-support.php:57
+msgid "Add the Redirect URI:"
+msgstr ""
+
+#: support/class-support.php:58
+msgid "Add the Post Logout Redirect URI:"
+msgstr ""
+
+#: support/class-support.php:59
+msgid "Select the scopes you want to use. The `Email`, `Personal` and `Membership` scopes are required;"
+msgstr ""
+
+#: support/class-support.php:60
+msgid "The `Address`, `Phone number` scope is optional."
+msgstr ""
+
+#: support/class-support.php:61
+msgid "Currently the `Parents/guardians` scope is not supported."
+msgstr ""
+
+#: support/class-support.php:62
+msgid "Select the organizations that can log in."
+msgstr ""
+
+#: support/class-support.php:63
+msgid "If your organization has sub-organizations, you can also select \"Allow suborganizations\"."
+msgstr ""
+
+#: support/class-support.php:64
+msgid "Select to use the PKCE (code challenge)."
+msgstr ""
+
+#: support/class-support.php:65
+msgid "Press \"Add Website\"."
+msgstr ""
+
+#: support/class-support.php:66
+msgid "Find the website you just created and click on ⓘ."
+msgstr ""
+
+#: support/class-support.php:67
+msgid "Copy the \"Client ID\", \"Client Secret\", and the \"Scopes\" to the"
+msgstr ""
+
+#: support/class-support.php:71
+msgid "Fill in the OpenID Connect Settings with the copied data."
+msgstr ""
+
+#: support/class-support.php:72
+msgid "Required scopes:"
+msgstr ""
+
+#: support/class-support.php:79
+msgid "Optional scopes:"
+msgstr ""
+
+#: support/class-support.php:85
+msgid "Fill in the General Settings."
+msgstr ""
+
+#: support/class-support.php:86
+msgid "Press \"Save Settings\""
+msgstr ""
+
+#: support/class-support.php:87
+msgid "Log out and try to log in with the Scouts Login button."
+msgstr ""
+
+#: support/class-support.php:91
+msgid "If you need help, please contact"
+msgstr ""
+
+#: support/class-support.php:93
+msgid "(developer of the plugin)"
+msgstr ""
+
+#: user/class-fields.php:40
 msgid "View in SOL"
 msgstr ""
 
-#: user/Fields.php:46
+#: user/class-fields.php:66
 msgid "Scouts Online (SOL) Profile Information"
 msgstr ""
 
-#: user/Fields.php:101
+#: user/class-fields.php:127
 msgid "Male"
 msgstr ""
 
-#: user/Fields.php:102
+#: user/class-fields.php:128
 msgid "Female"
 msgstr ""
 
-#: user/Fields.php:103
+#: user/class-fields.php:129
 msgid "Other"
 msgstr ""
 
-#: user/Fields.php:104
+#: user/class-fields.php:130
 msgid "Unknown"
 msgstr ""
 
-#: user/Fields.php:119
+#: user/class-fields.php:148
 msgid "Phone Number"
 msgstr ""
 
-#: user/Fields.php:136
+#: user/class-fields.php:168
 msgid "Street"
 msgstr ""
 
-#: user/Fields.php:152
+#: user/class-fields.php:187
 msgid "House Number"
 msgstr ""
 
-#: user/Fields.php:168
+#: user/class-fields.php:206
 msgid "Postal Code"
 msgstr ""
 
-#: user/Fields.php:184
+#: user/class-fields.php:225
 msgid "City"
 msgstr ""
 
-#: user/Fields.php:200
+#: user/class-fields.php:244
 msgid "Country Code"
 msgstr ""
 
-#: user/User.php:175
+#: user/class-user.php:255
 msgid "SOL ID is missing, make sure the \"membership\" scope is enabled."
 msgstr ""
 
-#: user/User.php:180
+#: user/class-user.php:260
 msgid "OpenID Connect subject is missing."
 msgstr ""
 
-#: user/User.php:188
+#: user/class-user.php:268
 msgid "Email is missing, make sure the \"email\" scope is enabled."
 msgstr ""
 
-#: user/User.php:213
+#: user/class-user.php:297
 msgid "This SOL ID is already linked to another account."
 msgstr ""
 
-#: user/User.php:259 user/User.php:270 user/User.php:319 user/User.php:333
+#: user/class-user.php:348 user/class-user.php:359 user/class-user.php:417
+#: user/class-user.php:434
 msgid "Email address is already in use by another account"
 msgstr ""
 
-#: user/User.php:359
+#: user/class-user.php:462
 msgid "User not found for update"
 msgstr ""
 
-#: user/User.php:375
+#: user/class-user.php:480
 msgid "Something went wrong while trying to log in"
 msgstr ""
 
-#: utilities/CronJobs.php:152
+#: utilities/class-cronjobs.php:183
 msgid "Sorry, you are not allowed to run Scouting OpenID Connect log cleanup."
 msgstr ""
