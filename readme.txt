@@ -2,8 +2,8 @@
 Contributors: jobvk
 Tags: scouting, scouting nederland, sol, openid connect, oidc
 Requires at least: 6.9.5
-Tested up to: 7.0
-Stable tag: 2.5.0
+Tested up to: 7.1
+Stable tag: 2.6.0
 Requires PHP: 8.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -15,7 +15,7 @@ WordPress plugin for logging in with Scouting Nederland OpenID Connect Server.
 A WordPress plugin for logging in with Scouting Nederland OpenID Connect Server.
 
 This plugin allows users to authenticate and login to their WordPress websites using their Scouting Nederland OpenID Connect credentials.
-It provides a secure and convenient way for Scouting Nederland members to access their WordPress sites without the need for separate login credentials. 
+It provides a secure and convenient way for Scouting Nederland members to access their WordPress sites without the need for separate login credentials.
 With this plugin, users can seamlessly integrate their Scouting Nederland accounts with their WordPress websites, enhancing the user experience and simplifying the login process.
 
 Do not report security vulnerabilities in a public issue or support topic. Follow the [security policy](https://github.com/Scouting-nl/scouting-openid-connect/security/policy) to submit a private report.
@@ -94,6 +94,11 @@ Currently not, but this is planned for a future update of this plugin.
 
 == Changelog ==
 
+= 2.6.0 =
+* Refactored the plugin's PHP and JavaScript codebase for improved readability and consistency.
+* Standardized source file names and the internal plugin structure.
+* Tested up to: `7.1`.
+
 = 2.5.0 =
 * Added a `subject` property to the User class to store the OpenID Connect subject, enforced that it must be present.
 * Fetch user claims from the discovered OpenID Connect UserInfo endpoint instead of the ID token.
@@ -140,7 +145,7 @@ Currently not, but this is planned for a future update of this plugin.
 * `membership` scope is now required to obtain the SOL Member ID.
 * `infix` is removed from user this was conflicting with WooCommerce, the infix is now added before the last name.
 * Removed the `prefix` field from the general settings.
-* Removed the SOL ID field profile this is now the UserName of the WordPress User. 
+* Removed the SOL ID field profile this is now the UserName of the WordPress User.
 * Improved error messages and redirects for missing or invalid user data or OIDC scopes.
 * Updated setup and support documentation to reflect the new identification model.
 
@@ -165,7 +170,7 @@ Currently not, but this is planned for a future update of this plugin.
 = 2.0.0 =
 ⚠️ `Breaking Changes`
 
-This release introduces a major change in how WordPress users are identified.  
+This release introduces a major change in how WordPress users are identified.
 The WordPress `UserName` now uses the `SOL ID` instead of the `SOL UserName`.
 
 Use version `2.0.1` for backward compatibility with version `1.2.0`.

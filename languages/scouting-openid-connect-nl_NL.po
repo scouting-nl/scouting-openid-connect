@@ -2,10 +2,11 @@
 # This file is distributed under the same license as the Scouting OpenID Connect plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Scouting OpenID Connect 2.5.0\n"
-"Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/issues\n"
-"POT-Creation-Date: 2026-08-07 17:26+0200\n"
-"PO-Revision-Date: 2026-08-07 17:40+0200\n"
+"Project-Id-Version: Scouting OpenID Connect 2.6.0\n"
+"Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/"
+"issues\n"
+"POT-Creation-Date: 2026-08-13 20:54+0200\n"
+"PO-Revision-Date: 2026-08-13 20:54+0200\n"
 "Last-Translator: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language: nl_NL\n"
@@ -18,1519 +19,1640 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: auth/Auth.php:60 auth/Auth.php:130 shortcode/Page.php:153
+#: auth/class-auth.php:82 auth/class-auth.php:160
+#: shortcode/class-shortcode.php:165
 msgid "Login with Scouts Online"
 msgstr "Inloggen met Scouts Online"
 
-#: auth/Auth.php:106 shortcode/Page.php:154
+#: auth/class-auth.php:136 shortcode/class-shortcode.php:166
 msgid "Logout"
 msgstr "Uitloggen"
 
-#: auth/Auth.php:173
+#: auth/class-auth.php:207
 msgid "Client ID or Client Secret are missing in the configuration"
 msgstr "Client-ID of Client Secret ontbreekt in de configuratie"
 
-#: auth/Auth.php:249
+#: auth/class-auth.php:284
 msgid "State is invalid"
 msgstr "State is ongeldig"
 
-#: auth/Auth.php:255 auth/Auth.php:262
+#: auth/class-auth.php:290 auth/class-auth.php:297
 msgid "Code is missing"
 msgstr "Code ontbreekt"
 
-#: auth/Auth.php:298
+#: auth/class-auth.php:332
 msgid "Webmaster disabled creation of new accounts"
 msgstr "Webmaster heeft het aanmaken van nieuwe accounts uitgeschakeld"
 
-#: auth/Auth.php:337
+#: auth/class-auth.php:372
 msgid "The user denied the request"
 msgstr "De gebruiker heeft het verzoek geweigerd"
 
-#: auth/Auth.php:341 auth/OpenIDConnectClient.php:685 auth/OpenIDConnectClient.php:722
-#: auth/OpenIDConnectClient.php:744
+#: auth/class-auth.php:376 auth/class-openidconnectclient.php:755
+#: auth/class-openidconnectclient.php:792
+#: auth/class-openidconnectclient.php:814
 msgid "Details:"
 msgstr "Details:"
 
-#: auth/OpenIDConnectClient.php:116 auth/OpenIDConnectClient.php:987
-msgid "A secure login session could not be started. Please use HTTPS and try again."
-msgstr "Een veilige inlogsessie kon niet worden gestart. Gebruik HTTPS en probeer het opnieuw."
+#: auth/class-openidconnectclient.php:166
+#: auth/class-openidconnectclient.php:1082
+msgid ""
+"A secure login session could not be started. Please use HTTPS and try again."
+msgstr ""
+"Een veilige inlogsessie kon niet worden gestart. Gebruik HTTPS en probeer "
+"het opnieuw."
 
-#: auth/OpenIDConnectClient.php:128
-msgid "The identity provider does not support the required S256 code challenge method for PKCE."
-msgstr "De identiteitsprovider ondersteunt de vereiste S256-codecontrolemethode voor PKCE niet."
+#: auth/class-openidconnectclient.php:178
+msgid ""
+"The identity provider does not support the required S256 code challenge "
+"method for PKCE."
+msgstr ""
+"De identiteitsprovider ondersteunt de vereiste S256-codecontrolemethode voor "
+"PKCE niet."
 
-#: auth/OpenIDConnectClient.php:134
+#: auth/class-openidconnectclient.php:184
 msgid "The authorization_endpoint is not available in the well-known data."
 msgstr "Het authorization_endpoint is niet beschikbaar in de well-known data."
 
-#: auth/OpenIDConnectClient.php:148
+#: auth/class-openidconnectclient.php:198
 msgid "The following scopes are not supported:"
 msgstr "De volgende scopes worden niet ondersteund:"
 
-#: auth/OpenIDConnectClient.php:148
+#: auth/class-openidconnectclient.php:198
 msgid "The supported scopes are:"
 msgstr "De ondersteunde scopes zijn:"
 
-#: auth/OpenIDConnectClient.php:207
+#: auth/class-openidconnectclient.php:262
 msgid "The token_endpoint is not available in the well-known data."
 msgstr "Het token_endpoint is niet beschikbaar in de well-known data."
 
-#: auth/OpenIDConnectClient.php:217
+#: auth/class-openidconnectclient.php:272
 msgid "The code_verifier for PKCE is missing from the session."
 msgstr "De code_verifier voor PKCE ontbreekt in de sessie."
 
-#: auth/OpenIDConnectClient.php:254
+#: auth/class-openidconnectclient.php:309
 #, php-format
 msgid "Token endpoint error %1$s: %2$s"
 msgstr "Token-eindpuntfout %1$s: %2$s"
 
-#: auth/OpenIDConnectClient.php:306
+#: auth/class-openidconnectclient.php:366
 msgid "The ID token is not available in the tokens."
 msgstr "Het ID-token is niet beschikbaar in de tokens."
 
-#: auth/OpenIDConnectClient.php:312
+#: auth/class-openidconnectclient.php:372
 msgid "The JSON Web Key Set (JWKS) is not available."
 msgstr "De JSON Web Key Set (JWKS) is niet beschikbaar."
 
-#: auth/OpenIDConnectClient.php:319
+#: auth/class-openidconnectclient.php:379
 msgid "The ID token has an invalid structure."
 msgstr "Het ID-token heeft een ongeldige structuur."
 
-#: auth/OpenIDConnectClient.php:333
+#: auth/class-openidconnectclient.php:393
 msgid "The ID token uses an unexpected signing algorithm."
 msgstr "Het ID-token maakt gebruik van een onverwacht ondertekeningsalgoritme."
 
-#: auth/OpenIDConnectClient.php:348
-msgid "The certificate chain (x5c) for the key ID (kid) specified in the header was not found."
-msgstr "De certificaatketen (x5c) voor de sleutel-ID (kid) in de koptekst is niet gevonden."
-
-#: auth/OpenIDConnectClient.php:363
-msgid "The signing certificate used to validate the ID token is invalid or unsupported."
+#: auth/class-openidconnectclient.php:408
+msgid ""
+"The certificate chain (x5c) for the key ID (kid) specified in the header was "
+"not found."
 msgstr ""
-"Het ondertekeningscertificaat dat wordt gebruikt om het ID-token te valideren, is ongeldig of "
-"wordt niet ondersteund."
+"De certificaatketen (x5c) voor de sleutel-ID (kid) in de koptekst is niet "
+"gevonden."
 
-#: auth/OpenIDConnectClient.php:370
+#: auth/class-openidconnectclient.php:423
+msgid ""
+"The signing certificate used to validate the ID token is invalid or "
+"unsupported."
+msgstr ""
+"Het ondertekeningscertificaat dat wordt gebruikt om het ID-token te "
+"valideren, is ongeldig of wordt niet ondersteund."
+
+#: auth/class-openidconnectclient.php:430
 msgid "The signature in the ID token is not valid."
 msgstr "De handtekening in het ID-token is niet geldig."
 
-#: auth/OpenIDConnectClient.php:376
+#: auth/class-openidconnectclient.php:436
 msgid "The ID token payload could not be decoded."
 msgstr "The ID token payload could not be decoded."
 
-#: auth/OpenIDConnectClient.php:382
+#: auth/class-openidconnectclient.php:442
 msgid "The ID token was issued by an unexpected issuer."
 msgstr "Het ID-token is uitgegeven door een onbekende uitgever."
 
-#: auth/OpenIDConnectClient.php:389
+#: auth/class-openidconnectclient.php:449
 msgid "The ID token was not issued for this client."
 msgstr "Er is geen ID-token voor deze klant aangemaakt."
 
-#: auth/OpenIDConnectClient.php:395
+#: auth/class-openidconnectclient.php:455
 msgid "The ID token has expired."
 msgstr "Het ID-token is verlopen."
 
-#: auth/OpenIDConnectClient.php:401
+#: auth/class-openidconnectclient.php:461
 msgid "The ID token has an invalid issued-at timestamp."
 msgstr "Het ID-token heeft een ongeldige tijdstempel voor de uitgiftedatum."
 
-#: auth/OpenIDConnectClient.php:407
+#: auth/class-openidconnectclient.php:467
 msgid "The ID token is missing the required sub claim."
 msgstr "De vereiste subclaim ontbreekt in het ID-token."
 
-#: auth/OpenIDConnectClient.php:413
+#: auth/class-openidconnectclient.php:473
 msgid "The login session is invalid or has expired."
 msgstr "De inlogsessie is ongeldig of is verlopen."
 
-#: auth/OpenIDConnectClient.php:419
+#: auth/class-openidconnectclient.php:479
 msgid "The ID token is missing the required nonce claim."
 msgstr "De vereiste nonce-claim ontbreekt in het ID-token."
 
-#: auth/OpenIDConnectClient.php:424
+#: auth/class-openidconnectclient.php:484
 msgid "The ID token nonce is invalid."
 msgstr "De nonce van het ID-token is ongeldig."
 
-#: auth/OpenIDConnectClient.php:446
+#: auth/class-openidconnectclient.php:508
 msgid "The userinfo_endpoint is not available in the well-known data."
 msgstr "Het userinfo_endpoint is niet beschikbaar in de well-known data."
 
-#: auth/OpenIDConnectClient.php:458
+#: auth/class-openidconnectclient.php:520
 msgid "The access token is not available in the tokens."
 msgstr "Het toegangstoken is niet beschikbaar in de tokens."
 
-#: auth/OpenIDConnectClient.php:487
+#: auth/class-openidconnectclient.php:549
 msgid "The UserInfo endpoint returned an unexpected response."
 msgstr "Het UserInfo-eindpunt heeft een onverwacht antwoord geretourneerd."
 
-#: auth/OpenIDConnectClient.php:497
+#: auth/class-openidconnectclient.php:559
 msgid "The UserInfo endpoint returned invalid user data."
-msgstr "Het UserInfo-eindpunt heeft ongeldige gebruikersgegevens geretourneerd."
+msgstr ""
+"Het UserInfo-eindpunt heeft ongeldige gebruikersgegevens geretourneerd."
 
-#: auth/OpenIDConnectClient.php:507
+#: auth/class-openidconnectclient.php:569
 msgid "The UserInfo response is missing the required sub claim."
 msgstr "De vereiste subclaim ontbreekt in het UserInfo-antwoord."
 
-#: auth/OpenIDConnectClient.php:516
+#: auth/class-openidconnectclient.php:578
 msgid "The UserInfo response belongs to a different subject."
 msgstr "Het UserInfo-antwoord hoort bij een ander subject."
 
-#: auth/OpenIDConnectClient.php:684 auth/OpenIDConnectClient.php:743
+#: auth/class-openidconnectclient.php:754
+#: auth/class-openidconnectclient.php:813
 msgid "No additional details provided."
 msgstr "Geen aanvullende details verstrekt."
 
-#: auth/OpenIDConnectClient.php:685
+#: auth/class-openidconnectclient.php:755
 msgid "When retrieving well-known data, the status code was:"
 msgstr "Bij het ophalen van well-known data was de statuscode:"
 
-#: auth/OpenIDConnectClient.php:716
+#: auth/class-openidconnectclient.php:786
 msgid "The jwks_uri is not available in the well-known data."
 msgstr "De jwks_uri is niet beschikbaar in de well-known data."
 
-#: auth/OpenIDConnectClient.php:722
+#: auth/class-openidconnectclient.php:792
 msgid "The jwks_uri is not a valid URL."
 msgstr "De jwks_uri is geen geldige URL."
 
-#: auth/OpenIDConnectClient.php:722
+#: auth/class-openidconnectclient.php:792
 msgid "The jwks_uri is not valid:"
 msgstr "De jwks_uri is niet geldig:"
 
-#: auth/OpenIDConnectClient.php:744
+#: auth/class-openidconnectclient.php:814
 msgid "When retrieving JWKS data, the status code was:"
 msgstr "Bij het ophalen van JWKS-gegevens was de statuscode:"
 
-#: auth/OpenIDConnectClient.php:792
+#: auth/class-openidconnectclient.php:866
 msgid "Authentication is temporarily unavailable. Please try again later."
 msgstr "Verificatie is tijdelijk niet beschikbaar. Probeer het later nog eens."
 
-#: logging/Download.php:17 logging/Page.php:69
+#: logging/class-logging.php:90 logging/class-loggingdownload.php:32
 msgid "You do not have sufficient permissions to export logs."
 msgstr "U beschikt niet over voldoende rechten om logbestanden te exporteren."
 
-#: logging/Help.php:21
-msgid "Overview"
-msgstr "Overzicht"
-
-#: logging/Help.php:23
-msgid "This screen shows the plugin logs stored in the database table scouting_oidc_logs."
-msgstr ""
-"Op dit scherm worden de logbestanden van de plug-in weergegeven die zijn opgeslagen in de "
-"databasetabel scouting_oidc_logs."
-
-#: logging/Help.php:24
-msgid ""
-"Each row contains a timestamp, severity level, component, optional user details, and the log "
-"message."
-msgstr ""
-"Elke rij bevat een tijdstempel, een ernstgraad, een component, optionele gebruikersgegevens en "
-"het logbericht."
-
-#: logging/Help.php:25
-msgid ""
-"Log timestamps are stored in UTC in the database and displayed using the WordPress site timezone."
-msgstr ""
-"Logtijdstempels worden in de database opgeslagen in UTC en weergegeven in de tijdzone van de "
-"WordPress-site."
-
-#: logging/Help.php:30
-msgid "Filtering and Search"
-msgstr "Filteren en zoeken"
-
-#: logging/Help.php:32
-msgid ""
-"Use the filter controls to narrow results by date/time range, level, component, user ID or SOL "
-"ID."
-msgstr ""
-"Gebruik de filteropties om de resultaten te verfijnen op basis van datum/tijd, niveau, "
-"onderdeel, gebruikers-ID of SOL-ID."
-
-#: logging/Help.php:33
-msgid "Use the search box to find text in the message field."
-msgstr "Gebruik het zoekvak om tekst in het berichtveld te zoeken."
-
-#: logging/Help.php:34
-msgid "The Reset button clears filters and returns to the latest entries."
-msgstr ""
-"Met de knop Reset worden de filters gewist en keert u terug naar de meest recente vermeldingen."
-
-#: logging/Help.php:39
-msgid "Export and Retention"
-msgstr "Export en behoud"
-
-#: logging/Help.php:41
-msgid "Use the Download .log button to export the currently filtered logs."
-msgstr "Gebruik de knop ‘.log downloaden’ om de momenteel gefilterde logbestanden te exporteren."
-
-#: logging/Help.php:45
-#, php-format
-msgid "A daily cleanup task removes log entries older than %d day(s)."
-msgstr "Een dagelijkse opschoning verwijdert logboekvermeldingen die ouder zijn dan %d dag(en)."
-
-#: logging/Help.php:53
-msgid "Debug Logging"
-msgstr "Loggen van Debug"
-
-#: logging/Help.php:55
-msgid "Debug-level entries are stored only when Enable debug logs is checked in General Settings."
-msgstr ""
-"Vermeldingen op debug-level worden alleen opgeslagen als de optie ‘Debug log inschakelen’ is "
-"aangevinkt in de algemene instellingen."
-
-#: logging/Help.php:56
-msgid ""
-"When WP_DEBUG is enabled, plugin log messages are also mirrored to the WordPress/PHP error log."
-msgstr ""
-"Wanneer WP_DEBUG is ingeschakeld, worden de logberichten van de plug-in ook opgenomen in het "
-"WordPress/PHP-foutenlogboek."
-
-#: logging/Help.php:60
-msgid "Need more help?"
-msgstr "Heb je nog meer hulp nodig?"
-
-#: logging/Help.php:61
-msgid "Open the Support page"
-msgstr "Ga naar de support pagina"
-
-#: logging/Page.php:188 logging/Settings.php:65
+#: logging/class-logging.php:246 logging/class-loggingsettings.php:90
 msgid "Date/Time"
 msgstr "Datum/Tijd"
 
-#: logging/Page.php:189 logging/Settings.php:66
+#: logging/class-logging.php:247 logging/class-loggingsettings.php:91
 msgid "Level"
 msgstr "Level"
 
-#: logging/Page.php:190 logging/Settings.php:67
+#: logging/class-logging.php:248 logging/class-loggingsettings.php:92
 msgid "Component"
 msgstr "Component"
 
-#: logging/Page.php:191 logging/Settings.php:68
+#: logging/class-logging.php:249 logging/class-loggingsettings.php:93
 msgid "User ID"
 msgstr "Gebruikers-ID"
 
-#: logging/Page.php:192 logging/Settings.php:69
+#: logging/class-logging.php:250 logging/class-loggingsettings.php:94
 msgid "SOL ID"
 msgstr "SOL-ID"
 
-#: logging/Page.php:193 logging/Settings.php:70
+#: logging/class-logging.php:251 logging/class-loggingsettings.php:95
 msgid "Message"
 msgstr "Bericht"
 
-#: logging/Page.php:244
+#: logging/class-logging.php:307
 msgid "Date/time from"
 msgstr "Datum/tijd vanaf"
 
-#: logging/Page.php:247
+#: logging/class-logging.php:310
 msgid "Date/time to"
 msgstr "Datum/tijd tot"
 
-#: logging/Page.php:250
+#: logging/class-logging.php:313
 msgid "Filter by level"
 msgstr "Filter op level"
 
-#: logging/Page.php:259
+#: logging/class-logging.php:322
 msgid "Filter by component"
 msgstr "Filter op component"
 
-#: logging/Page.php:268
+#: logging/class-logging.php:331
 msgid "Filter by user ID"
 msgstr "Filter op gebruikers-ID"
 
-#: logging/Page.php:271
+#: logging/class-logging.php:334
 msgid "Filter by SOL ID"
 msgstr "Filter op SOL-ID"
 
-#: logging/Page.php:276
+#: logging/class-logging.php:339
 msgid "Download .log"
 msgstr ".log downloaden"
 
-#: logging/Page.php:278
+#: logging/class-logging.php:341
 msgid "Reset"
 msgstr "Resetten"
 
-#: logging/Page.php:366
+#: logging/class-logging.php:435
 msgid "No log entries found for the selected filters."
 msgstr "Er zijn geen logs gevonden voor de geselecteerde filters."
 
-#: logging/Page.php:374
+#: logging/class-logging.php:443
 msgid "Logging"
 msgstr "Logging"
 
-#: logging/Page.php:382
+#: logging/class-logging.php:451
 msgid "Search Logs"
 msgstr "Zoek Logs"
 
-#: logging/Settings.php:51
+#: logging/class-logginghelp.php:36
+msgid "Overview"
+msgstr "Overzicht"
+
+#: logging/class-logginghelp.php:38
+msgid ""
+"This screen shows the plugin logs stored in the database table "
+"scouting_oidc_logs."
+msgstr ""
+"Op dit scherm worden de logbestanden van de plug-in weergegeven die zijn "
+"opgeslagen in de databasetabel scouting_oidc_logs."
+
+#: logging/class-logginghelp.php:39
+msgid ""
+"Each row contains a timestamp, severity level, component, optional user "
+"details, and the log message."
+msgstr ""
+"Elke rij bevat een tijdstempel, een ernstgraad, een component, optionele "
+"gebruikersgegevens en het logbericht."
+
+#: logging/class-logginghelp.php:40
+msgid ""
+"Log timestamps are stored in UTC in the database and displayed using the "
+"WordPress site timezone."
+msgstr ""
+"Logtijdstempels worden in de database opgeslagen in UTC en weergegeven in de "
+"tijdzone van de WordPress-site."
+
+#: logging/class-logginghelp.php:47
+msgid "Filtering and Search"
+msgstr "Filteren en zoeken"
+
+#: logging/class-logginghelp.php:49
+msgid ""
+"Use the filter controls to narrow results by date/time range, level, "
+"component, user ID or SOL ID."
+msgstr ""
+"Gebruik de filteropties om de resultaten te verfijnen op basis van datum/"
+"tijd, niveau, onderdeel, gebruikers-ID of SOL-ID."
+
+#: logging/class-logginghelp.php:50
+msgid "Use the search box to find text in the message field."
+msgstr "Gebruik het zoekvak om tekst in het berichtveld te zoeken."
+
+#: logging/class-logginghelp.php:51
+msgid "The Reset button clears filters and returns to the latest entries."
+msgstr ""
+"Met de knop Reset worden de filters gewist en keert u terug naar de meest "
+"recente vermeldingen."
+
+#: logging/class-logginghelp.php:58
+msgid "Export and Retention"
+msgstr "Export en behoud"
+
+#: logging/class-logginghelp.php:60
+msgid "Use the Download .log button to export the currently filtered logs."
+msgstr ""
+"Gebruik de knop ‘.log downloaden’ om de momenteel gefilterde logbestanden te "
+"exporteren."
+
+#: logging/class-logginghelp.php:64
+#, php-format
+msgid "A daily cleanup task removes log entries older than %d day(s)."
+msgstr ""
+"Een dagelijkse opschoning verwijdert logboekvermeldingen die ouder zijn dan "
+"%d dag(en)."
+
+#: logging/class-logginghelp.php:74
+msgid "Debug Logging"
+msgstr "Loggen van Debug"
+
+#: logging/class-logginghelp.php:76
+msgid ""
+"Debug-level entries are stored only when Enable debug logs is checked in "
+"General Settings."
+msgstr ""
+"Vermeldingen op debug-level worden alleen opgeslagen als de optie ‘Debug log "
+"inschakelen’ is aangevinkt in de algemene instellingen."
+
+#: logging/class-logginghelp.php:77
+msgid ""
+"When WP_DEBUG is enabled, plugin log messages are also mirrored to the "
+"WordPress/PHP error log."
+msgstr ""
+"Wanneer WP_DEBUG is ingeschakeld, worden de logberichten van de plug-in ook "
+"opgenomen in het WordPress/PHP-foutenlogboek."
+
+#: logging/class-logginghelp.php:82
+msgid "Need more help?"
+msgstr "Heb je nog meer hulp nodig?"
+
+#: logging/class-logginghelp.php:83
+msgid "Open the Support page"
+msgstr "Ga naar de support pagina"
+
+#: logging/class-loggingsettings.php:71
 msgid "Logs per page"
 msgstr "Aantal logs per pagina"
 
-#: plugin/Actions.php:18 settings/Page.php:42
+#: plugin/class-actions.php:32 settings/class-settings.php:54
 msgid "Settings"
 msgstr "Instellingen"
 
-#: plugin/Description.php:19
-msgid "WordPress plugin for logging in with Scouting Nederland OpenID Connect Server."
-msgstr "WordPress plugin om in te loggen met Scouting Nederland OpenID Connect Server."
+#: plugin/class-description.php:32
+msgid ""
+"WordPress plugin for logging in with Scouting Nederland OpenID Connect "
+"Server."
+msgstr ""
+"WordPress plugin om in te loggen met Scouting Nederland OpenID Connect "
+"Server."
 
-#: settings/General.php:20
+#: settings/class-settings-general.php:32
 msgid "General Settings"
 msgstr "Algemene Instellingen"
 
-#: settings/General.php:28
+#: settings/class-settings-general.php:40
 msgid "Set display name"
 msgstr "Weergavenaam instellen"
 
-#: settings/General.php:37
+#: settings/class-settings-general.php:49
 msgid "Store birthdate to local profile"
 msgstr "Geboortedatum opslaan in lokaal profiel"
 
-#: settings/General.php:46
+#: settings/class-settings-general.php:58
 msgid "Store gender to local profile"
 msgstr "Geslacht opslaan in lokaal profiel"
 
-#: settings/General.php:55
+#: settings/class-settings-general.php:67
 msgid "Store phone number to local profile"
 msgstr "Telefoonnummer opslaan in lokaal profiel"
 
-#: settings/General.php:64
+#: settings/class-settings-general.php:76
 msgid "Store address to local profile"
 msgstr "Adres opslaan in lokaal profiel"
 
-#: settings/General.php:74
+#: settings/class-settings-general.php:86
 msgid "Use WooCommerce phone number and address fields"
 msgstr "Gebruik de velden voor telefoonnummer en adres van WooCommerce"
 
-#: settings/General.php:87
+#: settings/class-settings-general.php:99
 msgid "Allow new user accounts"
 msgstr "Sta nieuwe gebruikers accounts toe"
 
-#: settings/General.php:96
+#: settings/class-settings-general.php:108
 msgid "When an email already exists"
 msgstr "Wanneer er al een e-mail bestaat"
 
-#: settings/General.php:105
+#: settings/class-settings-general.php:117
 msgid "Redirect only SOL users"
 msgstr "Alleen SOL-gebruikers omleiden"
 
-#: settings/General.php:114
+#: settings/class-settings-general.php:126
 msgid "After a successful login redirect user to"
 msgstr "Na een succesvolle aanmelding wordt de gebruiker doorgestuurd naar"
 
-#: settings/General.php:123
+#: settings/class-settings-general.php:135
 msgid "Url to custom redirect after a successful login"
 msgstr "URL voor aangepaste omleiding na een succesvolle aanmelding"
 
-#: settings/General.php:135
+#: settings/class-settings-general.php:147
 msgid "Enable debug logs"
 msgstr "Debug log inschakelen"
 
-#: settings/General.php:144
+#: settings/class-settings-general.php:156
 msgid "Log retention (days)"
 msgstr "Bewaartermijn van logbestanden (dagen)"
 
-#: settings/General.php:440
+#: settings/class-settings-general.php:467
 msgid "Full name"
 msgstr "Volledige naam"
 
-#: settings/General.php:441
+#: settings/class-settings-general.php:468
 msgid "First name"
 msgstr "Voornaam"
 
-#: settings/General.php:442
+#: settings/class-settings-general.php:469
 msgid "Last name"
 msgstr "Achternaam"
 
-#: settings/General.php:535
+#: settings/class-settings-general.php:569
 msgid "Add plus addressing to email"
 msgstr "Voeg plus-adressering toe aan e-mail"
 
-#: settings/General.php:536
+#: settings/class-settings-general.php:570
 msgid "Stop creation of user with an error"
 msgstr "Stop het aanmaken van gebruikers met een foutmelding"
 
-#: settings/General.php:548
+#: settings/class-settings-general.php:583
 msgid ""
-"When a user tries to log in with an email that already exists in the system, this setting "
-"determines how to handle it. The default option is to add plus addressing."
+"When a user tries to log in with an email that already exists in the system, "
+"this setting determines how to handle it. The default option is to add plus "
+"addressing."
 msgstr ""
-"Wanneer een gebruiker probeert in te loggen met een e-mailadres dat al in het systeem voorkomt, "
-"bepaalt deze instelling hoe hiermee wordt omgegaan. De standaardinstelling is het toevoegen van "
-"een plus-adres."
+"Wanneer een gebruiker probeert in te loggen met een e-mailadres dat al in "
+"het systeem voorkomt, bepaalt deze instelling hoe hiermee wordt omgegaan. De "
+"standaardinstelling is het toevoegen van een plus-adres."
 
-#: settings/General.php:570
+#: settings/class-settings-general.php:606
 msgid "Default (no action)"
 msgstr "Standaard (geen actie)"
 
-#: settings/General.php:571
+#: settings/class-settings-general.php:607
 msgid "Frontpage"
 msgstr "Voorpagina"
 
-#: settings/General.php:572
+#: settings/class-settings-general.php:608
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: settings/General.php:573
+#: settings/class-settings-general.php:609
 msgid "Custom URL"
 msgstr "Aangepaste URL"
 
-#: settings/General.php:605
-msgid "Enter the slug to append to the base URL where users should be redirected after login."
-msgstr ""
-"Voer de slug in die moet worden toegevoegd aan de basis-URL waarnaar gebruikers moeten worden "
-"doorgestuurd na het inloggen."
-
-#: settings/General.php:620
+#: settings/class-settings-general.php:642
 msgid ""
-"Logs may contain personal data such as user IDs and SOL IDs. Set how many days logs are retained "
-"before daily cleanup removes older entries."
+"Enter the slug to append to the base URL where users should be redirected "
+"after login."
 msgstr ""
-"Logbestanden kunnen persoonsgegevens bevatten, zoals gebruikers-ID’s en SOL-ID’s. Stel in "
-"hoeveel dagen logbestanden worden bewaard voordat oudere vermeldingen bij de dagelijkse "
-"opschoning worden verwijderd."
+"Voer de slug in die moet worden toegevoegd aan de basis-URL waarnaar "
+"gebruikers moeten worden doorgestuurd na het inloggen."
 
-#: settings/General.php:634
+#: settings/class-settings-general.php:657
 msgid ""
-"Debug logs are stored in the plugin logs table only when enabled. If WP_DEBUG is enabled, plugin "
-"logs are also mirrored to the WordPress/PHP error log."
+"Logs may contain personal data such as user IDs and SOL IDs. Set how many "
+"days logs are retained before daily cleanup removes older entries."
 msgstr ""
-"Debug logs worden alleen in de log van de plug-in opgeslagen als deze functie is ingeschakeld. "
-"Als WP_DEBUG is ingeschakeld, worden de logboeken van de plug-in ook doorgestuurd naar het "
-"foutlogboek van WordPress/PHP."
+"Logbestanden kunnen persoonsgegevens bevatten, zoals gebruikers-ID’s en SOL-"
+"ID’s. Stel in hoeveel dagen logbestanden worden bewaard voordat oudere "
+"vermeldingen bij de dagelijkse opschoning worden verwijderd."
 
-#: settings/Oidc.php:20
+#: settings/class-settings-general.php:672
+msgid ""
+"Debug logs are stored in the plugin logs table only when enabled. If "
+"WP_DEBUG is enabled, plugin logs are also mirrored to the WordPress/PHP "
+"error log."
+msgstr ""
+"Debug logs worden alleen in de log van de plug-in opgeslagen als deze "
+"functie is ingeschakeld. Als WP_DEBUG is ingeschakeld, worden de logboeken "
+"van de plug-in ook doorgestuurd naar het foutlogboek van WordPress/PHP."
+
+#: settings/class-settings-oidc.php:32
 msgid "OpenID Connect Settings"
 msgstr "OpenID Connect Instellingen"
 
-#: settings/Oidc.php:28 support/SiteHealth.php:119 support/SiteHealth.php:436
+#: settings/class-settings-oidc.php:40 support/class-sitehealth.php:174
+#: support/class-sitehealth.php:503
 msgid "Client ID"
 msgstr "Client ID"
 
-#: settings/Oidc.php:37 support/SiteHealth.php:123 support/SiteHealth.php:442
+#: settings/class-settings-oidc.php:49 support/class-sitehealth.php:178
+#: support/class-sitehealth.php:509
 msgid "Client Secret"
 msgstr "Client Secret"
 
-#: settings/Oidc.php:46
+#: settings/class-settings-oidc.php:58
 msgid "Scopes"
 msgstr "Scopes"
 
-#: settings/Oidc.php:106
+#: settings/class-settings-oidc.php:118
 msgid "Show"
 msgstr "Weergeven"
 
-#: settings/Oidc.php:107
+#: settings/class-settings-oidc.php:119
 msgid "Hide"
 msgstr "Verbergen"
 
-#: settings/Oidc.php:112
+#: settings/class-settings-oidc.php:124
 msgid ""
-"A client secret is already stored. Leave this field empty to keep the current secret. For "
-"security reasons, the stored value cannot be shown here."
+"A client secret is already stored. Leave this field empty to keep the "
+"current secret. For security reasons, the stored value cannot be shown here."
 msgstr ""
-"Er is al een client secret opgeslagen. Laat dit veld leeg om het huidige geheim te behouden. Om "
-"veiligheidsredenen kan de opgeslagen waarde hier niet worden weergegeven."
+"Er is al een client secret opgeslagen. Laat dit veld leeg om het huidige "
+"geheim te behouden. Om veiligheidsredenen kan de opgeslagen waarde hier niet "
+"worden weergegeven."
 
-#: settings/Oidc.php:114
+#: settings/class-settings-oidc.php:126
 msgid "No client secret stored yet."
 msgstr "Er is nog geen client secret opgeslagen."
 
-#: settings/Oidc.php:144
+#: settings/class-settings-oidc.php:158
 msgid "Client secret is required."
 msgstr "Client secret is vereist."
 
-#: settings/Oidc.php:177
-msgid "Scopes should be separated by spaces. Commas and semicolons were converted automatically."
+#: settings/class-settings-oidc.php:193
+msgid ""
+"Scopes should be separated by spaces. Commas and semicolons were converted "
+"automatically."
 msgstr ""
-"Zoektermen moeten door spaties worden gescheiden. Komma’s en puntkomma’s zijn automatisch "
-"omgezet."
+"Zoektermen moeten door spaties worden gescheiden. Komma’s en puntkomma’s "
+"zijn automatisch omgezet."
 
-#: settings/Oidc.php:195
+#: settings/class-settings-oidc.php:212
 msgid "Unsupported scopes were removed:"
 msgstr "Niet-ondersteunde scopes zijn verwijderd:"
 
-#: settings/Oidc.php:195
+#: settings/class-settings-oidc.php:212
 msgid "Supported scopes are:"
 msgstr "De volgende scopes worden ondersteund:"
 
-#: settings/Page.php:44
+#: settings/class-settings.php:56
 msgid "Need help with setting up?"
 msgstr "Hulp nodig bij het instellen?"
 
-#: settings/Page.php:45
+#: settings/class-settings.php:57
 msgid "Go to the support page"
 msgstr "Ga naar de support pagina"
 
-#: shortcode/Page.php:36
+#: shortcode/class-shortcode.php:48
 msgid "Shortcode"
 msgstr "Shortcode"
 
-#: shortcode/Page.php:39
+#: shortcode/class-shortcode.php:51
 msgid ""
-"Shortcodes are small pieces of code that allow you to easily add dynamic content to your "
-"WordPress site, enabling you to embed files or create objects with just one line of code."
+"Shortcodes are small pieces of code that allow you to easily add dynamic "
+"content to your WordPress site, enabling you to embed files or create "
+"objects with just one line of code."
 msgstr ""
-"Shortcodes zijn kleine stukjes code waarmee je eenvoudig dynamische inhoud aan je WordPress-site "
-"kunt toevoegen, zodat je bestanden kunt insluiten of objecten kunt maken met slechts één regel "
-"code."
+"Shortcodes zijn kleine stukjes code waarmee je eenvoudig dynamische inhoud "
+"aan je WordPress-site kunt toevoegen, zodat je bestanden kunt insluiten of "
+"objecten kunt maken met slechts één regel code."
 
-#: shortcode/Page.php:41
+#: shortcode/class-shortcode.php:53
 msgid ""
-"They can be used for various purposes, such as adding galleries, embedding videos, or displaying "
-"specific content types."
+"They can be used for various purposes, such as adding galleries, embedding "
+"videos, or displaying specific content types."
 msgstr ""
-"Ze kunnen voor verschillende doeleinden worden gebruikt, zoals het toevoegen van galerijen, het "
-"insluiten van video's of het weergeven van specifieke inhoudstypen."
+"Ze kunnen voor verschillende doeleinden worden gebruikt, zoals het toevoegen "
+"van galerijen, het insluiten van video's of het weergeven van specifieke "
+"inhoudstypen."
 
-#: shortcode/Page.php:43
+#: shortcode/class-shortcode.php:55
 msgid ""
-"To use a shortcode, simply insert it into the content area of your post or page, and WordPress "
-"will parse it, replacing it with the corresponding content when viewed."
+"To use a shortcode, simply insert it into the content area of your post or "
+"page, and WordPress will parse it, replacing it with the corresponding "
+"content when viewed."
 msgstr ""
-"Om een shortcode te gebruiken, voeg je deze eenvoudig in het inhoudsgebied van je bericht of "
-"pagina in, en WordPress zal het parseren en vervangen door de bijbehorende inhoud wanneer het "
-"wordt bekeken."
+"Om een shortcode te gebruiken, voeg je deze eenvoudig in het inhoudsgebied "
+"van je bericht of pagina in, en WordPress zal het parseren en vervangen door "
+"de bijbehorende inhoud wanneer het wordt bekeken."
 
-#: shortcode/Page.php:45
+#: shortcode/class-shortcode.php:57
 msgid ""
-"For more information on how to use shortcodes and their benefits, visit the following link: "
+"For more information on how to use shortcodes and their benefits, visit the "
+"following link: "
 msgstr ""
-"Voor meer informatie over hoe je shortcodes kunt gebruiken en hun voordelen, bezoek je de "
-"volgende link: "
+"Voor meer informatie over hoe je shortcodes kunt gebruiken en hun voordelen, "
+"bezoek je de volgende link: "
 
-#: shortcode/Page.php:46
+#: shortcode/class-shortcode.php:58
 msgid "WordPress Shortcode Block Support"
 msgstr "Ondersteuning voor WordPress Shortcode-blokken"
 
-#: shortcode/Page.php:49
+#: shortcode/class-shortcode.php:61
 msgid "Shortcodes for OpenID Connect"
 msgstr "Shortcodes for OpenID Connect"
 
-#: shortcode/Page.php:51
+#: shortcode/class-shortcode.php:63
 msgid "OpenID Connect Button"
 msgstr "OpenID Connect Knop"
 
-#: shortcode/Page.php:54
+#: shortcode/class-shortcode.php:66
 msgid "Button Example"
 msgstr "Knop Voorbeeld"
 
-#: shortcode/Page.php:56
+#: shortcode/class-shortcode.php:68
 msgid ""
-"The OpenID Connect button shortcode allows you to add a button to your WordPress site that users "
-"can click to log in using their Scouts Online account."
+"The OpenID Connect button shortcode allows you to add a button to your "
+"WordPress site that users can click to log in using their Scouts Online "
+"account."
 msgstr ""
-"De OpenID Connect-knop shortcode stelt je in staat een knop aan je WordPress-site toe te voegen "
-"waarop gebruikers kunnen klikken om in te loggen met hun Scouts Online-account."
+"De OpenID Connect-knop shortcode stelt je in staat een knop aan je WordPress-"
+"site toe te voegen waarop gebruikers kunnen klikken om in te loggen met hun "
+"Scouts Online-account."
 
-#: shortcode/Page.php:58
-msgid "To add the OpenID Connect button to your site, use the following shortcode:"
-msgstr "Om de OpenID Connect-knop aan je site toe te voegen, gebruik je de volgende shortcode:"
-
-#: shortcode/Page.php:61
+#: shortcode/class-shortcode.php:70
 msgid ""
-"You can customize the appearance of the button by adding attributes to the shortcode. The "
-"following attributes are available:"
+"To add the OpenID Connect button to your site, use the following shortcode:"
 msgstr ""
-"Je kunt het uiterlijk van de knop aanpassen door attributen aan de shortcode toe te voegen. De "
-"volgende attributen zijn beschikbaar:"
+"Om de OpenID Connect-knop aan je site toe te voegen, gebruik je de volgende "
+"shortcode:"
 
-#: shortcode/Page.php:63
+#: shortcode/class-shortcode.php:73
+msgid ""
+"You can customize the appearance of the button by adding attributes to the "
+"shortcode. The following attributes are available:"
+msgstr ""
+"Je kunt het uiterlijk van de knop aanpassen door attributen aan de shortcode "
+"toe te voegen. De volgende attributen zijn beschikbaar:"
+
+#: shortcode/class-shortcode.php:75
 msgid "The width of the button in pixels."
 msgstr "De breedte van de knop in pixels."
 
-#: shortcode/Page.php:64
+#: shortcode/class-shortcode.php:76
 msgid "The height of the button in pixels."
 msgstr "De hoogte van de knop in pixels."
 
-#: shortcode/Page.php:65
+#: shortcode/class-shortcode.php:77
 msgid "The background color of the button."
 msgstr "De achtergrondkleur van de knop."
 
-#: shortcode/Page.php:66
+#: shortcode/class-shortcode.php:78
 msgid "The text color of the button."
 msgstr "De tekstkleur van de knop."
 
-#: shortcode/Page.php:67
+#: shortcode/class-shortcode.php:79
 msgid "Set to true to hide the logo."
 msgstr "Set deze optie aan om het logo te verbergen."
 
-#: shortcode/Page.php:68
+#: shortcode/class-shortcode.php:80
 msgid ""
-"Set to true to return the user to the page with the button after login. This overrides login "
-"redirection settings."
+"Set to true to return the user to the page with the button after login. This "
+"overrides login redirection settings."
 msgstr ""
-"Set deze optie aan om om de gebruiker na het inloggen terug te leiden naar de pagina met de "
-"knop. Dit heeft voorrang op de instellingen voor omleiding na het inloggen."
+"Set deze optie aan om om de gebruiker na het inloggen terug te leiden naar "
+"de pagina met de knop. Dit heeft voorrang op de instellingen voor omleiding "
+"na het inloggen."
 
-#: shortcode/Page.php:72
+#: shortcode/class-shortcode.php:84
 msgid "Live Shortcode Editor"
 msgstr "Live Shortcode-editor"
 
-#: shortcode/Page.php:76
+#: shortcode/class-shortcode.php:88
 msgid ""
-"Default is 250px, minimum is 120px. If the width is smaller than 225px, the logo will be removed."
+"Default is 250px, minimum is 120px. If the width is smaller than 225px, the "
+"logo will be removed."
 msgstr ""
-"Standaard is 250px, minimum is 120px. Als de breedte kleiner is dan 225px, wordt het logo "
-"verwijderd."
+"Standaard is 250px, minimum is 120px. Als de breedte kleiner is dan 225px, "
+"wordt het logo verwijderd."
 
-#: shortcode/Page.php:80
+#: shortcode/class-shortcode.php:92
 msgid "Default is 40px, minimum is 40px."
 msgstr "Standaard is 40px, minimum is 40px."
 
-#: shortcode/Page.php:84
+#: shortcode/class-shortcode.php:96
 msgid "The default color is #4caf50."
 msgstr "De standaardkleur is #4caf50."
 
-#: shortcode/Page.php:88
+#: shortcode/class-shortcode.php:100
 msgid "The default color is #ffffff."
 msgstr "De standaardkleur is #ffffff."
 
-#: shortcode/Page.php:92
+#: shortcode/class-shortcode.php:104
 msgid "Check this box to hide the logo on the button."
 msgstr "Vink dit vakje aan om het logo op de knop te verbergen."
 
-#: shortcode/Page.php:96
-msgid "Check this box to add redirect_back=\"true\" to the generated shortcodes."
-msgstr "Vink dit vakje aan om redirect_back=\"true\" toe te voegen aan de gegenereerde shortcodes."
-
-#: shortcode/Page.php:100
-msgid "For demo purposes only: check this box to preview the logout button text."
+#: shortcode/class-shortcode.php:108
+msgid ""
+"Check this box to add redirect_back=\"true\" to the generated shortcodes."
 msgstr ""
-"Alleen voor demonstratiedoeleinden: vink dit vakje aan om een voorbeeld van de tekst op de "
-"uitlogknop te bekijken."
+"Vink dit vakje aan om redirect_back=\"true\" toe te voegen aan de "
+"gegenereerde shortcodes."
 
-#: shortcode/Page.php:106
+#: shortcode/class-shortcode.php:112
+msgid ""
+"For demo purposes only: check this box to preview the logout button text."
+msgstr ""
+"Alleen voor demonstratiedoeleinden: vink dit vakje aan om een voorbeeld van "
+"de tekst op de uitlogknop te bekijken."
+
+#: shortcode/class-shortcode.php:118
 msgid "Generated shortcode (default attributes shown below until edited):"
 msgstr ""
-"Gegenereerde shortcode (standaardkenmerken worden hieronder weergegeven totdat deze worden "
-"bewerkt):"
+"Gegenereerde shortcode (standaardkenmerken worden hieronder weergegeven "
+"totdat deze worden bewerkt):"
 
-#: shortcode/Page.php:108
+#: shortcode/class-shortcode.php:120
 msgid "Example of the shortcode above:"
 msgstr "Voorbeeld van de bovenstaande shortcode:"
 
-#: shortcode/Page.php:112
+#: shortcode/class-shortcode.php:124
 msgid "Note: The button is not interactive in this preview."
 msgstr "Opmerking: De knop is niet interactief in deze preview."
 
-#: shortcode/Page.php:117
+#: shortcode/class-shortcode.php:129
 msgid "OpenID Connect Link"
 msgstr "OpenID Connect Link"
 
-#: shortcode/Page.php:119
+#: shortcode/class-shortcode.php:131
 msgid ""
-"The OpenID Connect link shortcode allows you to add a text link to your WordPress site that "
-"users can click to log in using their Scouts Online account."
+"The OpenID Connect link shortcode allows you to add a text link to your "
+"WordPress site that users can click to log in using their Scouts Online "
+"account."
 msgstr ""
-"De OpenID Connect link shortcode stelt je in staat een tekstlink aan je WordPress-site toe te "
-"voegen waarop gebruikers kunnen klikken om in te loggen met hun Scouts Online-account."
+"De OpenID Connect link shortcode stelt je in staat een tekstlink aan je "
+"WordPress-site toe te voegen waarop gebruikers kunnen klikken om in te "
+"loggen met hun Scouts Online-account."
 
-#: shortcode/Page.php:121
-msgid "To add the OpenID Connect link to your site, use the following shortcode:"
-msgstr "Om de OpenID Connect-link aan je site toe te voegen, gebruik je de volgende shortcode:"
-
-#: shortcode/Page.php:124
+#: shortcode/class-shortcode.php:133
 msgid ""
-"You cannot customize the appearance of the link, but you can add redirect_back=\"true\" to "
-"return the user to the current page after login."
+"To add the OpenID Connect link to your site, use the following shortcode:"
 msgstr ""
-"Je kunt het uiterlijk van de link niet aanpassen, maar je kunt wel `redirect_back=\"true\"` "
-"toevoegen om de gebruiker na het inloggen terug te leiden naar de huidige pagina."
+"Om de OpenID Connect-link aan je site toe te voegen, gebruik je de volgende "
+"shortcode:"
 
-#: shortcode/Page.php:125
+#: shortcode/class-shortcode.php:136
+msgid ""
+"You cannot customize the appearance of the link, but you can add "
+"redirect_back=\"true\" to return the user to the current page after login."
+msgstr ""
+"Je kunt het uiterlijk van de link niet aanpassen, maar je kunt wel "
+"`redirect_back=\"true\"` toevoegen om de gebruiker na het inloggen terug te "
+"leiden naar de huidige pagina."
+
+#: shortcode/class-shortcode.php:137
 msgid "Example of the link shortcode:"
 msgstr "Voorbeeld van de link shortcode:"
 
-#: shortcode/Page.php:126
+#: shortcode/class-shortcode.php:138
 msgid ""
-"Note: Do not copy this link, it will not work. This is just an example of how the link will look "
-"like."
+"Note: Do not copy this link, it will not work. This is just an example of "
+"how the link will look like."
 msgstr ""
-"Opmerking: Kopieer deze link niet, deze zal niet werken. Dit is slechts een voorbeeld van hoe de "
-"link eruit zal zien."
+"Opmerking: Kopieer deze link niet, deze zal niet werken. Dit is slechts een "
+"voorbeeld van hoe de link eruit zal zien."
 
-#: support/Page.php:36 support/Page.php:78
-msgid "Support"
-msgstr "Support"
-
-#: support/Page.php:37
-msgid "Before you start make sure you have the role \"webmaster\" in"
-msgstr "Voordat je begint, moet je ervoor zorgen dat je de rol \"webmaster\" hebt in"
-
-#: support/Page.php:41
-msgid "Setting up OpenID Connect"
-msgstr "Scouting OpenID Connect"
-
-#: support/Page.php:43
-msgid "Go to"
-msgstr "Ga naar"
-
-#: support/Page.php:43
-msgid "click on \"Managed websites\" and click on \"Add OpenID Connect connection\"."
-msgstr "klik op \"Beheerde websites\" en klik op \"Voeg OpenID Connect koppeling toe\"."
-
-#: support/Page.php:44
-msgid "Add the name of your group/website."
-msgstr "Voeg de naam van je groep/website toe."
-
-#: support/Page.php:45
-msgid "Add the Redirect URI:"
-msgstr "Voeg de Redirect URI toe:"
-
-#: support/Page.php:46
-msgid "Add the Post Logout Redirect URI:"
-msgstr "Voeg de Post Logout Redirect URI toe:"
-
-#: support/Page.php:47
-msgid ""
-"Select the scopes you want to use. The `Email`, `Personal` and `Membership` scopes are required;"
-msgstr ""
-"Selecteer de scopes die u wilt gebruiken. De scopes `E-mail`, `Persoonlijk` en `Lidmaatschap` "
-"zijn verplicht;"
-
-#: support/Page.php:48
-msgid "The `Address`, `Phone number` scope is optional."
-msgstr "Het bereik `Adres`, `Telefoonnummer` is optioneel."
-
-#: support/Page.php:49
-msgid "Currently the `Parents/guardians` scope is not supported."
-msgstr "Momenteel wordt het bereik `Ouders/voogden` niet ondersteund."
-
-#: support/Page.php:50
-msgid "Select the organizations that can log in."
-msgstr "Selecteer de organisaties die kunnen inloggen."
-
-#: support/Page.php:51
-msgid "If your organization has sub-organizations, you can also select \"Allow suborganizations\"."
-msgstr ""
-"Als je organisatie onderliggende organisaties heeft, kun je ook \"Inclusief onderliggende "
-"organisaties\" selecteren."
-
-#: support/Page.php:52
-msgid "Select to use the PKCE (code challenge)."
-msgstr "Selecteer om PKCE (code challenge) te gebruiken."
-
-#: support/Page.php:53
-msgid "Press \"Add Website\"."
-msgstr "Druk op \"Website toevoegen\"."
-
-#: support/Page.php:54
-msgid "Find the website you just created and click on ⓘ."
-msgstr "Zoek de website die je net hebt gemaakt en klik op ⓘ."
-
-#: support/Page.php:55
-msgid "Copy the \"Client ID\", \"Client Secret\", and the \"Scopes\" to the"
-msgstr "Kopieer de \"Client ID\", \"Client Secret\" en de \"Scopes\" naar de"
-
-#: support/Page.php:59
-msgid "Fill in the OpenID Connect Settings with the copied data."
-msgstr "Vul de OpenID Connect instellingen in met de gekopieerde gegevens."
-
-#: support/Page.php:60
-msgid "Required scopes:"
-msgstr "Vereiste scopes:"
-
-#: support/Page.php:67
-msgid "Optional scopes:"
-msgstr "Optionele scopes:"
-
-#: support/Page.php:73
-msgid "Fill in the General Settings."
-msgstr "Vul de Algemene Instellingen in."
-
-#: support/Page.php:74
-msgid "Press \"Save Settings\""
-msgstr "Druk op \"Save Settings\""
-
-#: support/Page.php:75
-msgid "Log out and try to log in with the Scouts Login button."
-msgstr "Log uit en probeer in te loggen met de knop Scouts Login."
-
-#: support/Page.php:79
-msgid "If you need help, please contact"
-msgstr "Als je hulp nodig hebt, neem dan contact op met"
-
-#: support/Page.php:81
-msgid "(developer of the plugin)"
-msgstr "(ontwikkelaar van de plugin)"
-
-#: support/ProviderHealth.php:59
+#: support/class-providerhealth.php:87
 msgid "The Scouts Online OpenID Connect provider could not be reached"
 msgstr "De OpenID Connect-provider van Scouts Online kon niet worden bereikt"
 
-#: support/ProviderHealth.php:63
+#: support/class-providerhealth.php:91
 #, php-format
 msgid "Provider discovery failed: %s"
 msgstr "Provider-discoverie mislukt: %s"
 
-#: support/ProviderHealth.php:69
+#: support/class-providerhealth.php:97
 #, fuzzy
 #| msgid "The UserInfo endpoint returned an unexpected response."
 msgid "The Scouts Online provider returned an unexpected response"
 msgstr "De Scouts Online-provider heeft een onverwacht antwoord teruggegeven."
 
-#: support/ProviderHealth.php:73
+#: support/class-providerhealth.php:101
 #, php-format
 msgid "Provider discovery returned HTTP status %d instead of 200."
 msgstr "Provider-discoverie gaf HTTP-status %d terug in plaats van 200."
 
-#: support/ProviderHealth.php:82
+#: support/class-providerhealth.php:110
 #, fuzzy
 #| msgid "The UserInfo endpoint returned invalid user data."
 msgid "The Scouts Online provider returned invalid discovery data"
 msgstr ""
-"De Scouts Online-provider heeft ongeldige discovery-gegevens teruggegeven.Het UserInfo-eindpunt "
-"heeft ongeldige gebruikersgegevens geretourneerd."
+"De Scouts Online-provider heeft ongeldige discovery-gegevens "
+"teruggegeven.Het UserInfo-eindpunt heeft ongeldige gebruikersgegevens "
+"geretourneerd."
 
-#: support/ProviderHealth.php:84
+#: support/class-providerhealth.php:112
 msgid "The provider response was not a valid JSON object."
 msgstr "Het antwoord van de provider was geen geldig JSON-object."
 
-#: support/ProviderHealth.php:111
+#: support/class-providerhealth.php:141
 msgid "The provider does not advertise a logout endpoint"
 msgstr "De provider biedt geen logout-eindpunt aan"
 
-#: support/ProviderHealth.php:113
-msgid "Login is available, but provider logout will fall back to the site home page."
-msgstr "Inloggen is beschikbaar, maar provider-logout valt terug op de homepage van de site."
+#: support/class-providerhealth.php:143
+msgid ""
+"Login is available, but provider logout will fall back to the site home page."
+msgstr ""
+"Inloggen is beschikbaar, maar provider-logout valt terug op de homepage van "
+"de site."
 
-#: support/ProviderHealth.php:135
+#: support/class-providerhealth.php:167
 msgid "The provider discovery issuer does not match"
 msgstr "De issuer uit de provider-discoverie komt niet overeen"
 
-#: support/ProviderHealth.php:137
-msgid "The discovered issuer does not match the issuer expected by Scouting OpenID Connect."
-msgstr "De gevonden issuer komt niet overeen met de issuer die Scouting OpenID Connect verwacht."
+#: support/class-providerhealth.php:169
+msgid ""
+"The discovered issuer does not match the issuer expected by Scouting OpenID "
+"Connect."
+msgstr ""
+"De gevonden issuer komt niet overeen met de issuer die Scouting OpenID "
+"Connect verwacht."
 
-#: support/ProviderHealth.php:168
+#: support/class-providerhealth.php:202
 msgid "The provider discovery data is incomplete"
 msgstr "De discovery-gegevens van de provider zijn onvolledig"
 
-#: support/ProviderHealth.php:172
+#: support/class-providerhealth.php:206
 #, php-format
 msgid "These required endpoints are missing or invalid: %s."
 msgstr "Deze vereiste eindpunten ontbreken of zijn ongeldig: %s."
 
-#: support/ProviderHealth.php:187
+#: support/class-providerhealth.php:223
 #, fuzzy
-#| msgid "The identity provider does not support the required S256 code challenge method for PKCE."
+#| msgid ""
+#| "The identity provider does not support the required S256 code challenge "
+#| "method for PKCE."
 msgid "The provider does not advertise the required PKCE method"
 msgstr ""
-"De provider biedt de vereiste PKCE-methode niet aanDe identiteitsprovider ondersteunt de "
-"vereiste S256-codecontrolemethode voor PKCE niet."
+"De provider biedt de vereiste PKCE-methode niet aanDe identiteitsprovider "
+"ondersteunt de vereiste S256-codecontrolemethode voor PKCE niet."
 
-#: support/ProviderHealth.php:189
+#: support/class-providerhealth.php:225
 msgid "Scouting OpenID Connect requires the S256 code challenge method."
 msgstr "Scouting OpenID Connect vereist de S256-codechallenge-methode."
 
-#: support/ProviderHealth.php:212
+#: support/class-providerhealth.php:248
 #, fuzzy
 #| msgid "The ID token is missing the required nonce claim."
 msgid "The provider is missing required OpenID Connect capabilities"
 msgstr "De vereiste nonce-claim ontbreekt in het ID-token."
 
-#: support/ProviderHealth.php:216
+#: support/class-providerhealth.php:252
 #, php-format
 msgid "These capabilities are not advertised: %s."
 msgstr "Deze capabilities worden niet aangeboden: %s."
 
-#: support/ProviderHealth.php:239
+#: support/class-providerhealth.php:277
 msgid "Configured scopes are not advertised by the provider"
 msgstr "Geconfigureerde scopes worden niet door de provider aangeboden"
 
-#: support/ProviderHealth.php:243
+#: support/class-providerhealth.php:281
 #, fuzzy, php-format
 #| msgid "Required scopes:"
 msgid "Review these scopes: %s."
 msgstr "Bekijk deze scopes: %s."
 
-#: support/ProviderHealth.php:280
+#: support/class-providerhealth.php:322
 #, fuzzy
 #| msgid "The ID token payload could not be decoded."
 msgid "The provider signing keys could not be reached"
 msgstr "The ID token payload could not be decoded."
 
-#: support/ProviderHealth.php:284
+#: support/class-providerhealth.php:326
 #, php-format
 msgid "Signing-key retrieval failed: %s"
 msgstr "Het ophalen van de ondertekeningssleutels is mislukt: %s"
 
-#: support/ProviderHealth.php:290
+#: support/class-providerhealth.php:332
 #, fuzzy
 #| msgid "The UserInfo endpoint returned an unexpected response."
 msgid "The provider signing keys returned an unexpected response"
 msgstr "Het UserInfo-eindpunt heeft een onverwacht antwoord geretourneerd."
 
-#: support/ProviderHealth.php:294
+#: support/class-providerhealth.php:336
 #, php-format
 msgid "Signing-key retrieval returned HTTP status %d instead of 200."
-msgstr "Het ophalen van de ondertekeningssleutels gaf HTTP-status %d terug in plaats van 200."
+msgstr ""
+"Het ophalen van de ondertekeningssleutels gaf HTTP-status %d terug in plaats "
+"van 200."
 
-#: support/ProviderHealth.php:303
+#: support/class-providerhealth.php:345
 msgid "The Scouts Online OpenID Connect provider is available"
 msgstr "De OpenID Connect-provider van Scouts Online is beschikbaar"
 
-#: support/ProviderHealth.php:305
-msgid "Discovery, required protocol capabilities, endpoints, and signing keys are available."
+#: support/class-providerhealth.php:347
+msgid ""
+"Discovery, required protocol capabilities, endpoints, and signing keys are "
+"available."
 msgstr ""
-"Discovery, vereiste protocol-capabilities, eindpunten en ondertekenings-sleutels zijn "
-"beschikbaar."
+"Discovery, vereiste protocol-capabilities, eindpunten en ondertekenings-"
+"sleutels zijn beschikbaar."
 
-#: support/ProviderHealth.php:308
+#: support/class-providerhealth.php:350
 msgid "The provider signing-key set is empty or invalid"
 msgstr "De set ondertekeningssleutels van de provider is leeg of ongeldig"
 
-#: support/ProviderHealth.php:310
+#: support/class-providerhealth.php:352
 msgid ""
-"The provider did not return an RSA/RS256 signing key with the certificate chain required to "
-"validate ID tokens."
+"The provider did not return an RSA/RS256 signing key with the certificate "
+"chain required to validate ID tokens."
 msgstr ""
-"De provider heeft geen RSA/RS256-ondertekeningssleutel met de vereiste certificaatketen "
-"teruggegeven om ID-tokens te valideren."
+"De provider heeft geen RSA/RS256-ondertekeningssleutel met de vereiste "
+"certificaatketen teruggegeven om ID-tokens te valideren."
 
-#: support/ProviderHealth.php:373 support/SiteHealth.php:423 support/SiteHealth.php:524
+#: support/class-providerhealth.php:421 support/class-sitehealth.php:490
+#: support/class-sitehealth.php:593
 #, fuzzy
 #| msgid "Setting up OpenID Connect"
 msgid "Scouting OpenID Connect"
 msgstr "Scouting OpenID Connect"
 
-#: support/ProviderHealth.php:391 support/SiteHealth.php:542
+#: support/class-providerhealth.php:441 support/class-sitehealth.php:613
 #, fuzzy
 #| msgid "OpenID Connect Settings"
 msgid "Review Scouting OpenID Connect settings"
 msgstr "OpenID Connect Instellingen"
 
-#: support/SiteHealth.php:36
+#: support/class-sitehealth.php:87
 #, fuzzy
 #| msgid "Setting up OpenID Connect"
 msgid "Scouting OpenID Connect runtime"
 msgstr "Scouting OpenID Connect"
 
-#: support/SiteHealth.php:40
+#: support/class-sitehealth.php:91
 #, fuzzy
 #| msgid "OpenID Connect Button"
 msgid "Scouting OpenID Connect configuration"
 msgstr "OpenID Connect Knop"
 
-#: support/SiteHealth.php:44
+#: support/class-sitehealth.php:95
 #, fuzzy
 #| msgid "Setting up OpenID Connect"
 msgid "Scouting OpenID Connect scopes"
 msgstr "Scouting OpenID Connect"
 
-#: support/SiteHealth.php:48
+#: support/class-sitehealth.php:99
 #, fuzzy
 #| msgid "Setting up OpenID Connect"
 msgid "Scouting OpenID Connect provider"
 msgstr "Scouting OpenID Connect"
 
-#: support/SiteHealth.php:54
+#: support/class-sitehealth.php:105
 #, fuzzy
 #| msgid "Setting up OpenID Connect"
 msgid "Scouting OpenID Connect login redirect"
 msgstr "Scouting OpenID Connect"
 
-#: support/SiteHealth.php:58
+#: support/class-sitehealth.php:109
 #, fuzzy
 #| msgid "Setting up OpenID Connect"
 msgid "Scouting OpenID Connect log storage"
 msgstr "Scouting OpenID Connect"
 
-#: support/SiteHealth.php:62
+#: support/class-sitehealth.php:113
 #, fuzzy
 #| msgid "Setting up OpenID Connect"
 msgid "Scouting OpenID Connect log cleanup"
 msgstr "Scouting OpenID Connect"
 
-#: support/SiteHealth.php:83
+#: support/class-sitehealth.php:136
 #, fuzzy
 #| msgid "The ID token is missing the required nonce claim."
 msgid "The server is missing functions required for Scouts Online login"
-msgstr "De server mist functies die nodig zijn voor het inloggen bij Scouts Online."
+msgstr ""
+"De server mist functies die nodig zijn voor het inloggen bij Scouts Online."
 
-#: support/SiteHealth.php:87
+#: support/class-sitehealth.php:140
 #, php-format
-msgid "Ask the hosting provider to enable the PHP functions or extensions that provide: %s."
-msgstr "Vraag de hostingprovider om de PHP-functies of extensies in te schakelen die leveren: %s."
+msgid ""
+"Ask the hosting provider to enable the PHP functions or extensions that "
+"provide: %s."
+msgstr ""
+"Vraag de hostingprovider om de PHP-functies of extensies in te schakelen die "
+"leveren: %s."
 
-#: support/SiteHealth.php:96
+#: support/class-sitehealth.php:149
 msgid "Scouting OpenID Connect requires the site to use HTTPS"
 msgstr "Scouting OpenID Connect vereist dat de site HTTPS gebruikt"
 
-#: support/SiteHealth.php:98
+#: support/class-sitehealth.php:151
 msgid ""
-"The login flow needs HTTPS to create its secure session cookie. Update both WordPress URLs to "
-"use HTTPS."
+"The login flow needs HTTPS to create its secure session cookie. Update both "
+"WordPress URLs to use HTTPS."
 msgstr ""
-"De inlogstroom heeft HTTPS nodig om de beveiligde sessiecookie aan te maken. Werk beide "
-"WordPress-URL's bij zodat ze HTTPS gebruiken."
+"De inlogstroom heeft HTTPS nodig om de beveiligde sessiecookie aan te maken. "
+"Werk beide WordPress-URL's bij zodat ze HTTPS gebruiken."
 
-#: support/SiteHealth.php:104
+#: support/class-sitehealth.php:157
 msgid "The server meets the Scouting OpenID Connect runtime requirements"
 msgstr "De server voldoet aan de runtimevereisten van Scouting OpenID Connect"
 
-#: support/SiteHealth.php:106
-msgid "HTTPS and the PHP functions required for sessions and ID token validation are available."
+#: support/class-sitehealth.php:159
+msgid ""
+"HTTPS and the PHP functions required for sessions and ID token validation "
+"are available."
 msgstr ""
-"HTTPS en de PHP-functies die nodig zijn voor sessies en validatie van ID-tokens zijn beschikbaar."
+"HTTPS en de PHP-functies die nodig zijn voor sessies en validatie van ID-"
+"tokens zijn beschikbaar."
 
-#: support/SiteHealth.php:129
+#: support/class-sitehealth.php:184
 msgid "Scouting OpenID Connect is not fully configured"
 msgstr "Scouting OpenID Connect is niet volledig geconfigureerd"
 
-#: support/SiteHealth.php:133
+#: support/class-sitehealth.php:188
 #, php-format
-msgid "Add the following value(s) before users can log in with Scouts Online: %s."
-msgstr "Voeg de volgende waarde(n) toe voordat gebruikers kunnen inloggen met Scouts Online: %s."
+msgid ""
+"Add the following value(s) before users can log in with Scouts Online: %s."
+msgstr ""
+"Voeg de volgende waarde(n) toe voordat gebruikers kunnen inloggen met Scouts "
+"Online: %s."
 
-#: support/SiteHealth.php:142
+#: support/class-sitehealth.php:197
 msgid "Scouting OpenID Connect credentials are configured"
 msgstr "De inloggegevens van Scouting OpenID Connect zijn geconfigureerd"
 
-#: support/SiteHealth.php:144
-msgid "A Client ID and Client Secret are stored. Site Health never displays the Client Secret."
+#: support/class-sitehealth.php:199
+msgid ""
+"A Client ID and Client Secret are stored. Site Health never displays the "
+"Client Secret."
 msgstr ""
-"Er zijn een Client ID en Client Secret opgeslagen. Site Health laat het Client Secret nooit zien."
+"Er zijn een Client ID en Client Secret opgeslagen. Site Health laat het "
+"Client Secret nooit zien."
 
-#: support/SiteHealth.php:160
+#: support/class-sitehealth.php:217
 msgid "Required OpenID Connect scopes are missing"
 msgstr "Vereiste OpenID Connect-scopes ontbreken"
 
-#: support/SiteHealth.php:164
+#: support/class-sitehealth.php:221
 #, php-format
-msgid "Add these required scopes to the plugin and the connection in Scouts Online: %s."
-msgstr "Voeg deze vereiste scopes toe aan de plug-in en de verbinding in Scouts Online: %s."
+msgid ""
+"Add these required scopes to the plugin and the connection in Scouts Online: "
+"%s."
+msgstr ""
+"Voeg deze vereiste scopes toe aan de plug-in en de verbinding in Scouts "
+"Online: %s."
 
-#: support/SiteHealth.php:173
+#: support/class-sitehealth.php:230
 msgid "Phone storage is enabled without the phone scope."
 msgstr "Telefoonopslag is ingeschakeld zonder de telefoon-scope."
 
-#: support/SiteHealth.php:176
+#: support/class-sitehealth.php:233
 msgid "Address storage is enabled without the address scope."
 msgstr "Adresopslag is ingeschakeld zonder de adres-scope."
 
-#: support/SiteHealth.php:179
-msgid "WooCommerce synchronization is enabled while WooCommerce is not available."
-msgstr "WooCommerce-synchronisatie is ingeschakeld terwijl WooCommerce niet beschikbaar is."
+#: support/class-sitehealth.php:236
+msgid ""
+"WooCommerce synchronization is enabled while WooCommerce is not available."
+msgstr ""
+"WooCommerce-synchronisatie is ingeschakeld terwijl WooCommerce niet "
+"beschikbaar is."
 
-#: support/SiteHealth.php:185
+#: support/class-sitehealth.php:242
 msgid "Enabled profile features do not match the configured scopes"
-msgstr "Ingeschakelde profielfuncties komen niet overeen met de geconfigureerde scopes"
+msgstr ""
+"Ingeschakelde profielfuncties komen niet overeen met de geconfigureerde "
+"scopes"
 
-#: support/SiteHealth.php:194
+#: support/class-sitehealth.php:251
 msgid "OpenID Connect scopes match the enabled features"
 msgstr "OpenID Connect-scopes komen overeen met de ingeschakelde functies"
 
-#: support/SiteHealth.php:198
+#: support/class-sitehealth.php:255
 #, php-format
 msgid "All required scopes are configured. Current scopes: %s."
 msgstr "Alle vereiste scopes zijn geconfigureerd. Huidige scopes: %s."
 
-#: support/SiteHealth.php:216
+#: support/class-sitehealth.php:275
 #, fuzzy
 #| msgid "The ID token nonce is invalid."
 msgid "The login redirect mode is invalid"
 msgstr "De modus voor login-redirect is ongeldig."
 
-#: support/SiteHealth.php:220
+#: support/class-sitehealth.php:279
 #, php-format
 msgid "The stored redirect mode \"%s\" is not recognized."
 msgstr "De opgeslagen redirect-modus \"%s\" wordt niet herkend."
 
-#: support/SiteHealth.php:231
+#: support/class-sitehealth.php:290
 msgid "The custom login redirect is not configured correctly"
 msgstr "De aangepaste login-redirect is niet correct geconfigureerd"
 
-#: support/SiteHealth.php:233
+#: support/class-sitehealth.php:292
 msgid "Choose a valid page on this site or select another login redirect mode."
-msgstr "Kies een geldige pagina op deze site of selecteer een andere login-redirect-modus."
+msgstr ""
+"Kies een geldige pagina op deze site of selecteer een andere login-redirect-"
+"modus."
 
-#: support/SiteHealth.php:240
+#: support/class-sitehealth.php:299
 msgid "The login redirect is configured"
 msgstr "De login-redirect is geconfigureerd"
 
-#: support/SiteHealth.php:244
+#: support/class-sitehealth.php:303
 #, php-format
 msgid "The current post-login redirect mode is %s."
 msgstr "De huidige post-login redirect-modus is %s."
 
-#: support/SiteHealth.php:259
+#: support/class-sitehealth.php:320
 msgid "The Scouting OpenID Connect log table is missing"
 msgstr "De logtabel van Scouting OpenID Connect ontbreekt"
 
-#: support/SiteHealth.php:261
+#: support/class-sitehealth.php:322
 msgid "Deactivate and reactivate the plugin to recreate its log storage."
-msgstr "Deactiveer en activeer de plug-in opnieuw om de logopslag opnieuw aan te maken."
+msgstr ""
+"Deactiveer en activeer de plug-in opnieuw om de logopslag opnieuw aan te "
+"maken."
 
-#: support/SiteHealth.php:273
+#: support/class-sitehealth.php:334
 #, php-format
 msgid "Missing database columns: %s."
 msgstr "Ontbrekende databasekolommen: %s."
 
-#: support/SiteHealth.php:280
+#: support/class-sitehealth.php:341
 #, php-format
 msgid "Installed schema version is %1$s; expected %2$s."
 msgstr "De geïnstalleerde schemaversie is %1$s; verwacht %2$s."
 
-#: support/SiteHealth.php:281
+#: support/class-sitehealth.php:342
 msgid "not recorded"
 msgstr "niet geregistreerd"
 
-#: support/SiteHealth.php:289
+#: support/class-sitehealth.php:350
 msgid "The Scouting OpenID Connect log storage needs attention"
 msgstr "De logopslag van Scouting OpenID Connect heeft aandacht nodig"
 
-#: support/SiteHealth.php:297
+#: support/class-sitehealth.php:358
 msgid "The Scouting OpenID Connect log storage is ready"
 msgstr "De logopslag van Scouting OpenID Connect is klaar"
 
-#: support/SiteHealth.php:299
+#: support/class-sitehealth.php:360
 msgid "The log table exists with the expected schema and columns."
 msgstr "De logtabel bestaat met het verwachte schema en de verwachte kolommen."
 
-#: support/SiteHealth.php:320
+#: support/class-sitehealth.php:383
 msgid "Run log cleanup now"
 msgstr "Voer nu de logopschoning uit"
 
-#: support/SiteHealth.php:327
+#: support/class-sitehealth.php:390
 msgid "Scouting OpenID Connect log cleanup is not scheduled"
 msgstr "De logopschoning van Scouting OpenID Connect is niet gepland"
 
-#: support/SiteHealth.php:329
+#: support/class-sitehealth.php:392
 msgid ""
-"The plugin could not find its daily cleanup event. Run cleanup now to recreate the schedule."
+"The plugin could not find its daily cleanup event. Run cleanup now to "
+"recreate the schedule."
 msgstr ""
-"De plug-in heeft zijn dagelijkse opschooningsgebeurtenis niet gevonden. Voer nu de opschoning "
-"uit om de planning opnieuw aan te maken."
+"De plug-in heeft zijn dagelijkse opschooningsgebeurtenis niet gevonden. Voer "
+"nu de opschoning uit om de planning opnieuw aan te maken."
 
-#: support/SiteHealth.php:337
+#: support/class-sitehealth.php:400
 msgid "The cleanup event is not using the daily schedule."
 msgstr "De opschooningsgebeurtenis gebruikt niet de dagelijkse planning."
 
-#: support/SiteHealth.php:344
+#: support/class-sitehealth.php:407
 #, php-format
 msgid ""
-"Automatic WP-Cron spawning is disabled, and the external cron runner has not processed the "
-"cleanup scheduled for %s."
+"Automatic WP-Cron spawning is disabled, and the external cron runner has not "
+"processed the cleanup scheduled for %s."
 msgstr ""
-"Automatisch starten van WP-Cron is uitgeschakeld, en de externe cron-runner heeft de voor %s "
-"geplande opschoning nog niet verwerkt."
+"Automatisch starten van WP-Cron is uitgeschakeld, en de externe cron-runner "
+"heeft de voor %s geplande opschoning nog niet verwerkt."
 
-#: support/SiteHealth.php:350
+#: support/class-sitehealth.php:413
 #, php-format
 msgid ""
-"WordPress has not dispatched the cleanup scheduled for %s. Check the core scheduled-events and "
-"loopback-request Site Health tests."
+"WordPress has not dispatched the cleanup scheduled for %s. Check the core "
+"scheduled-events and loopback-request Site Health tests."
 msgstr ""
-"WordPress heeft de voor %s geplande opschoning niet verzonden. Controleer de core scheduled-"
-"events en de Site Health-tests voor loopback-requests."
+"WordPress heeft de voor %s geplande opschoning niet verzonden. Controleer de "
+"core scheduled-events en de Site Health-tests voor loopback-requests."
 
-#: support/SiteHealth.php:359
+#: support/class-sitehealth.php:422
 msgid "Scouting OpenID Connect log cleanup needs attention"
 msgstr "De logopschoning van Scouting OpenID Connect heeft aandacht nodig"
 
-#: support/SiteHealth.php:368
+#: support/class-sitehealth.php:431
 msgid "Scouting OpenID Connect log cleanup is scheduled"
 msgstr "De logopschoning van Scouting OpenID Connect is gepland"
 
-#: support/SiteHealth.php:372
+#: support/class-sitehealth.php:435
 #, php-format
-msgid "The next cleanup is scheduled for %1$s and will retain %2$d days of logs."
-msgstr "De volgende opschoning is gepland voor %1$s en zal %2$d dagen aan logs behouden."
+msgid ""
+"The next cleanup is scheduled for %1$s and will retain %2$d days of logs."
+msgstr ""
+"De volgende opschoning is gepland voor %1$s en zal %2$d dagen aan logs "
+"behouden."
 
-#: support/SiteHealth.php:402 user/Fields.php:79
+#: support/class-sitehealth.php:469 user/class-fields.php:102
 msgid "Birthdate"
 msgstr "Geboortedatum"
 
-#: support/SiteHealth.php:403 user/Fields.php:98
+#: support/class-sitehealth.php:470 user/class-fields.php:124
 msgid "Gender"
 msgstr "Geslacht"
 
-#: support/SiteHealth.php:404
+#: support/class-sitehealth.php:471
 #, fuzzy
 #| msgid "phone"
 msgid "Phone"
 msgstr "Telefoon"
 
-#: support/SiteHealth.php:405
+#: support/class-sitehealth.php:472
 #, fuzzy
 #| msgid "address"
 msgid "Address"
 msgstr "Adres"
 
-#: support/SiteHealth.php:415
+#: support/class-sitehealth.php:482
 msgid "Not scheduled"
 msgstr "Niet gepland"
 
-#: support/SiteHealth.php:419
+#: support/class-sitehealth.php:486
 msgid "Never recorded"
 msgstr "Nooit vastgelegd"
 
-#: support/SiteHealth.php:424
+#: support/class-sitehealth.php:491
 msgid ""
-"Configuration and operational details. Client secrets and personal user claims are never "
-"included."
+"Configuration and operational details. Client secrets and personal user "
+"claims are never included."
 msgstr ""
-"Configuratie- en operationele details. Clientsecrets en persoonlijke gebruikersclaims worden "
-"nooit opgenomen."
+"Configuratie- en operationele details. Clientsecrets en persoonlijke "
+"gebruikersclaims worden nooit opgenomen."
 
-#: support/SiteHealth.php:427
+#: support/class-sitehealth.php:494
 msgid "Plugin version"
 msgstr "Plug-inversie"
 
-#: support/SiteHealth.php:428
+#: support/class-sitehealth.php:495
 msgid "Issuer"
 msgstr "Issuer"
 
-#: support/SiteHealth.php:429
+#: support/class-sitehealth.php:496
 #, fuzzy
 #| msgid "Add the Redirect URI:"
 msgid "Redirect URI"
 msgstr "Redirect URI"
 
-#: support/SiteHealth.php:430
+#: support/class-sitehealth.php:497
 msgid "Site uses HTTPS"
 msgstr "Site gebruikt HTTPS"
 
-#: support/SiteHealth.php:432
+#: support/class-sitehealth.php:499
 msgid "PHP OpenSSL library"
 msgstr "PHP OpenSSL-bibliotheek"
 
-#: support/SiteHealth.php:433 support/SiteHealth.php:616 support/SiteHealth.php:694
+#: support/class-sitehealth.php:500 support/class-sitehealth.php:698
+#: support/class-sitehealth.php:782
 msgid "Not available"
 msgstr "Niet beschikbaar"
 
-#: support/SiteHealth.php:438 support/SiteHealth.php:444
+#: support/class-sitehealth.php:505 support/class-sitehealth.php:511
 msgid "Not configured"
 msgstr "Niet geconfigureerd"
 
-#: support/SiteHealth.php:439 support/SiteHealth.php:445
+#: support/class-sitehealth.php:506 support/class-sitehealth.php:512
 msgid "Configured"
 msgstr "Geconfigureerd"
 
-#: support/SiteHealth.php:447
+#: support/class-sitehealth.php:514
 #, fuzzy
 #| msgid "Required scopes:"
 msgid "Configured scopes"
 msgstr "Geconfigureerde scopes"
 
-#: support/SiteHealth.php:449
+#: support/class-sitehealth.php:516
 #, fuzzy
 #| msgid "Required scopes:"
 msgid "Required scopes"
 msgstr "Vereiste scopes"
 
-#: support/SiteHealth.php:451
+#: support/class-sitehealth.php:518
 msgid "All present"
 msgstr "Alles aanwezig"
 
-#: support/SiteHealth.php:454
+#: support/class-sitehealth.php:521
 #, php-format
 msgid "Missing: %s"
 msgstr "Ontbreekt: %s"
 
-#: support/SiteHealth.php:459
+#: support/class-sitehealth.php:526
 msgid "Stored profile fields"
 msgstr "Opgeslagen profielvelden"
 
-#: support/SiteHealth.php:460 support/SiteHealth.php:644
+#: support/class-sitehealth.php:527 support/class-sitehealth.php:726
 msgid "None"
 msgstr "Geen"
 
-#: support/SiteHealth.php:462
+#: support/class-sitehealth.php:529
 msgid "Automatic account creation"
 msgstr "Automatisch aanmaken van accounts"
 
-#: support/SiteHealth.php:463
+#: support/class-sitehealth.php:530
 msgid "Duplicate email handling"
 msgstr "Afhandeling van dubbele e-mailadressen"
 
-#: support/SiteHealth.php:464
+#: support/class-sitehealth.php:531
 msgid "Login redirect mode"
 msgstr "Modus voor login-redirect"
 
-#: support/SiteHealth.php:465
+#: support/class-sitehealth.php:532
 msgid "Custom login redirect"
 msgstr "Aangepaste login-redirect"
 
-#: support/SiteHealth.php:466
+#: support/class-sitehealth.php:533
 #, fuzzy
 #| msgid "Setting up OpenID Connect"
 msgid "Scouting OpenID Connect users"
 msgstr "Scouting OpenID Connect-gebruikers"
 
-#: support/SiteHealth.php:467
+#: support/class-sitehealth.php:534
 msgid "WooCommerce available"
 msgstr "WooCommerce beschikbaar"
 
-#: support/SiteHealth.php:468
+#: support/class-sitehealth.php:535
 msgid "WooCommerce synchronization"
 msgstr "WooCommerce-synchronisatie"
 
-#: support/SiteHealth.php:469
+#: support/class-sitehealth.php:536
 #, fuzzy
 #| msgid "Debug Logging"
 msgid "Debug logging"
 msgstr "Debug-loggen"
 
-#: support/SiteHealth.php:471
+#: support/class-sitehealth.php:538
 #, fuzzy
 #| msgid "Log retention (days)"
 msgid "Log retention"
 msgstr "Bewaartermijn van logs"
 
-#: support/SiteHealth.php:474
+#: support/class-sitehealth.php:541
 #, php-format
 msgid "%d days"
 msgstr "%d dagen"
 
-#: support/SiteHealth.php:478
+#: support/class-sitehealth.php:545
 msgid "Log table"
 msgstr "Logtabel"
 
-#: support/SiteHealth.php:478
+#: support/class-sitehealth.php:545
 msgid "Available"
 msgstr "Beschikbaar"
 
-#: support/SiteHealth.php:478
+#: support/class-sitehealth.php:545
 msgid "Missing"
 msgstr "Ontbrekend"
 
-#: support/SiteHealth.php:479
+#: support/class-sitehealth.php:546
 msgid "Log database schema"
 msgstr "Log-databaseschema"
 
-#: support/SiteHealth.php:480
+#: support/class-sitehealth.php:547
 msgid "Log entries"
 msgstr "Logboekvermeldingen"
 
-#: support/SiteHealth.php:481
+#: support/class-sitehealth.php:548
 msgid "Errors in the last 24 hours"
 msgstr "Fouten in de afgelopen 24 uur"
 
-#: support/SiteHealth.php:482
+#: support/class-sitehealth.php:549
 msgid "Latest log entry"
 msgstr "Laatste logboekvermelding"
 
-#: support/SiteHealth.php:483
+#: support/class-sitehealth.php:550
 msgid "Last successful log cleanup"
 msgstr "Laatste succesvolle logopschoning"
 
-#: support/SiteHealth.php:484
+#: support/class-sitehealth.php:551
 msgid "Next log cleanup"
 msgstr "Volgende logopschoning"
 
-#: support/SiteHealth.php:486
+#: support/class-sitehealth.php:553
 msgid "WordPress cron spawning"
 msgstr "WordPress-cronstart"
 
-#: support/SiteHealth.php:488
+#: support/class-sitehealth.php:555
 msgid "Disabled by configuration"
 msgstr "Uitgeschakeld via configuratie"
 
-#: support/SiteHealth.php:489 support/SiteHealth.php:680
+#: support/class-sitehealth.php:556 support/class-sitehealth.php:766
 msgid "Enabled"
 msgstr "Ingeschakeld"
 
-#: support/SiteHealth.php:492
+#: support/class-sitehealth.php:559
 msgid "Provider discovery cache"
 msgstr "Cache voor provider-discoverie"
 
-#: support/SiteHealth.php:494 support/SiteHealth.php:500
+#: support/class-sitehealth.php:561 support/class-sitehealth.php:567
 msgid "Empty"
 msgstr "Leeg"
 
-#: support/SiteHealth.php:495 support/SiteHealth.php:501
+#: support/class-sitehealth.php:562 support/class-sitehealth.php:568
 msgid "Populated"
 msgstr "Bevolkt"
 
-#: support/SiteHealth.php:498
+#: support/class-sitehealth.php:565
 msgid "Provider signing-key cache"
 msgstr "Cache voor ondertekeningssleutels van de provider"
 
-#: support/SiteHealth.php:681
+#: support/class-sitehealth.php:767
 msgid "Disabled"
 msgstr "Uitgeschakeld"
 
-#: user/Fields.php:26
+#: support/class-support.php:48 support/class-support.php:90
+msgid "Support"
+msgstr "Support"
+
+#: support/class-support.php:49
+msgid "Before you start make sure you have the role \"webmaster\" in"
+msgstr ""
+"Voordat je begint, moet je ervoor zorgen dat je de rol \"webmaster\" hebt in"
+
+#: support/class-support.php:53
+msgid "Setting up OpenID Connect"
+msgstr "Scouting OpenID Connect"
+
+#: support/class-support.php:55
+msgid "Go to"
+msgstr "Ga naar"
+
+#: support/class-support.php:55
+msgid ""
+"click on \"Managed websites\" and click on \"Add OpenID Connect connection\"."
+msgstr ""
+"klik op \"Beheerde websites\" en klik op \"Voeg OpenID Connect koppeling "
+"toe\"."
+
+#: support/class-support.php:56
+msgid "Add the name of your group/website."
+msgstr "Voeg de naam van je groep/website toe."
+
+#: support/class-support.php:57
+msgid "Add the Redirect URI:"
+msgstr "Voeg de Redirect URI toe:"
+
+#: support/class-support.php:58
+msgid "Add the Post Logout Redirect URI:"
+msgstr "Voeg de Post Logout Redirect URI toe:"
+
+#: support/class-support.php:59
+msgid ""
+"Select the scopes you want to use. The `Email`, `Personal` and `Membership` "
+"scopes are required;"
+msgstr ""
+"Selecteer de scopes die u wilt gebruiken. De scopes `E-mail`, `Persoonlijk` "
+"en `Lidmaatschap` zijn verplicht;"
+
+#: support/class-support.php:60
+msgid "The `Address`, `Phone number` scope is optional."
+msgstr "Het bereik `Adres`, `Telefoonnummer` is optioneel."
+
+#: support/class-support.php:61
+msgid "Currently the `Parents/guardians` scope is not supported."
+msgstr "Momenteel wordt het bereik `Ouders/voogden` niet ondersteund."
+
+#: support/class-support.php:62
+msgid "Select the organizations that can log in."
+msgstr "Selecteer de organisaties die kunnen inloggen."
+
+#: support/class-support.php:63
+msgid ""
+"If your organization has sub-organizations, you can also select \"Allow "
+"suborganizations\"."
+msgstr ""
+"Als je organisatie onderliggende organisaties heeft, kun je ook \"Inclusief "
+"onderliggende organisaties\" selecteren."
+
+#: support/class-support.php:64
+msgid "Select to use the PKCE (code challenge)."
+msgstr "Selecteer om PKCE (code challenge) te gebruiken."
+
+#: support/class-support.php:65
+msgid "Press \"Add Website\"."
+msgstr "Druk op \"Website toevoegen\"."
+
+#: support/class-support.php:66
+msgid "Find the website you just created and click on ⓘ."
+msgstr "Zoek de website die je net hebt gemaakt en klik op ⓘ."
+
+#: support/class-support.php:67
+msgid "Copy the \"Client ID\", \"Client Secret\", and the \"Scopes\" to the"
+msgstr "Kopieer de \"Client ID\", \"Client Secret\" en de \"Scopes\" naar de"
+
+#: support/class-support.php:71
+msgid "Fill in the OpenID Connect Settings with the copied data."
+msgstr "Vul de OpenID Connect instellingen in met de gekopieerde gegevens."
+
+#: support/class-support.php:72
+msgid "Required scopes:"
+msgstr "Vereiste scopes:"
+
+#: support/class-support.php:79
+msgid "Optional scopes:"
+msgstr "Optionele scopes:"
+
+#: support/class-support.php:85
+msgid "Fill in the General Settings."
+msgstr "Vul de Algemene Instellingen in."
+
+#: support/class-support.php:86
+msgid "Press \"Save Settings\""
+msgstr "Druk op \"Save Settings\""
+
+#: support/class-support.php:87
+msgid "Log out and try to log in with the Scouts Login button."
+msgstr "Log uit en probeer in te loggen met de knop Scouts Login."
+
+#: support/class-support.php:91
+msgid "If you need help, please contact"
+msgstr "Als je hulp nodig hebt, neem dan contact op met"
+
+#: support/class-support.php:93
+msgid "(developer of the plugin)"
+msgstr "(ontwikkelaar van de plugin)"
+
+#: user/class-fields.php:40
 msgid "View in SOL"
 msgstr "Bekijken in SOL"
 
-#: user/Fields.php:46
+#: user/class-fields.php:66
 msgid "Scouts Online (SOL) Profile Information"
 msgstr "Scouts Online (SOL) Profiel Informatie"
 
-#: user/Fields.php:101
+#: user/class-fields.php:127
 msgid "Male"
 msgstr "Man"
 
-#: user/Fields.php:102
+#: user/class-fields.php:128
 msgid "Female"
 msgstr "Vrouw"
 
-#: user/Fields.php:103
+#: user/class-fields.php:129
 msgid "Other"
 msgstr "Overige"
 
-#: user/Fields.php:104
+#: user/class-fields.php:130
 msgid "Unknown"
 msgstr "Onbekend"
 
-#: user/Fields.php:119
+#: user/class-fields.php:148
 msgid "Phone Number"
 msgstr "Telefoonnummer"
 
-#: user/Fields.php:136
+#: user/class-fields.php:168
 msgid "Street"
 msgstr "Straat"
 
-#: user/Fields.php:152
+#: user/class-fields.php:187
 msgid "House Number"
 msgstr "Huisnummer"
 
-#: user/Fields.php:168
+#: user/class-fields.php:206
 msgid "Postal Code"
 msgstr "Postcode"
 
-#: user/Fields.php:184
+#: user/class-fields.php:225
 msgid "City"
 msgstr "Plaats"
 
-#: user/Fields.php:200
+#: user/class-fields.php:244
 msgid "Country Code"
 msgstr "Landcode"
 
-#: user/User.php:175
+#: user/class-user.php:255
 msgid "SOL ID is missing, make sure the \"membership\" scope is enabled."
-msgstr "SOL ID ontbreekt, controleer of de scope \"membership\" is ingeschakeld."
+msgstr ""
+"SOL ID ontbreekt, controleer of de scope \"membership\" is ingeschakeld."
 
-#: user/User.php:180
+#: user/class-user.php:260
 #, fuzzy
 #| msgid "OpenID Connect Settings"
 msgid "OpenID Connect subject is missing."
 msgstr "OpenID Connect-subject ontbreekt."
 
-#: user/User.php:188
+#: user/class-user.php:268
 msgid "Email is missing, make sure the \"email\" scope is enabled."
 msgstr "E-mail ontbreekt, controleer of de scope \"email\" is ingeschakeld."
 
-#: user/User.php:213
+#: user/class-user.php:297
 #, fuzzy
 #| msgid "Email address is already in use by another account"
 msgid "This SOL ID is already linked to another account."
 msgstr "Dit SOL-ID is al gekoppeld aan een ander account."
 
-#: user/User.php:259 user/User.php:270 user/User.php:319 user/User.php:333
+#: user/class-user.php:348 user/class-user.php:359 user/class-user.php:417
+#: user/class-user.php:434
 msgid "Email address is already in use by another account"
 msgstr "Het e-mailadres wordt al gebruikt door een andere account"
 
-#: user/User.php:359
+#: user/class-user.php:462
 msgid "User not found for update"
 msgstr "Gebruiker niet gevonden voor update"
 
-#: user/User.php:375
+#: user/class-user.php:480
 msgid "Something went wrong while trying to log in"
 msgstr "Er is iets misgegaan tijdens het inloggen"
 
-#: utilities/CronJobs.php:152
+#: utilities/class-cronjobs.php:183
 msgid "Sorry, you are not allowed to run Scouting OpenID Connect log cleanup."
-msgstr "Sorry, je hebt geen rechten om de logopschoning van Scouting OpenID Connect uit te voeren."
+msgstr ""
+"Sorry, je hebt geen rechten om de logopschoning van Scouting OpenID Connect "
+"uit te voeren."
 
 #~ msgid "Example of the shortcode with custom attributes:"
 #~ msgstr "Voorbeeld van de shortcode met aangepaste attributen:"
@@ -1557,18 +1679,20 @@ msgstr "Sorry, je hebt geen rechten om de logopschoning van Scouting OpenID Conn
 #~ msgstr "SOL ID en e-mail hebben verschillende gebruikers-ID's"
 
 #~ msgid ""
-#~ "Fill in the General Settings. Optional scopes: use \"profile\" for birthdate and gender, "
-#~ "\"phone\" for phone number, and \"address\" for address information."
+#~ "Fill in the General Settings. Optional scopes: use \"profile\" for "
+#~ "birthdate and gender, \"phone\" for phone number, and \"address\" for "
+#~ "address information."
 #~ msgstr ""
-#~ "Vul de Algemene Instellingen in. Optionele scopes: gebruik “profile” voor geboortedatum en "
-#~ "geslacht, ‘phone’ voor telefoonnummer en “address” voor adresgegevens."
+#~ "Vul de Algemene Instellingen in. Optionele scopes: gebruik “profile” voor "
+#~ "geboortedatum en geslacht, ‘phone’ voor telefoonnummer en “address” voor "
+#~ "adresgegevens."
 
 #~ msgid ""
-#~ "Fill in the General Settings. If you want to store the birthdate, or gender, use the scope "
-#~ "\"profile\"."
+#~ "Fill in the General Settings. If you want to store the birthdate, or "
+#~ "gender, use the scope \"profile\"."
 #~ msgstr ""
-#~ "Vul de algemene instellingen in. Als u de geboortedatum of het geslacht wilt opslaan, "
-#~ "gebruikt u de scope \"profile\"."
+#~ "Vul de algemene instellingen in. Als u de geboortedatum of het geslacht "
+#~ "wilt opslaan, gebruikt u de scope \"profile\"."
 
 #~ msgid "Store Scouting ID to local profile"
 #~ msgstr "Scouting ID opslaan in lokaal profiel"
@@ -1579,9 +1703,11 @@ msgstr "Sorry, je hebt geen rechten om de logopschoning van Scouting OpenID Conn
 #~ msgid "Username"
 #~ msgstr "Gebruikersnaam"
 
-#~ msgid "This prefix will be added to the username of all Scouting Nederland users"
+#~ msgid ""
+#~ "This prefix will be added to the username of all Scouting Nederland users"
 #~ msgstr ""
-#~ "Dit voorvoegsel wordt toegevoegd aan de gebruikersnaam van alle Scouting Nederland gebruikers"
+#~ "Dit voorvoegsel wordt toegevoegd aan de gebruikersnaam van alle Scouting "
+#~ "Nederland gebruikers"
 
 #~ msgid "Scouting ID"
 #~ msgstr "Scouting ID"
@@ -1614,7 +1740,8 @@ msgstr "Sorry, je hebt geen rechten om de logopschoning van Scouting OpenID Conn
 #~ msgstr "Kon gebruikersinformatie niet ophalen. Responscode:"
 
 #~ msgid "The end session endpoint is not available in the well-known data."
-#~ msgstr "Het eindpunt van de sessie is niet beschikbaar in de bekende gegevens."
+#~ msgstr ""
+#~ "Het eindpunt van de sessie is niet beschikbaar in de bekende gegevens."
 
 #~ msgid "Scopes must be a non-empty array."
 #~ msgstr "Scopes moeten een niet-lege array zijn."
