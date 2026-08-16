@@ -146,6 +146,17 @@ class OpenIDConnectClient {
 	}
 
 	/**
+	 * Checks whether the current request can use a secure OIDC session.
+	 *
+	 * @since Unreleased Allows authentication to fail gracefully on insecure requests.
+	 *
+	 * @return bool True when a secure OIDC session can be used.
+	 */
+	public function can_use_secure_session(): bool {
+		return $this->session->scouting_oidc_session_is_secure_request();
+	}
+
+	/**
 	 * Generates the authentication URL.
 	 *
 	 * @since 1.0.0

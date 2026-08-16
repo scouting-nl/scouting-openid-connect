@@ -137,14 +137,37 @@ class Session {
 	}
 
 	/**
+	 * Determines whether the current request is served over HTTPS.
+	 *
+	 * @since Unreleased Supports HTTPS terminated by an explicitly trusted reverse proxy.
+	 *
+	 * @return bool True when the request is secure for the session cookie.
+	 */
+	public function scouting_oidc_session_is_secure_request(): bool {
+		if ( is_ssl() ) {
+			return true;
+		}
+
+		$trusted_proxy_ips = defined( 'SCOUTING_OIDC_TRUSTED_PROXY_IPS' ) ? SCOUTING_OIDC_TRUSTED_PROXY_IPS : array();
+		$remote_address    = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+		$forwarded_proto   = isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) ) : '';
+
+		return is_array( $trusted_proxy_ips )
+			&& '' !== $remote_address
+			&& in_array( $remote_address, $trusted_proxy_ips, true )
+			&& 'https' === strtolower( trim( $forwarded_proto ) );
+	}
+
+	/**
 	 * Gets the scouting_oidc_session session ID value.
 	 *
 	 * @since 2.2.0
+	 * @since Unreleased Supports HTTPS terminated by an explicitly trusted reverse proxy.
 	 *
 	 * @return string the session ID value or an empty string if the session ID does not exist.
 	 */
 	private function scouting_oidc_session_get_session_id(): string {
-		if ( ! is_ssl() ) {
+		if ( ! $this->scouting_oidc_session_is_secure_request() ) {
 			return '';
 		}
 
@@ -161,12 +184,13 @@ class Session {
 	 *
 	 * @since 1.0.0
 	 * @since 2.5.0 Added the `$session_id` parameter. Updated the return type.
+	 * @since Unreleased Supports HTTPS terminated by an explicitly trusted reverse proxy.
 	 *
 	 * @param string $session_id Session identifier.
 	 * @return bool True when the cookie was successfully queued.
 	 */
 	private function scouting_oidc_session_set_cookie( string $session_id ): bool {
-		if ( ! is_ssl() || headers_sent() ) {
+		if ( ! $this->scouting_oidc_session_is_secure_request() || headers_sent() ) {
 			return false;
 		}
 

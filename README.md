@@ -22,6 +22,7 @@ Connect your Wordpress website to the Scouting Nederland OpenID Connect server.
 ## Index
 
 * [Description](#description)
+* [Documentation](#documentation)
 * [Screenshots](#screenshots)
 * [Installation](#installation)
 * [Configuration](#configuration)
@@ -42,6 +43,12 @@ With this plugin, users can seamlessly integrate their Scouting Nederland accoun
 Bugs and feature requests can go to [GitHub](https://github.com/Scouting-nl/scouting-openid-connect/issues) or [WordPress](https://wordpress.org/support/plugin/scouting-openid-connect).
 
 Do not report security vulnerabilities publicly. Follow the [security policy](.github/SECURITY.md) to submit a private report.
+
+## Documentation
+
+Detailed administrator, deployment, privacy, data-lifecycle, troubleshooting,
+and developer documentation is available in the
+[Scouting OpenID Connect Wiki](https://github.com/scouting-nl/scouting-openid-connect/wiki).
 
 ## Screenshots
 
