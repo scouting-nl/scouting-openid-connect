@@ -551,7 +551,6 @@ class Auth {
 	 *
 	 * @since 1.0.0
 	 * @since 2.4.0 Added the `$redirect_after_login` parameter.
-	 * @since Unreleased Preserves the native WordPress login form when OIDC cannot use HTTPS.
 	 *
 	 * @param string|null $redirect_after_login Optional. URL to redirect to after login,
 	 *                                          used for shortcode support. If null, default
@@ -578,11 +577,6 @@ class Auth {
 				Logger::error( LogComponent::AUTH, "OIDC login URL builder returning init error: {$hint}" );
 				return 'init_error:' . $hint;
 			}
-		}
-
-		if ( ! $this->oidc_client->can_use_secure_session() ) {
-			Logger::warning( LogComponent::AUTH, 'OIDC login URL was not generated because the request is not recognized as HTTPS.' );
-			return 'init_error:' . __( 'OpenID Connect login requires a secure HTTPS connection. Please contact the site administrator.', 'scouting-openid-connect' );
 		}
 
 		return $this->oidc_client->get_authentication_url( $response_type, $scopes, $redirect_after_login );
