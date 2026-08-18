@@ -110,20 +110,22 @@ class OpenIDConnectClient {
 	private $session;
 
 	/**
-	 * The logout redirect hosts.
+	 * The OIDC redirect hosts.
 	 *
 	 * @since 2.4.0
-	 * @var array<string> normalized hosts allowed for logout redirects.
+	 * @since Unreleased Includes authorization endpoint hosts.
+	 * @var array<string> Normalized hosts allowed for OIDC redirects.
 	 */
-	private static array $logout_redirect_hosts = array();
+	private static array $oidc_redirect_hosts = array();
 
 	/**
-	 * The logout redirect hosts filter added.
+	 * Whether the OIDC redirect hosts filter has been added.
 	 *
 	 * @since 2.4.0
+	 * @since Unreleased Includes authorization endpoint hosts.
 	 * @var bool whether the allowed_redirect_hosts callback is already attached.
 	 */
-	private static bool $logout_redirect_hosts_filter_added = false;
+	private static bool $oidc_redirect_hosts_filter_added = false;
 
 	/**
 	 * Initializes the OpenID Connect client.
@@ -143,6 +145,41 @@ class OpenIDConnectClient {
 
 		// Initialize session storage; create the cookie only when login begins.
 		$this->session = new Session();
+	}
+
+	/**
+	 * Redirects to an OIDC authorization request through a safe redirect.
+	 *
+	 * @since Unreleased Redirects to OIDC before WordPress login form output.
+	 *
+	 * @param string      $response_type The response type.
+	 * @param array       $scopes_array An array of scopes.
+	 * @param string|null $redirect_after_login Optional post-login redirect. Default null.
+	 */
+	public function redirect_to_authentication( string $response_type, array $scopes_array, ?string $redirect_after_login = null ): void {
+		$authentication_url = $this->get_authentication_url( $response_type, $scopes_array, $redirect_after_login );
+		$host               = wp_parse_url( $authentication_url, PHP_URL_HOST );
+
+		if ( ! is_string( $host ) || '' === $host ) {
+			Logger::critical( LogComponent::OIDC, 'Authentication URL did not contain a redirect host.' );
+			ErrorHandler::redirect_to_login_error(
+				'init',
+				__( 'The authorization endpoint is not a valid URL.', 'scouting-openid-connect' ),
+				'authorization_endpoint_is_invalid'
+			);
+		}
+
+		$this->register_oidc_redirect_host( $host );
+		if ( ! wp_safe_redirect( $authentication_url ) ) {
+			Logger::critical( LogComponent::OIDC, 'Authentication URL could not be used for a safe redirect.' );
+			ErrorHandler::redirect_to_login_error(
+				'init',
+				__( 'The authorization endpoint could not be used for a secure redirect.', 'scouting-openid-connect' ),
+				'authorization_endpoint_is_invalid'
+			);
+		}
+
+		exit;
 	}
 
 	/**
@@ -622,7 +659,7 @@ class OpenIDConnectClient {
 		// so we add the logout host here to avoid blocking a trusted external logout URL.
 		$host = wp_parse_url( $logout_url, PHP_URL_HOST );
 		if ( is_string( $host ) && '' !== $host ) {
-			$this->register_logout_redirect_host( $host );
+			$this->register_oidc_redirect_host( $host );
 		}
 
 		return $logout_url;
@@ -661,33 +698,35 @@ class OpenIDConnectClient {
 	}
 
 	/**
-	 * Registers a host for logout redirects and attaches the filter callback once per request.
+	 * Registers an OIDC provider host and attaches the filter callback once per request.
 	 *
 	 * @since 2.4.0
+	 * @since Unreleased Supports authorization endpoint redirects.
 	 *
 	 * @param string $host the host to allow for redirects.
 	 */
-	private function register_logout_redirect_host( string $host ): void {
+	private function register_oidc_redirect_host( string $host ): void {
 		$normalized_host = strtolower( trim( $host ) );
 
 		if ( '' === $normalized_host ) {
 			return;
 		}
 
-		if ( ! in_array( $normalized_host, self::$logout_redirect_hosts, true ) ) {
-			self::$logout_redirect_hosts[] = $normalized_host;
+		if ( ! in_array( $normalized_host, self::$oidc_redirect_hosts, true ) ) {
+			self::$oidc_redirect_hosts[] = $normalized_host;
 		}
 
-		if ( ! self::$logout_redirect_hosts_filter_added ) {
+		if ( ! self::$oidc_redirect_hosts_filter_added ) {
 			add_filter( 'allowed_redirect_hosts', array( __CLASS__, 'scouting_oidc_filter_allowed_redirect_hosts' ) );
-			self::$logout_redirect_hosts_filter_added = true;
+			self::$oidc_redirect_hosts_filter_added = true;
 		}
 	}
 
 	/**
-	 * Extends allowed redirect hosts with normalized logout hosts.
+	 * Extends allowed redirect hosts with normalized OIDC provider hosts.
 	 *
 	 * @since 2.4.0
+	 * @since Unreleased Includes authorization endpoint hosts.
 	 *
 	 * @param array $hosts existing allowed hosts.
 	 * @return array updated allowed hosts.
@@ -701,10 +740,10 @@ class OpenIDConnectClient {
 			}
 		}
 
-		foreach ( self::$logout_redirect_hosts as $logout_host ) {
-			if ( ! in_array( $logout_host, $normalized_existing_hosts, true ) ) {
-				$hosts[]                     = $logout_host;
-				$normalized_existing_hosts[] = $logout_host;
+		foreach ( self::$oidc_redirect_hosts as $oidc_host ) {
+			if ( ! in_array( $oidc_host, $normalized_existing_hosts, true ) ) {
+				$hosts[]                     = $oidc_host;
+				$normalized_existing_hosts[] = $oidc_host;
 			}
 		}
 

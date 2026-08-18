@@ -87,6 +87,9 @@ $scouting_oidc_cron_jobs       = new CronJobs();
 function scouting_oidc_init(): void {
 	global $scouting_oidc_auth, $scouting_oidc_actions, $scouting_oidc_fields, $scouting_oidc_shortcode, $scouting_oidc_settings;
 
+	// Handle OIDC login before wp-login.php renders HTML so the session cookie can be queued.
+	add_action( 'login_form_scouting_oidc', array( $scouting_oidc_auth, 'scouting_oidc_auth_login' ), 0 );
+
 	// Add the OpenID Connect button to the login form.
 	add_action( 'login_form', array( $scouting_oidc_auth, 'scouting_oidc_auth_login_form' ) );
 
