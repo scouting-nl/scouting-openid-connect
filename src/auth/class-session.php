@@ -12,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once plugin_dir_path( __FILE__ ) . '../../src/utilities/class-logger.php';
+
 // Define WordPress constant if not defined.
 if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
 	define( 'HOUR_IN_SECONDS', 3600 );
@@ -93,11 +95,17 @@ class Session {
 	public function scouting_oidc_session_set_session_id(): bool {
 		$session_id = $this->scouting_oidc_session_get_session_id();
 		if ( '' !== $session_id ) {
+			Logger::debug( LogComponent::OIDC, 'Existing secure OIDC session cookie was reused.' );
 			return true;
 		}
 
+		Logger::debug( LogComponent::OIDC, 'No valid OIDC session cookie was available; generating a new session identifier.' );
 		$session_id = $this->generate_session_id();
-		return null !== $session_id && $this->scouting_oidc_session_set_cookie( $session_id );
+		if ( null === $session_id ) {
+			return false;
+		}
+
+		return $this->scouting_oidc_session_set_cookie( $session_id );
 	}
 
 	/**
@@ -145,12 +153,20 @@ class Session {
 	 */
 	private function scouting_oidc_session_get_session_id(): string {
 		if ( ! is_ssl() ) {
+			Logger::debug( LogComponent::OIDC, 'OIDC session cookie was not read because WordPress did not identify the request as HTTPS.' );
 			return '';
 		}
 
-		$session_id = isset( $_COOKIE[ self::COOKIE_NAME ] ) ? sanitize_text_field( wp_unslash( $_COOKIE[ self::COOKIE_NAME ] ) ) : '';
+		$has_session_cookie = isset( $_COOKIE[ self::COOKIE_NAME ] );
+		$session_id         = $has_session_cookie ? sanitize_text_field( wp_unslash( $_COOKIE[ self::COOKIE_NAME ] ) ) : '';
 		if ( is_string( $session_id ) && preg_match( '/\A[a-f0-9]{32}\z/', $session_id ) === 1 ) {
 			return $session_id;
+		}
+
+		if ( $has_session_cookie ) {
+			Logger::warning( LogComponent::OIDC, 'OIDC session cookie was rejected because it did not match the expected format.' );
+		} else {
+			Logger::debug( LogComponent::OIDC, 'OIDC session cookie was not included in the current request.' );
 		}
 
 		return '';
@@ -166,28 +182,40 @@ class Session {
 	 * @return bool True when the cookie was successfully queued.
 	 */
 	private function scouting_oidc_session_set_cookie( string $session_id ): bool {
-		if ( ! is_ssl() || headers_sent() ) {
+		if ( ! is_ssl() ) {
+			Logger::error( LogComponent::OIDC, 'OIDC session cookie was not queued because WordPress did not identify the request as HTTPS.' );
 			return false;
 		}
 
-		$was_set = setcookie(
-			self::COOKIE_NAME,
-			$session_id,
-			array(
-				'expires'  => time() + HOUR_IN_SECONDS,
-				'path'     => '/',
-				'secure'   => true,
-				'httponly' => true,
-				'samesite' => 'Lax',
-			)
-		);
+		$headers_file = '';
+		$headers_line = 0;
+		if ( headers_sent( $headers_file, $headers_line ) ) {
+			$output_location = '' !== $headers_file ? ' Output started in ' . basename( $headers_file ) . ' on line ' . $headers_line . '.' : '';
+			Logger::error( LogComponent::OIDC, 'OIDC session cookie was not queued because response headers had already been sent.' . $output_location );
+		} else {
+			Logger::debug( LogComponent::OIDC, 'Queuing secure OIDC session cookie.' );
+			$was_set = setcookie(
+				self::COOKIE_NAME,
+				$session_id,
+				array(
+					'expires'  => time() + HOUR_IN_SECONDS,
+					'path'     => '/',
+					'secure'   => true,
+					'httponly' => true,
+					'samesite' => 'Lax',
+				)
+			);
 
-		if ( ! $was_set ) {
-			return false;
+			if ( $was_set ) {
+				$_COOKIE[ self::COOKIE_NAME ] = $session_id;
+				Logger::debug( LogComponent::OIDC, 'Secure OIDC session cookie was queued successfully.' );
+				return true;
+			}
+
+			Logger::error( LogComponent::OIDC, 'PHP could not queue the secure OIDC session cookie.' );
 		}
 
-		$_COOKIE[ self::COOKIE_NAME ] = $session_id;
-		return true;
+		return false;
 	}
 
 	/**
@@ -199,8 +227,11 @@ class Session {
 	 */
 	private function generate_session_id(): ?string {
 		try {
-			return bin2hex( random_bytes( 16 ) );
+			$session_id = bin2hex( random_bytes( 16 ) );
+			Logger::debug( LogComponent::OIDC, 'Generated a new secure OIDC session identifier.' );
+			return $session_id;
 		} catch ( \Exception $exception ) {
+			Logger::error( LogComponent::OIDC, 'Failed to generate a secure OIDC session identifier: ' . get_class( $exception ) . '.' );
 			return null;
 		}
 	}

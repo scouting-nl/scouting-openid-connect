@@ -20,6 +20,10 @@ With this plugin, users can seamlessly integrate their Scouting Nederland accoun
 
 Do not report security vulnerabilities in a public issue or support topic. Follow the [security policy](https://github.com/Scouting-nl/scouting-openid-connect/security/policy) to submit a private report.
 
+== Documentation ==
+
+Detailed administrator, deployment, privacy, data-lifecycle, troubleshooting, and developer documentation is available in the project wiki: https://github.com/scouting-nl/scouting-openid-connect/wiki
+
 == Installation ==
 
 Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scouting.nl).
