@@ -596,7 +596,32 @@ class Auth {
 		}
 
 		$redirect = wp_validate_redirect( esc_url_raw( wp_unslash( $redirect_raw ) ), '' );
-		if ( '' !== $redirect ) {
+		$home_url = home_url( '/' );
+
+		$redirect_scheme = wp_parse_url( $redirect, PHP_URL_SCHEME );
+		$redirect_host   = wp_parse_url( $redirect, PHP_URL_HOST );
+		$redirect_port   = wp_parse_url( $redirect, PHP_URL_PORT );
+		$home_scheme     = wp_parse_url( $home_url, PHP_URL_SCHEME );
+		$home_host       = wp_parse_url( $home_url, PHP_URL_HOST );
+		$home_port       = wp_parse_url( $home_url, PHP_URL_PORT );
+
+		if ( ! is_int( $redirect_port ) ) {
+			$redirect_port = 'https' === strtolower( (string) $redirect_scheme ) ? 443 : 80;
+		}
+		if ( ! is_int( $home_port ) ) {
+			$home_port = 'https' === strtolower( (string) $home_scheme ) ? 443 : 80;
+		}
+
+		if (
+			'' !== $redirect
+			&& is_string( $redirect_scheme )
+			&& is_string( $redirect_host )
+			&& is_string( $home_scheme )
+			&& is_string( $home_host )
+			&& strtolower( $redirect_scheme ) === strtolower( $home_scheme )
+			&& strtolower( $redirect_host ) === strtolower( $home_host )
+			&& $redirect_port === $home_port
+		) {
 			return $redirect;
 		}
 

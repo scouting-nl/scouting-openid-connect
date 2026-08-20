@@ -159,18 +159,20 @@ class OpenIDConnectClient {
 	public function redirect_to_authentication( string $response_type, array $scopes_array, ?string $redirect_after_login = null ): void {
 		$authentication_url = $this->get_authentication_url( $response_type, $scopes_array, $redirect_after_login );
 		$host               = wp_parse_url( $authentication_url, PHP_URL_HOST );
+		$scheme             = wp_parse_url( $authentication_url, PHP_URL_SCHEME );
 
-		if ( ! is_string( $host ) || '' === $host ) {
-			Logger::critical( LogComponent::OIDC, 'Authentication URL did not contain a redirect host.' );
+		if ( ! is_string( $host ) || '' === $host || ! is_string( $scheme ) || 'https' !== strtolower( $scheme ) ) {
+			Logger::critical( LogComponent::OIDC, 'Authentication URL was not a valid HTTPS URL.' );
 			ErrorHandler::redirect_to_login_error(
 				'init',
-				__( 'The authorization endpoint is not a valid URL.', 'scouting-openid-connect' ),
+				__( 'The authorization endpoint is not a valid HTTPS URL.', 'scouting-openid-connect' ),
 				'authorization_endpoint_is_invalid'
 			);
 		}
 
 		$this->register_oidc_redirect_host( $host );
-		if ( ! wp_safe_redirect( $authentication_url ) ) {
+		$validated_authentication_url = wp_validate_redirect( $authentication_url, '' );
+		if ( '' === $validated_authentication_url || ! wp_safe_redirect( $validated_authentication_url ) ) {
 			Logger::critical( LogComponent::OIDC, 'Authentication URL could not be used for a safe redirect.' );
 			ErrorHandler::redirect_to_login_error(
 				'init',
