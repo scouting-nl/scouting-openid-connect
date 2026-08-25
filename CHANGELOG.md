@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [[2.6.1](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.6.1)] - 25/08/2026
+
+- Fixed OIDC session creation before WordPress login form output.
+- Improved authentication redirect validation to require HTTPS URLs.
+
 ## [[2.6.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.6.0)] - 13/08/2026
 
 - Refactored the plugin's PHP and JavaScript codebase for improved readability and consistency.

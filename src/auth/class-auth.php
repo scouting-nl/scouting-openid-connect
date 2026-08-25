@@ -30,14 +30,14 @@ class Auth {
 	/**
 	 * WordPress login action used for the OIDC authorization flow.
 	 *
-	 * @since Unreleased Handles OIDC before the WordPress login form is rendered.
+	 * @since 2.6.1 Handles OIDC before the WordPress login form is rendered.
 	 */
 	private const LOGIN_ACTION = 'scouting_oidc';
 
 	/**
 	 * Query argument used to carry a shortcode post-login redirect.
 	 *
-	 * @since Unreleased Preserves redirect_back through the local OIDC login URL.
+	 * @since 2.6.1 Preserves redirect_back through the local OIDC login URL.
 	 */
 	private const REDIRECT_AFTER_LOGIN_QUERY_ARG = 'scouting_oidc_redirect_after_login';
 
@@ -67,7 +67,7 @@ class Auth {
 	 * Adds the OpenID Connect button to the login form.
 	 *
 	 * @since 1.0.0
-	 * @since Unreleased Defers OIDC request creation until the button is activated.
+	 * @since 2.6.1 Defers OIDC request creation until the button is activated.
 	 */
 	public function scouting_oidc_auth_login_form(): void {
 		// Check if the client ID and client secret are empty.
@@ -98,7 +98,7 @@ class Auth {
 	 * @since 1.0.0
 	 * @since 2.3.0 Made the `$atts` parameter optional. Updated the method signature.
 	 * @since 2.4.0 Added redirect_back support for the login button shortcode.
-	 * @since Unreleased Defers OIDC request creation until the button is activated.
+	 * @since 2.6.1 Defers OIDC request creation until the button is activated.
 	 *
 	 * @param array $atts Optional. The shortcode attributes for customizing the button (width, height, background_color,
 	 *                       text_color, hide_logo). Default empty array.
@@ -184,7 +184,7 @@ class Auth {
 	 *
 	 * @since 1.0.0
 	 * @since 2.4.0 Added the `$atts` parameter.
-	 * @since Unreleased Returns a local OIDC login URL handled before form output.
+	 * @since 2.6.1 Returns a local OIDC login URL handled before form output.
 	 *
 	 * @param array $atts Optional. Shortcode attributes. Default empty array.
 	 * @return string the local OIDC login URL or an error URL if the client is not configured.
@@ -225,7 +225,7 @@ class Auth {
 	/**
 	 * Handles the OIDC authorization flow before the WordPress login form renders.
 	 *
-	 * @since Unreleased Moves session-cookie creation before login page output.
+	 * @since 2.6.1 Moves session-cookie creation before login page output.
 	 */
 	public function scouting_oidc_auth_login(): void {
 		if ( empty( get_option( 'scouting_oidc_client_id' ) ) || empty( get_option( 'scouting_oidc_client_secret' ) ) ) {
@@ -565,7 +565,7 @@ class Auth {
 	 * Builds the local wp-login URL that handles the OIDC authorization flow.
 	 *
 	 * @since 1.0.0
-	 * @since Unreleased Defers OIDC URL generation until before login form output.
+	 * @since 2.6.1 Defers OIDC URL generation until before login form output.
 	 *
 	 * @param string|null $redirect_after_login Optional. URL to redirect to after login. Default null.
 	 * @return string Local OIDC login URL.
@@ -585,7 +585,7 @@ class Auth {
 	/**
 	 * Gets a validated shortcode post-login redirect from the local OIDC login URL.
 	 *
-	 * @since Unreleased Validates redirect_back data before creating OIDC state.
+	 * @since 2.6.1 Validates redirect_back data before creating OIDC state.
 	 *
 	 * @return string|null Valid same-site redirect URL or null.
 	 */

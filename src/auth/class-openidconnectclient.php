@@ -113,7 +113,7 @@ class OpenIDConnectClient {
 	 * The OIDC redirect hosts.
 	 *
 	 * @since 2.4.0
-	 * @since Unreleased Includes authorization endpoint hosts.
+	 * @since 2.6.1 Includes authorization endpoint hosts.
 	 * @var array<string> Normalized hosts allowed for OIDC redirects.
 	 */
 	private static array $oidc_redirect_hosts = array();
@@ -122,7 +122,7 @@ class OpenIDConnectClient {
 	 * Whether the OIDC redirect hosts filter has been added.
 	 *
 	 * @since 2.4.0
-	 * @since Unreleased Includes authorization endpoint hosts.
+	 * @since 2.6.1 Includes authorization endpoint hosts.
 	 * @var bool whether the allowed_redirect_hosts callback is already attached.
 	 */
 	private static bool $oidc_redirect_hosts_filter_added = false;
@@ -150,7 +150,7 @@ class OpenIDConnectClient {
 	/**
 	 * Redirects to an OIDC authorization request through a safe redirect.
 	 *
-	 * @since Unreleased Redirects to OIDC before WordPress login form output.
+	 * @since 2.6.1 Redirects to OIDC before WordPress login form output.
 	 *
 	 * @param string      $response_type The response type.
 	 * @param array       $scopes_array An array of scopes.
@@ -703,7 +703,7 @@ class OpenIDConnectClient {
 	 * Registers an OIDC provider host and attaches the filter callback once per request.
 	 *
 	 * @since 2.4.0
-	 * @since Unreleased Supports authorization endpoint redirects.
+	 * @since 2.6.1 Supports authorization endpoint redirects.
 	 *
 	 * @param string $host the host to allow for redirects.
 	 */
@@ -728,7 +728,7 @@ class OpenIDConnectClient {
 	 * Extends allowed redirect hosts with normalized OIDC provider hosts.
 	 *
 	 * @since 2.4.0
-	 * @since Unreleased Includes authorization endpoint hosts.
+	 * @since 2.6.1 Includes authorization endpoint hosts.
 	 *
 	 * @param array $hosts existing allowed hosts.
 	 * @return array updated allowed hosts.

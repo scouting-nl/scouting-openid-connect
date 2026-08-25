@@ -7,7 +7,7 @@
  * @author     Job van Koeveringe <job.van.koeveringe@scouting.nl>
  * @copyright  2026 Scouting Nederland
  * @license    GPLv3
- * @version    2.6.0
+ * @version    2.6.1
  * @since      1.0.0
  * @link       https://github.com/Scouting-nl/scouting-openid-connect
  *
@@ -15,7 +15,7 @@
  * Plugin Name:          Scouting OpenID Connect
  * Plugin URI:           https://github.com/Scouting-nl/scouting-openid-connect
  * Description:          WordPress plugin for logging in with Scouting Nederland OpenID Connect Server.
- * Version:              2.6.0
+ * Version:              2.6.1
  * Requires at least:    6.9.5
  * Requires PHP:         8.2
  * Author:               Job van Koeveringe
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 define( 'SCOUTING_OIDC_PATH', plugin_dir_path( __FILE__ ) );
-define( 'SCOUTING_OIDC_VERSION', '2.6.0' );
+define( 'SCOUTING_OIDC_VERSION', '2.6.1' );
 require_once SCOUTING_OIDC_PATH . 'src/auth/class-auth.php';
 require_once SCOUTING_OIDC_PATH . 'src/auth/class-session.php';
 require_once SCOUTING_OIDC_PATH . 'src/menu/class-menu.php';
