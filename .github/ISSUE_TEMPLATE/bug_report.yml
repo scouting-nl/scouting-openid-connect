@@ -1,8 +1,8 @@
 name: 🐛 Report an issue
 description: Report an issue for the Scouting OpenID Connect WordPress plugin.
-labels: bug
 assignees:
   - jobvk
+type: bug
 body:
   - type: markdown
     attributes:

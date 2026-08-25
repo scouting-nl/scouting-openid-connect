@@ -28,6 +28,20 @@ use ScoutingOIDC\ErrorHandler;
  */
 class Auth {
 	/**
+	 * WordPress login action used for the OIDC authorization flow.
+	 *
+	 * @since 2.6.1 Handles OIDC before the WordPress login form is rendered.
+	 */
+	private const LOGIN_ACTION = 'scouting_oidc';
+
+	/**
+	 * Query argument used to carry a shortcode post-login redirect.
+	 *
+	 * @since 2.6.1 Preserves redirect_back through the local OIDC login URL.
+	 */
+	private const REDIRECT_AFTER_LOGIN_QUERY_ARG = 'scouting_oidc_redirect_after_login';
+
+	/**
 	 * The OIDC client.
 	 *
 	 * @since 1.0.0
@@ -53,6 +67,7 @@ class Auth {
 	 * Adds the OpenID Connect button to the login form.
 	 *
 	 * @since 1.0.0
+	 * @since 2.6.1 Defers OIDC request creation until the button is activated.
 	 */
 	public function scouting_oidc_auth_login_form(): void {
 		// Check if the client ID and client secret are empty.
@@ -62,12 +77,6 @@ class Auth {
 		}
 
 		$login_url = $this->scouting_oidc_auth_login_url();
-
-		// Check if the login URL starts with 'init_error'.
-		if ( substr( $login_url, 0, 10 ) === 'init_error' ) {
-			Logger::warning( LogComponent::AUTH, 'Failed to generate OIDC login URL, login button will not be rendered on the login form' );
-			return;
-		}
 
 		// Add divider to the login form to separate the default login form from the OpenID Connect button.
 		echo '<hr id="scouting-oidc-divider" style="border-top: 2px solid #8c8f94; border-radius: 4px;"/>';
@@ -89,6 +98,7 @@ class Auth {
 	 * @since 1.0.0
 	 * @since 2.3.0 Made the `$atts` parameter optional. Updated the method signature.
 	 * @since 2.4.0 Added redirect_back support for the login button shortcode.
+	 * @since 2.6.1 Defers OIDC request creation until the button is activated.
 	 *
 	 * @param array $atts Optional. The shortcode attributes for customizing the button (width, height, background_color,
 	 *                       text_color, hide_logo). Default empty array.
@@ -141,19 +151,13 @@ class Auth {
 				return '';
 			}
 
-			// If redirect_back is requested, build a return URL to the current page and pass it to the auth URL builder.
+			// If redirect_back is requested, include the current page in the local OIDC login URL.
 			if ( $redirect_back ) {
 				$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '/';
 				$current_url = home_url( $request_uri );
 				$login_url   = $this->scouting_oidc_auth_login_url( $current_url );
 			} else {
 				$login_url = $this->scouting_oidc_auth_login_url();
-			}
-
-			// Check if the login URL starts with 'init_error'.
-			if ( substr( $login_url, 0, 10 ) === 'init_error' ) {
-				Logger::error( LogComponent::AUTH, 'Failed to generate OIDC login URL, shortcode button will not be rendered' );
-				return '';
 			}
 
 			$button_url  = $login_url;
@@ -180,9 +184,10 @@ class Auth {
 	 *
 	 * @since 1.0.0
 	 * @since 2.4.0 Added the `$atts` parameter.
+	 * @since 2.6.1 Returns a local OIDC login URL handled before form output.
 	 *
 	 * @param array $atts Optional. Shortcode attributes. Default empty array.
-	 * @return string the HTML for the login URL or an error URL if the login URL cannot be generated.
+	 * @return string the local OIDC login URL or an error URL if the client is not configured.
 	 */
 	public function scouting_oidc_auth_login_url_shortcode( array $atts = array() ): string {
 		// Allow a `redirect_back` attribute for the link shortcode as well.
@@ -214,18 +219,28 @@ class Auth {
 		} else {
 			$login_url = $this->scouting_oidc_auth_login_url();
 		}
-
-		// Check if the login URL starts with 'init_error'.
-		if ( substr( $login_url, 0, 10 ) === 'init_error' ) {
-			// Get hint from the URL.
-			$hint = substr( $login_url, 12 );
-
-			Logger::critical( LogComponent::AUTH, 'Failed to generate OIDC login URL, shortcode login URL will be rendered as an login error URL' );
-
-			// Return login URL with hint.
-			return ErrorHandler::login_error_url( 'init', $hint, 'init_error' );
-		}
 		return esc_url( $login_url );
+	}
+
+	/**
+	 * Handles the OIDC authorization flow before the WordPress login form renders.
+	 *
+	 * @since 2.6.1 Moves session-cookie creation before login page output.
+	 */
+	public function scouting_oidc_auth_login(): void {
+		if ( empty( get_option( 'scouting_oidc_client_id' ) ) || empty( get_option( 'scouting_oidc_client_secret' ) ) ) {
+			Logger::critical( LogComponent::AUTH, 'Client ID or Client Secret are missing in the configuration, OIDC login cannot be started' );
+			ErrorHandler::redirect_to_login_error(
+				'init',
+				__( 'Client ID or Client Secret are missing in the configuration.', 'scouting-openid-connect' ),
+				'init_error'
+			);
+		}
+
+		$response_type        = 'code';
+		$scopes               = array_map( 'sanitize_text_field', explode( ' ', get_option( 'scouting_oidc_scopes' ) ) );
+		$redirect_after_login = $this->scouting_oidc_auth_get_redirect_after_login_from_request();
+		$this->oidc_client->redirect_to_authentication( $response_type, $scopes, $redirect_after_login );
 	}
 
 	/**
@@ -547,38 +562,70 @@ class Auth {
 	}
 
 	/**
-	 * Returns the login URL.
+	 * Builds the local wp-login URL that handles the OIDC authorization flow.
 	 *
 	 * @since 1.0.0
-	 * @since 2.4.0 Added the `$redirect_after_login` parameter.
+	 * @since 2.6.1 Defers OIDC URL generation until before login form output.
 	 *
-	 * @param string|null $redirect_after_login Optional. URL to redirect to after login,
-	 *                                          used for shortcode support. If null, default
-	 *                                          redirect behavior applies.
-	 * @return string the login URL.
+	 * @param string|null $redirect_after_login Optional. URL to redirect to after login. Default null.
+	 * @return string Local OIDC login URL.
 	 */
 	private function scouting_oidc_auth_login_url( ?string $redirect_after_login = null ): string {
-		$response_type = 'code';
-		$scopes        = array_map( 'sanitize_text_field', explode( ' ', get_option( 'scouting_oidc_scopes' ) ) );
+		$query_args = array(
+			'action' => self::LOGIN_ACTION,
+		);
 
-		// Check if error_description, hint, and message are set in the URL.
-		if ( filter_has_var( INPUT_GET, 'error_description' ) && filter_has_var( INPUT_GET, 'hint' ) ) {
-
-			// All raw $_GET reads collected here.
-			$error_description_raw = filter_input( INPUT_GET, 'error_description', FILTER_UNSAFE_RAW );
-			$hint_raw              = filter_input( INPUT_GET, 'hint', FILTER_UNSAFE_RAW );
-
-			// All parameters are sanitized as they may contain untrusted data.
-			$error_description = is_string( $error_description_raw ) ? sanitize_text_field( wp_unslash( $error_description_raw ) ) : '';
-			$hint              = is_string( $hint_raw ) ? sanitize_text_field( wp_unslash( $hint_raw ) ) : '';
-
-			// If the error equals `init`, it means there was an error during the initialization of the login URL, so we log it and return a custom URL that indicates an initialization error with the hint as a parameter.
-			if ( 'init' === $error_description ) {
-				Logger::error( LogComponent::AUTH, "OIDC login URL builder returning init error: {$hint}" );
-				return 'init_error:' . $hint;
-			}
+		if ( is_string( $redirect_after_login ) && '' !== $redirect_after_login ) {
+			$query_args[ self::REDIRECT_AFTER_LOGIN_QUERY_ARG ] = $redirect_after_login;
 		}
 
-		return $this->oidc_client->get_authentication_url( $response_type, $scopes, $redirect_after_login );
+		return esc_url_raw( add_query_arg( $query_args, wp_login_url() ) );
+	}
+
+	/**
+	 * Gets a validated shortcode post-login redirect from the local OIDC login URL.
+	 *
+	 * @since 2.6.1 Validates redirect_back data before creating OIDC state.
+	 *
+	 * @return string|null Valid same-site redirect URL or null.
+	 */
+	private function scouting_oidc_auth_get_redirect_after_login_from_request(): ?string {
+		$redirect_raw = filter_input( INPUT_GET, self::REDIRECT_AFTER_LOGIN_QUERY_ARG, FILTER_UNSAFE_RAW );
+		if ( ! is_string( $redirect_raw ) || '' === $redirect_raw ) {
+			return null;
+		}
+
+		$redirect = wp_validate_redirect( esc_url_raw( wp_unslash( $redirect_raw ) ), '' );
+		$home_url = home_url( '/' );
+
+		$redirect_scheme = wp_parse_url( $redirect, PHP_URL_SCHEME );
+		$redirect_host   = wp_parse_url( $redirect, PHP_URL_HOST );
+		$redirect_port   = wp_parse_url( $redirect, PHP_URL_PORT );
+		$home_scheme     = wp_parse_url( $home_url, PHP_URL_SCHEME );
+		$home_host       = wp_parse_url( $home_url, PHP_URL_HOST );
+		$home_port       = wp_parse_url( $home_url, PHP_URL_PORT );
+
+		if ( ! is_int( $redirect_port ) ) {
+			$redirect_port = 'https' === strtolower( (string) $redirect_scheme ) ? 443 : 80;
+		}
+		if ( ! is_int( $home_port ) ) {
+			$home_port = 'https' === strtolower( (string) $home_scheme ) ? 443 : 80;
+		}
+
+		if (
+			'' !== $redirect
+			&& is_string( $redirect_scheme )
+			&& is_string( $redirect_host )
+			&& is_string( $home_scheme )
+			&& is_string( $home_host )
+			&& strtolower( $redirect_scheme ) === strtolower( $home_scheme )
+			&& strtolower( $redirect_host ) === strtolower( $home_host )
+			&& $redirect_port === $home_port
+		) {
+			return $redirect;
+		}
+
+		Logger::warning( LogComponent::AUTH, 'OIDC login request included an invalid post-login redirect URL.' );
+		return null;
 	}
 }
