@@ -94,6 +94,10 @@ function scouting_oidc_init(): void {
 	add_shortcode( 'scouting_oidc_button', array( $scouting_oidc_auth, 'scouting_oidc_auth_login_button_shortcode' ) );
 	add_shortcode( 'scouting_oidc_link', array( $scouting_oidc_auth, 'scouting_oidc_auth_login_url_shortcode' ) );
 
+	// Start OIDC authentication before any page output is sent.
+	add_action( 'admin_post_scouting_oidc_login', array( $scouting_oidc_auth, 'scouting_oidc_auth_start' ) );
+	add_action( 'admin_post_nopriv_scouting_oidc_login', array( $scouting_oidc_auth, 'scouting_oidc_auth_start' ) );
+
 	// Provide additional links in the plugin overview page.
 	add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $scouting_oidc_actions, 'scouting_oidc_actions_plugin_links' ) );
 

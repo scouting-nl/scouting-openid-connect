@@ -50,6 +50,56 @@ class Auth {
 	}
 
 	/**
+	 * Starts OIDC authentication before WordPress sends response headers.
+	 *
+	 * @since Unreleased Moved session cookie creation out of rendered login links.
+	 */
+	public function scouting_oidc_auth_start(): void {
+		if ( is_user_logged_in() ) {
+			wp_safe_redirect( home_url() );
+			exit;
+		}
+
+		if ( empty( get_option( 'scouting_oidc_client_id' ) ) || empty( get_option( 'scouting_oidc_client_secret' ) ) ) {
+			ErrorHandler::redirect_to_login_error( 'init', __( 'Client ID or Client Secret are missing in the configuration', 'scouting-openid-connect' ), 'init_error' );
+		}
+
+		$redirect_after_login = null;
+		$redirect_to_raw      = filter_input( INPUT_GET, 'redirect_to', FILTER_UNSAFE_RAW );
+
+		if ( is_string( $redirect_to_raw ) ) {
+			$redirect_after_login = wp_validate_redirect( esc_url_raw( wp_unslash( $redirect_to_raw ) ), '' );
+			$redirect_after_login = '' !== $redirect_after_login ? $redirect_after_login : null;
+		}
+
+		$authentication_url    = $this->scouting_oidc_auth_login_url( $redirect_after_login );
+		$authentication_host   = wp_parse_url( $authentication_url, PHP_URL_HOST );
+		$authentication_scheme = wp_parse_url( $authentication_url, PHP_URL_SCHEME );
+
+		if ( 'https' !== $authentication_scheme || 'login.scouting.nl' !== $authentication_host ) {
+			Logger::critical( LogComponent::AUTH, 'OIDC authorization endpoint is not a trusted Scouting Login URL' );
+			ErrorHandler::redirect_to_login_error( 'init', __( 'The authorization endpoint is invalid.', 'scouting-openid-connect' ), 'authorization_endpoint_is_invalid' );
+		}
+
+		add_filter( 'allowed_redirect_hosts', array( $this, 'scouting_oidc_auth_allowed_redirect_hosts' ) );
+		wp_safe_redirect( $authentication_url );
+		exit;
+	}
+
+	/**
+	 * Allows redirects to the fixed Scouting Login host.
+	 *
+	 * @since Unreleased Added for the OIDC login-start redirect.
+	 *
+	 * @param array $hosts Existing allowed redirect hosts.
+	 * @return array Updated allowed redirect hosts.
+	 */
+	public function scouting_oidc_auth_allowed_redirect_hosts( array $hosts ): array {
+		$hosts[] = 'login.scouting.nl';
+		return array_unique( $hosts );
+	}
+
+	/**
 	 * Adds the OpenID Connect button to the login form.
 	 *
 	 * @since 1.0.0
@@ -61,13 +111,7 @@ class Auth {
 			return;
 		}
 
-		$login_url = $this->scouting_oidc_auth_login_url();
-
-		// Check if the login URL starts with 'init_error'.
-		if ( substr( $login_url, 0, 10 ) === 'init_error' ) {
-			Logger::warning( LogComponent::AUTH, 'Failed to generate OIDC login URL, login button will not be rendered on the login form' );
-			return;
-		}
+		$login_url = $this->scouting_oidc_auth_start_url();
 
 		// Add divider to the login form to separate the default login form from the OpenID Connect button.
 		echo '<hr id="scouting-oidc-divider" style="border-top: 2px solid #8c8f94; border-radius: 4px;"/>';
@@ -145,15 +189,9 @@ class Auth {
 			if ( $redirect_back ) {
 				$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '/';
 				$current_url = home_url( $request_uri );
-				$login_url   = $this->scouting_oidc_auth_login_url( $current_url );
+				$login_url   = $this->scouting_oidc_auth_start_url( $current_url );
 			} else {
-				$login_url = $this->scouting_oidc_auth_login_url();
-			}
-
-			// Check if the login URL starts with 'init_error'.
-			if ( substr( $login_url, 0, 10 ) === 'init_error' ) {
-				Logger::error( LogComponent::AUTH, 'Failed to generate OIDC login URL, shortcode button will not be rendered' );
-				return '';
+				$login_url = $this->scouting_oidc_auth_start_url();
 			}
 
 			$button_url  = $login_url;
@@ -210,20 +248,9 @@ class Auth {
 		if ( $redirect_back ) {
 			$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '/';
 			$current_url = home_url( $request_uri );
-			$login_url   = $this->scouting_oidc_auth_login_url( $current_url );
+			$login_url   = $this->scouting_oidc_auth_start_url( $current_url );
 		} else {
-			$login_url = $this->scouting_oidc_auth_login_url();
-		}
-
-		// Check if the login URL starts with 'init_error'.
-		if ( substr( $login_url, 0, 10 ) === 'init_error' ) {
-			// Get hint from the URL.
-			$hint = substr( $login_url, 12 );
-
-			Logger::critical( LogComponent::AUTH, 'Failed to generate OIDC login URL, shortcode login URL will be rendered as an login error URL' );
-
-			// Return login URL with hint.
-			return ErrorHandler::login_error_url( 'init', $hint, 'init_error' );
+			$login_url = $this->scouting_oidc_auth_start_url();
 		}
 		return esc_url( $login_url );
 	}
@@ -544,6 +571,29 @@ class Auth {
 				'd'     => true,
 			),
 		);
+	}
+
+	/**
+	 * Returns the local URL that starts OIDC authentication.
+	 *
+	 * @since Unreleased Added to defer session creation until a dedicated request.
+	 *
+	 * @param string|null $redirect_after_login Optional local URL to visit after login.
+	 * @return string The local login-start URL.
+	 */
+	private function scouting_oidc_auth_start_url( ?string $redirect_after_login = null ): string {
+		$query_args = array(
+			'action' => 'scouting_oidc_login',
+		);
+
+		if ( is_string( $redirect_after_login ) && '' !== $redirect_after_login ) {
+			$validated_redirect = wp_validate_redirect( $redirect_after_login, '' );
+			if ( '' !== $validated_redirect ) {
+				$query_args['redirect_to'] = $validated_redirect;
+			}
+		}
+
+		return esc_url_raw( add_query_arg( $query_args, admin_url( 'admin-post.php' ) ) );
 	}
 
 	/**
