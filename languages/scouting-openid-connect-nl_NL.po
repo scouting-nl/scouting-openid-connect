@@ -5,8 +5,8 @@ msgstr ""
 "Project-Id-Version: Scouting OpenID Connect 2.6.1\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/"
 "issues\n"
-"POT-Creation-Date: 2026-08-13 20:54+0200\n"
-"PO-Revision-Date: 2026-08-13 20:54+0200\n"
+"POT-Creation-Date: 2026-08-25 20:52+0200\n"
+"PO-Revision-Date: 2026-08-25 21:00+0200\n"
 "Last-Translator: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language: nl_NL\n"
@@ -19,50 +19,63 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: auth/class-auth.php:82 auth/class-auth.php:160
+#: auth/class-auth.php:91 auth/class-auth.php:164
 #: shortcode/class-shortcode.php:165
 msgid "Login with Scouts Online"
 msgstr "Inloggen met Scouts Online"
 
-#: auth/class-auth.php:136 shortcode/class-shortcode.php:166
+#: auth/class-auth.php:146 shortcode/class-shortcode.php:166
 msgid "Logout"
 msgstr "Uitloggen"
 
-#: auth/class-auth.php:207
+#: auth/class-auth.php:212
 msgid "Client ID or Client Secret are missing in the configuration"
 msgstr "Client-ID of Client Secret ontbreekt in de configuratie"
 
-#: auth/class-auth.php:284
+#: auth/class-auth.php:235
+msgid "Client ID or Client Secret are missing in the configuration."
+msgstr "Client-ID of Client Secret ontbreekt in de configuratie."
+
+#: auth/class-auth.php:299
 msgid "State is invalid"
 msgstr "State is ongeldig"
 
-#: auth/class-auth.php:290 auth/class-auth.php:297
+#: auth/class-auth.php:305 auth/class-auth.php:312
 msgid "Code is missing"
 msgstr "Code ontbreekt"
 
-#: auth/class-auth.php:332
+#: auth/class-auth.php:347
 msgid "Webmaster disabled creation of new accounts"
 msgstr "Webmaster heeft het aanmaken van nieuwe accounts uitgeschakeld"
 
-#: auth/class-auth.php:372
+#: auth/class-auth.php:387
 msgid "The user denied the request"
 msgstr "De gebruiker heeft het verzoek geweigerd"
 
-#: auth/class-auth.php:376 auth/class-openidconnectclient.php:755
-#: auth/class-openidconnectclient.php:792
-#: auth/class-openidconnectclient.php:814
+#: auth/class-auth.php:391 auth/class-openidconnectclient.php:796
+#: auth/class-openidconnectclient.php:833
+#: auth/class-openidconnectclient.php:855
 msgid "Details:"
 msgstr "Details:"
 
-#: auth/class-openidconnectclient.php:166
-#: auth/class-openidconnectclient.php:1082
+#: auth/class-openidconnectclient.php:168
+msgid "The authorization endpoint is not a valid HTTPS URL."
+msgstr "Het autorisatie-eindpunt is geen geldige HTTPS-URL."
+
+#: auth/class-openidconnectclient.php:179
+msgid "The authorization endpoint could not be used for a secure redirect."
+msgstr ""
+"Het autorisatie-eindpunt kon niet worden gebruikt voor een veilige omleiding."
+
+#: auth/class-openidconnectclient.php:205
+#: auth/class-openidconnectclient.php:1123
 msgid ""
 "A secure login session could not be started. Please use HTTPS and try again."
 msgstr ""
 "Een veilige inlogsessie kon niet worden gestart. Gebruik HTTPS en probeer "
 "het opnieuw."
 
-#: auth/class-openidconnectclient.php:178
+#: auth/class-openidconnectclient.php:217
 msgid ""
 "The identity provider does not support the required S256 code challenge "
 "method for PKCE."
@@ -70,48 +83,48 @@ msgstr ""
 "De identiteitsprovider ondersteunt de vereiste S256-codecontrolemethode voor "
 "PKCE niet."
 
-#: auth/class-openidconnectclient.php:184
+#: auth/class-openidconnectclient.php:223
 msgid "The authorization_endpoint is not available in the well-known data."
 msgstr "Het authorization_endpoint is niet beschikbaar in de well-known data."
 
-#: auth/class-openidconnectclient.php:198
+#: auth/class-openidconnectclient.php:237
 msgid "The following scopes are not supported:"
 msgstr "De volgende scopes worden niet ondersteund:"
 
-#: auth/class-openidconnectclient.php:198
+#: auth/class-openidconnectclient.php:237
 msgid "The supported scopes are:"
 msgstr "De ondersteunde scopes zijn:"
 
-#: auth/class-openidconnectclient.php:262
+#: auth/class-openidconnectclient.php:301
 msgid "The token_endpoint is not available in the well-known data."
 msgstr "Het token_endpoint is niet beschikbaar in de well-known data."
 
-#: auth/class-openidconnectclient.php:272
+#: auth/class-openidconnectclient.php:311
 msgid "The code_verifier for PKCE is missing from the session."
 msgstr "De code_verifier voor PKCE ontbreekt in de sessie."
 
-#: auth/class-openidconnectclient.php:309
+#: auth/class-openidconnectclient.php:348
 #, php-format
 msgid "Token endpoint error %1$s: %2$s"
 msgstr "Token-eindpuntfout %1$s: %2$s"
 
-#: auth/class-openidconnectclient.php:366
+#: auth/class-openidconnectclient.php:405
 msgid "The ID token is not available in the tokens."
 msgstr "Het ID-token is niet beschikbaar in de tokens."
 
-#: auth/class-openidconnectclient.php:372
+#: auth/class-openidconnectclient.php:411
 msgid "The JSON Web Key Set (JWKS) is not available."
 msgstr "De JSON Web Key Set (JWKS) is niet beschikbaar."
 
-#: auth/class-openidconnectclient.php:379
+#: auth/class-openidconnectclient.php:418
 msgid "The ID token has an invalid structure."
 msgstr "Het ID-token heeft een ongeldige structuur."
 
-#: auth/class-openidconnectclient.php:393
+#: auth/class-openidconnectclient.php:432
 msgid "The ID token uses an unexpected signing algorithm."
 msgstr "Het ID-token maakt gebruik van een onverwacht ondertekeningsalgoritme."
 
-#: auth/class-openidconnectclient.php:408
+#: auth/class-openidconnectclient.php:447
 msgid ""
 "The certificate chain (x5c) for the key ID (kid) specified in the header was "
 "not found."
@@ -119,7 +132,7 @@ msgstr ""
 "De certificaatketen (x5c) voor de sleutel-ID (kid) in de koptekst is niet "
 "gevonden."
 
-#: auth/class-openidconnectclient.php:423
+#: auth/class-openidconnectclient.php:462
 msgid ""
 "The signing certificate used to validate the ID token is invalid or "
 "unsupported."
@@ -127,97 +140,97 @@ msgstr ""
 "Het ondertekeningscertificaat dat wordt gebruikt om het ID-token te "
 "valideren, is ongeldig of wordt niet ondersteund."
 
-#: auth/class-openidconnectclient.php:430
+#: auth/class-openidconnectclient.php:469
 msgid "The signature in the ID token is not valid."
 msgstr "De handtekening in het ID-token is niet geldig."
 
-#: auth/class-openidconnectclient.php:436
+#: auth/class-openidconnectclient.php:475
 msgid "The ID token payload could not be decoded."
 msgstr "The ID token payload could not be decoded."
 
-#: auth/class-openidconnectclient.php:442
+#: auth/class-openidconnectclient.php:481
 msgid "The ID token was issued by an unexpected issuer."
 msgstr "Het ID-token is uitgegeven door een onbekende uitgever."
 
-#: auth/class-openidconnectclient.php:449
+#: auth/class-openidconnectclient.php:488
 msgid "The ID token was not issued for this client."
 msgstr "Er is geen ID-token voor deze klant aangemaakt."
 
-#: auth/class-openidconnectclient.php:455
+#: auth/class-openidconnectclient.php:494
 msgid "The ID token has expired."
 msgstr "Het ID-token is verlopen."
 
-#: auth/class-openidconnectclient.php:461
+#: auth/class-openidconnectclient.php:500
 msgid "The ID token has an invalid issued-at timestamp."
 msgstr "Het ID-token heeft een ongeldige tijdstempel voor de uitgiftedatum."
 
-#: auth/class-openidconnectclient.php:467
+#: auth/class-openidconnectclient.php:506
 msgid "The ID token is missing the required sub claim."
 msgstr "De vereiste subclaim ontbreekt in het ID-token."
 
-#: auth/class-openidconnectclient.php:473
+#: auth/class-openidconnectclient.php:512
 msgid "The login session is invalid or has expired."
 msgstr "De inlogsessie is ongeldig of is verlopen."
 
-#: auth/class-openidconnectclient.php:479
+#: auth/class-openidconnectclient.php:518
 msgid "The ID token is missing the required nonce claim."
 msgstr "De vereiste nonce-claim ontbreekt in het ID-token."
 
-#: auth/class-openidconnectclient.php:484
+#: auth/class-openidconnectclient.php:523
 msgid "The ID token nonce is invalid."
 msgstr "De nonce van het ID-token is ongeldig."
 
-#: auth/class-openidconnectclient.php:508
+#: auth/class-openidconnectclient.php:547
 msgid "The userinfo_endpoint is not available in the well-known data."
 msgstr "Het userinfo_endpoint is niet beschikbaar in de well-known data."
 
-#: auth/class-openidconnectclient.php:520
+#: auth/class-openidconnectclient.php:559
 msgid "The access token is not available in the tokens."
 msgstr "Het toegangstoken is niet beschikbaar in de tokens."
 
-#: auth/class-openidconnectclient.php:549
+#: auth/class-openidconnectclient.php:588
 msgid "The UserInfo endpoint returned an unexpected response."
 msgstr "Het UserInfo-eindpunt heeft een onverwacht antwoord geretourneerd."
 
-#: auth/class-openidconnectclient.php:559
+#: auth/class-openidconnectclient.php:598
 msgid "The UserInfo endpoint returned invalid user data."
 msgstr ""
 "Het UserInfo-eindpunt heeft ongeldige gebruikersgegevens geretourneerd."
 
-#: auth/class-openidconnectclient.php:569
+#: auth/class-openidconnectclient.php:608
 msgid "The UserInfo response is missing the required sub claim."
 msgstr "De vereiste subclaim ontbreekt in het UserInfo-antwoord."
 
-#: auth/class-openidconnectclient.php:578
+#: auth/class-openidconnectclient.php:617
 msgid "The UserInfo response belongs to a different subject."
 msgstr "Het UserInfo-antwoord hoort bij een ander subject."
 
-#: auth/class-openidconnectclient.php:754
-#: auth/class-openidconnectclient.php:813
+#: auth/class-openidconnectclient.php:795
+#: auth/class-openidconnectclient.php:854
 msgid "No additional details provided."
 msgstr "Geen aanvullende details verstrekt."
 
-#: auth/class-openidconnectclient.php:755
+#: auth/class-openidconnectclient.php:796
 msgid "When retrieving well-known data, the status code was:"
 msgstr "Bij het ophalen van well-known data was de statuscode:"
 
-#: auth/class-openidconnectclient.php:786
+#: auth/class-openidconnectclient.php:827
 msgid "The jwks_uri is not available in the well-known data."
 msgstr "De jwks_uri is niet beschikbaar in de well-known data."
 
-#: auth/class-openidconnectclient.php:792
+#: auth/class-openidconnectclient.php:833
 msgid "The jwks_uri is not a valid URL."
 msgstr "De jwks_uri is geen geldige URL."
 
-#: auth/class-openidconnectclient.php:792
+#: auth/class-openidconnectclient.php:833
 msgid "The jwks_uri is not valid:"
 msgstr "De jwks_uri is niet geldig:"
 
-#: auth/class-openidconnectclient.php:814
+#: auth/class-openidconnectclient.php:855
 msgid "When retrieving JWKS data, the status code was:"
 msgstr "Bij het ophalen van JWKS-gegevens was de statuscode:"
 
-#: auth/class-openidconnectclient.php:866
+#: auth/class-openidconnectclient.php:907
 msgid "Authentication is temporarily unavailable. Please try again later."
 msgstr "Verificatie is tijdelijk niet beschikbaar. Probeer het later nog eens."
 
@@ -819,10 +832,8 @@ msgid "Provider discovery failed: %s"
 msgstr "Provider-discoverie mislukt: %s"
 
 #: support/class-providerhealth.php:97
-#, fuzzy
-#| msgid "The UserInfo endpoint returned an unexpected response."
 msgid "The Scouts Online provider returned an unexpected response"
-msgstr "De Scouts Online-provider heeft een onverwacht antwoord teruggegeven."
+msgstr "De Scouts Online-provider heeft een onverwacht antwoord teruggegeven"
 
 #: support/class-providerhealth.php:101
 #, php-format
@@ -830,13 +841,11 @@ msgid "Provider discovery returned HTTP status %d instead of 200."
 msgstr "Provider-discoverie gaf HTTP-status %d terug in plaats van 200."
 
 #: support/class-providerhealth.php:110
-#, fuzzy
-#| msgid "The UserInfo endpoint returned invalid user data."
 msgid "The Scouts Online provider returned invalid discovery data"
 msgstr ""
 "De Scouts Online-provider heeft ongeldige discovery-gegevens "
 "teruggegeven.Het UserInfo-eindpunt heeft ongeldige gebruikersgegevens "
-"geretourneerd."
+"geretourneerd"
 
 #: support/class-providerhealth.php:112
 msgid "The provider response was not a valid JSON object."
@@ -875,24 +884,18 @@ msgid "These required endpoints are missing or invalid: %s."
 msgstr "Deze vereiste eindpunten ontbreken of zijn ongeldig: %s."
 
 #: support/class-providerhealth.php:223
-#, fuzzy
-#| msgid ""
-#| "The identity provider does not support the required S256 code challenge "
-#| "method for PKCE."
 msgid "The provider does not advertise the required PKCE method"
 msgstr ""
 "De provider biedt de vereiste PKCE-methode niet aanDe identiteitsprovider "
-"ondersteunt de vereiste S256-codecontrolemethode voor PKCE niet."
+"ondersteunt de vereiste S256-codecontrolemethode voor PKCE niet"
 
 #: support/class-providerhealth.php:225
 msgid "Scouting OpenID Connect requires the S256 code challenge method."
 msgstr "Scouting OpenID Connect vereist de S256-codechallenge-methode."
 
 #: support/class-providerhealth.php:248
-#, fuzzy
-#| msgid "The ID token is missing the required nonce claim."
 msgid "The provider is missing required OpenID Connect capabilities"
-msgstr "De vereiste nonce-claim ontbreekt in het ID-token."
+msgstr "De vereiste nonce-claim ontbreekt in het ID-token"
 
 #: support/class-providerhealth.php:252
 #, php-format
@@ -904,16 +907,13 @@ msgid "Configured scopes are not advertised by the provider"
 msgstr "Geconfigureerde scopes worden niet door de provider aangeboden"
 
 #: support/class-providerhealth.php:281
-#, fuzzy, php-format
-#| msgid "Required scopes:"
+#, php-format
 msgid "Review these scopes: %s."
 msgstr "Bekijk deze scopes: %s."
 
 #: support/class-providerhealth.php:322
-#, fuzzy
-#| msgid "The ID token payload could not be decoded."
 msgid "The provider signing keys could not be reached"
-msgstr "The ID token payload could not be decoded."
+msgstr "The ID token payload could not be decoded"
 
 #: support/class-providerhealth.php:326
 #, php-format
@@ -921,10 +921,8 @@ msgid "Signing-key retrieval failed: %s"
 msgstr "Het ophalen van de ondertekeningssleutels is mislukt: %s"
 
 #: support/class-providerhealth.php:332
-#, fuzzy
-#| msgid "The UserInfo endpoint returned an unexpected response."
 msgid "The provider signing keys returned an unexpected response"
-msgstr "Het UserInfo-eindpunt heeft een onverwacht antwoord geretourneerd."
+msgstr "Het UserInfo-eindpunt heeft een onverwacht antwoord geretourneerd"
 
 #: support/class-providerhealth.php:336
 #, php-format
@@ -959,65 +957,45 @@ msgstr ""
 
 #: support/class-providerhealth.php:421 support/class-sitehealth.php:490
 #: support/class-sitehealth.php:593
-#, fuzzy
-#| msgid "Setting up OpenID Connect"
 msgid "Scouting OpenID Connect"
 msgstr "Scouting OpenID Connect"
 
 #: support/class-providerhealth.php:441 support/class-sitehealth.php:613
-#, fuzzy
-#| msgid "OpenID Connect Settings"
 msgid "Review Scouting OpenID Connect settings"
-msgstr "OpenID Connect Instellingen"
+msgstr "Controleer de OpenID Connect-instellingen van Scouting"
 
 #: support/class-sitehealth.php:87
-#, fuzzy
-#| msgid "Setting up OpenID Connect"
 msgid "Scouting OpenID Connect runtime"
-msgstr "Scouting OpenID Connect"
+msgstr "Scouting OpenID Connect-runtime"
 
 #: support/class-sitehealth.php:91
-#, fuzzy
-#| msgid "OpenID Connect Button"
 msgid "Scouting OpenID Connect configuration"
-msgstr "OpenID Connect Knop"
+msgstr "Scouting OpenID Connect-configuratie"
 
 #: support/class-sitehealth.php:95
-#, fuzzy
-#| msgid "Setting up OpenID Connect"
 msgid "Scouting OpenID Connect scopes"
-msgstr "Scouting OpenID Connect"
+msgstr "Scouting OpenID Connect-scopes"
 
 #: support/class-sitehealth.php:99
-#, fuzzy
-#| msgid "Setting up OpenID Connect"
 msgid "Scouting OpenID Connect provider"
-msgstr "Scouting OpenID Connect"
+msgstr "Scouting OpenID Connect-provider"
 
 #: support/class-sitehealth.php:105
-#, fuzzy
-#| msgid "Setting up OpenID Connect"
 msgid "Scouting OpenID Connect login redirect"
-msgstr "Scouting OpenID Connect"
+msgstr "Scouting OpenID Connect-inlogomleiding"
 
 #: support/class-sitehealth.php:109
-#, fuzzy
-#| msgid "Setting up OpenID Connect"
 msgid "Scouting OpenID Connect log storage"
-msgstr "Scouting OpenID Connect"
+msgstr "Opslag van Scouting OpenID Connect-logs"
 
 #: support/class-sitehealth.php:113
-#, fuzzy
-#| msgid "Setting up OpenID Connect"
 msgid "Scouting OpenID Connect log cleanup"
-msgstr "Scouting OpenID Connect"
+msgstr "Opschonen van Scouting OpenID Connect-logs"
 
 #: support/class-sitehealth.php:136
-#, fuzzy
-#| msgid "The ID token is missing the required nonce claim."
 msgid "The server is missing functions required for Scouts Online login"
 msgstr ""
-"De server mist functies die nodig zijn voor het inloggen bij Scouts Online."
+"De server mist functies die nodig zijn voor het inloggen bij Scouts Online"
 
 #: support/class-sitehealth.php:140
 #, php-format
@@ -1120,10 +1098,8 @@ msgid "All required scopes are configured. Current scopes: %s."
 msgstr "Alle vereiste scopes zijn geconfigureerd. Huidige scopes: %s."
 
 #: support/class-sitehealth.php:275
-#, fuzzy
-#| msgid "The ID token nonce is invalid."
 msgid "The login redirect mode is invalid"
-msgstr "De modus voor login-redirect is ongeldig."
+msgstr "De inlog-omleidingsmodus is ongeldig"
 
 #: support/class-sitehealth.php:279
 #, php-format
@@ -1248,14 +1224,10 @@ msgid "Gender"
 msgstr "Geslacht"
 
 #: support/class-sitehealth.php:471
-#, fuzzy
-#| msgid "phone"
 msgid "Phone"
 msgstr "Telefoon"
 
 #: support/class-sitehealth.php:472
-#, fuzzy
-#| msgid "address"
 msgid "Address"
 msgstr "Adres"
 
@@ -1284,8 +1256,6 @@ msgid "Issuer"
 msgstr "Issuer"
 
 #: support/class-sitehealth.php:496
-#, fuzzy
-#| msgid "Add the Redirect URI:"
 msgid "Redirect URI"
 msgstr "Redirect URI"
 
@@ -1311,14 +1281,10 @@ msgid "Configured"
 msgstr "Geconfigureerd"
 
 #: support/class-sitehealth.php:514
-#, fuzzy
-#| msgid "Required scopes:"
 msgid "Configured scopes"
 msgstr "Geconfigureerde scopes"
 
 #: support/class-sitehealth.php:516
-#, fuzzy
-#| msgid "Required scopes:"
 msgid "Required scopes"
 msgstr "Vereiste scopes"
 
@@ -1356,8 +1322,6 @@ msgid "Custom login redirect"
 msgstr "Aangepaste login-redirect"
 
 #: support/class-sitehealth.php:533
-#, fuzzy
-#| msgid "Setting up OpenID Connect"
 msgid "Scouting OpenID Connect users"
 msgstr "Scouting OpenID Connect-gebruikers"
 
@@ -1370,14 +1334,10 @@ msgid "WooCommerce synchronization"
 msgstr "WooCommerce-synchronisatie"
 
 #: support/class-sitehealth.php:536
-#, fuzzy
-#| msgid "Debug Logging"
 msgid "Debug logging"
 msgstr "Debug-loggen"
 
 #: support/class-sitehealth.php:538
-#, fuzzy
-#| msgid "Log retention (days)"
 msgid "Log retention"
 msgstr "Bewaartermijn van logs"
 
@@ -1620,8 +1580,6 @@ msgstr ""
 "SOL ID ontbreekt, controleer of de scope \"membership\" is ingeschakeld."
 
 #: user/class-user.php:260
-#, fuzzy
-#| msgid "OpenID Connect Settings"
 msgid "OpenID Connect subject is missing."
 msgstr "OpenID Connect-subject ontbreekt."
 
@@ -1630,8 +1588,6 @@ msgid "Email is missing, make sure the \"email\" scope is enabled."
 msgstr "E-mail ontbreekt, controleer of de scope \"email\" is ingeschakeld."
 
 #: user/class-user.php:297
-#, fuzzy
-#| msgid "Email address is already in use by another account"
 msgid "This SOL ID is already linked to another account."
 msgstr "Dit SOL-ID is al gekoppeld aan een ander account."
 

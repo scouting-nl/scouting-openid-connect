@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Scouting OpenID Connect 2.6.1\n"
 "Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/issues\n"
-"POT-Creation-Date: 2026-08-13 20:54+0200\n"
+"POT-Creation-Date: 2026-08-25 20:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
@@ -18,189 +18,201 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: auth/class-auth.php:82 auth/class-auth.php:160
+#: auth/class-auth.php:91 auth/class-auth.php:164
 #: shortcode/class-shortcode.php:165
 msgid "Login with Scouts Online"
 msgstr ""
 
-#: auth/class-auth.php:136 shortcode/class-shortcode.php:166
+#: auth/class-auth.php:146 shortcode/class-shortcode.php:166
 msgid "Logout"
 msgstr ""
 
-#: auth/class-auth.php:207
+#: auth/class-auth.php:212
 msgid "Client ID or Client Secret are missing in the configuration"
 msgstr ""
 
-#: auth/class-auth.php:284
+#: auth/class-auth.php:235
+msgid "Client ID or Client Secret are missing in the configuration."
+msgstr ""
+
+#: auth/class-auth.php:299
 msgid "State is invalid"
 msgstr ""
 
-#: auth/class-auth.php:290 auth/class-auth.php:297
+#: auth/class-auth.php:305 auth/class-auth.php:312
 msgid "Code is missing"
 msgstr ""
 
-#: auth/class-auth.php:332
+#: auth/class-auth.php:347
 msgid "Webmaster disabled creation of new accounts"
 msgstr ""
 
-#: auth/class-auth.php:372
+#: auth/class-auth.php:387
 msgid "The user denied the request"
 msgstr ""
 
-#: auth/class-auth.php:376 auth/class-openidconnectclient.php:755
-#: auth/class-openidconnectclient.php:792
-#: auth/class-openidconnectclient.php:814
+#: auth/class-auth.php:391 auth/class-openidconnectclient.php:796
+#: auth/class-openidconnectclient.php:833
+#: auth/class-openidconnectclient.php:855
 msgid "Details:"
 msgstr ""
 
-#: auth/class-openidconnectclient.php:166
-#: auth/class-openidconnectclient.php:1082
+#: auth/class-openidconnectclient.php:168
+msgid "The authorization endpoint is not a valid HTTPS URL."
+msgstr ""
+
+#: auth/class-openidconnectclient.php:179
+msgid "The authorization endpoint could not be used for a secure redirect."
+msgstr ""
+
+#: auth/class-openidconnectclient.php:205
+#: auth/class-openidconnectclient.php:1123
 msgid "A secure login session could not be started. Please use HTTPS and try again."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:178
+#: auth/class-openidconnectclient.php:217
 msgid "The identity provider does not support the required S256 code challenge method for PKCE."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:184
+#: auth/class-openidconnectclient.php:223
 msgid "The authorization_endpoint is not available in the well-known data."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:198
+#: auth/class-openidconnectclient.php:237
 msgid "The following scopes are not supported:"
 msgstr ""
 
-#: auth/class-openidconnectclient.php:198
+#: auth/class-openidconnectclient.php:237
 msgid "The supported scopes are:"
 msgstr ""
 
-#: auth/class-openidconnectclient.php:262
+#: auth/class-openidconnectclient.php:301
 msgid "The token_endpoint is not available in the well-known data."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:272
+#: auth/class-openidconnectclient.php:311
 msgid "The code_verifier for PKCE is missing from the session."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:309
+#: auth/class-openidconnectclient.php:348
 #, php-format
 msgid "Token endpoint error %1$s: %2$s"
 msgstr ""
 
-#: auth/class-openidconnectclient.php:366
+#: auth/class-openidconnectclient.php:405
 msgid "The ID token is not available in the tokens."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:372
+#: auth/class-openidconnectclient.php:411
 msgid "The JSON Web Key Set (JWKS) is not available."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:379
+#: auth/class-openidconnectclient.php:418
 msgid "The ID token has an invalid structure."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:393
+#: auth/class-openidconnectclient.php:432
 msgid "The ID token uses an unexpected signing algorithm."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:408
+#: auth/class-openidconnectclient.php:447
 msgid "The certificate chain (x5c) for the key ID (kid) specified in the header was not found."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:423
+#: auth/class-openidconnectclient.php:462
 msgid "The signing certificate used to validate the ID token is invalid or unsupported."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:430
+#: auth/class-openidconnectclient.php:469
 msgid "The signature in the ID token is not valid."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:436
+#: auth/class-openidconnectclient.php:475
 msgid "The ID token payload could not be decoded."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:442
+#: auth/class-openidconnectclient.php:481
 msgid "The ID token was issued by an unexpected issuer."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:449
+#: auth/class-openidconnectclient.php:488
 msgid "The ID token was not issued for this client."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:455
+#: auth/class-openidconnectclient.php:494
 msgid "The ID token has expired."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:461
+#: auth/class-openidconnectclient.php:500
 msgid "The ID token has an invalid issued-at timestamp."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:467
+#: auth/class-openidconnectclient.php:506
 msgid "The ID token is missing the required sub claim."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:473
+#: auth/class-openidconnectclient.php:512
 msgid "The login session is invalid or has expired."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:479
+#: auth/class-openidconnectclient.php:518
 msgid "The ID token is missing the required nonce claim."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:484
+#: auth/class-openidconnectclient.php:523
 msgid "The ID token nonce is invalid."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:508
+#: auth/class-openidconnectclient.php:547
 msgid "The userinfo_endpoint is not available in the well-known data."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:520
+#: auth/class-openidconnectclient.php:559
 msgid "The access token is not available in the tokens."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:549
+#: auth/class-openidconnectclient.php:588
 msgid "The UserInfo endpoint returned an unexpected response."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:559
+#: auth/class-openidconnectclient.php:598
 msgid "The UserInfo endpoint returned invalid user data."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:569
+#: auth/class-openidconnectclient.php:608
 msgid "The UserInfo response is missing the required sub claim."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:578
+#: auth/class-openidconnectclient.php:617
 msgid "The UserInfo response belongs to a different subject."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:754
-#: auth/class-openidconnectclient.php:813
+#: auth/class-openidconnectclient.php:795
+#: auth/class-openidconnectclient.php:854
 msgid "No additional details provided."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:755
+#: auth/class-openidconnectclient.php:796
 msgid "When retrieving well-known data, the status code was:"
 msgstr ""
 
-#: auth/class-openidconnectclient.php:786
+#: auth/class-openidconnectclient.php:827
 msgid "The jwks_uri is not available in the well-known data."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:792
+#: auth/class-openidconnectclient.php:833
 msgid "The jwks_uri is not a valid URL."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:792
+#: auth/class-openidconnectclient.php:833
 msgid "The jwks_uri is not valid:"
 msgstr ""
 
-#: auth/class-openidconnectclient.php:814
+#: auth/class-openidconnectclient.php:855
 msgid "When retrieving JWKS data, the status code was:"
 msgstr ""
 
-#: auth/class-openidconnectclient.php:866
+#: auth/class-openidconnectclient.php:907
 msgid "Authentication is temporarily unavailable. Please try again later."
 msgstr ""
 
