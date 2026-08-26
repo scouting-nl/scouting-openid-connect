@@ -33,6 +33,7 @@ $scouting_oidc_options = array(
 	'scouting_oidc_log_retention_days',
 	'scouting_oidc_last_log_cleanup',
 	'scouting_oidc_logs_schema_version',
+	'scouting_oidc_roles_schema_version',
 );
 
 foreach ( $scouting_oidc_options as $scouting_oidc_option ) {
@@ -91,3 +92,16 @@ $scouting_oidc_logs_table = $wpdb->prefix . 'scouting_oidc_logs';
 
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching
 $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $scouting_oidc_logs_table ) );
+
+// Drop the role tables in dependency order.
+$scouting_oidc_roles_tables = array(
+	$wpdb->prefix . 'scouting_oidc_user_roles',
+	$wpdb->prefix . 'scouting_oidc_sol_roles',
+	$wpdb->prefix . 'scouting_oidc_sol_organisation_units',
+	$wpdb->prefix . 'scouting_oidc_sol_organisations',
+);
+
+foreach ( $scouting_oidc_roles_tables as $scouting_oidc_roles_table ) {
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching
+	$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $scouting_oidc_roles_table ) );
+}

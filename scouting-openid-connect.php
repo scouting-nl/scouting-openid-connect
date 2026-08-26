@@ -44,6 +44,8 @@ require_once SCOUTING_OIDC_PATH . 'src/logging/class-logging.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/class-actions.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/class-description.php';
 require_once SCOUTING_OIDC_PATH . 'src/user/class-fields.php';
+require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolesdatabase.php';
+require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolessync.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-logger.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-cronjobs.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-mail.php';
@@ -60,6 +62,8 @@ use ScoutingOIDC\ProviderHealth;
 use ScoutingOIDC\SiteHealth;
 use ScoutingOIDC\Logging;
 use ScoutingOIDC\Fields;
+use ScoutingOIDC\RolesDatabase;
+use ScoutingOIDC\RolesSync;
 use ScoutingOIDC\CronJobs;
 use ScoutingOIDC\Mail;
 use ScoutingOIDC\Logger;
@@ -76,6 +80,7 @@ $scouting_oidc_provider_health = new ProviderHealth();
 $scouting_oidc_site_health     = new SiteHealth( $scouting_oidc_provider_health );
 $scouting_oidc_logging         = new Logging();
 $scouting_oidc_fields          = new Fields();
+$scouting_oidc_roles_database  = new RolesDatabase();
 $scouting_oidc_logger          = new Logger();
 $scouting_oidc_cron_jobs       = new CronJobs();
 
@@ -118,7 +123,9 @@ function scouting_oidc_init(): void {
 }
 add_action( 'plugins_loaded', 'scouting_oidc_init' );
 add_action( 'plugins_loaded', array( $scouting_oidc_logger, 'scouting_oidc_logger_maybe_upgrade_database' ) );
+add_action( 'plugins_loaded', array( $scouting_oidc_roles_database, 'scouting_oidc_roles_database_maybe_upgrade' ) );
 add_action( 'delete_user', array( Logger::class, 'scouting_oidc_logger_log_user_deletion' ), 10, 1 );
+add_action( 'delete_user', array( RolesSync::class, 'scouting_oidc_roles_sync_delete_user_roles' ), 10, 1 );
 
 // Add pages to the admin menu.
 add_action( 'admin_menu', array( $scouting_oidc_menu, 'scouting_oidc_menu' ) );
@@ -171,5 +178,6 @@ add_action( 'admin_post_' . CronJobs::RUN_CLEANUP_ACTION, array( $scouting_oidc_
 // Setup defaults during installation.
 register_activation_hook( __FILE__, array( $scouting_oidc_settings, 'scouting_oidc_settings_install' ) );
 register_activation_hook( __FILE__, array( $scouting_oidc_logger, 'scouting_oidc_logger_database_create' ) );
+register_activation_hook( __FILE__, array( $scouting_oidc_roles_database, 'scouting_oidc_roles_database_create' ) );
 register_activation_hook( __FILE__, array( $scouting_oidc_cron_jobs, 'scouting_oidc_cron_activate' ) );
 register_deactivation_hook( __FILE__, array( $scouting_oidc_cron_jobs, 'scouting_oidc_cron_deactivate' ) );

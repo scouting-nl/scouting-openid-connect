@@ -325,8 +325,11 @@ class User {
 	 *
 	 * @since 1.0.0
 	 * @since 2.0.0 Changed account creation to use the SOL member ID.
+	 * @since Unreleased Returns the created WordPress user ID.
+	 *
+	 * @return int Created WordPress user ID.
 	 */
-	public function scouting_oidc_user_create(): void {
+	public function scouting_oidc_user_create(): int {
 		Logger::info( LogComponent::USER, "Creating an account for user '{$this->full_name}'", null, $this->sol_id );
 		$user_id = wp_create_user( $this->sol_id, wp_generate_password( 18, true, true ), $this->email );
 
@@ -380,6 +383,8 @@ class User {
 		do_action( 'scouting_oidc_user_register', $user_id, $this->sol_id, $this->email );
 
 		$this->scouting_oidc_user_update_meta( $user_id );
+
+		return (int) $user_id;
 	}
 
 	/**
@@ -388,8 +393,11 @@ class User {
 	 * @since 1.0.0
 	 * @since 2.0.0 Changed account updates to use the SOL member ID.
 	 * @since 2.0.1 Restored compatibility with version 1.2.0 accounts.
+	 * @since Unreleased Returns the updated WordPress user ID.
+	 *
+	 * @return int Updated WordPress user ID.
 	 */
-	public function scouting_oidc_user_update(): void {
+	public function scouting_oidc_user_update(): int {
 		$user_id_by_sol_id = username_exists( $this->sol_id );
 		$user_id_by_email  = email_exists( $this->email );
 
@@ -463,6 +471,8 @@ class User {
 		}
 
 		Logger::info( LogComponent::USER, "Updating user '{$this->full_name}' finished", $user_id_by_sol_id, $this->sol_id );
+
+		return (int) $user_id_by_sol_id;
 	}
 
 		/**

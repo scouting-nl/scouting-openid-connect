@@ -20,6 +20,7 @@ require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
 
 use ScoutingOIDC\User;
 use ScoutingOIDC\ErrorHandler;
+use ScoutingOIDC\RolesSync;
 
 /**
  * Handles Scouting OpenID Connect authentication.
@@ -332,13 +333,15 @@ class Auth {
 		// Check if user is already created.
 		if ( $user->scouting_oidc_user_check_if_exist() ) {
 			Logger::info( LogComponent::AUTH, "User '{$user->get_display_name()}' has an existing account, updating user information and logging in", null, $user->get_username() );
-			$user->scouting_oidc_user_update();
+			$user_id = $user->scouting_oidc_user_update();
+			RolesSync::scouting_oidc_roles_sync_user_info( $user_id, $user_info );
 			// Promote per-state redirect only after successful callback validation and right before login.
 			$this->oidc_client->apply_redirect_for_state_to_session( $state );
 			$user->scouting_oidc_user_login();
 		} elseif ( get_option( 'scouting_oidc_user_auto_create' ) ) {
 				Logger::info( LogComponent::AUTH, "User '{$user->get_display_name()}' does not have an account, auto-creation is enabled, creating account and logging in", null, $user->get_username() );
-				$user->scouting_oidc_user_create();
+				$user_id = $user->scouting_oidc_user_create();
+				RolesSync::scouting_oidc_roles_sync_user_info( $user_id, $user_info );
 				// Promote per-state redirect only after successful callback validation and right before login.
 				$this->oidc_client->apply_redirect_for_state_to_session( $state );
 				$user->scouting_oidc_user_login();
