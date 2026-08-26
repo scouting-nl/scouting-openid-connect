@@ -169,7 +169,7 @@ class Settings_Oidc {
 	/**
 	 * Sanitizes scopes option to supported values only.
 	 *
-	 * Supported scopes: openid membership profile email address phone
+	 * Supported scopes: openid membership profile email address phone roles
 	 *
 	 * @since 2.4.0
 	 *
@@ -177,7 +177,7 @@ class Settings_Oidc {
 	 * @return string String value.
 	 */
 	public function scouting_oidc_sanitize_scopes_option( mixed $input ): string {
-		$allowed_scopes = array( 'openid', 'membership', 'profile', 'email', 'address', 'phone' );
+		$allowed_scopes = array( 'openid', 'membership', 'profile', 'email', 'address', 'phone', 'roles' );
 		$input          = is_string( $input ) ? strtolower( trim( $input ) ) : '';
 
 		// If the input is empty, return the default set of scopes.
