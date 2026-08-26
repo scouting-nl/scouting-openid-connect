@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [[2.6.2](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.6.2)] - 26/08/2026
+
+- Preserved historical log entries when WordPress users are deleted.
+- Added audit logging for SOL user deletions, including the initiating user or system process.
+- Limited log user ID profile links to WordPress users that still exist.
+
 ## [[2.6.1](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.6.1)] - 25/08/2026
 
 - Fixed OIDC session creation before WordPress login form output.

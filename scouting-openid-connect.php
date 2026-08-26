@@ -7,7 +7,7 @@
  * @author     Job van Koeveringe <job.van.koeveringe@scouting.nl>
  * @copyright  2026 Scouting Nederland
  * @license    GPLv3
- * @version    2.6.1
+ * @version    2.6.2
  * @since      1.0.0
  * @link       https://github.com/Scouting-nl/scouting-openid-connect
  *
@@ -15,7 +15,7 @@
  * Plugin Name:          Scouting OpenID Connect
  * Plugin URI:           https://github.com/Scouting-nl/scouting-openid-connect
  * Description:          WordPress plugin for logging in with Scouting Nederland OpenID Connect Server.
- * Version:              2.6.1
+ * Version:              2.6.2
  * Requires at least:    6.9.5
  * Requires PHP:         8.2
  * Author:               Job van Koeveringe
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 define( 'SCOUTING_OIDC_PATH', plugin_dir_path( __FILE__ ) );
-define( 'SCOUTING_OIDC_VERSION', '2.6.1' );
+define( 'SCOUTING_OIDC_VERSION', '2.6.2' );
 require_once SCOUTING_OIDC_PATH . 'src/auth/class-auth.php';
 require_once SCOUTING_OIDC_PATH . 'src/auth/class-session.php';
 require_once SCOUTING_OIDC_PATH . 'src/menu/class-menu.php';
@@ -118,6 +118,7 @@ function scouting_oidc_init(): void {
 }
 add_action( 'plugins_loaded', 'scouting_oidc_init' );
 add_action( 'plugins_loaded', array( $scouting_oidc_logger, 'scouting_oidc_logger_maybe_upgrade_database' ) );
+add_action( 'delete_user', array( Logger::class, 'scouting_oidc_logger_log_user_deletion' ), 10, 1 );
 
 // Add pages to the admin menu.
 add_action( 'admin_menu', array( $scouting_oidc_menu, 'scouting_oidc_menu' ) );
