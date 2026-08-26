@@ -30,8 +30,9 @@ class Logger {
 	 * Current schema version for the logs table.
 	 *
 	 * @since 2.4.0
+	 * @since 2.6.2 Removes the user foreign key while preserving historical logs.
 	 */
-	private const LOGS_SCHEMA_VERSION = '1';
+	private const LOGS_SCHEMA_VERSION = '2';
 
 	/**
 	 * Option key used to persist installed logs schema version.
@@ -41,9 +42,17 @@ class Logger {
 	private const LOGS_SCHEMA_VERSION_OPTION = 'scouting_oidc_logs_schema_version';
 
 	/**
+	 * Name of the foreign key created by logs schema version 1.
+	 *
+	 * @since 2.6.2 Removes the legacy WordPress users table foreign key.
+	 */
+	private const LEGACY_USER_FOREIGN_KEY = 'fk_scouting_logs_user';
+
+	/**
 	 * Ensures the logs table exists and is up to date for plugin updates.
 	 *
 	 * @since 2.4.0
+	 * @since 2.6.2 Removes the legacy WordPress users table foreign key.
 	 */
 	public function scouting_oidc_logger_maybe_upgrade_database(): void {
 		global $wpdb;
@@ -51,7 +60,7 @@ class Logger {
 		$logs_table        = $wpdb->prefix . 'scouting_oidc_logs';
 		$installed_version = get_option( self::LOGS_SCHEMA_VERSION_OPTION, '' );
 
-		if ( self::LOGS_SCHEMA_VERSION === $installed_version && $this->scouting_oidc_logger_table_exists( $logs_table ) ) {
+		if ( self::LOGS_SCHEMA_VERSION === $installed_version && $this->scouting_oidc_logger_table_exists( $logs_table ) && ! $this->scouting_oidc_logger_legacy_user_foreign_key_exists( $logs_table ) ) {
 			return;
 		}
 
@@ -62,6 +71,7 @@ class Logger {
 	 * Creates or updates the logs table during plugin activation.
 	 *
 	 * @since 2.4.0
+	 * @since 2.6.2 Removes the legacy WordPress users table foreign key.
 	 */
 	public function scouting_oidc_logger_database_create(): void {
 		global $wpdb;
@@ -107,32 +117,8 @@ class Logger {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 
-		// Ensure the table engine supports foreign keys (InnoDB).
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB
-		$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ENGINE=InnoDB', $logs_table ) );
-
-		// Only add FK if it doesn't already exist.
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$existing_fk = $wpdb->get_var(
-			$wpdb->prepare(
-				'
-                SELECT CONSTRAINT_NAME
-                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-                WHERE TABLE_SCHEMA = DATABASE()
-                AND TABLE_NAME = %s
-                AND COLUMN_NAME = %s
-                AND REFERENCED_TABLE_NAME = %s
-                ',
-				$logs_table,
-				'user_id',
-				$wpdb->users
-			)
-		);
-
-		if ( ! $existing_fk ) {
-			// Add a foreign key constraint on user_id referencing the WP users table, with cascading deletes to maintain referential integrity. This ensures that if a user is deleted from WordPress, all their associated log entries will also be removed, preventing orphaned log records.
-            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB
-			$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ADD CONSTRAINT %i FOREIGN KEY (user_id) REFERENCES %i(ID) ON DELETE CASCADE', $logs_table, 'fk_scouting_logs_user', $wpdb->users ) );
+		if ( ! $this->scouting_oidc_logger_drop_legacy_user_foreign_key( $logs_table ) ) {
+			return;
 		}
 
 		update_option( self::LOGS_SCHEMA_VERSION_OPTION, self::LOGS_SCHEMA_VERSION );
@@ -417,6 +403,41 @@ class Logger {
 	}
 
 	/**
+	 * Logs the deletion of a Scouting OpenID Connect user.
+	 *
+	 * @since 2.6.2 Logs SOL account deletions and their initiators.
+	 *
+	 * @param int $user_id WordPress user ID being deleted.
+	 */
+	public static function scouting_oidc_logger_log_user_deletion( int $user_id ): void {
+		$user = get_userdata( $user_id );
+		if ( false === $user || 'true' !== get_user_meta( $user_id, 'scouting_oidc_user', true ) ) {
+			return;
+		}
+
+		$sol_id = (string) $user->user_login;
+		$actor  = wp_get_current_user();
+
+		if ( $actor->exists() ) {
+			$message = sprintf(
+				"SOL user '%s' (WordPress user ID %d) was deleted by WordPress user '%s' (ID %d).",
+				$sol_id,
+				$user_id,
+				(string) $actor->user_login,
+				(int) $actor->ID
+			);
+		} else {
+			$message = sprintf(
+				"SOL user '%s' (WordPress user ID %d) was deleted by a system process.",
+				$sol_id,
+				$user_id
+			);
+		}
+
+		self::notice( LogComponent::USER, $message, $user_id, $sol_id );
+	}
+
+	/**
 	 * Checks whether the logs table currently exists.
 	 *
 	 * @since 2.4.0
@@ -431,6 +452,51 @@ class Logger {
 		$found_table = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $logs_table ) );
 
 		return is_string( $found_table ) && $found_table === $logs_table;
+	}
+
+	/**
+	 * Checks whether the logs table still has the foreign key from schema version 1.
+	 *
+	 * @since 2.6.2 Detects the legacy WordPress users table foreign key.
+	 *
+	 * @param string $logs_table Full logs table name.
+	 * @return bool Whether the legacy foreign key exists.
+	 */
+	private function scouting_oidc_logger_legacy_user_foreign_key_exists( string $logs_table ): bool {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$foreign_key = $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = %s AND CONSTRAINT_NAME = %s AND CONSTRAINT_TYPE = %s',
+				$logs_table,
+				self::LEGACY_USER_FOREIGN_KEY,
+				'FOREIGN KEY'
+			)
+		);
+
+		return self::LEGACY_USER_FOREIGN_KEY === $foreign_key;
+	}
+
+	/**
+	 * Removes the legacy foreign key that references the WordPress users table.
+	 *
+	 * @since 2.6.2 Removes the legacy WordPress users table foreign key.
+	 *
+	 * @param string $logs_table Full logs table name.
+	 * @return bool Whether the foreign key is absent or was removed successfully.
+	 */
+	private function scouting_oidc_logger_drop_legacy_user_foreign_key( string $logs_table ): bool {
+		global $wpdb;
+
+		if ( ! $this->scouting_oidc_logger_legacy_user_foreign_key_exists( $logs_table ) ) {
+			return true;
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB
+		$result = $wpdb->query( $wpdb->prepare( 'ALTER TABLE %i DROP FOREIGN KEY %i', $logs_table, self::LEGACY_USER_FOREIGN_KEY ) );
+
+		return false !== $result;
 	}
 
 	/**

@@ -377,6 +377,7 @@ class Logging {
 			 * Renders the User ID column with links to user profiles when possible.
 			 *
 			 * @since 2.4.0
+			 * @since 2.6.2 Links stored IDs only while their WordPress users exist.
 			 *
 			 * @param array<string, mixed> $item The log item.
 			 * @return string String value.
@@ -388,10 +389,13 @@ class Logging {
 					return '—';
 				}
 
-				// Attempt to find a user with the given ID and link to their profile if found.
-				$url = get_edit_user_link( $user_id_value );
-				if ( is_string( $url ) && '' !== $url ) {
-					return '<a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( (string) $user_id_value ) . '</a>';
+				// Link the stored ID only while the corresponding WordPress user exists.
+				$user = get_userdata( $user_id_value );
+				if ( false !== $user ) {
+					$url = get_edit_user_link( $user_id_value );
+					if ( is_string( $url ) && '' !== $url ) {
+						return '<a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( (string) $user_id_value ) . '</a>';
+					}
 				}
 
 				// If no user is found with the given ID, just display the ID as plain text.

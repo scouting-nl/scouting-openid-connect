@@ -33,10 +33,11 @@ class SiteHealth {
 	 * Installed database schema version.
 	 *
 	 * @since 2.5.0
+	 * @since 2.6.2 Expects the logging schema without a user foreign key.
 	 *
 	 * @var string
 	 */
-	private const LOGS_SCHEMA_VERSION = '1';
+	private const LOGS_SCHEMA_VERSION = '2';
 
 	/**
 	 * Format used for Site Health debug timestamps.
