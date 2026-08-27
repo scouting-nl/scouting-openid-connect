@@ -159,7 +159,7 @@ class RolesSync {
 	 *
 	 * @since Unreleased Normalizes UserInfo organisation units.
 	 *
-	 * @param array                                    $raw_organisation_units Raw UserInfo organisation units claim.
+	 * @param array                                          $raw_organisation_units Raw UserInfo organisation units claim.
 	 * @param array<string, array{id: string, name: string}> $organisations Normalized organisations.
 	 * @return array<int, array{organisation_id: string, name: string, unit_type: string, game_section_type: string|null}>|\WP_Error Normalized organisation units, or an error.
 	 */
@@ -205,7 +205,7 @@ class RolesSync {
 	 *
 	 * @since Unreleased Normalizes UserInfo role assignments.
 	 *
-	 * @param array                                                                                         $raw_roles Raw UserInfo roles claim.
+	 * @param array                                                                                                       $raw_roles Raw UserInfo roles claim.
 	 * @param array<int, array{organisation_id: string, name: string, unit_type: string, game_section_type: string|null}> $organisation_units Normalized organisation units.
 	 * @return array<string, array{organisation_id: string, organisation_unit_id: int, unit_type: string, game_section_type: string|null, role_key: string, role_name: string, role_type: string, member_type: string, category: string|null}>|\WP_Error Normalized roles keyed by role key, or an error.
 	 */
@@ -239,8 +239,8 @@ class RolesSync {
 			$roles[ $role_key ] = array(
 				'organisation_id'      => $organisation_units[ $organisation_unit_id ]['organisation_id'],
 				'organisation_unit_id' => $organisation_unit_id,
-				'unit_type'             => $organisation_units[ $organisation_unit_id ]['unit_type'],
-				'game_section_type'     => $organisation_units[ $organisation_unit_id ]['game_section_type'],
+				'unit_type'            => $organisation_units[ $organisation_unit_id ]['unit_type'],
+				'game_section_type'    => $organisation_units[ $organisation_unit_id ]['game_section_type'],
 				'role_key'             => $role_key,
 				'role_name'            => $role_name,
 				'role_type'            => $role_type,
@@ -257,7 +257,7 @@ class RolesSync {
 	 *
 	 * @since Unreleased Persists UserInfo role claims.
 	 *
-	 * @param int                                                                                                                                                              $user_id WordPress user ID.
+	 * @param int                                                                                                                                                                                                                                                                                                                                                                                        $user_id WordPress user ID.
 	 * @param array{organisations: array<string, array{id: string, name: string}>, organisation_units: array<int, array{organisation_id: string, name: string, unit_type: string, game_section_type: string|null}>, roles: array<string, array{organisation_id: string, organisation_unit_id: int, role_key: string, role_name: string, role_type: string, member_type: string, category: string|null}>} $role_graph Normalized role graph.
 	 * @return bool Whether the role graph was persisted.
 	 */
@@ -326,9 +326,9 @@ class RolesSync {
 	 *
 	 * @since Unreleased Saves synchronized organisations.
 	 *
-	 * @param string                         $organisations_table Full organisations table name.
+	 * @param string                          $organisations_table Full organisations table name.
 	 * @param array{id: string, name: string} $organisation Normalized organisation.
-	 * @param string                         $current_time UTC timestamp.
+	 * @param string                          $current_time UTC timestamp.
 	 * @return bool Whether the organisation was saved.
 	 */
 	private static function scouting_oidc_roles_sync_upsert_organisation( string $organisations_table, array $organisation, string $current_time ): bool {
@@ -355,10 +355,10 @@ class RolesSync {
 	 *
 	 * @since Unreleased Saves synchronized organisation units.
 	 *
-	 * @param string                                                                                         $organisation_units_table Full organisation units table name.
-	 * @param int                                                                                            $organisation_unit_id Organisation unit ID.
+	 * @param string                                                                                          $organisation_units_table Full organisation units table name.
+	 * @param int                                                                                             $organisation_unit_id Organisation unit ID.
 	 * @param array{organisation_id: string, name: string, unit_type: string, game_section_type: string|null} $organisation_unit Normalized organisation unit.
-	 * @param string                                                                                         $current_time UTC timestamp.
+	 * @param string                                                                                          $current_time UTC timestamp.
 	 * @return bool Whether the organisation unit was saved.
 	 */
 	private static function scouting_oidc_roles_sync_upsert_organisation_unit( string $organisation_units_table, int $organisation_unit_id, array $organisation_unit, string $current_time ): bool {
@@ -392,9 +392,9 @@ class RolesSync {
 	 *
 	 * @since Unreleased Saves shared synchronized roles.
 	 *
-	 * @param string                                                                                                                                              $roles_table Full roles table name.
+	 * @param string                                                                                                                                                        $roles_table Full roles table name.
 	 * @param array{organisation_id: string, organisation_unit_id: int, role_key: string, role_name: string, role_type: string, member_type: string, category: string|null} $role Normalized role.
-	 * @param string                                                                                                                                              $current_time UTC timestamp.
+	 * @param string                                                                                                                                                        $current_time UTC timestamp.
 	 * @return int|null Saved role ID, or null on failure.
 	 */
 	private static function scouting_oidc_roles_sync_upsert_role( string $roles_table, array $role, string $current_time ): ?int {
@@ -460,9 +460,9 @@ class RolesSync {
 	 *
 	 * @since Unreleased Removes stale synchronized user roles.
 	 *
-	 * @param string               $user_roles_table Full user roles table name.
-	 * @param int                  $user_id WordPress user ID.
-	 * @param array<int, int>    $role_ids Current shared role IDs.
+	 * @param string          $user_roles_table Full user roles table name.
+	 * @param int             $user_id WordPress user ID.
+	 * @param array<int, int> $role_ids Current shared role IDs.
 	 * @return bool Whether stale roles were removed.
 	 */
 	private static function scouting_oidc_roles_sync_delete_stale_user_roles( string $user_roles_table, int $user_id, array $role_ids ): bool {
@@ -479,7 +479,7 @@ class RolesSync {
 		$sql          = 'DELETE FROM %i WHERE user_id = %d AND role_id NOT IN (' . $placeholders . ')';
 		$arguments    = array_merge( array( $user_roles_table, $user_id ), array_values( $role_ids ) );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		$result = $wpdb->query( $wpdb->prepare( $sql, $arguments ) );
 
 		return false !== $result;
@@ -576,5 +576,4 @@ class RolesSync {
 
 		return $value;
 	}
-
 }
