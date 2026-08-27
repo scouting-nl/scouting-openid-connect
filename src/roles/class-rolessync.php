@@ -32,27 +32,27 @@ class RolesSync {
 	 */
 	public static function scouting_oidc_roles_sync_user_info( int $user_id, array $user_info ): void {
 		if ( $user_id <= 0 || ! get_userdata( $user_id ) ) {
-			Logger::warning( LogComponent::USER, 'Skipped SOL role synchronization because the WordPress user could not be found.', $user_id > 0 ? $user_id : null );
+			Logger::warning( LogComponent::ROLES, 'Skipped SOL role synchronization because the WordPress user could not be found.', $user_id > 0 ? $user_id : null );
 			return;
 		}
 
 		$role_graph = self::scouting_oidc_roles_sync_normalize_role_graph( $user_info );
 		if ( null === $role_graph ) {
-			Logger::debug( LogComponent::USER, 'Skipped SOL role synchronization because the UserInfo response did not include a role graph.', $user_id );
+			Logger::debug( LogComponent::ROLES, 'Skipped SOL role synchronization because the UserInfo response did not include a role graph.', $user_id );
 			return;
 		}
 
 		if ( is_wp_error( $role_graph ) ) {
-			Logger::warning( LogComponent::USER, 'Skipped SOL role synchronization because the UserInfo role graph was invalid.', $user_id );
+			Logger::warning( LogComponent::ROLES, 'Skipped SOL role synchronization because the UserInfo role graph was invalid.', $user_id );
 			return;
 		}
 
 		if ( ! self::scouting_oidc_roles_sync_persist_role_graph( $user_id, $role_graph ) ) {
-			Logger::error( LogComponent::USER, 'SOL role synchronization could not be saved.', $user_id );
+			Logger::error( LogComponent::ROLES, 'SOL role synchronization could not be saved.', $user_id );
 			return;
 		}
 
-		Logger::debug( LogComponent::USER, 'SOL role synchronization completed.', $user_id );
+		Logger::debug( LogComponent::ROLES, 'SOL role synchronization completed.', $user_id );
 	}
 
 	/**
