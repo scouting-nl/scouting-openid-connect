@@ -60,7 +60,7 @@ class RolesDatabase {
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$organisations_sql = "CREATE TABLE {$tables['organisations']} (
-			organisation_id VARCHAR(20) NOT NULL,
+			organisation_id BIGINT(20) UNSIGNED NOT NULL,
 			name VARCHAR(255) NOT NULL,
 			last_seen_at DATETIME NOT NULL,
 			PRIMARY KEY  (organisation_id),
@@ -69,7 +69,7 @@ class RolesDatabase {
 
 		$organisation_units_sql = "CREATE TABLE {$tables['organisation_units']} (
 			organisation_unit_id BIGINT(20) UNSIGNED NOT NULL,
-			organisation_id VARCHAR(20) NOT NULL,
+			organisation_id BIGINT(20) UNSIGNED NOT NULL,
 			name VARCHAR(255) NOT NULL,
 			unit_type VARCHAR(100) NOT NULL,
 			game_section_type VARCHAR(100) NULL,

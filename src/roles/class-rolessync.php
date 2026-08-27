@@ -83,7 +83,7 @@ class RolesSync {
 	 * @since Unreleased Validates UserInfo role claims.
 	 *
 	 * @param array $user_info Validated UserInfo response.
-	 * @return array{organisations: array<string, array{id: string, name: string}>, organisation_units: array<int, array{organisation_id: string, name: string, unit_type: string, game_section_type: string|null}>, roles: array<string, array{organisation_id: string, organisation_unit_id: int, role_key: string, role_name: string, role_type: string, member_type: string, category: string|null}>}|\WP_Error|null Normalized role graph, invalid-data error, or null when role claims are absent.
+	 * @return array{organisations: array<int, array{id: int, name: string}>, organisation_units: array<int, array{organisation_id: int, name: string, unit_type: string, game_section_type: string|null}>, roles: array<string, array{organisation_id: int, organisation_unit_id: int, role_key: string, role_name: string, role_type: string, member_type: string, category: string|null}>}|\WP_Error|null Normalized role graph, invalid-data error, or null when role claims are absent.
 	 */
 	private static function scouting_oidc_roles_sync_normalize_role_graph( array $user_info ): array|\WP_Error|null {
 		$required_claims = array( 'organisations', 'organisation_units', 'roles' );
@@ -125,7 +125,7 @@ class RolesSync {
 	 * @since Unreleased Normalizes UserInfo organisations.
 	 *
 	 * @param array $raw_organisations Raw UserInfo organisations claim.
-	 * @return array<string, array{id: string, name: string}>|\WP_Error Normalized organisations, or an error.
+	 * @return array<int, array{id: int, name: string}>|\WP_Error Normalized organisations, or an error.
 	 */
 	private static function scouting_oidc_roles_sync_normalize_organisations( array $raw_organisations ): array|\WP_Error {
 		$organisations = array();
@@ -135,7 +135,7 @@ class RolesSync {
 				return new \WP_Error( 'invalid_organisation' );
 			}
 
-			$organisation_id = self::scouting_oidc_roles_sync_normalize_organisation_id( $raw_organisation['id'] ?? $array_key );
+			$organisation_id = self::scouting_oidc_roles_sync_normalize_positive_id( $raw_organisation['id'] ?? $array_key );
 			$name            = self::scouting_oidc_roles_sync_normalize_text( $raw_organisation['name'] ?? null, 255 );
 			if ( null === $organisation_id || null === $name ) {
 				return new \WP_Error( 'invalid_organisation' );
@@ -159,9 +159,9 @@ class RolesSync {
 	 *
 	 * @since Unreleased Normalizes UserInfo organisation units.
 	 *
-	 * @param array                                          $raw_organisation_units Raw UserInfo organisation units claim.
-	 * @param array<string, array{id: string, name: string}> $organisations Normalized organisations.
-	 * @return array<int, array{organisation_id: string, name: string, unit_type: string, game_section_type: string|null}>|\WP_Error Normalized organisation units, or an error.
+	 * @param array                                    $raw_organisation_units Raw UserInfo organisation units claim.
+	 * @param array<int, array{id: int, name: string}> $organisations Normalized organisations.
+	 * @return array<int, array{organisation_id: int, name: string, unit_type: string, game_section_type: string|null}>|\WP_Error Normalized organisation units, or an error.
 	 */
 	private static function scouting_oidc_roles_sync_normalize_organisation_units( array $raw_organisation_units, array $organisations ): array|\WP_Error {
 		$organisation_units = array();
@@ -172,7 +172,7 @@ class RolesSync {
 			}
 
 			$organisation_unit_id = self::scouting_oidc_roles_sync_normalize_positive_id( $raw_organisation_unit['id'] ?? $array_key );
-			$organisation_id      = self::scouting_oidc_roles_sync_normalize_organisation_id( $raw_organisation_unit['organisation_id'] ?? null );
+			$organisation_id      = self::scouting_oidc_roles_sync_normalize_positive_id( $raw_organisation_unit['organisation_id'] ?? null );
 			$name                 = self::scouting_oidc_roles_sync_normalize_text( $raw_organisation_unit['name'] ?? null, 255 );
 			$unit_type            = self::scouting_oidc_roles_sync_normalize_text( $raw_organisation_unit['type'] ?? null, 100 );
 			$game_section_type    = null;
@@ -205,9 +205,9 @@ class RolesSync {
 	 *
 	 * @since Unreleased Normalizes UserInfo role assignments.
 	 *
-	 * @param array                                                                                                       $raw_roles Raw UserInfo roles claim.
-	 * @param array<int, array{organisation_id: string, name: string, unit_type: string, game_section_type: string|null}> $organisation_units Normalized organisation units.
-	 * @return array<string, array{organisation_id: string, organisation_unit_id: int, unit_type: string, game_section_type: string|null, role_key: string, role_name: string, role_type: string, member_type: string, category: string|null}>|\WP_Error Normalized roles keyed by role key, or an error.
+	 * @param array                                                                                                    $raw_roles Raw UserInfo roles claim.
+	 * @param array<int, array{organisation_id: int, name: string, unit_type: string, game_section_type: string|null}> $organisation_units Normalized organisation units.
+	 * @return array<string, array{organisation_id: int, organisation_unit_id: int, unit_type: string, game_section_type: string|null, role_key: string, role_name: string, role_type: string, member_type: string, category: string|null}>|\WP_Error Normalized roles keyed by role key, or an error.
 	 */
 	private static function scouting_oidc_roles_sync_normalize_roles( array $raw_roles, array $organisation_units ): array|\WP_Error {
 		$roles = array();
@@ -257,8 +257,8 @@ class RolesSync {
 	 *
 	 * @since Unreleased Persists UserInfo role claims.
 	 *
-	 * @param int                                                                                                                                                                                                                                                                                                                                                                                        $user_id WordPress user ID.
-	 * @param array{organisations: array<string, array{id: string, name: string}>, organisation_units: array<int, array{organisation_id: string, name: string, unit_type: string, game_section_type: string|null}>, roles: array<string, array{organisation_id: string, organisation_unit_id: int, role_key: string, role_name: string, role_type: string, member_type: string, category: string|null}>} $role_graph Normalized role graph.
+	 * @param int                                                                                                                                                                                                                                                                                                                                                                            $user_id WordPress user ID.
+	 * @param array{organisations: array<int, array{id: int, name: string}>, organisation_units: array<int, array{organisation_id: int, name: string, unit_type: string, game_section_type: string|null}>, roles: array<string, array{organisation_id: int, organisation_unit_id: int, role_key: string, role_name: string, role_type: string, member_type: string, category: string|null}>} $role_graph Normalized role graph.
 	 * @return bool Whether the role graph was persisted.
 	 */
 	private static function scouting_oidc_roles_sync_persist_role_graph( int $user_id, array $role_graph ): bool {
@@ -326,9 +326,9 @@ class RolesSync {
 	 *
 	 * @since Unreleased Saves synchronized organisations.
 	 *
-	 * @param string                          $organisations_table Full organisations table name.
-	 * @param array{id: string, name: string} $organisation Normalized organisation.
-	 * @param string                          $current_time UTC timestamp.
+	 * @param string                       $organisations_table Full organisations table name.
+	 * @param array{id: int, name: string} $organisation Normalized organisation.
+	 * @param string                       $current_time UTC timestamp.
 	 * @return bool Whether the organisation was saved.
 	 */
 	private static function scouting_oidc_roles_sync_upsert_organisation( string $organisations_table, array $organisation, string $current_time ): bool {
@@ -337,7 +337,7 @@ class RolesSync {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$result = $wpdb->query(
 			$wpdb->prepare(
-				'INSERT INTO %i (organisation_id, name, last_seen_at) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE name = %s, last_seen_at = %s',
+				'INSERT INTO %i (organisation_id, name, last_seen_at) VALUES (%d, %s, %s) ON DUPLICATE KEY UPDATE name = %s, last_seen_at = %s',
 				$organisations_table,
 				$organisation['id'],
 				$organisation['name'],
@@ -355,10 +355,10 @@ class RolesSync {
 	 *
 	 * @since Unreleased Saves synchronized organisation units.
 	 *
-	 * @param string                                                                                          $organisation_units_table Full organisation units table name.
-	 * @param int                                                                                             $organisation_unit_id Organisation unit ID.
-	 * @param array{organisation_id: string, name: string, unit_type: string, game_section_type: string|null} $organisation_unit Normalized organisation unit.
-	 * @param string                                                                                          $current_time UTC timestamp.
+	 * @param string                                                                                       $organisation_units_table Full organisation units table name.
+	 * @param int                                                                                          $organisation_unit_id Organisation unit ID.
+	 * @param array{organisation_id: int, name: string, unit_type: string, game_section_type: string|null} $organisation_unit Normalized organisation unit.
+	 * @param string                                                                                       $current_time UTC timestamp.
 	 * @return bool Whether the organisation unit was saved.
 	 */
 	private static function scouting_oidc_roles_sync_upsert_organisation_unit( string $organisation_units_table, int $organisation_unit_id, array $organisation_unit, string $current_time ): bool {
@@ -368,7 +368,7 @@ class RolesSync {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$result = $wpdb->query(
 			$wpdb->prepare(
-				'INSERT INTO %i (organisation_unit_id, organisation_id, name, unit_type, game_section_type, last_seen_at) VALUES (%d, %s, %s, %s, NULLIF(%s, \'\'), %s) ON DUPLICATE KEY UPDATE organisation_id = %s, name = %s, unit_type = %s, game_section_type = NULLIF(%s, \'\'), last_seen_at = %s',
+				'INSERT INTO %i (organisation_unit_id, organisation_id, name, unit_type, game_section_type, last_seen_at) VALUES (%d, %d, %s, %s, NULLIF(%s, \'\'), %s) ON DUPLICATE KEY UPDATE organisation_id = %d, name = %s, unit_type = %s, game_section_type = NULLIF(%s, \'\'), last_seen_at = %s',
 				$organisation_units_table,
 				$organisation_unit_id,
 				$organisation_unit['organisation_id'],
@@ -392,9 +392,9 @@ class RolesSync {
 	 *
 	 * @since Unreleased Saves shared synchronized roles.
 	 *
-	 * @param string                                                                                                                                                        $roles_table Full roles table name.
-	 * @param array{organisation_id: string, organisation_unit_id: int, role_key: string, role_name: string, role_type: string, member_type: string, category: string|null} $role Normalized role.
-	 * @param string                                                                                                                                                        $current_time UTC timestamp.
+	 * @param string                                                                                                                                                     $roles_table Full roles table name.
+	 * @param array{organisation_id: int, organisation_unit_id: int, role_key: string, role_name: string, role_type: string, member_type: string, category: string|null} $role Normalized role.
+	 * @param string                                                                                                                                                     $current_time UTC timestamp.
 	 * @return int|null Saved role ID, or null on failure.
 	 */
 	private static function scouting_oidc_roles_sync_upsert_role( string $roles_table, array $role, string $current_time ): ?int {
@@ -513,30 +513,9 @@ class RolesSync {
 	}
 
 	/**
-	 * Normalizes an organisation identifier while preserving leading zeroes.
-	 *
-	 * @since Unreleased Validates organisation identifiers.
-	 *
-	 * @param mixed $value Raw organisation identifier.
-	 * @return string|null Normalized identifier, or null when invalid.
-	 */
-	private static function scouting_oidc_roles_sync_normalize_organisation_id( mixed $value ): ?string {
-		if ( ! is_string( $value ) && ! is_int( $value ) ) {
-			return null;
-		}
-
-		$organisation_id = trim( (string) $value );
-		if ( '' === $organisation_id || strlen( $organisation_id ) > 20 || 1 !== preg_match( '/^[A-Za-z0-9_-]+$/', $organisation_id ) ) {
-			return null;
-		}
-
-		return $organisation_id;
-	}
-
-	/**
 	 * Normalizes a positive integer identifier.
 	 *
-	 * @since Unreleased Validates organisation unit identifiers.
+	 * @since Unreleased Validates source identifiers.
 	 *
 	 * @param mixed $value Raw numeric identifier.
 	 * @return int|null Positive integer, or null when invalid.
