@@ -95,7 +95,7 @@ $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $scouting_oidc_logs_tab
 
 // Drop the role tables in dependency order.
 $scouting_oidc_roles_tables = array(
-	$wpdb->prefix . 'scouting_oidc_user_roles',
+	$wpdb->prefix . 'scouting_oidc_sol_role_assignments',
 	$wpdb->prefix . 'scouting_oidc_sol_roles',
 	$wpdb->prefix . 'scouting_oidc_sol_organisation_units',
 	$wpdb->prefix . 'scouting_oidc_sol_organisations',

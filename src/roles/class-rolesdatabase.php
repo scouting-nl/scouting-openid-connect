@@ -21,7 +21,7 @@ class RolesDatabase {
 	/**
 	 * Current schema version for the role tables.
 	 *
-	 * @since Unreleased Uses dedicated SOL source tables and normalized user assignments.
+	 * @since Unreleased Defines the initial role schema.
 	 */
 	private const SCHEMA_VERSION = '1';
 
@@ -60,7 +60,7 @@ class RolesDatabase {
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$organisations_sql = "CREATE TABLE {$tables['organisations']} (
-			organisation_id BIGINT(20) UNSIGNED NOT NULL,
+			organisation_id CHAR(6) NOT NULL,
 			name VARCHAR(255) NOT NULL,
 			last_seen_at DATETIME NOT NULL,
 			PRIMARY KEY  (organisation_id),
@@ -68,11 +68,11 @@ class RolesDatabase {
 		) ENGINE=InnoDB $charset_collate;";
 
 		$organisation_units_sql = "CREATE TABLE {$tables['organisation_units']} (
-			organisation_unit_id BIGINT(20) UNSIGNED NOT NULL,
-			organisation_id BIGINT(20) UNSIGNED NOT NULL,
+			organisation_unit_id BIGINT UNSIGNED NOT NULL,
+			organisation_id CHAR(6) NOT NULL,
 			name VARCHAR(255) NOT NULL,
-			unit_type VARCHAR(100) NOT NULL,
-			game_section_type VARCHAR(100) NULL,
+			unit_type VARCHAR(255) NOT NULL,
+			game_section_type VARCHAR(255) NULL,
 			last_seen_at DATETIME NOT NULL,
 			PRIMARY KEY  (organisation_unit_id),
 			KEY organisation_id (organisation_id),
@@ -83,7 +83,7 @@ class RolesDatabase {
 		dbDelta( $organisations_sql );
 		dbDelta( $organisation_units_sql );
 		dbDelta( $this->scouting_oidc_roles_database_get_roles_sql( $tables['roles'], $charset_collate ) );
-		dbDelta( $this->scouting_oidc_roles_database_get_user_roles_sql( $tables['user_roles'], $charset_collate ) );
+		dbDelta( $this->scouting_oidc_roles_database_get_role_assignments_sql( $tables['role_assignments'], $charset_collate ) );
 
 		foreach ( $tables as $transactional_table ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB
@@ -99,7 +99,7 @@ class RolesDatabase {
 	/**
 	 * Gets the shared role definition table SQL.
 	 *
-	 * @since Unreleased Defines normalized shared roles.
+	 * @since Unreleased Defines roles keyed by provider ID.
 	 *
 	 * @param string $table Full table name.
 	 * @param string $charset_collate Database character set and collation SQL.
@@ -107,23 +107,21 @@ class RolesDatabase {
 	 */
 	private function scouting_oidc_roles_database_get_roles_sql( string $table, string $charset_collate ): string {
 		return "CREATE TABLE $table (
-			role_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-			organisation_unit_id BIGINT(20) UNSIGNED NOT NULL,
-			role_key CHAR(64) NOT NULL,
+			role_id BIGINT UNSIGNED NOT NULL,
+			organisation_unit_id BIGINT UNSIGNED NOT NULL,
 			role_name VARCHAR(255) NOT NULL,
-			role_type VARCHAR(100) NOT NULL,
-			member_type VARCHAR(100) NOT NULL,
+			role_type VARCHAR(255) NOT NULL,
+			member_type VARCHAR(255) NULL,
 			category VARCHAR(255) NULL,
 			last_seen_at DATETIME NOT NULL,
 			PRIMARY KEY  (role_id),
-			UNIQUE KEY unit_role (organisation_unit_id, role_key),
-			KEY role_key (role_key),
+			KEY organisation_unit_id (organisation_unit_id),
 			KEY last_seen_at (last_seen_at)
 		) ENGINE=InnoDB $charset_collate;";
 	}
 
 	/**
-	 * Gets the user role assignment table SQL.
+	 * Gets the dated user role assignment table SQL.
 	 *
 	 * @since Unreleased Defines normalized user role assignments.
 	 *
@@ -131,12 +129,14 @@ class RolesDatabase {
 	 * @param string $charset_collate Database character set and collation SQL.
 	 * @return string CREATE TABLE statement.
 	 */
-	private function scouting_oidc_roles_database_get_user_roles_sql( string $table, string $charset_collate ): string {
+	private function scouting_oidc_roles_database_get_role_assignments_sql( string $table, string $charset_collate ): string {
 		return "CREATE TABLE $table (
 			user_id BIGINT(20) UNSIGNED NOT NULL,
-			role_id BIGINT(20) UNSIGNED NOT NULL,
+			role_id BIGINT UNSIGNED NOT NULL,
+			start_date DATETIME(6) NOT NULL,
+			end_date DATETIME(6) NULL,
 			last_seen_at DATETIME NOT NULL,
-			PRIMARY KEY  (user_id, role_id),
+			PRIMARY KEY  (user_id, role_id, start_date),
 			KEY role_id (role_id),
 			KEY last_seen_at (last_seen_at)
 		) ENGINE=InnoDB $charset_collate;";
@@ -156,7 +156,7 @@ class RolesDatabase {
 			'organisations'      => $wpdb->prefix . 'scouting_oidc_sol_organisations',
 			'organisation_units' => $wpdb->prefix . 'scouting_oidc_sol_organisation_units',
 			'roles'              => $wpdb->prefix . 'scouting_oidc_sol_roles',
-			'user_roles'         => $wpdb->prefix . 'scouting_oidc_user_roles',
+			'role_assignments'   => $wpdb->prefix . 'scouting_oidc_sol_role_assignments',
 		);
 	}
 
