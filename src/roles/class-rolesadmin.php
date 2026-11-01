@@ -50,7 +50,7 @@ class RolesAdmin {
 	/**
 	 * Loads progressive enhancements only on the mapping page.
 	 *
-	 * @since Unreleased Adds the modal editor and live selector searches.
+	 * @since Unreleased Loads dialog enhancements before rendering to prevent inline panel flashes.
 	 *
 	 * @param string $hook_suffix Current admin page hook.
 	 */
@@ -59,7 +59,7 @@ class RolesAdmin {
 			return;
 		}
 
-		wp_enqueue_script( 'scouting-oidc-role-mapping', plugins_url( 'role-mapping.js', __FILE__ ), array(), (string) filemtime( __DIR__ . '/role-mapping.js' ), true );
+		wp_enqueue_script( 'scouting-oidc-role-mapping', plugins_url( 'role-mapping.js', __FILE__ ), array(), (string) filemtime( __DIR__ . '/role-mapping.js' ), false );
 		wp_enqueue_style( 'scouting-oidc-role-mapping', plugins_url( 'role-mapping.css', __FILE__ ), array(), (string) filemtime( __DIR__ . '/role-mapping.css' ) );
 	}
 

@@ -57,7 +57,7 @@ class RolesExplorer {
 				<input type="hidden" name="page" value="scouting-oidc-role-explorer" />
 				<label for="filter-organisation"><?php esc_html_e( 'Organisation', 'scouting-openid-connect' ); ?></label>
 				<select id="filter-organisation" name="organisation_id">
-					<option value=""><?php esc_html_e( 'All', 'scouting-openid-connect' ); ?></option>
+					<option value=""><?php esc_html_e( 'Select an organisation', 'scouting-openid-connect' ); ?></option>
 					<?php foreach ( $options['organisations'] as $organisation ) : ?>
 						<option value="<?php echo esc_attr( $organisation['organisation_id'] ); ?>" <?php selected( $filters['organisation_id'], $organisation['organisation_id'] ); ?>><?php echo esc_html( $organisation['name'] . ' (' . $organisation['organisation_id'] . ')' ); ?></option>
 					<?php endforeach; ?>

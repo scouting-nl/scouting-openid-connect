@@ -1,7 +1,7 @@
 /**
  * Progressive enhancements for the SOL mapping rule editor.
  *
- * @since Unreleased Adds a modal editor and visible live search results.
+ * @since Unreleased Adds flash-free progressive dialogs and visible live search results.
  */
 
 /**
@@ -242,4 +242,35 @@ function scoutingOidcInitializeDialog( options ) {
 	}
 }
 
-scoutingOidcInitializeRoleMapping();
+/**
+ * Hides inline dialog panels before rendering while retaining failure fallback.
+ *
+ * @since Unreleased Prevents editor and tester flashes during page loading.
+ */
+if ( typeof document.createElement( 'dialog' ).showModal === 'function' ) {
+	document.documentElement.classList.add( 'scouting-oidc-dialogs-pending' );
+}
+
+/**
+ * Initializes the completed markup and restores any unenhanced inline panels.
+ *
+ * @since Unreleased Preserves inline fallback even when initialization throws.
+ * @return {void}
+ */
+function scoutingOidcInitializeRoleMappingWhenReady() {
+	try {
+		scoutingOidcInitializeRoleMapping();
+	} finally {
+		document.documentElement.classList.remove( 'scouting-oidc-dialogs-pending' );
+	}
+}
+
+if ( document.readyState === 'loading' ) {
+	document.addEventListener(
+		'DOMContentLoaded',
+		scoutingOidcInitializeRoleMappingWhenReady,
+		{ once: true },
+	);
+} else {
+	scoutingOidcInitializeRoleMappingWhenReady();
+}
