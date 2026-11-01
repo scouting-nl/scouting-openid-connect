@@ -49,22 +49,17 @@ class RolesAuthorization {
 	private static array $active_assignments = array();
 
 	/**
-	 * Gets the configured mapping with safe defaults for missing or stale data.
+	 * Gets configured rules without the retired plugin-specific fallback.
 	 *
-	 * @since Unreleased Normalizes SOL role mapping rules.
+	 * @since Unreleased Normalizes SOL role mapping rules and ignores legacy defaults.
 	 *
-	 * @return array{rules: array<int, array{id: string, organisation_id: string, organisation_unit_id: int, role_id: int, wordpress_role: string, login_allowed: bool}>, default: array{wordpress_role: string, login_allowed: bool}} Mapping configuration.
+	 * @return array{rules: array<int, array{id: string, organisation_id: string, organisation_unit_id: int, role_id: int, wordpress_role: string, login_allowed: bool}>} Mapping configuration.
 	 */
 	public static function scouting_oidc_roles_authorization_get_mapping(): array {
 		$wordpress_roles = wp_roles()->roles;
-		$default_role    = get_option( 'default_role', 'subscriber' );
-		if ( ! is_string( $default_role ) || ! isset( $wordpress_roles[ $default_role ] ) ) {
-			$default_role = isset( $wordpress_roles['subscriber'] ) ? 'subscriber' : (string) array_key_first( $wordpress_roles );
-		}
-
-		$stored_mapping = get_option( self::RULES_OPTION, array() );
-		$stored_rules   = is_array( $stored_mapping ) && isset( $stored_mapping['rules'] ) && is_array( $stored_mapping['rules'] ) ? $stored_mapping['rules'] : array();
-		$rules          = array();
+		$stored_mapping  = get_option( self::RULES_OPTION, array() );
+		$stored_rules    = is_array( $stored_mapping ) && isset( $stored_mapping['rules'] ) && is_array( $stored_mapping['rules'] ) ? $stored_mapping['rules'] : array();
+		$rules           = array();
 		foreach ( $stored_rules as $stored_rule ) {
 			$rule = self::scouting_oidc_roles_authorization_normalize_rule( $stored_rule, $wordpress_roles );
 			if ( null !== $rule ) {
@@ -72,17 +67,8 @@ class RolesAuthorization {
 			}
 		}
 
-		$stored_default = is_array( $stored_mapping ) && isset( $stored_mapping['default'] ) && is_array( $stored_mapping['default'] ) ? $stored_mapping['default'] : array();
-		if ( isset( $stored_default['wordpress_role'] ) && is_string( $stored_default['wordpress_role'] ) && isset( $wordpress_roles[ $stored_default['wordpress_role'] ] ) ) {
-			$default_role = $stored_default['wordpress_role'];
-		}
-
 		return array(
-			'rules'   => $rules,
-			'default' => array(
-				'wordpress_role' => $default_role,
-				'login_allowed'  => ! isset( $stored_default['login_allowed'] ) || (bool) $stored_default['login_allowed'],
-			),
+			'rules' => $rules,
 		);
 	}
 
@@ -95,19 +81,51 @@ class RolesAuthorization {
 	 * @return array{wordpress_role: string, login_allowed: bool} Role and login decision.
 	 */
 	public static function scouting_oidc_roles_authorization_get_user_decision( int $user_id ): array {
+		$preview = self::scouting_oidc_roles_authorization_get_user_preview( $user_id );
+
+		return $preview['decision'];
+	}
+
+	/**
+	 * Previews the saved mapping without changing roles or login state.
+	 *
+	 * @since Unreleased Uses the WordPress default role when no mapping rule matches.
+	 *
+	 * @param int $user_id WordPress user ID.
+	 * @return array{decision: array{wordpress_role: string, login_allowed: bool}, rule_index: int|null, assignments: array} Authorization preview; a null index means no rule matched.
+	 */
+	public static function scouting_oidc_roles_authorization_get_user_preview( int $user_id ): array {
 		$mapping     = self::scouting_oidc_roles_authorization_get_mapping();
 		$assignments = self::scouting_oidc_roles_authorization_get_active_assignments( $user_id );
 
-		foreach ( $mapping['rules'] as $rule ) {
+		foreach ( $mapping['rules'] as $index => $rule ) {
 			if ( self::scouting_oidc_roles_authorization_rule_matches_assignments( $rule, $assignments ) ) {
 				return array(
-					'wordpress_role' => $rule['wordpress_role'],
-					'login_allowed'  => $rule['login_allowed'],
+					'decision'    => array(
+						'wordpress_role' => $rule['wordpress_role'],
+						'login_allowed'  => $rule['login_allowed'],
+					),
+					'rule_index'  => $index,
+					'assignments' => $assignments,
 				);
 			}
 		}
 
-		return $mapping['default'];
+		$wordpress_roles = wp_roles()->roles;
+		$default_role    = get_option( 'default_role', 'subscriber' );
+		if ( ! is_string( $default_role ) || ! isset( $wordpress_roles[ $default_role ] ) ) {
+			Logger::error( LogComponent::ROLES, 'The configured WordPress default role is unavailable.', $user_id );
+			$default_role = isset( $wordpress_roles['subscriber'] ) ? 'subscriber' : (string) array_key_first( $wordpress_roles );
+		}
+
+		return array(
+			'decision'    => array(
+				'wordpress_role' => $default_role,
+				'login_allowed'  => true,
+			),
+			'rule_index'  => null,
+			'assignments' => $assignments,
+		);
 	}
 
 	/**
@@ -202,12 +220,12 @@ class RolesAuthorization {
 	/**
 	 * Gets each organisation together with every reachable parent organisation.
 	 *
-	 * @since Unreleased Expands SOL organisation hierarchy matches.
+	 * @since Unreleased Shares SOL organisation hierarchy matches with the mapping editor.
 	 *
 	 * @param array<int, string> $organisation_ids Direct organisation IDs.
 	 * @return array<string, array<int, string>> Organisation IDs keyed by direct organisation ID.
 	 */
-	private static function scouting_oidc_roles_authorization_get_organisation_paths( array $organisation_ids ): array {
+	public static function scouting_oidc_roles_authorization_get_organisation_paths( array $organisation_ids ): array {
 		$organisation_ids = self::scouting_oidc_roles_authorization_normalize_organisation_ids( $organisation_ids );
 		if ( empty( $organisation_ids ) ) {
 			return array();

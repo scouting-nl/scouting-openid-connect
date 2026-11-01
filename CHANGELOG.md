@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- Placed Add Mapping Rule and Test a User together in a responsive action row below the heading.
+- Moved Test a User into a matching accessible modal that reopens with preview results or errors after submission.
+- Fixed mapping-page heading spacing and notice placement by using the standard WordPress heading and header-end layout.
+- Removed the separate default mapping rule and login setting. Unmatched users use the WordPress default role; existing new-user registration and login checks remain in effect. Legacy mapping defaults are ignored.
+- Derived the local ZIP builder's version from the nearest reachable Git release tag instead of prompting for a version.
+- Improved SOL role mapping with linked searchable selectors, When / Then editing, a read-only user tester, rule duplication, and keyboard-accessible position changes.
+- Added a top-right mapping-rule button and accessible modal editor; made live search results visible while typing and tied assets to the registered WordPress page hook.
+- Refined the mapping modal with styled native selectors, an accessible close icon, and adjacent action buttons in a persistent footer.
+- Added native WordPress contextual help to SOL Role Mapping, covering rule matching, editing, precedence, defaults and user previews.
+
 ## [[2.6.2](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.6.2)] - 26/08/2026
 
 - Preserved historical log entries when WordPress users are deleted.
