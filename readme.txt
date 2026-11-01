@@ -84,13 +84,7 @@ Yes, there is a settings page where you can set up a redirect after login, confi
 
 = Can roles also be imported into WordPress from SOL? =
 
-Yes. Configure ordered rules under Scouting OIDC > SOL Role Mapping. After a successful Scouting OIDC login, the first matching active SOL assignment determines the WordPress role managed by this plugin and whether the user may sign in. The default rule applies when no earlier rule matches.
-
-When Scouts Online supplies parent organisations, selecting a parent in a role mapping or product rule also matches assignments in its descendant organisations. Missing parent data leaves existing hierarchy data unchanged; an explicit empty parent list removes that organisation's parent relationships.
-
-WooCommerce product and WooCommerce Bookings product editors provide a SOL Access tab. Select allowed SOL organisations or roles to require one matching active assignment; selecting both uses OR logic. Select denied organisations or roles to block a matching customer. Denials always take priority over allowed selections. Leaving all fields empty keeps the product unrestricted.
-
-For example, select only a denied organisation to exclude that organisation while leaving all other customers eligible. Combine an allowed organisation with a denied role to permit that organisation but exclude customers who hold the selected role.
+Yes, roles can be imported into WordPress from SOL using the plugin's role mapping feature.
 
 = Can my parents or guardian also sign in? =
 

@@ -3,3 +3,8 @@
 	font-size: 16px;
 	content: '\f332';
 }
+
+#scouting_oidc_product_data .scouting-oidc-access-description {
+	margin: 12px;
+	padding: 0;
+}

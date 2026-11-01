@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+- Added separate Include descendant organisations checkboxes for WooCommerce allowed and denied organisations, enabled by default for existing products.
+- Added organisation and unit context to WooCommerce SOL role choices and removed excessive indentation from the SOL Access instructions.
 - Placed Add Mapping Rule and Test a User together in a responsive action row below the heading.
 - Moved Test a User into a matching accessible modal that reopens with preview results or errors after submission.
 - Fixed mapping-page heading spacing and notice placement by using the standard WordPress heading and header-end layout.

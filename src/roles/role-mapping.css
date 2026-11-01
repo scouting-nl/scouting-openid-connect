@@ -23,12 +23,44 @@
 .scouting-oidc-rule-actions form {
 	display: inline-flex;
 	align-items: center;
-	gap: 4px;
+	gap: 8px;
 	margin: 0;
 }
 
+.scouting-oidc-rule-actions a,
+.scouting-oidc-rule-actions .button-link,
+.scouting-oidc-rule-actions label {
+	display: inline-flex;
+	align-items: center;
+	box-sizing: border-box;
+	min-height: 32px;
+	margin: 0;
+	padding: 0;
+	font: inherit;
+	line-height: 1.5;
+}
+
 .scouting-oidc-rule-actions input[type="number"] {
+	box-sizing: border-box;
 	width: 5em;
+	height: 32px;
+	min-height: 32px;
+	margin: 0;
+	padding: 0 8px;
+	font: inherit;
+	line-height: 1.5;
+}
+
+.scouting-oidc-rule-actions .button.button-small {
+	display: inline-flex;
+	align-items: center;
+	box-sizing: border-box;
+	height: 32px;
+	min-height: 32px;
+	margin: 0;
+	padding: 0 10px;
+	font: inherit;
+	line-height: 1.5;
 }
 
 .scouting-oidc-selector-search {
