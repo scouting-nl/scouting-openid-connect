@@ -7,7 +7,7 @@
  * @author     Job van Koeveringe <job.van.koeveringe@scouting.nl>
  * @copyright  2026 Scouting Nederland
  * @license    GPLv3
- * @version    2.6.2
+ * @version    2.6.2.1
  * @since      1.0.0
  * @link       https://github.com/Scouting-nl/scouting-openid-connect
  *
@@ -15,7 +15,7 @@
  * Plugin Name:          Scouting OpenID Connect
  * Plugin URI:           https://github.com/Scouting-nl/scouting-openid-connect
  * Description:          WordPress plugin for logging in with Scouting Nederland OpenID Connect Server.
- * Version:              2.6.2
+ * Version:              2.6.2.1
  * Requires at least:    6.9.5
  * Requires PHP:         8.2
  * Author:               Job van Koeveringe
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 define( 'SCOUTING_OIDC_PATH', plugin_dir_path( __FILE__ ) );
-define( 'SCOUTING_OIDC_VERSION', '2.6.2' );
+define( 'SCOUTING_OIDC_VERSION', '2.6.2.1' );
 require_once SCOUTING_OIDC_PATH . 'src/auth/class-auth.php';
 require_once SCOUTING_OIDC_PATH . 'src/auth/class-session.php';
 require_once SCOUTING_OIDC_PATH . 'src/menu/class-menu.php';
@@ -46,6 +46,8 @@ require_once SCOUTING_OIDC_PATH . 'src/plugin/class-description.php';
 require_once SCOUTING_OIDC_PATH . 'src/user/class-fields.php';
 require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolesdatabase.php';
 require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolessync.php';
+require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolesexplorer.php';
+require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolesadmin.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-logger.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-cronjobs.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-mail.php';
@@ -64,6 +66,7 @@ use ScoutingOIDC\Logging;
 use ScoutingOIDC\Fields;
 use ScoutingOIDC\RolesDatabase;
 use ScoutingOIDC\RolesSync;
+use ScoutingOIDC\RolesAdmin;
 use ScoutingOIDC\CronJobs;
 use ScoutingOIDC\Mail;
 use ScoutingOIDC\Logger;
@@ -81,6 +84,7 @@ $scouting_oidc_site_health     = new SiteHealth( $scouting_oidc_provider_health 
 $scouting_oidc_logging         = new Logging();
 $scouting_oidc_fields          = new Fields();
 $scouting_oidc_roles_database  = new RolesDatabase();
+$scouting_oidc_roles_admin     = new RolesAdmin();
 $scouting_oidc_logger          = new Logger();
 $scouting_oidc_cron_jobs       = new CronJobs();
 
@@ -133,6 +137,7 @@ add_action( 'admin_menu', array( $scouting_oidc_settings, 'scouting_oidc_setting
 add_action( 'admin_menu', array( $scouting_oidc_shortcode, 'scouting_oidc_shortcode_submenu_page' ) );
 add_action( 'admin_menu', array( $scouting_oidc_support, 'scouting_oidc_support_submenu_page' ) );
 add_action( 'admin_menu', array( $scouting_oidc_logging, 'scouting_oidc_logging_submenu_page' ) );
+add_action( 'admin_menu', array( $scouting_oidc_roles_admin, 'scouting_oidc_roles_admin_register_pages' ) );
 
 // Hook into admin_init to initialize settings.
 add_action( 'admin_init', array( $scouting_oidc_settings, 'scouting_oidc_settings_page_init' ) );
