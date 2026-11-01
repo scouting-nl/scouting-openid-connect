@@ -52,6 +52,7 @@ class RolesSync {
 			return;
 		}
 
+		RolesAuthorization::scouting_oidc_roles_authorization_clear_active_assignments( $user_id );
 		Logger::debug( LogComponent::ROLES, 'SOL role synchronization completed.', $user_id );
 	}
 

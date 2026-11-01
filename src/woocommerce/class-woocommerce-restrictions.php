@@ -1,0 +1,375 @@
+<?php
+/**
+ * Scouting OpenID Connect plugin file
+ *
+ * @package ScoutingOIDC
+ * @since Unreleased Adds WooCommerce SOL ordering restrictions.
+ */
+
+namespace ScoutingOIDC;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Restricts WooCommerce products to customers with matching SOL assignments.
+ *
+ * @since Unreleased Adds WooCommerce SOL ordering restrictions.
+ */
+class WooCommerceRestrictions {
+	/**
+	 * Product meta key for allowed SOL organisation IDs.
+	 *
+	 * @since Unreleased Stores WooCommerce organisation restrictions.
+	 */
+	private const ALLOWED_ORGANISATIONS_META_KEY = '_scouting_oidc_allowed_organisation_ids';
+
+	/**
+	 * Product meta key for allowed SOL role IDs.
+	 *
+	 * @since Unreleased Stores WooCommerce role restrictions.
+	 */
+	private const ALLOWED_ROLES_META_KEY = '_scouting_oidc_allowed_role_ids';
+
+	/**
+	 * Registers WooCommerce hooks after active plugins have loaded.
+	 *
+	 * @since Unreleased Defers WooCommerce integration registration.
+	 */
+	public function __construct() {
+		add_action( 'plugins_loaded', array( $this, 'scouting_oidc_woocommerce_restrictions_register_hooks' ), 20 );
+	}
+
+	/**
+	 * Registers product-editor and purchasing hooks when WooCommerce is active.
+	 *
+	 * @since Unreleased Registers WooCommerce SOL ordering restrictions.
+	 */
+	public function scouting_oidc_woocommerce_restrictions_register_hooks(): void {
+		if ( ! class_exists( 'WooCommerce' ) ) {
+			return;
+		}
+
+		add_action( 'woocommerce_product_options_general_product_data', array( $this, 'scouting_oidc_woocommerce_restrictions_render_product_fields' ) );
+		add_action( 'woocommerce_admin_process_product_object', array( $this, 'scouting_oidc_woocommerce_restrictions_save_product_fields' ) );
+		add_filter( 'woocommerce_is_purchasable', array( $this, 'scouting_oidc_woocommerce_restrictions_is_purchasable' ), 10, 2 );
+		add_filter( 'woocommerce_add_to_cart_validation', array( $this, 'scouting_oidc_woocommerce_restrictions_validate_add_to_cart' ), 10, 4 );
+		add_action( 'woocommerce_check_cart_items', array( $this, 'scouting_oidc_woocommerce_restrictions_validate_cart' ) );
+		add_action( 'woocommerce_single_product_summary', array( $this, 'scouting_oidc_woocommerce_restrictions_render_purchase_notice' ), 6 );
+	}
+
+	/**
+	 * Renders SOL organisation and role fields in the WooCommerce product editor.
+	 *
+	 * @since Unreleased Adds WooCommerce SOL restriction fields.
+	 */
+	public function scouting_oidc_woocommerce_restrictions_render_product_fields(): void {
+		global $post;
+
+		$product_id               = $post instanceof \WP_Post ? $post->ID : 0;
+		$allowed_organisation_ids = $this->scouting_oidc_woocommerce_restrictions_get_organisation_ids( $product_id );
+		$allowed_role_ids         = $this->scouting_oidc_woocommerce_restrictions_get_role_ids( $product_id );
+		$organisations            = $this->scouting_oidc_woocommerce_restrictions_get_organisations();
+		$roles                    = $this->scouting_oidc_woocommerce_restrictions_get_roles();
+		$organisation_ids         = array_column( $organisations, 'organisation_id' );
+		$role_ids                 = array_map( 'intval', array_column( $roles, 'role_id' ) );
+		?>
+		<div class="options_group">
+			<p class="form-field">
+				<label for="scouting-oidc-allowed-organisations"><?php esc_html_e( 'Allowed SOL organisations', 'scouting-openid-connect' ); ?></label>
+				<select id="scouting-oidc-allowed-organisations" class="wc-enhanced-select" name="scouting_oidc_allowed_organisation_ids[]" multiple="multiple" data-placeholder="<?php esc_attr_e( 'No organisation restriction', 'scouting-openid-connect' ); ?>">
+					<?php foreach ( $organisations as $organisation ) : ?>
+						<option value="<?php echo esc_attr( $organisation['organisation_id'] ); ?>" <?php selected( in_array( $organisation['organisation_id'], $allowed_organisation_ids, true ) ); ?>><?php echo esc_html( $organisation['name'] . ' (' . $organisation['organisation_id'] . ')' ); ?></option>
+					<?php endforeach; ?>
+					<?php foreach ( array_diff( $allowed_organisation_ids, $organisation_ids ) as $organisation_id ) : ?>
+						<option value="<?php echo esc_attr( $organisation_id ); ?>" selected="selected"><?php echo esc_html( sprintf( __( '%s (no longer synchronized)', 'scouting-openid-connect' ), $organisation_id ) ); ?></option>
+					<?php endforeach; ?>
+				</select>
+				<span class="description"><?php esc_html_e( 'Leave both SOL fields empty to allow every customer. A matching active organisation or role allows ordering.', 'scouting-openid-connect' ); ?></span>
+			</p>
+			<p class="form-field">
+				<label for="scouting-oidc-allowed-roles"><?php esc_html_e( 'Allowed SOL roles', 'scouting-openid-connect' ); ?></label>
+				<select id="scouting-oidc-allowed-roles" class="wc-enhanced-select" name="scouting_oidc_allowed_role_ids[]" multiple="multiple" data-placeholder="<?php esc_attr_e( 'No role restriction', 'scouting-openid-connect' ); ?>">
+					<?php foreach ( $roles as $role ) : ?>
+						<option value="<?php echo esc_attr( (string) $role['role_id'] ); ?>" <?php selected( in_array( (int) $role['role_id'], $allowed_role_ids, true ) ); ?>><?php echo esc_html( $role['role_name'] . ' (' . $role['role_id'] . ')' ); ?></option>
+					<?php endforeach; ?>
+					<?php foreach ( array_diff( $allowed_role_ids, $role_ids ) as $role_id ) : ?>
+						<option value="<?php echo esc_attr( (string) $role_id ); ?>" selected="selected"><?php echo esc_html( sprintf( __( '%d (no longer synchronized)', 'scouting-openid-connect' ), $role_id ) ); ?></option>
+					<?php endforeach; ?>
+				</select>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Saves SOL ordering restrictions through the WooCommerce product data API.
+	 *
+	 * @since Unreleased Saves WooCommerce SOL restriction fields.
+	 *
+	 * @param \WC_Product $product Product being saved.
+	 */
+	public function scouting_oidc_woocommerce_restrictions_save_product_fields( $product ): void {
+		if ( ! $product instanceof \WC_Product || ! current_user_can( 'edit_post', $product->get_id() ) ) {
+			return;
+		}
+
+		// WooCommerce verifies the product-edit nonce before this action runs.
+		$organisation_ids = isset( $_POST['scouting_oidc_allowed_organisation_ids'] ) ? $this->scouting_oidc_woocommerce_restrictions_normalize_organisation_ids( wp_unslash( $_POST['scouting_oidc_allowed_organisation_ids'] ) ) : array();
+		$role_ids         = isset( $_POST['scouting_oidc_allowed_role_ids'] ) ? $this->scouting_oidc_woocommerce_restrictions_normalize_role_ids( wp_unslash( $_POST['scouting_oidc_allowed_role_ids'] ) ) : array();
+
+		$this->scouting_oidc_woocommerce_restrictions_update_product_meta( $product, self::ALLOWED_ORGANISATIONS_META_KEY, $organisation_ids );
+		$this->scouting_oidc_woocommerce_restrictions_update_product_meta( $product, self::ALLOWED_ROLES_META_KEY, $role_ids );
+	}
+
+	/**
+	 * Makes restricted products unavailable to unauthorised customers.
+	 *
+	 * @since Unreleased Hides purchase controls for restricted products.
+	 *
+	 * @param bool        $purchasable Whether WooCommerce considers the product purchasable.
+	 * @param \WC_Product $product Product being evaluated.
+	 * @return bool Whether the current customer can purchase the product.
+	 */
+	public function scouting_oidc_woocommerce_restrictions_is_purchasable( bool $purchasable, $product ): bool {
+		if ( ! $product instanceof \WC_Product || ( is_admin() && ! wp_doing_ajax() ) ) {
+			return $purchasable;
+		}
+
+		return $purchasable && $this->scouting_oidc_woocommerce_restrictions_current_user_can_order_product( $product->get_id() );
+	}
+
+	/**
+	 * Rejects attempts to add an unauthorised product or booking to the cart.
+	 *
+	 * @since Unreleased Validates SOL restrictions before adding cart items.
+	 *
+	 * @param bool  $passed Whether previous validation passed.
+	 * @param int   $product_id Product ID.
+	 * @param int   $_quantity Requested quantity.
+	 * @param int   $variation_id Variation ID when applicable.
+	 * @return bool Whether the item may be added to the cart.
+	 */
+	public function scouting_oidc_woocommerce_restrictions_validate_add_to_cart( bool $passed, int $product_id, int $_quantity, int $variation_id = 0 ): bool {
+		if ( $_quantity < 1 || ! $passed || $this->scouting_oidc_woocommerce_restrictions_current_user_can_order_product( $variation_id > 0 ? $variation_id : $product_id ) ) {
+			return $passed;
+		}
+
+		wc_add_notice( $this->scouting_oidc_woocommerce_restrictions_get_purchase_message(), 'error' );
+
+		return false;
+	}
+
+	/**
+	 * Revalidates restricted items already present in the cart.
+	 *
+	 * @since Unreleased Prevents checkout when SOL access changes.
+	 */
+	public function scouting_oidc_woocommerce_restrictions_validate_cart(): void {
+		if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
+			return;
+		}
+
+		$restricted_product_ids = array();
+		foreach ( WC()->cart->get_cart() as $cart_item ) {
+			$product_id = ! empty( $cart_item['variation_id'] ) ? (int) $cart_item['variation_id'] : (int) $cart_item['product_id'];
+			if ( ! $this->scouting_oidc_woocommerce_restrictions_current_user_can_order_product( $product_id ) ) {
+				$restricted_product_ids[] = $this->scouting_oidc_woocommerce_restrictions_get_restriction_product_id( $product_id );
+			}
+		}
+
+		foreach ( array_unique( $restricted_product_ids ) as $product_id ) {
+			wc_add_notice( $this->scouting_oidc_woocommerce_restrictions_get_purchase_message(), 'error' );
+		}
+	}
+
+	/**
+	 * Displays a clear availability message on restricted single product pages.
+	 *
+	 * @since Unreleased Explains unavailable restricted products.
+	 */
+	public function scouting_oidc_woocommerce_restrictions_render_purchase_notice(): void {
+		global $product;
+
+		if ( ! $product instanceof \WC_Product || $this->scouting_oidc_woocommerce_restrictions_current_user_can_order_product( $product->get_id() ) ) {
+			return;
+		}
+
+		wc_print_notice( $this->scouting_oidc_woocommerce_restrictions_get_purchase_message(), 'notice' );
+	}
+
+	/**
+	 * Checks whether the current user may order a product under its SOL rules.
+	 *
+	 * @since Unreleased Applies product SOL restrictions to the current user.
+	 *
+	 * @param int $product_id Product or variation ID.
+	 * @return bool Whether the current user can order the product.
+	 */
+	private function scouting_oidc_woocommerce_restrictions_current_user_can_order_product( int $product_id ): bool {
+		$restriction_product_id = $this->scouting_oidc_woocommerce_restrictions_get_restriction_product_id( $product_id );
+		$organisation_ids       = $this->scouting_oidc_woocommerce_restrictions_get_organisation_ids( $restriction_product_id );
+		$role_ids               = $this->scouting_oidc_woocommerce_restrictions_get_role_ids( $restriction_product_id );
+		$can_order              = empty( $organisation_ids ) && empty( $role_ids );
+		$user_id                = get_current_user_id();
+
+		if ( ! $can_order && $user_id > 0 ) {
+			foreach ( RolesAuthorization::scouting_oidc_roles_authorization_get_active_assignments( $user_id ) as $assignment ) {
+				if ( in_array( $assignment['organisation_id'], $organisation_ids, true ) || in_array( $assignment['role_id'], $role_ids, true ) ) {
+					$can_order = true;
+					break;
+				}
+			}
+		}
+
+		return $can_order;
+	}
+
+	/**
+	 * Gets the parent product that owns restrictions for a product or variation.
+	 *
+	 * @since Unreleased Shares restrictions between variable products and variations.
+	 *
+	 * @param int $product_id Product or variation ID.
+	 * @return int Product ID that owns restriction metadata.
+	 */
+	private function scouting_oidc_woocommerce_restrictions_get_restriction_product_id( int $product_id ): int {
+		$product = wc_get_product( $product_id );
+		if ( $product instanceof \WC_Product && $product->is_type( 'variation' ) ) {
+			return $product->get_parent_id();
+		}
+
+		return $product_id;
+	}
+
+	/**
+	 * Gets the saved allowed SOL organisation IDs for a product.
+	 *
+	 * @since Unreleased Reads WooCommerce organisation restrictions.
+	 *
+	 * @param int $product_id Product ID.
+	 * @return array<int, string> Organisation IDs.
+	 */
+	private function scouting_oidc_woocommerce_restrictions_get_organisation_ids( int $product_id ): array {
+		return $this->scouting_oidc_woocommerce_restrictions_normalize_organisation_ids( get_post_meta( $product_id, self::ALLOWED_ORGANISATIONS_META_KEY, true ) );
+	}
+
+	/**
+	 * Gets the saved allowed SOL role IDs for a product.
+	 *
+	 * @since Unreleased Reads WooCommerce role restrictions.
+	 *
+	 * @param int $product_id Product ID.
+	 * @return array<int, int> Role IDs.
+	 */
+	private function scouting_oidc_woocommerce_restrictions_get_role_ids( int $product_id ): array {
+		return $this->scouting_oidc_woocommerce_restrictions_normalize_role_ids( get_post_meta( $product_id, self::ALLOWED_ROLES_META_KEY, true ) );
+	}
+
+	/**
+	 * Gets organisation choices for the WooCommerce product editor.
+	 *
+	 * @since Unreleased Lists SOL organisations for WooCommerce restrictions.
+	 *
+	 * @return array<int, array{organisation_id: string, name: string}> Organisations.
+	 */
+	private function scouting_oidc_woocommerce_restrictions_get_organisations(): array {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'scouting_oidc_sol_organisations';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT organisation_id, name FROM %i ORDER BY name, organisation_id', $table ), ARRAY_A );
+
+		return is_array( $rows ) ? $rows : array();
+	}
+
+	/**
+	 * Gets role choices for the WooCommerce product editor.
+	 *
+	 * @since Unreleased Lists SOL roles for WooCommerce restrictions.
+	 *
+	 * @return array<int, array{role_id: int|string, role_name: string}> Roles.
+	 */
+	private function scouting_oidc_woocommerce_restrictions_get_roles(): array {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'scouting_oidc_sol_roles';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT role_id, role_name FROM %i ORDER BY role_name, role_id', $table ), ARRAY_A );
+
+		return is_array( $rows ) ? $rows : array();
+	}
+
+	/**
+	 * Stores a normalized product metadata list through WooCommerce's data API.
+	 *
+	 * @since Unreleased Saves WooCommerce SOL restriction metadata.
+	 *
+	 * @param \WC_Product $product Product being saved.
+	 * @param string      $meta_key Product meta key.
+	 * @param array       $values Normalized meta values.
+	 */
+	private function scouting_oidc_woocommerce_restrictions_update_product_meta( $product, string $meta_key, array $values ): void {
+		if ( empty( $values ) ) {
+			$product->delete_meta_data( $meta_key );
+			return;
+		}
+
+		$product->update_meta_data( $meta_key, $values );
+	}
+
+	/**
+	 * Normalizes organisation IDs while preserving their leading zeroes.
+	 *
+	 * @since Unreleased Validates WooCommerce SOL organisation restrictions.
+	 *
+	 * @param mixed $value Raw organisation IDs.
+	 * @return array<int, string> Normalized organisation IDs.
+	 */
+	private function scouting_oidc_woocommerce_restrictions_normalize_organisation_ids( mixed $value ): array {
+		$values = is_array( $value ) ? $value : array( $value );
+		$result = array();
+		foreach ( $values as $organisation_id ) {
+			if ( is_string( $organisation_id ) && 1 === preg_match( '/^\d{6}$/', $organisation_id ) ) {
+				$result[] = $organisation_id;
+			}
+		}
+
+		return array_values( array_unique( $result ) );
+	}
+
+	/**
+	 * Normalizes positive role IDs.
+	 *
+	 * @since Unreleased Validates WooCommerce SOL role restrictions.
+	 *
+	 * @param mixed $value Raw role IDs.
+	 * @return array<int, int> Normalized role IDs.
+	 */
+	private function scouting_oidc_woocommerce_restrictions_normalize_role_ids( mixed $value ): array {
+		$values = is_array( $value ) ? $value : array( $value );
+		$result = array();
+		foreach ( $values as $role_id ) {
+			if ( is_scalar( $role_id ) ) {
+				$role_id = absint( $role_id );
+				if ( $role_id > 0 ) {
+					$result[] = $role_id;
+				}
+			}
+		}
+
+		return array_values( array_unique( $result ) );
+	}
+
+	/**
+	 * Gets the customer-facing message for unavailable restricted products.
+	 *
+	 * @since Unreleased Explains SOL ordering restrictions.
+	 *
+	 * @return string Restriction message.
+	 */
+	private function scouting_oidc_woocommerce_restrictions_get_purchase_message(): string {
+		return __( 'Your current Scouts Online role or organisation does not permit ordering this product.', 'scouting-openid-connect' );
+	}
+}
