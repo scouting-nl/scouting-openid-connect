@@ -52,6 +52,7 @@ class RolesSync {
 			return;
 		}
 
+		RolesAuthorization::scouting_oidc_roles_authorization_clear_active_assignments( $user_id );
 		Logger::debug( LogComponent::ROLES, 'SOL role synchronization completed.', $user_id );
 	}
 
@@ -131,10 +132,11 @@ class RolesSync {
 	 * @since Unreleased Normalizes UserInfo organisations.
 	 *
 	 * @param array $raw_organisations Raw UserInfo organisations claim.
-	 * @return array<string, array{organisation_id: string, name: string}>|\WP_Error Normalized organisations, or an error.
+	 * @return array<string, array{organisation_id: string, name: string, parent_ids: array<int, string>, has_parent_data: bool}>|\WP_Error Normalized organisations, or an error.
 	 */
 	private static function scouting_oidc_roles_sync_normalize_organisations( array $raw_organisations ): array|\WP_Error {
 		$organisations = array();
+		$parent_names  = array();
 
 		foreach ( $raw_organisations as $raw_organisation ) {
 			if ( ! is_array( $raw_organisation ) ) {
@@ -151,9 +153,54 @@ class RolesSync {
 				return new \WP_Error( 'duplicate_organisation' );
 			}
 
+			$has_parent_data = array_key_exists( 'parents', $raw_organisation ) && null !== $raw_organisation['parents'];
+			$parent_ids      = array();
+			if ( $has_parent_data ) {
+				if ( ! is_array( $raw_organisation['parents'] ) ) {
+					return new \WP_Error( 'invalid_organisation_parent' );
+				}
+
+				foreach ( $raw_organisation['parents'] as $raw_parent ) {
+					if ( ! is_array( $raw_parent ) ) {
+						return new \WP_Error( 'invalid_organisation_parent' );
+					}
+
+					$parent_id   = self::scouting_oidc_roles_sync_normalize_organisation_id( $raw_parent['organisation_id'] ?? $raw_parent['id'] ?? null );
+					$parent_name = self::scouting_oidc_roles_sync_normalize_text( $raw_parent['name'] ?? null, 255 );
+					if ( null === $parent_id || null === $parent_name || $organisation_id === $parent_id || in_array( $parent_id, $parent_ids, true ) ) {
+						return new \WP_Error( 'invalid_organisation_parent' );
+					}
+
+					if ( isset( $parent_names[ $parent_id ] ) && $parent_names[ $parent_id ] !== $parent_name ) {
+						return new \WP_Error( 'inconsistent_organisation_parent' );
+					}
+
+					$parent_ids[]               = $parent_id;
+					$parent_names[ $parent_id ] = $parent_name;
+				}
+			}
+
 			$organisations[ $organisation_id ] = array(
 				'organisation_id' => $organisation_id,
 				'name'            => $name,
+				'parent_ids'      => $parent_ids,
+				'has_parent_data' => $has_parent_data,
+			);
+		}
+
+		foreach ( $parent_names as $parent_id => $parent_name ) {
+			if ( isset( $organisations[ $parent_id ] ) ) {
+				if ( $organisations[ $parent_id ]['name'] !== $parent_name ) {
+					return new \WP_Error( 'inconsistent_organisation_parent' );
+				}
+				continue;
+			}
+
+			$organisations[ $parent_id ] = array(
+				'organisation_id' => $parent_id,
+				'name'            => $parent_name,
+				'parent_ids'      => array(),
+				'has_parent_data' => false,
 			);
 		}
 
@@ -165,8 +212,8 @@ class RolesSync {
 	 *
 	 * @since Unreleased Normalizes UserInfo organisation units.
 	 *
-	 * @param array                                                       $raw_organisation_units Raw UserInfo organisation units claim.
-	 * @param array<string, array{organisation_id: string, name: string}> $organisations Normalized organisations.
+	 * @param array                                                                                                              $raw_organisation_units Raw UserInfo organisation units claim.
+	 * @param array<string, array{organisation_id: string, name: string, parent_ids: array<int, string>, has_parent_data: bool}> $organisations Normalized organisations.
 	 * @return array<int, array{organisation_id: string, name: string, unit_type: string, game_section_type: string|null}>|\WP_Error Normalized organisation units, or an error.
 	 */
 	private static function scouting_oidc_roles_sync_normalize_organisation_units( array $raw_organisation_units, array $organisations ): array|\WP_Error {
@@ -364,11 +411,12 @@ class RolesSync {
 	private static function scouting_oidc_roles_sync_persist_role_graph( int $user_id, array $role_graph ): bool {
 		global $wpdb;
 
-		$organisations_table      = $wpdb->prefix . 'scouting_oidc_sol_organisations';
-		$organisation_units_table = $wpdb->prefix . 'scouting_oidc_sol_organisation_units';
-		$roles_table              = $wpdb->prefix . 'scouting_oidc_sol_roles';
-		$assignments_table        = $wpdb->prefix . 'scouting_oidc_sol_role_assignments';
-		$current_time             = current_time( 'mysql', true );
+		$organisations_table        = $wpdb->prefix . 'scouting_oidc_sol_organisations';
+		$organisation_parents_table = $wpdb->prefix . 'scouting_oidc_sol_organisation_parents';
+		$organisation_units_table   = $wpdb->prefix . 'scouting_oidc_sol_organisation_units';
+		$roles_table                = $wpdb->prefix . 'scouting_oidc_sol_roles';
+		$assignments_table          = $wpdb->prefix . 'scouting_oidc_sol_role_assignments';
+		$current_time               = current_time( 'mysql', true );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$transaction_started = $wpdb->query( 'START TRANSACTION' );
@@ -376,12 +424,10 @@ class RolesSync {
 			return false;
 		}
 
-		foreach ( $role_graph['organisations'] as $organisation ) {
-			if ( ! self::scouting_oidc_roles_sync_upsert_organisation( $organisations_table, $organisation, $current_time ) ) {
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-				$wpdb->query( 'ROLLBACK' );
-				return false;
-			}
+		if ( ! self::scouting_oidc_roles_sync_persist_organisations( $organisations_table, $organisation_parents_table, $role_graph['organisations'], $current_time ) ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->query( 'ROLLBACK' );
+			return false;
 		}
 
 		foreach ( $role_graph['organisation_units'] as $organisation_unit_id => $organisation_unit ) {
@@ -428,13 +474,40 @@ class RolesSync {
 	}
 
 	/**
+	 * Persists organisations and any optional parent relationships.
+	 *
+	 * @since Unreleased Synchronizes UserInfo organisation hierarchies.
+	 *
+	 * @param string                                                                                                             $organisations_table Full organisations table name.
+	 * @param string                                                                                                             $organisation_parents_table Full organisation parent table name.
+	 * @param array<string, array{organisation_id: string, name: string, parent_ids: array<int, string>, has_parent_data: bool}> $organisations Normalized organisations.
+	 * @param string                                                                                                             $current_time UTC timestamp.
+	 * @return bool Whether organisations and parent relationships were saved.
+	 */
+	private static function scouting_oidc_roles_sync_persist_organisations( string $organisations_table, string $organisation_parents_table, array $organisations, string $current_time ): bool {
+		foreach ( $organisations as $organisation ) {
+			if ( ! self::scouting_oidc_roles_sync_upsert_organisation( $organisations_table, $organisation, $current_time ) ) {
+				return false;
+			}
+		}
+
+		foreach ( $organisations as $organisation ) {
+			if ( $organisation['has_parent_data'] && ! self::scouting_oidc_roles_sync_replace_organisation_parents( $organisation_parents_table, $organisation, $current_time ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * Upserts a synchronized organisation.
 	 *
 	 * @since Unreleased Saves synchronized organisations.
 	 *
-	 * @param string                                       $organisations_table Full organisations table name.
-	 * @param array{organisation_id: string, name: string} $organisation Normalized organisation.
-	 * @param string                                       $current_time UTC timestamp.
+	 * @param string                                                                                              $organisations_table Full organisations table name.
+	 * @param array{organisation_id: string, name: string, parent_ids: array<int, string>, has_parent_data: bool} $organisation Normalized organisation.
+	 * @param string                                                                                              $current_time UTC timestamp.
 	 * @return bool Whether the organisation was saved.
 	 */
 	private static function scouting_oidc_roles_sync_upsert_organisation( string $organisations_table, array $organisation, string $current_time ): bool {
@@ -454,6 +527,44 @@ class RolesSync {
 		);
 
 		return false !== $result;
+	}
+
+	/**
+	 * Replaces the known parent relationships for an organisation.
+	 *
+	 * @since Unreleased Synchronizes optional UserInfo organisation parents.
+	 *
+	 * @param string                                                                                              $organisation_parents_table Full organisation parent table name.
+	 * @param array{organisation_id: string, name: string, parent_ids: array<int, string>, has_parent_data: bool} $organisation Normalized organisation.
+	 * @param string                                                                                              $current_time UTC timestamp.
+	 * @return bool Whether parent relationships were saved.
+	 */
+	private static function scouting_oidc_roles_sync_replace_organisation_parents( string $organisation_parents_table, array $organisation, string $current_time ): bool {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$deleted = $wpdb->delete( $organisation_parents_table, array( 'child_organisation_id' => $organisation['organisation_id'] ), array( '%s' ) );
+		if ( false === $deleted ) {
+			return false;
+		}
+
+		foreach ( $organisation['parent_ids'] as $parent_organisation_id ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$inserted = $wpdb->insert(
+				$organisation_parents_table,
+				array(
+					'child_organisation_id'  => $organisation['organisation_id'],
+					'parent_organisation_id' => $parent_organisation_id,
+					'last_seen_at'           => $current_time,
+				),
+				array( '%s', '%s', '%s' )
+			);
+			if ( false === $inserted ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**

@@ -84,7 +84,7 @@ Yes, there is a settings page where you can set up a redirect after login, confi
 
 = Can roles also be imported into WordPress from SOL? =
 
-Currently not, but this is planned for a future update of this plugin.
+Yes, roles can be imported into WordPress from SOL using the plugin's role mapping feature.
 
 = Can my parents or guardian also sign in? =
 

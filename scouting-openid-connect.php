@@ -45,12 +45,14 @@ require_once SCOUTING_OIDC_PATH . 'src/plugin/class-actions.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/class-description.php';
 require_once SCOUTING_OIDC_PATH . 'src/user/class-fields.php';
 require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolesdatabase.php';
+require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolesauthorization.php';
 require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolessync.php';
 require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolesexplorer.php';
 require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolesadmin.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-logger.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-cronjobs.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-mail.php';
+require_once SCOUTING_OIDC_PATH . 'src/woocommerce/class-woocommercerestrictions.php';
 
 use ScoutingOIDC\Auth;
 use ScoutingOIDC\Session;
@@ -67,6 +69,7 @@ use ScoutingOIDC\Fields;
 use ScoutingOIDC\RolesDatabase;
 use ScoutingOIDC\RolesSync;
 use ScoutingOIDC\RolesAdmin;
+use ScoutingOIDC\WooCommerceRestrictions;
 use ScoutingOIDC\CronJobs;
 use ScoutingOIDC\Mail;
 use ScoutingOIDC\Logger;
@@ -87,6 +90,8 @@ $scouting_oidc_roles_database  = new RolesDatabase();
 $scouting_oidc_roles_admin     = new RolesAdmin();
 $scouting_oidc_logger          = new Logger();
 $scouting_oidc_cron_jobs       = new CronJobs();
+
+$scouting_oidc_woocommerce_restrictions = new WooCommerceRestrictions();
 
 /**
  * Registers the plugin's WordPress hooks.

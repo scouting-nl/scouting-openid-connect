@@ -20,6 +20,7 @@ require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
 
 use ScoutingOIDC\User;
 use ScoutingOIDC\ErrorHandler;
+use ScoutingOIDC\RolesAuthorization;
 use ScoutingOIDC\RolesSync;
 
 /**
@@ -335,6 +336,7 @@ class Auth {
 			Logger::info( LogComponent::AUTH, "User '{$user->get_display_name()}' has an existing account, updating user information and logging in", null, $user->get_username() );
 			$user_id = $user->scouting_oidc_user_update();
 			RolesSync::scouting_oidc_roles_sync_user_info( $user_id, $user_info );
+			$this->scouting_oidc_auth_apply_role_mapping( $user_id );
 			// Promote per-state redirect only after successful callback validation and right before login.
 			$this->oidc_client->apply_redirect_for_state_to_session( $state );
 			$user->scouting_oidc_user_login();
@@ -342,6 +344,7 @@ class Auth {
 				Logger::info( LogComponent::AUTH, "User '{$user->get_display_name()}' does not have an account, auto-creation is enabled, creating account and logging in", null, $user->get_username() );
 				$user_id = $user->scouting_oidc_user_create();
 				RolesSync::scouting_oidc_roles_sync_user_info( $user_id, $user_info );
+				$this->scouting_oidc_auth_apply_role_mapping( $user_id );
 				// Promote per-state redirect only after successful callback validation and right before login.
 				$this->oidc_client->apply_redirect_for_state_to_session( $state );
 				$user->scouting_oidc_user_login();
@@ -353,6 +356,36 @@ class Auth {
 		// Configured post-login redirects exit from the wp_login hook. Clean OIDC callback parameters for the default flow.
 		wp_safe_redirect( home_url( '/' ) );
 		exit;
+	}
+
+	/**
+	 * Applies the matching SOL role mapping and blocks denied OIDC logins.
+	 *
+	 * @since Unreleased Enforces SOL role mapping decisions during login.
+	 *
+	 * @param int $user_id WordPress user ID.
+	 */
+	private function scouting_oidc_auth_apply_role_mapping( int $user_id ): void {
+		$decision = RolesAuthorization::scouting_oidc_roles_authorization_get_user_decision( $user_id );
+		if ( ! $decision['login_allowed'] ) {
+			Logger::warning( LogComponent::ROLES, 'Blocked OIDC login because the SOL role mapping does not allow access.', $user_id );
+			ErrorHandler::redirect_to_login_error(
+				'access_denied',
+				__( 'Your Scouts Online role is not permitted to access this site.', 'scouting-openid-connect' ),
+				__( 'You are not allowed to sign in to this site.', 'scouting-openid-connect' ),
+				'roles_not_allowed'
+			);
+		}
+
+		if ( ! RolesAuthorization::scouting_oidc_roles_authorization_apply_wordpress_role( $user_id, $decision['wordpress_role'] ) ) {
+			Logger::error( LogComponent::ROLES, 'Could not apply the SOL role mapping during OIDC login.', $user_id );
+			ErrorHandler::redirect_to_login_error(
+				'server_error',
+				__( 'Your access level could not be updated. Please contact the site administrator.', 'scouting-openid-connect' ),
+				__( 'We could not complete your sign-in.', 'scouting-openid-connect' ),
+				'roles_mapping_failed'
+			);
+		}
 	}
 
 	/**
