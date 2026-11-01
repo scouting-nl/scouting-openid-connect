@@ -98,7 +98,7 @@ $scouting_oidc_product_metas = array(
 );
 
 foreach ( $scouting_oidc_product_metas as $scouting_oidc_product_meta ) {
-	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- A fixed plugin meta key is removed once during uninstall.
 	$wpdb->delete( $wpdb->postmeta, array( 'meta_key' => $scouting_oidc_product_meta ), array( '%s' ) );
 }
 

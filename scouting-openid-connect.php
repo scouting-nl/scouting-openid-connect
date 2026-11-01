@@ -52,7 +52,7 @@ require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolesadmin.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-logger.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-cronjobs.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-mail.php';
-require_once SCOUTING_OIDC_PATH . 'src/woocommerce/class-woocommerce-restrictions.php';
+require_once SCOUTING_OIDC_PATH . 'src/woocommerce/class-woocommercerestrictions.php';
 
 use ScoutingOIDC\Auth;
 use ScoutingOIDC\Session;

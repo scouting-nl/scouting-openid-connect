@@ -186,7 +186,7 @@ class RolesAuthorization {
 		$assignments        = array();
 		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
 			$organisation_id = (string) $row['organisation_id'];
-			$assignments[] = array(
+			$assignments[]   = array(
 				'role_id'              => (int) $row['role_id'],
 				'organisation_unit_id' => (int) $row['organisation_unit_id'],
 				'organisation_id'      => $organisation_id,
@@ -214,7 +214,7 @@ class RolesAuthorization {
 		}
 
 		$parents_by_child = self::scouting_oidc_roles_authorization_get_organisation_parents();
-		$paths = array();
+		$paths            = array();
 		foreach ( $organisation_ids as $organisation_id ) {
 			$paths[ $organisation_id ] = self::scouting_oidc_roles_authorization_get_organisation_path( $organisation_id, $parents_by_child );
 		}
@@ -253,7 +253,7 @@ class RolesAuthorization {
 
 		$organisation_parents_table = $wpdb->prefix . 'scouting_oidc_sol_organisation_parents';
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT child_organisation_id, parent_organisation_id FROM %i', $organisation_parents_table ), ARRAY_A );
+		$rows   = $wpdb->get_results( $wpdb->prepare( 'SELECT child_organisation_id, parent_organisation_id FROM %i', $organisation_parents_table ), ARRAY_A );
 		$result = array();
 		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
 			$child_organisation_id  = isset( $row['child_organisation_id'] ) ? (string) $row['child_organisation_id'] : '';
@@ -307,7 +307,7 @@ class RolesAuthorization {
 	 *
 	 * @since Unreleased Safely reads stored SOL role mapping rules.
 	 *
-	 * @param mixed               $stored_rule Stored rule value.
+	 * @param mixed                $stored_rule Stored rule value.
 	 * @param array<string, array> $wordpress_roles Available WordPress roles.
 	 * @return array{id: string, organisation_id: string, organisation_unit_id: int, role_id: int, wordpress_role: string, login_allowed: bool}|null Normalized rule or null when invalid.
 	 */
@@ -349,7 +349,7 @@ class RolesAuthorization {
 	 * @since Unreleased Matches role mapping conditions against active assignments.
 	 *
 	 * @param array{id: string, organisation_id: string, organisation_unit_id: int, role_id: int, wordpress_role: string, login_allowed: bool} $rule Mapping rule.
-	 * @param array<int, array{role_id: int, organisation_unit_id: int, organisation_id: string, organisation_ids: array<int, string>}> $assignments Active assignments.
+	 * @param array<int, array{role_id: int, organisation_unit_id: int, organisation_id: string, organisation_ids: array<int, string>}>        $assignments Active assignments.
 	 * @return bool Whether the rule matches.
 	 */
 	private static function scouting_oidc_roles_authorization_rule_matches_assignments( array $rule, array $assignments ): bool {

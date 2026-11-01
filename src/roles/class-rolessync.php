@@ -175,7 +175,7 @@ class RolesSync {
 						return new \WP_Error( 'inconsistent_organisation_parent' );
 					}
 
-					$parent_ids[]            = $parent_id;
+					$parent_ids[]               = $parent_id;
 					$parent_names[ $parent_id ] = $parent_name;
 				}
 			}
@@ -212,7 +212,7 @@ class RolesSync {
 	 *
 	 * @since Unreleased Normalizes UserInfo organisation units.
 	 *
-	 * @param array                                                       $raw_organisation_units Raw UserInfo organisation units claim.
+	 * @param array                                                                                                              $raw_organisation_units Raw UserInfo organisation units claim.
 	 * @param array<string, array{organisation_id: string, name: string, parent_ids: array<int, string>, has_parent_data: bool}> $organisations Normalized organisations.
 	 * @return array<int, array{organisation_id: string, name: string, unit_type: string, game_section_type: string|null}>|\WP_Error Normalized organisation units, or an error.
 	 */
@@ -414,9 +414,9 @@ class RolesSync {
 		$organisations_table        = $wpdb->prefix . 'scouting_oidc_sol_organisations';
 		$organisation_parents_table = $wpdb->prefix . 'scouting_oidc_sol_organisation_parents';
 		$organisation_units_table   = $wpdb->prefix . 'scouting_oidc_sol_organisation_units';
-		$roles_table                 = $wpdb->prefix . 'scouting_oidc_sol_roles';
-		$assignments_table           = $wpdb->prefix . 'scouting_oidc_sol_role_assignments';
-		$current_time                = current_time( 'mysql', true );
+		$roles_table                = $wpdb->prefix . 'scouting_oidc_sol_roles';
+		$assignments_table          = $wpdb->prefix . 'scouting_oidc_sol_role_assignments';
+		$current_time               = current_time( 'mysql', true );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$transaction_started = $wpdb->query( 'START TRANSACTION' );
@@ -478,10 +478,10 @@ class RolesSync {
 	 *
 	 * @since Unreleased Synchronizes UserInfo organisation hierarchies.
 	 *
-	 * @param string                                                                                                   $organisations_table Full organisations table name.
-	 * @param string                                                                                                   $organisation_parents_table Full organisation parent table name.
+	 * @param string                                                                                                             $organisations_table Full organisations table name.
+	 * @param string                                                                                                             $organisation_parents_table Full organisation parent table name.
 	 * @param array<string, array{organisation_id: string, name: string, parent_ids: array<int, string>, has_parent_data: bool}> $organisations Normalized organisations.
-	 * @param string                                                                                                   $current_time UTC timestamp.
+	 * @param string                                                                                                             $current_time UTC timestamp.
 	 * @return bool Whether organisations and parent relationships were saved.
 	 */
 	private static function scouting_oidc_roles_sync_persist_organisations( string $organisations_table, string $organisation_parents_table, array $organisations, string $current_time ): bool {
@@ -505,9 +505,9 @@ class RolesSync {
 	 *
 	 * @since Unreleased Saves synchronized organisations.
 	 *
-	 * @param string                                       $organisations_table Full organisations table name.
+	 * @param string                                                                                              $organisations_table Full organisations table name.
 	 * @param array{organisation_id: string, name: string, parent_ids: array<int, string>, has_parent_data: bool} $organisation Normalized organisation.
-	 * @param string                                       $current_time UTC timestamp.
+	 * @param string                                                                                              $current_time UTC timestamp.
 	 * @return bool Whether the organisation was saved.
 	 */
 	private static function scouting_oidc_roles_sync_upsert_organisation( string $organisations_table, array $organisation, string $current_time ): bool {
@@ -534,9 +534,9 @@ class RolesSync {
 	 *
 	 * @since Unreleased Synchronizes optional UserInfo organisation parents.
 	 *
-	 * @param string                                                                                          $organisation_parents_table Full organisation parent table name.
+	 * @param string                                                                                              $organisation_parents_table Full organisation parent table name.
 	 * @param array{organisation_id: string, name: string, parent_ids: array<int, string>, has_parent_data: bool} $organisation Normalized organisation.
-	 * @param string                                                                                          $current_time UTC timestamp.
+	 * @param string                                                                                              $current_time UTC timestamp.
 	 * @return bool Whether parent relationships were saved.
 	 */
 	private static function scouting_oidc_roles_sync_replace_organisation_parents( string $organisation_parents_table, array $organisation, string $current_time ): bool {
@@ -555,7 +555,7 @@ class RolesSync {
 				array(
 					'child_organisation_id'  => $organisation['organisation_id'],
 					'parent_organisation_id' => $parent_organisation_id,
-					'last_seen_at'            => $current_time,
+					'last_seen_at'           => $current_time,
 				),
 				array( '%s', '%s', '%s' )
 			);

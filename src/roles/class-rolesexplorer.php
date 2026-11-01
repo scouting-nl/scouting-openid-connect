@@ -138,8 +138,8 @@ class RolesExplorer {
 		$roles_table         = $wpdb->prefix . 'scouting_oidc_sol_roles';
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$organisations = $wpdb->get_results( $wpdb->prepare( 'SELECT organisation_id, name FROM %i ORDER BY name, organisation_id', $organisations_table ), ARRAY_A );
-		$organisations = is_array( $organisations ) ? $organisations : array();
+		$organisations    = $wpdb->get_results( $wpdb->prepare( 'SELECT organisation_id, name FROM %i ORDER BY name, organisation_id', $organisations_table ), ARRAY_A );
+		$organisations    = is_array( $organisations ) ? $organisations : array();
 		$organisation_ids = array_column( $organisations, 'organisation_id' );
 		if ( '' !== $filters['organisation_id'] && ! in_array( $filters['organisation_id'], $organisation_ids, true ) ) {
 			$filters['organisation_id']      = '';

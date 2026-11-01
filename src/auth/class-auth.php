@@ -336,7 +336,7 @@ class Auth {
 			Logger::info( LogComponent::AUTH, "User '{$user->get_display_name()}' has an existing account, updating user information and logging in", null, $user->get_username() );
 			$user_id = $user->scouting_oidc_user_update();
 			RolesSync::scouting_oidc_roles_sync_user_info( $user_id, $user_info );
-			$this->scoutingOidcAuthApplyRoleMapping( $user_id );
+			$this->scouting_oidc_auth_apply_role_mapping( $user_id );
 			// Promote per-state redirect only after successful callback validation and right before login.
 			$this->oidc_client->apply_redirect_for_state_to_session( $state );
 			$user->scouting_oidc_user_login();
@@ -344,7 +344,7 @@ class Auth {
 				Logger::info( LogComponent::AUTH, "User '{$user->get_display_name()}' does not have an account, auto-creation is enabled, creating account and logging in", null, $user->get_username() );
 				$user_id = $user->scouting_oidc_user_create();
 				RolesSync::scouting_oidc_roles_sync_user_info( $user_id, $user_info );
-				$this->scoutingOidcAuthApplyRoleMapping( $user_id );
+				$this->scouting_oidc_auth_apply_role_mapping( $user_id );
 				// Promote per-state redirect only after successful callback validation and right before login.
 				$this->oidc_client->apply_redirect_for_state_to_session( $state );
 				$user->scouting_oidc_user_login();
@@ -365,7 +365,7 @@ class Auth {
 	 *
 	 * @param int $user_id WordPress user ID.
 	 */
-	private function scoutingOidcAuthApplyRoleMapping( int $user_id ): void {
+	private function scouting_oidc_auth_apply_role_mapping( int $user_id ): void {
 		$decision = RolesAuthorization::scouting_oidc_roles_authorization_get_user_decision( $user_id );
 		if ( ! $decision['login_allowed'] ) {
 			Logger::warning( LogComponent::ROLES, 'Blocked OIDC login because the SOL role mapping does not allow access.', $user_id );
