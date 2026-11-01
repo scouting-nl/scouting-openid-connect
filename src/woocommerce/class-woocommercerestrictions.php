@@ -61,6 +61,20 @@ class WooCommerceRestrictions {
 	private const DENIED_DESCENDANTS_META_KEY = '_scouting_oidc_denied_include_descendants';
 
 	/**
+	 * Product meta key requiring both allow conditions on one assignment.
+	 *
+	 * @since Unreleased Supports combined organisation and role allow rules.
+	 */
+	private const ALLOWED_REQUIRE_BOTH_META_KEY = '_scouting_oidc_allowed_require_both';
+
+	/**
+	 * Product meta key requiring both deny conditions on one assignment.
+	 *
+	 * @since Unreleased Supports combined organisation and role deny rules.
+	 */
+	private const DENIED_REQUIRE_BOTH_META_KEY = '_scouting_oidc_denied_require_both';
+
+	/**
 	 * Registers WooCommerce hooks after active plugins have loaded.
 	 *
 	 * @since Unreleased Defers WooCommerce integration registration.
@@ -136,7 +150,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Renders the SOL restrictions panel in WooCommerce Product data.
 	 *
-	 * @since Unreleased Adds contextual role labels and full-width restriction instructions.
+	 * @since Unreleased Adds contextual role labels and configurable organisation and role matching.
 	 */
 	public function scouting_oidc_woocommerce_restrictions_render_product_data_panel(): void {
 		global $post;
@@ -153,7 +167,7 @@ class WooCommerceRestrictions {
 		?>
 		<div id="scouting_oidc_product_data" class="panel woocommerce_options_panel hidden">
 			<div class="options_group">
-				<p id="scouting-oidc-allow-help" class="scouting-oidc-access-description"><?php esc_html_e( 'Select organisations or roles that may order this product. A customer needs one matching active organisation or role. Include descendant organisations to match assignments in groups beneath a selected parent; turn it off to require a direct assignment in a selected organisation. Leave both allow fields empty to allow every customer unless a deny rule matches.', 'scouting-openid-connect' ); ?></p>
+				<p id="scouting-oidc-allow-help" class="scouting-oidc-access-description"><?php esc_html_e( 'Select organisations or roles that may order this product. A customer needs one matching active organisation or role. Enable Require both organisation and role to match both fields on the same active assignment when both fields contain selections; with only one field selected, only that field is required. Include descendant organisations to match assignments in groups beneath a selected parent; turn it off to require a direct assignment in a selected organisation. Leave both allow fields empty to allow every customer unless a deny rule matches.', 'scouting-openid-connect' ); ?></p>
 				<p class="form-field">
 					<label for="scouting-oidc-allowed-organisations"><?php esc_html_e( 'Allowed SOL organisations', 'scouting-openid-connect' ); ?></label>
 					<select id="scouting-oidc-allowed-organisations" class="wc-enhanced-select" name="scouting_oidc_allowed_organisation_ids[]" multiple="multiple" aria-describedby="scouting-oidc-allow-help" data-placeholder="<?php esc_attr_e( 'No organisation allow rule', 'scouting-openid-connect' ); ?>">
@@ -169,7 +183,7 @@ class WooCommerceRestrictions {
 						<?php endforeach; ?>
 					</select>
 				</p>
-				<?php $this->scouting_oidc_woocommerce_restrictions_render_descendants_checkbox( $product_id, self::ALLOWED_DESCENDANTS_META_KEY, 'scouting_oidc_allowed_include_descendants', 'scouting-oidc-allow-help' ); ?>
+				<?php $this->scouting_oidc_woocommerce_restrictions_render_checkbox( 'scouting_oidc_allowed_include_descendants', 'scouting-oidc-allow-help', __( 'Include descendant organisations', 'scouting-openid-connect' ), $this->scouting_oidc_woocommerce_restrictions_include_descendants( $product_id, self::ALLOWED_DESCENDANTS_META_KEY ) ); ?>
 				<p class="form-field">
 					<label for="scouting-oidc-allowed-roles"><?php esc_html_e( 'Allowed SOL roles', 'scouting-openid-connect' ); ?></label>
 					<select id="scouting-oidc-allowed-roles" class="wc-enhanced-select" name="scouting_oidc_allowed_role_ids[]" multiple="multiple" aria-describedby="scouting-oidc-allow-help" data-placeholder="<?php esc_attr_e( 'No role allow rule', 'scouting-openid-connect' ); ?>">
@@ -185,9 +199,10 @@ class WooCommerceRestrictions {
 						<?php endforeach; ?>
 					</select>
 				</p>
+				<?php $this->scouting_oidc_woocommerce_restrictions_render_checkbox( 'scouting_oidc_allowed_require_both', 'scouting-oidc-allow-help', __( 'Require both organisation and role', 'scouting-openid-connect' ), 'yes' === get_post_meta( $product_id, self::ALLOWED_REQUIRE_BOTH_META_KEY, true ) ); ?>
 			</div>
 			<div class="options_group">
-				<p id="scouting-oidc-deny-help" class="scouting-oidc-access-description"><?php esc_html_e( 'Select organisations or roles that may not order this product. Include descendant organisations to deny assignments in groups beneath a selected parent; turn it off to deny only direct assignments in selected organisations. Any matching deny rule blocks ordering, even when the customer also matches an allow rule.', 'scouting-openid-connect' ); ?></p>
+				<p id="scouting-oidc-deny-help" class="scouting-oidc-access-description"><?php esc_html_e( 'Select organisations or roles that may not order this product. Enable Require both organisation and role to match both fields on the same active assignment when both fields contain selections; with only one field selected, only that field is required. Include descendant organisations to deny assignments in groups beneath a selected parent; turn it off to deny only direct assignments in selected organisations. Any matching deny rule blocks ordering, even when the customer also matches an allow rule.', 'scouting-openid-connect' ); ?></p>
 				<p class="form-field">
 					<label for="scouting-oidc-denied-organisations"><?php esc_html_e( 'Denied SOL organisations', 'scouting-openid-connect' ); ?></label>
 					<select id="scouting-oidc-denied-organisations" class="wc-enhanced-select" name="scouting_oidc_denied_organisation_ids[]" multiple="multiple" aria-describedby="scouting-oidc-deny-help" data-placeholder="<?php esc_attr_e( 'No organisation deny rule', 'scouting-openid-connect' ); ?>">
@@ -203,7 +218,7 @@ class WooCommerceRestrictions {
 						<?php endforeach; ?>
 					</select>
 				</p>
-				<?php $this->scouting_oidc_woocommerce_restrictions_render_descendants_checkbox( $product_id, self::DENIED_DESCENDANTS_META_KEY, 'scouting_oidc_denied_include_descendants', 'scouting-oidc-deny-help' ); ?>
+				<?php $this->scouting_oidc_woocommerce_restrictions_render_checkbox( 'scouting_oidc_denied_include_descendants', 'scouting-oidc-deny-help', __( 'Include descendant organisations', 'scouting-openid-connect' ), $this->scouting_oidc_woocommerce_restrictions_include_descendants( $product_id, self::DENIED_DESCENDANTS_META_KEY ) ); ?>
 				<p class="form-field">
 					<label for="scouting-oidc-denied-roles"><?php esc_html_e( 'Denied SOL roles', 'scouting-openid-connect' ); ?></label>
 					<select id="scouting-oidc-denied-roles" class="wc-enhanced-select" name="scouting_oidc_denied_role_ids[]" multiple="multiple" aria-describedby="scouting-oidc-deny-help" data-placeholder="<?php esc_attr_e( 'No role deny rule', 'scouting-openid-connect' ); ?>">
@@ -219,6 +234,7 @@ class WooCommerceRestrictions {
 						<?php endforeach; ?>
 					</select>
 				</p>
+				<?php $this->scouting_oidc_woocommerce_restrictions_render_checkbox( 'scouting_oidc_denied_require_both', 'scouting-oidc-deny-help', __( 'Require both organisation and role', 'scouting-openid-connect' ), 'yes' === get_post_meta( $product_id, self::DENIED_REQUIRE_BOTH_META_KEY, true ) ); ?>
 			</div>
 		</div>
 		<?php
@@ -227,19 +243,19 @@ class WooCommerceRestrictions {
 	/**
 	 * Renders a native checkbox and marker distinguishing absent legacy forms.
 	 *
-	 * @since Unreleased Adds independently configurable organisation ancestry.
+	 * @since Unreleased Renders labelled organisation and role matching controls.
 	 *
-	 * @param int    $product_id Product ID.
-	 * @param string $meta_key Descendant matching meta key.
 	 * @param string $name Checkbox field name.
 	 * @param string $description_id Instructions ID.
+	 * @param string $label Translated checkbox label.
+	 * @param bool   $is_checked Whether the checkbox is selected.
 	 */
-	private function scouting_oidc_woocommerce_restrictions_render_descendants_checkbox( int $product_id, string $meta_key, string $name, string $description_id ): void {
+	private function scouting_oidc_woocommerce_restrictions_render_checkbox( string $name, string $description_id, string $label, bool $is_checked ): void {
 		?>
 		<p class="form-field">
 			<input type="hidden" name="<?php echo esc_attr( $name . '_present' ); ?>" value="1" />
-			<label for="<?php echo esc_attr( $name ); ?>"><?php esc_html_e( 'Include descendant organisations', 'scouting-openid-connect' ); ?></label>
-			<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $name ); ?>" name="<?php echo esc_attr( $name ); ?>" value="yes" aria-describedby="<?php echo esc_attr( $description_id ); ?>" <?php checked( $this->scouting_oidc_woocommerce_restrictions_include_descendants( $product_id, $meta_key ) ); ?> />
+			<label for="<?php echo esc_attr( $name ); ?>"><?php echo esc_html( $label ); ?></label>
+			<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $name ); ?>" name="<?php echo esc_attr( $name ); ?>" value="yes" aria-describedby="<?php echo esc_attr( $description_id ); ?>" <?php checked( $is_checked ); ?> />
 		</p>
 		<?php
 	}
@@ -260,7 +276,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Saves SOL ordering restrictions through the WooCommerce product data API.
 	 *
-	 * @since Unreleased Saves WooCommerce SOL restriction fields.
+	 * @since Unreleased Saves WooCommerce SOL restriction fields and matching modes.
 	 *
 	 * @param \WC_Product $product Product being saved.
 	 */
@@ -288,6 +304,12 @@ class WooCommerceRestrictions {
 		}
 		if ( isset( $_POST['scouting_oidc_denied_include_descendants_present'] ) ) {
 			$product->update_meta_data( self::DENIED_DESCENDANTS_META_KEY, isset( $_POST['scouting_oidc_denied_include_descendants'] ) ? 'yes' : 'no' );
+		}
+		if ( isset( $_POST['scouting_oidc_allowed_require_both_present'] ) ) {
+			$product->update_meta_data( self::ALLOWED_REQUIRE_BOTH_META_KEY, isset( $_POST['scouting_oidc_allowed_require_both'] ) ? 'yes' : 'no' );
+		}
+		if ( isset( $_POST['scouting_oidc_denied_require_both_present'] ) ) {
+			$product->update_meta_data( self::DENIED_REQUIRE_BOTH_META_KEY, isset( $_POST['scouting_oidc_denied_require_both'] ) ? 'yes' : 'no' );
 		}
 	}
 
@@ -370,7 +392,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Checks whether the current user may order a product under its SOL rules.
 	 *
-	 * @since Unreleased Applies product SOL restrictions to the current user.
+	 * @since Unreleased Applies configurable organisation and role conditions to active assignments.
 	 *
 	 * @param int $product_id Product or variation ID.
 	 * @return bool Whether the current user can order the product.
@@ -386,28 +408,47 @@ class WooCommerceRestrictions {
 		$user_id                 = get_current_user_id();
 		$allowed_descendants     = $this->scouting_oidc_woocommerce_restrictions_include_descendants( $restriction_product_id, self::ALLOWED_DESCENDANTS_META_KEY );
 		$denied_descendants      = $this->scouting_oidc_woocommerce_restrictions_include_descendants( $restriction_product_id, self::DENIED_DESCENDANTS_META_KEY );
+		$allowed_require_both    = 'yes' === get_post_meta( $restriction_product_id, self::ALLOWED_REQUIRE_BOTH_META_KEY, true );
+		$denied_require_both     = 'yes' === get_post_meta( $restriction_product_id, self::DENIED_REQUIRE_BOTH_META_KEY, true );
 
 		if ( $user_id > 0 ) {
 			foreach ( RolesAuthorization::scouting_oidc_roles_authorization_get_active_assignments( $user_id ) as $assignment ) {
 				$allowed_assignment_ids = $allowed_descendants ? $assignment['organisation_ids'] : array( $assignment['organisation_id'] );
 				$denied_assignment_ids  = $denied_descendants ? $assignment['organisation_ids'] : array( $assignment['organisation_id'] );
-				if (
-					! empty( array_intersect( $denied_assignment_ids, $denied_organisation_ids ) )
-					|| in_array( $assignment['role_id'], $denied_role_ids, true )
-				) {
+				if ( $this->scouting_oidc_woocommerce_restrictions_assignment_matches( $denied_assignment_ids, $assignment['role_id'], $denied_organisation_ids, $denied_role_ids, $denied_require_both ) ) {
 					return false;
 				}
 
-				if (
-					! empty( array_intersect( $allowed_assignment_ids, $organisation_ids ) )
-					|| in_array( $assignment['role_id'], $role_ids, true )
-				) {
+				if ( $this->scouting_oidc_woocommerce_restrictions_assignment_matches( $allowed_assignment_ids, $assignment['role_id'], $organisation_ids, $role_ids, $allowed_require_both ) ) {
 					$can_order = true;
 				}
 			}
 		}
 
 		return $can_order;
+	}
+
+	/**
+	 * Matches populated organisation and role conditions against one assignment.
+	 *
+	 * @since Unreleased Shares OR and same-assignment AND matching for allow and deny rules.
+	 *
+	 * @param array<string> $assignment_ids Organisation IDs eligible for this assignment.
+	 * @param int           $assignment_role_id Active assignment role ID.
+	 * @param array<string> $organisation_ids Selected organisation IDs.
+	 * @param array<int>    $role_ids Selected role IDs.
+	 * @param bool          $require_both Whether both populated fields must match.
+	 * @return bool Whether the assignment matches the rule.
+	 */
+	private function scouting_oidc_woocommerce_restrictions_assignment_matches( array $assignment_ids, int $assignment_role_id, array $organisation_ids, array $role_ids, bool $require_both ): bool {
+		$organisation_matches = ! empty( array_intersect( $assignment_ids, $organisation_ids ) );
+		$role_matches         = in_array( $assignment_role_id, $role_ids, true );
+
+		if ( $require_both && ! empty( $organisation_ids ) && ! empty( $role_ids ) ) {
+			return $organisation_matches && $role_matches;
+		}
+
+		return $organisation_matches || $role_matches;
 	}
 
 	/**

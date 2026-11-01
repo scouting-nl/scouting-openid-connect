@@ -28,7 +28,7 @@ class RolesExplorer {
 	/**
 	 * Renders organisation, unit, role and assigned-user filters.
 	 *
-	 * @since Unreleased Adds the SOL role explorer page.
+	 * @since Unreleased Displays SOL assignments without an email column.
 	 */
 	public function render_page(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -94,16 +94,15 @@ class RolesExplorer {
 						<th scope="col"><?php esc_html_e( 'Organisation Unit', 'scouting-openid-connect' ); ?></th>
 						<th scope="col"><?php esc_html_e( 'SOL Role', 'scouting-openid-connect' ); ?></th>
 						<th scope="col"><?php esc_html_e( 'User', 'scouting-openid-connect' ); ?></th>
-						<th scope="col"><?php esc_html_e( 'Email', 'scouting-openid-connect' ); ?></th>
 						<th scope="col"><?php esc_html_e( 'Starts', 'scouting-openid-connect' ); ?></th>
 						<th scope="col"><?php esc_html_e( 'Ends', 'scouting-openid-connect' ); ?></th>
 					</tr>
 				</thead>
 				<tbody>
 				<?php if ( '' === $filters['organisation_id'] ) : ?>
-					<tr><td colspan="7"><?php esc_html_e( 'Select an organisation to view role assignments.', 'scouting-openid-connect' ); ?></td></tr>
+					<tr><td colspan="6"><?php esc_html_e( 'Select an organisation to view role assignments.', 'scouting-openid-connect' ); ?></td></tr>
 				<?php elseif ( empty( $data['rows'] ) ) : ?>
-					<tr><td colspan="7"><?php esc_html_e( 'No role assignments match these filters.', 'scouting-openid-connect' ); ?></td></tr>
+					<tr><td colspan="6"><?php esc_html_e( 'No role assignments match these filters.', 'scouting-openid-connect' ); ?></td></tr>
 				<?php endif; ?>
 				<?php foreach ( $data['rows'] as $row ) : ?>
 					<tr>
@@ -111,7 +110,6 @@ class RolesExplorer {
 						<td><?php echo esc_html( $row['unit_name'] . ' (' . $row['organisation_unit_id'] . ')' ); ?></td>
 						<td><?php echo esc_html( $row['role_name'] . ' (' . $row['role_id'] . ')' ); ?></td>
 						<td><a href="<?php echo esc_url( get_edit_user_link( (int) $row['user_id'] ) ); ?>"><?php echo esc_html( $row['display_name'] . ' (' . $row['user_login'] . ')' ); ?></a></td>
-						<td><?php echo esc_html( $row['user_email'] ); ?></td>
 						<td><?php echo esc_html( $row['start_date'] ); ?></td>
 						<td><?php echo esc_html( $row['end_date'] ?? __( 'No end date', 'scouting-openid-connect' ) ); ?></td>
 					</tr>
@@ -240,7 +238,7 @@ class RolesExplorer {
 				'SELECT assignment.user_id, assignment.role_id, assignment.start_date, assignment.end_date, ' .
 				'organisation.organisation_id, organisation.name AS organisation_name, ' .
 				'unit.organisation_unit_id, unit.name AS unit_name, role.role_name, ' .
-				'user.display_name, user.user_login, user.user_email ' .
+				'user.display_name, user.user_login ' .
 				'FROM %i AS assignment ' .
 				'INNER JOIN %i AS role ON role.role_id = assignment.role_id ' .
 				'INNER JOIN %i AS unit ON unit.organisation_unit_id = role.organisation_unit_id ' .

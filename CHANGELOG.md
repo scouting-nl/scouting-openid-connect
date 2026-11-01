@@ -4,17 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
-- Added separate Include descendant organisations checkboxes for WooCommerce allowed and denied organisations, enabled by default for existing products.
-- Added organisation and unit context to WooCommerce SOL role choices and removed excessive indentation from the SOL Access instructions.
-- Placed Add Mapping Rule and Test a User together in a responsive action row below the heading.
-- Moved Test a User into a matching accessible modal that reopens with preview results or errors after submission.
-- Fixed mapping-page heading spacing and notice placement by using the standard WordPress heading and header-end layout.
-- Removed the separate default mapping rule and login setting. Unmatched users use the WordPress default role; existing new-user registration and login checks remain in effect. Legacy mapping defaults are ignored.
-- Derived the local ZIP builder's version from the nearest reachable Git release tag instead of prompting for a version.
-- Improved SOL role mapping with linked searchable selectors, When / Then editing, a read-only user tester, rule duplication, and keyboard-accessible position changes.
-- Added a top-right mapping-rule button and accessible modal editor; made live search results visible while typing and tied assets to the registered WordPress page hook.
-- Refined the mapping modal with styled native selectors, an accessible close icon, and adjacent action buttons in a persistent footer.
-- Added native WordPress contextual help to SOL Role Mapping, covering rule matching, editing, precedence, defaults and user previews.
+- Added SOL role mapping with searchable organisation, unit, and role selectors, allow and deny rules, rule duplication and reordering, accessible dialogs, a read-only user tester, and contextual help. Unmatched users use the WordPress default role.
+- Added the SOL Role Explorer to browse synchronized organisations, units, roles, and user assignments.
+- Added WooCommerce SOL Access restrictions with organisation and role allow and deny rules, optional descendant matching, and optional organisation-and-role matching on the same active assignment. Deny rules take precedence.
 
 ## [[2.6.2](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.6.2)] - 26/08/2026
 
