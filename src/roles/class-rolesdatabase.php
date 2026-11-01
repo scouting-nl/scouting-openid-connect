@@ -23,7 +23,7 @@ class RolesDatabase {
 	 *
 	 * @since Unreleased Defines the initial role schema.
 	 */
-	private const SCHEMA_VERSION = '1';
+	private const SCHEMA_VERSION = '2';
 
 	/**
 	 * Option key used to persist the installed role schema version.
@@ -81,6 +81,7 @@ class RolesDatabase {
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $organisations_sql );
+		dbDelta( $this->scouting_oidc_roles_database_get_organisation_parents_sql( $tables['organisation_parents'], $charset_collate ) );
 		dbDelta( $organisation_units_sql );
 		dbDelta( $this->scouting_oidc_roles_database_get_roles_sql( $tables['roles'], $charset_collate ) );
 		dbDelta( $this->scouting_oidc_roles_database_get_role_assignments_sql( $tables['role_assignments'], $charset_collate ) );
@@ -94,6 +95,26 @@ class RolesDatabase {
 		}
 
 		update_option( self::SCHEMA_VERSION_OPTION, self::SCHEMA_VERSION );
+	}
+
+	/**
+	 * Gets the organisation hierarchy table SQL.
+	 *
+	 * @since Unreleased Defines parent organisation relationships.
+	 *
+	 * @param string $table Full table name.
+	 * @param string $charset_collate Database character set and collation SQL.
+	 * @return string CREATE TABLE statement.
+	 */
+	private function scouting_oidc_roles_database_get_organisation_parents_sql( string $table, string $charset_collate ): string {
+		return "CREATE TABLE $table (
+			child_organisation_id CHAR(6) NOT NULL,
+			parent_organisation_id CHAR(6) NOT NULL,
+			last_seen_at DATETIME NOT NULL,
+			PRIMARY KEY  (child_organisation_id, parent_organisation_id),
+			KEY parent_organisation_id (parent_organisation_id),
+			KEY last_seen_at (last_seen_at)
+		) ENGINE=InnoDB $charset_collate;";
 	}
 
 	/**
@@ -153,10 +174,11 @@ class RolesDatabase {
 		global $wpdb;
 
 		return array(
-			'organisations'      => $wpdb->prefix . 'scouting_oidc_sol_organisations',
-			'organisation_units' => $wpdb->prefix . 'scouting_oidc_sol_organisation_units',
-			'roles'              => $wpdb->prefix . 'scouting_oidc_sol_roles',
-			'role_assignments'   => $wpdb->prefix . 'scouting_oidc_sol_role_assignments',
+			'organisations'        => $wpdb->prefix . 'scouting_oidc_sol_organisations',
+			'organisation_parents' => $wpdb->prefix . 'scouting_oidc_sol_organisation_parents',
+			'organisation_units'   => $wpdb->prefix . 'scouting_oidc_sol_organisation_units',
+			'roles'                => $wpdb->prefix . 'scouting_oidc_sol_roles',
+			'role_assignments'     => $wpdb->prefix . 'scouting_oidc_sol_role_assignments',
 		);
 	}
 

@@ -33,11 +33,18 @@ class RolesAuthorization {
 	private const MANAGED_ROLE_META_KEY = 'scouting_oidc_managed_wordpress_role';
 
 	/**
+	 * Pattern for a six-digit Scouts Online organisation identifier.
+	 *
+	 * @since Unreleased Validates SOL organisation identifiers.
+	 */
+	private const ORGANISATION_ID_PATTERN = '/^\d{6}$/';
+
+	/**
 	 * Active SOL assignments cached by WordPress user ID for the current request.
 	 *
 	 * @since Unreleased Avoids repeated authorization queries in a request.
 	 *
-	 * @var array<int, array<int, array{role_id: int, organisation_unit_id: int, organisation_id: string}>>
+	 * @var array<int, array<int, array{role_id: int, organisation_unit_id: int, organisation_id: string, organisation_ids: array<int, string>}>>
 	 */
 	private static array $active_assignments = array();
 
@@ -140,7 +147,7 @@ class RolesAuthorization {
 	 * @since Unreleased Reads active SOL role assignments for authorization.
 	 *
 	 * @param int $user_id WordPress user ID.
-	 * @return array<int, array{role_id: int, organisation_unit_id: int, organisation_id: string}> Active assignments.
+	 * @return array<int, array{role_id: int, organisation_unit_id: int, organisation_id: string, organisation_ids: array<int, string>}> Active assignments with organisation ancestry.
 	 */
 	public static function scouting_oidc_roles_authorization_get_active_assignments( int $user_id ): array {
 		if ( $user_id <= 0 ) {
@@ -174,18 +181,114 @@ class RolesAuthorization {
 			ARRAY_A
 		);
 
-		$assignments = array();
+		$organisation_ids   = array_map( 'strval', array_column( is_array( $rows ) ? $rows : array(), 'organisation_id' ) );
+		$organisation_paths = self::scouting_oidc_roles_authorization_get_organisation_paths( $organisation_ids );
+		$assignments        = array();
 		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
+			$organisation_id = (string) $row['organisation_id'];
 			$assignments[] = array(
 				'role_id'              => (int) $row['role_id'],
 				'organisation_unit_id' => (int) $row['organisation_unit_id'],
-				'organisation_id'      => (string) $row['organisation_id'],
+				'organisation_id'      => $organisation_id,
+				'organisation_ids'     => $organisation_paths[ $organisation_id ] ?? array( $organisation_id ),
 			);
 		}
 
 		self::$active_assignments[ $user_id ] = $assignments;
 
 		return $assignments;
+	}
+
+	/**
+	 * Gets each organisation together with every reachable parent organisation.
+	 *
+	 * @since Unreleased Expands SOL organisation hierarchy matches.
+	 *
+	 * @param array<int, string> $organisation_ids Direct organisation IDs.
+	 * @return array<string, array<int, string>> Organisation IDs keyed by direct organisation ID.
+	 */
+	private static function scouting_oidc_roles_authorization_get_organisation_paths( array $organisation_ids ): array {
+		$organisation_ids = self::scouting_oidc_roles_authorization_normalize_organisation_ids( $organisation_ids );
+		if ( empty( $organisation_ids ) ) {
+			return array();
+		}
+
+		$parents_by_child = self::scouting_oidc_roles_authorization_get_organisation_parents();
+		$paths = array();
+		foreach ( $organisation_ids as $organisation_id ) {
+			$paths[ $organisation_id ] = self::scouting_oidc_roles_authorization_get_organisation_path( $organisation_id, $parents_by_child );
+		}
+
+		return $paths;
+	}
+
+	/**
+	 * Normalizes organisation identifiers for hierarchy lookups.
+	 *
+	 * @since Unreleased Validates SOL organisation hierarchy identifiers.
+	 *
+	 * @param array<int, string> $organisation_ids Raw organisation IDs.
+	 * @return array<int, string> Normalized organisation IDs.
+	 */
+	private static function scouting_oidc_roles_authorization_normalize_organisation_ids( array $organisation_ids ): array {
+		$result = array();
+		foreach ( $organisation_ids as $organisation_id ) {
+			if ( 1 === preg_match( self::ORGANISATION_ID_PATTERN, $organisation_id ) && ! in_array( $organisation_id, $result, true ) ) {
+				$result[] = $organisation_id;
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Gets direct parent organisation IDs keyed by child organisation ID.
+	 *
+	 * @since Unreleased Reads SOL organisation hierarchy relationships.
+	 *
+	 * @return array<string, array<int, string>> Parent IDs keyed by child organisation ID.
+	 */
+	private static function scouting_oidc_roles_authorization_get_organisation_parents(): array {
+		global $wpdb;
+
+		$organisation_parents_table = $wpdb->prefix . 'scouting_oidc_sol_organisation_parents';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT child_organisation_id, parent_organisation_id FROM %i', $organisation_parents_table ), ARRAY_A );
+		$result = array();
+		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
+			$child_organisation_id  = isset( $row['child_organisation_id'] ) ? (string) $row['child_organisation_id'] : '';
+			$parent_organisation_id = isset( $row['parent_organisation_id'] ) ? (string) $row['parent_organisation_id'] : '';
+			if ( 1 === preg_match( self::ORGANISATION_ID_PATTERN, $child_organisation_id ) && 1 === preg_match( self::ORGANISATION_ID_PATTERN, $parent_organisation_id ) ) {
+				$result[ $child_organisation_id ][] = $parent_organisation_id;
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Gets one organisation and all of its reachable parents.
+	 *
+	 * @since Unreleased Traverses SOL organisation hierarchy relationships.
+	 *
+	 * @param string                            $organisation_id Direct organisation ID.
+	 * @param array<string, array<int, string>> $parents_by_child Parent IDs keyed by child organisation ID.
+	 * @return array<int, string> Organisation and parent IDs.
+	 */
+	private static function scouting_oidc_roles_authorization_get_organisation_path( string $organisation_id, array $parents_by_child ): array {
+		$path    = array( $organisation_id );
+		$pending = array( $organisation_id );
+		while ( ! empty( $pending ) ) {
+			$current_organisation_id = array_pop( $pending );
+			foreach ( $parents_by_child[ $current_organisation_id ] ?? array() as $parent_organisation_id ) {
+				if ( ! in_array( $parent_organisation_id, $path, true ) ) {
+					$path[]    = $parent_organisation_id;
+					$pending[] = $parent_organisation_id;
+				}
+			}
+		}
+
+		return $path;
 	}
 
 	/**
@@ -215,7 +318,7 @@ class RolesAuthorization {
 
 		$organisation_id = '';
 		if ( isset( $stored_rule['organisation_id'] ) && '' !== $stored_rule['organisation_id'] ) {
-			if ( ! is_string( $stored_rule['organisation_id'] ) || 1 !== preg_match( '/^\d{6}$/', $stored_rule['organisation_id'] ) ) {
+			if ( ! is_string( $stored_rule['organisation_id'] ) || 1 !== preg_match( self::ORGANISATION_ID_PATTERN, $stored_rule['organisation_id'] ) ) {
 				return null;
 			}
 			$organisation_id = $stored_rule['organisation_id'];
@@ -246,12 +349,12 @@ class RolesAuthorization {
 	 * @since Unreleased Matches role mapping conditions against active assignments.
 	 *
 	 * @param array{id: string, organisation_id: string, organisation_unit_id: int, role_id: int, wordpress_role: string, login_allowed: bool} $rule Mapping rule.
-	 * @param array<int, array{role_id: int, organisation_unit_id: int, organisation_id: string}> $assignments Active assignments.
+	 * @param array<int, array{role_id: int, organisation_unit_id: int, organisation_id: string, organisation_ids: array<int, string>}> $assignments Active assignments.
 	 * @return bool Whether the rule matches.
 	 */
 	private static function scouting_oidc_roles_authorization_rule_matches_assignments( array $rule, array $assignments ): bool {
 		foreach ( $assignments as $assignment ) {
-			if ( '' !== $rule['organisation_id'] && $rule['organisation_id'] !== $assignment['organisation_id'] ) {
+			if ( '' !== $rule['organisation_id'] && ! in_array( $rule['organisation_id'], $assignment['organisation_ids'], true ) ) {
 				continue;
 			}
 			if ( 0 !== $rule['organisation_unit_id'] && $rule['organisation_unit_id'] !== $assignment['organisation_unit_id'] ) {

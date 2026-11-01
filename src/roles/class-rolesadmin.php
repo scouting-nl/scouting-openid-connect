@@ -100,6 +100,7 @@ class RolesAdmin {
 			<h1><?php esc_html_e( 'SOL Role Mapping', 'scouting-openid-connect' ); ?></h1>
 			<p><?php esc_html_e( 'Rules are evaluated from top to bottom. The first matching rule wins; the default rule is always evaluated last.', 'scouting-openid-connect' ); ?></p>
 			<div class="notice notice-info inline"><p><?php esc_html_e( 'These rules are applied after a successful Scouting OIDC login. The first matching rule assigns its WordPress role and determines whether the user may sign in.', 'scouting-openid-connect' ); ?></p></div>
+			<div class="notice notice-info inline"><p><?php esc_html_e( 'When Scouts Online supplies parent organisations, an organisation condition also matches assignments in its descendant organisations.', 'scouting-openid-connect' ); ?></p></div>
 			<?php $this->scouting_oidc_roles_admin_render_notice(); ?>
 			<table class="widefat striped">
 				<thead>

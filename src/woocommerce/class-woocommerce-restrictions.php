@@ -139,8 +139,7 @@ class WooCommerceRestrictions {
 		?>
 		<div id="scouting_oidc_product_data" class="panel woocommerce_options_panel hidden">
 			<div class="options_group">
-				<h3><?php esc_html_e( 'Allow Access', 'scouting-openid-connect' ); ?></h3>
-				<p class="form-field form-field-wide"><span class="description"><?php esc_html_e( 'Select organisations or roles that may order this product. A customer needs one matching active organisation or role. Leave both allow fields empty to allow every customer unless a deny rule matches.', 'scouting-openid-connect' ); ?></span></p>
+				<p class="form-field form-field-wide"><span class="description"><?php esc_html_e( 'Select organisations or roles that may order this product. A customer needs one matching active organisation or role; selecting a parent organisation also matches its reported descendants. Leave both allow fields empty to allow every customer unless a deny rule matches.', 'scouting-openid-connect' ); ?></span></p>
 				<p class="form-field">
 					<label for="scouting-oidc-allowed-organisations"><?php esc_html_e( 'Allowed SOL organisations', 'scouting-openid-connect' ); ?></label>
 					<select id="scouting-oidc-allowed-organisations" class="wc-enhanced-select" name="scouting_oidc_allowed_organisation_ids[]" multiple="multiple" data-placeholder="<?php esc_attr_e( 'No organisation allow rule', 'scouting-openid-connect' ); ?>">
@@ -165,8 +164,7 @@ class WooCommerceRestrictions {
 				</p>
 			</div>
 			<div class="options_group">
-				<h3><?php esc_html_e( 'Deny Access', 'scouting-openid-connect' ); ?></h3>
-				<p class="form-field form-field-wide"><span class="description"><?php esc_html_e( 'Select organisations or roles that may not order this product. Any matching deny rule blocks ordering, even when the customer also matches an allow rule.', 'scouting-openid-connect' ); ?></span></p>
+				<p class="form-field form-field-wide"><span class="description"><?php esc_html_e( 'Select organisations or roles that may not order this product. A parent organisation also denies its reported descendants. Any matching deny rule blocks ordering, even when the customer also matches an allow rule.', 'scouting-openid-connect' ); ?></span></p>
 				<p class="form-field">
 					<label for="scouting-oidc-denied-organisations"><?php esc_html_e( 'Denied SOL organisations', 'scouting-openid-connect' ); ?></label>
 					<select id="scouting-oidc-denied-organisations" class="wc-enhanced-select" name="scouting_oidc_denied_organisation_ids[]" multiple="multiple" data-placeholder="<?php esc_attr_e( 'No organisation deny rule', 'scouting-openid-connect' ); ?>">
@@ -314,11 +312,17 @@ class WooCommerceRestrictions {
 
 		if ( $user_id > 0 ) {
 			foreach ( RolesAuthorization::scouting_oidc_roles_authorization_get_active_assignments( $user_id ) as $assignment ) {
-				if ( in_array( $assignment['organisation_id'], $denied_organisation_ids, true ) || in_array( $assignment['role_id'], $denied_role_ids, true ) ) {
+				if (
+					! empty( array_intersect( $assignment['organisation_ids'], $denied_organisation_ids ) )
+					|| in_array( $assignment['role_id'], $denied_role_ids, true )
+				) {
 					return false;
 				}
 
-				if ( in_array( $assignment['organisation_id'], $organisation_ids, true ) || in_array( $assignment['role_id'], $role_ids, true ) ) {
+				if (
+					! empty( array_intersect( $assignment['organisation_ids'], $organisation_ids ) )
+					|| in_array( $assignment['role_id'], $role_ids, true )
+				) {
 					$can_order = true;
 				}
 			}
