@@ -95,16 +95,11 @@ class RolesAdmin {
 		$organisation_units = $this->scouting_oidc_roles_admin_get_organisation_units();
 		$roles              = $this->scouting_oidc_roles_admin_get_roles();
 		$wordpress_roles    = wp_roles()->roles;
-		$groups_available   = GroupsIntegration::scouting_oidc_groups_integration_is_available();
-		$groups             = $groups_available ? GroupsIntegration::scouting_oidc_groups_integration_get_groups() : array();
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'SOL Role Mapping', 'scouting-openid-connect' ); ?></h1>
 			<p><?php esc_html_e( 'Rules are evaluated from top to bottom. The first matching rule wins; the default rule is always evaluated last.', 'scouting-openid-connect' ); ?></p>
 			<div class="notice notice-info inline"><p><?php esc_html_e( 'These rules are applied after a successful Scouting OIDC login. The first matching rule assigns its WordPress role and determines whether the user may sign in.', 'scouting-openid-connect' ); ?></p></div>
-			<?php if ( ! $groups_available ) : ?>
-				<div class="notice notice-info inline"><p><?php esc_html_e( 'Activate the Groups plugin to synchronize SOL mapping rules with Groups memberships.', 'scouting-openid-connect' ); ?></p></div>
-			<?php endif; ?>
 			<?php $this->scouting_oidc_roles_admin_render_notice(); ?>
 			<table class="widefat striped">
 				<thead>
@@ -113,13 +108,12 @@ class RolesAdmin {
 						<th scope="col"><?php esc_html_e( 'Conditions', 'scouting-openid-connect' ); ?></th>
 						<th scope="col"><?php esc_html_e( 'WordPress Role', 'scouting-openid-connect' ); ?></th>
 						<th scope="col"><?php esc_html_e( 'Login Allowed', 'scouting-openid-connect' ); ?></th>
-						<th scope="col"><?php esc_html_e( 'Groups Memberships', 'scouting-openid-connect' ); ?></th>
 						<th scope="col"><?php esc_html_e( 'Actions', 'scouting-openid-connect' ); ?></th>
 					</tr>
 				</thead>
 				<tbody>
 				<?php if ( empty( $rules ) ) : ?>
-					<tr><td colspan="6"><?php esc_html_e( 'No mapping rules yet.', 'scouting-openid-connect' ); ?></td></tr>
+					<tr><td colspan="5"><?php esc_html_e( 'No mapping rules yet.', 'scouting-openid-connect' ); ?></td></tr>
 				<?php endif; ?>
 				<?php foreach ( $rules as $index => $rule ) : ?>
 					<?php
@@ -139,7 +133,6 @@ class RolesAdmin {
 						<td><?php echo esc_html( $this->scouting_oidc_roles_admin_describe_conditions( $rule, $organisations, $organisation_units, $roles ) ); ?></td>
 						<td><?php echo esc_html( $wordpress_roles[ $rule['wordpress_role'] ]['name'] ?? $rule['wordpress_role'] ); ?></td>
 						<td><?php echo esc_html( $rule['login_allowed'] ? __( 'Yes', 'scouting-openid-connect' ) : __( 'No', 'scouting-openid-connect' ) ); ?></td>
-						<td><?php echo esc_html( $this->scouting_oidc_roles_admin_describe_groups( $rule['group_ids'], $groups ) ); ?></td>
 						<td>
 							<a href="<?php echo esc_url( $edit_url ); ?>"><?php esc_html_e( 'Edit', 'scouting-openid-connect' ); ?></a>
 							<?php $this->scouting_oidc_roles_admin_render_rule_action( 'scouting_oidc_roles_move_rule', __( 'Move up', 'scouting-openid-connect' ), $rule['id'], 'up', $index > 0 ); ?>
@@ -153,7 +146,6 @@ class RolesAdmin {
 						<td><?php esc_html_e( 'Every user who does not match an earlier rule', 'scouting-openid-connect' ); ?></td>
 						<td><?php echo esc_html( $wordpress_roles[ $mapping['default']['wordpress_role'] ]['name'] ?? $mapping['default']['wordpress_role'] ); ?></td>
 						<td><?php echo esc_html( $mapping['default']['login_allowed'] ? __( 'Yes', 'scouting-openid-connect' ) : __( 'No', 'scouting-openid-connect' ) ); ?></td>
-						<td><?php echo esc_html( $this->scouting_oidc_roles_admin_describe_groups( $mapping['default']['group_ids'], $groups ) ); ?></td>
 						<td><?php esc_html_e( 'Always last', 'scouting-openid-connect' ); ?></td>
 					</tr>
 				</tbody>
@@ -202,19 +194,6 @@ class RolesAdmin {
 							<th scope="row"><label for="login-allowed"><?php esc_html_e( 'Login Allowed', 'scouting-openid-connect' ); ?></label></th>
 							<td><select id="login-allowed" name="login_allowed"><option value="1" <?php selected( $editing['login_allowed'] ?? true, true ); ?>><?php esc_html_e( 'Yes', 'scouting-openid-connect' ); ?></option><option value="0" <?php selected( $editing['login_allowed'] ?? true, false ); ?>><?php esc_html_e( 'No', 'scouting-openid-connect' ); ?></option></select></td>
 						</tr>
-						<?php if ( $groups_available ) : ?>
-							<tr>
-								<th scope="row"><label for="sol-groups"><?php esc_html_e( 'Groups Memberships', 'scouting-openid-connect' ); ?></label></th>
-								<td>
-									<select id="sol-groups" name="group_ids[]" multiple="multiple">
-										<?php foreach ( $groups as $group ) : ?>
-											<option value="<?php echo esc_attr( (string) $group['group_id'] ); ?>" <?php selected( in_array( $group['group_id'], $editing['group_ids'] ?? array(), true ) ); ?>><?php echo esc_html( $group['name'] ); ?></option>
-										<?php endforeach; ?>
-									</select>
-									<p class="description"><?php esc_html_e( 'Only memberships created by this plugin are removed when a later SOL mapping no longer selects them.', 'scouting-openid-connect' ); ?></p>
-								</td>
-							</tr>
-						<?php endif; ?>
 					</tbody>
 				</table>
 				<?php submit_button( $editing ? __( 'Save Rule', 'scouting-openid-connect' ) : __( 'Add Rule', 'scouting-openid-connect' ) ); ?>
@@ -236,14 +215,6 @@ class RolesAdmin {
 					<option value="<?php echo esc_attr( $role_key ); ?>" <?php selected( $mapping['default']['wordpress_role'], $role_key ); ?>><?php echo esc_html( translate_user_role( $wordpress_role['name'] ) ); ?></option><?php endforeach; ?></select>
 				<label for="default-login-allowed"><?php esc_html_e( 'Login Allowed', 'scouting-openid-connect' ); ?></label>
 				<select id="default-login-allowed" name="login_allowed"><option value="1" <?php selected( $mapping['default']['login_allowed'], true ); ?>><?php esc_html_e( 'Yes', 'scouting-openid-connect' ); ?></option><option value="0" <?php selected( $mapping['default']['login_allowed'], false ); ?>><?php esc_html_e( 'No', 'scouting-openid-connect' ); ?></option></select>
-				<?php if ( $groups_available ) : ?>
-					<label for="default-groups"><?php esc_html_e( 'Groups Memberships', 'scouting-openid-connect' ); ?></label>
-					<select id="default-groups" name="group_ids[]" multiple="multiple">
-						<?php foreach ( $groups as $group ) : ?>
-							<option value="<?php echo esc_attr( (string) $group['group_id'] ); ?>" <?php selected( in_array( $group['group_id'], $mapping['default']['group_ids'], true ) ); ?>><?php echo esc_html( $group['name'] ); ?></option>
-						<?php endforeach; ?>
-					</select>
-				<?php endif; ?>
 				<?php submit_button( __( 'Save Default', 'scouting-openid-connect' ), 'secondary', 'submit', false ); ?>
 			</form>
 		</div>
@@ -260,16 +231,9 @@ class RolesAdmin {
 			wp_die( esc_html__( 'You do not have permission to manage SOL role mappings.', 'scouting-openid-connect' ) );
 		}
 		check_admin_referer( 'scouting_oidc_roles_save_rule' );
-		$mapping              = $this->scouting_oidc_roles_admin_get_mapping();
-		$rule_id              = isset( $_POST['rule_id'] ) ? sanitize_text_field( wp_unslash( $_POST['rule_id'] ) ) : '';
-		$existing_group_ids   = array();
-		foreach ( $mapping['rules'] as $existing_rule ) {
-			if ( $existing_rule['id'] === $rule_id ) {
-				$existing_group_ids = $existing_rule['group_ids'];
-				break;
-			}
-		}
-		$rule = $this->scouting_oidc_roles_admin_validate_rule( $_POST, $existing_group_ids );
+		$mapping = $this->scouting_oidc_roles_admin_get_mapping();
+		$rule_id = isset( $_POST['rule_id'] ) ? sanitize_text_field( wp_unslash( $_POST['rule_id'] ) ) : '';
+		$rule    = $this->scouting_oidc_roles_admin_validate_rule( $_POST );
 		if ( is_wp_error( $rule ) ) {
 			$this->scouting_oidc_roles_admin_redirect( 'invalid' );
 		}
@@ -363,17 +327,14 @@ class RolesAdmin {
 		$mapping = $this->scouting_oidc_roles_admin_get_mapping();
 		$role    = isset( $_POST['wordpress_role'] ) ? sanitize_key( wp_unslash( $_POST['wordpress_role'] ) ) : '';
 		$allowed = isset( $_POST['login_allowed'] ) ? sanitize_text_field( wp_unslash( $_POST['login_allowed'] ) ) : '';
-		$groups_available = GroupsIntegration::scouting_oidc_groups_integration_is_available();
-		$group_ids        = $groups_available ? GroupsIntegration::scouting_oidc_groups_integration_normalize_group_ids( wp_unslash( $_POST['group_ids'] ?? array() ) ) : $mapping['default']['group_ids'];
 		$roles   = wp_roles()->roles;
-		if ( ! isset( $roles[ $role ] ) || ! in_array( $allowed, array( '0', '1' ), true ) || ( $groups_available && ! GroupsIntegration::scouting_oidc_groups_integration_group_ids_exist( $group_ids ) ) ) {
+		if ( ! isset( $roles[ $role ] ) || ! in_array( $allowed, array( '0', '1' ), true ) ) {
 			$this->scouting_oidc_roles_admin_redirect( 'invalid' );
 		}
 
 		$mapping['default'] = array(
 			'wordpress_role' => $role,
 			'login_allowed'  => '1' === $allowed,
-			'group_ids'      => $group_ids,
 		);
 		update_option( self::RULES_OPTION, $mapping, false );
 		$this->scouting_oidc_roles_admin_redirect( 'saved' );
@@ -385,17 +346,14 @@ class RolesAdmin {
 	 * @since Unreleased Validates SOL mapping rules.
 	 *
 	 * @param array $input Unsanitized form fields.
-	 * @param array<int, int> $existing_group_ids Groups memberships to retain when Groups is inactive.
 	 * @return array|\WP_Error Normalized mapping rule or a validation error.
 	 */
-	private function scouting_oidc_roles_admin_validate_rule( array $input, array $existing_group_ids = array() ): array|\WP_Error {
+	private function scouting_oidc_roles_admin_validate_rule( array $input ): array|\WP_Error {
 		$organisation_id = isset( $input['organisation_id'] ) ? sanitize_text_field( wp_unslash( $input['organisation_id'] ) ) : '';
 		$unit_id         = isset( $input['organisation_unit_id'] ) ? absint( $input['organisation_unit_id'] ) : 0;
 		$role_id         = isset( $input['role_id'] ) ? absint( $input['role_id'] ) : 0;
 		$wordpress_role  = isset( $input['wordpress_role'] ) ? sanitize_key( wp_unslash( $input['wordpress_role'] ) ) : '';
 		$login_allowed   = isset( $input['login_allowed'] ) ? sanitize_text_field( wp_unslash( $input['login_allowed'] ) ) : '';
-		$groups_available = GroupsIntegration::scouting_oidc_groups_integration_is_available();
-		$group_ids        = $groups_available ? GroupsIntegration::scouting_oidc_groups_integration_normalize_group_ids( wp_unslash( $input['group_ids'] ?? array() ) ) : $existing_group_ids;
 		$wordpress_roles = wp_roles()->roles;
 		$units           = $this->scouting_oidc_roles_admin_get_organisation_units();
 		$roles           = $this->scouting_oidc_roles_admin_get_roles();
@@ -418,7 +376,7 @@ class RolesAdmin {
 		if ( $role_id > 0 && '' !== $organisation_id && $roles[ $role_id ]['organisation_id'] !== $organisation_id ) {
 			return new \WP_Error( 'invalid_rule' );
 		}
-		if ( ! isset( $wordpress_roles[ $wordpress_role ] ) || ! in_array( $login_allowed, array( '0', '1' ), true ) || ( '' === $organisation_id && 0 === $unit_id && 0 === $role_id ) || ( $groups_available && ! GroupsIntegration::scouting_oidc_groups_integration_group_ids_exist( $group_ids ) ) ) {
+		if ( ! isset( $wordpress_roles[ $wordpress_role ] ) || ! in_array( $login_allowed, array( '0', '1' ), true ) || ( '' === $organisation_id && 0 === $unit_id && 0 === $role_id ) ) {
 			return new \WP_Error( 'invalid_rule' );
 		}
 
@@ -428,7 +386,6 @@ class RolesAdmin {
 			'role_id'              => $role_id,
 			'wordpress_role'       => $wordpress_role,
 			'login_allowed'        => '1' === $login_allowed,
-			'group_ids'            => $group_ids,
 		);
 	}
 
@@ -437,7 +394,7 @@ class RolesAdmin {
 	 *
 	 * @since Unreleased Reads SOL mapping configuration.
 	 *
-	 * @return array{rules: array, default: array{wordpress_role: string, login_allowed: bool, group_ids: array<int, int>}} Mapping configuration.
+	 * @return array{rules: array, default: array{wordpress_role: string, login_allowed: bool}} Mapping configuration.
 	 */
 	private function scouting_oidc_roles_admin_get_mapping(): array {
 		return RolesAuthorization::scouting_oidc_roles_authorization_get_mapping();
@@ -581,32 +538,6 @@ class RolesAdmin {
 		}
 
 		return implode( ' AND ', $conditions );
-	}
-
-	/**
-	 * Generates readable Groups membership names for a mapping rule.
-	 *
-	 * @since Unreleased Describes Groups membership mappings.
-	 *
-	 * @param array<int, int> $group_ids Groups membership IDs.
-	 * @param array<int, array{group_id: int, name: string}> $groups Available Groups memberships.
-	 * @return string Human-readable Groups membership names.
-	 */
-	private function scouting_oidc_roles_admin_describe_groups( array $group_ids, array $groups ): string {
-		if ( empty( $group_ids ) ) {
-			return __( 'None', 'scouting-openid-connect' );
-		}
-
-		$names_by_id = array();
-		foreach ( $groups as $group ) {
-			$names_by_id[ $group['group_id'] ] = $group['name'];
-		}
-		$names = array();
-		foreach ( $group_ids as $group_id ) {
-			$names[] = $names_by_id[ $group_id ] ?? (string) $group_id;
-		}
-
-		return implode( ', ', $names );
 	}
 
 	/**

@@ -377,8 +377,8 @@ class Auth {
 			);
 		}
 
-		if ( ! RolesAuthorization::scouting_oidc_roles_authorization_apply_decision( $user_id, $decision ) ) {
-			Logger::error( LogComponent::ROLES, 'Could not apply the SOL role mapping or Groups memberships during OIDC login.', $user_id );
+		if ( ! RolesAuthorization::scouting_oidc_roles_authorization_apply_wordpress_role( $user_id, $decision['wordpress_role'] ) ) {
+			Logger::error( LogComponent::ROLES, 'Could not apply the SOL role mapping during OIDC login.', $user_id );
 			ErrorHandler::redirect_to_login_error(
 				'server_error',
 				__( 'Your access level could not be updated. Please contact the site administrator.', 'scouting-openid-connect' ),

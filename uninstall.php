@@ -79,7 +79,6 @@ $scouting_oidc_metas = array(
 	'scouting_oidc_locality',
 	'scouting_oidc_country_code',
 	'scouting_oidc_managed_wordpress_role',
-	'scouting_oidc_managed_group_ids',
 );
 
 // Prepare placeholders for the IN clause based on the number of meta keys to delete.

@@ -46,7 +46,7 @@ class RolesAuthorization {
 	 *
 	 * @since Unreleased Normalizes SOL role mapping rules.
 	 *
-	 * @return array{rules: array<int, array{id: string, organisation_id: string, organisation_unit_id: int, role_id: int, wordpress_role: string, login_allowed: bool, group_ids: array<int, int>}>, default: array{wordpress_role: string, login_allowed: bool, group_ids: array<int, int>}} Mapping configuration.
+	 * @return array{rules: array<int, array{id: string, organisation_id: string, organisation_unit_id: int, role_id: int, wordpress_role: string, login_allowed: bool}>, default: array{wordpress_role: string, login_allowed: bool}} Mapping configuration.
 	 */
 	public static function scouting_oidc_roles_authorization_get_mapping(): array {
 		$wordpress_roles = wp_roles()->roles;
@@ -69,14 +69,12 @@ class RolesAuthorization {
 		if ( isset( $stored_default['wordpress_role'] ) && is_string( $stored_default['wordpress_role'] ) && isset( $wordpress_roles[ $stored_default['wordpress_role'] ] ) ) {
 			$default_role = $stored_default['wordpress_role'];
 		}
-		$default_group_ids = GroupsIntegration::scouting_oidc_groups_integration_normalize_group_ids( $stored_default['group_ids'] ?? array() );
 
 		return array(
 			'rules'   => $rules,
 			'default' => array(
 				'wordpress_role' => $default_role,
 				'login_allowed'  => ! isset( $stored_default['login_allowed'] ) || (bool) $stored_default['login_allowed'],
-				'group_ids'      => $default_group_ids,
 			),
 		);
 	}
@@ -87,7 +85,7 @@ class RolesAuthorization {
 	 * @since Unreleased Evaluates SOL role mapping rules.
 	 *
 	 * @param int $user_id WordPress user ID.
-	 * @return array{wordpress_role: string, login_allowed: bool, group_ids: array<int, int>} Role and login decision.
+	 * @return array{wordpress_role: string, login_allowed: bool} Role and login decision.
 	 */
 	public static function scouting_oidc_roles_authorization_get_user_decision( int $user_id ): array {
 		$mapping     = self::scouting_oidc_roles_authorization_get_mapping();
@@ -98,26 +96,11 @@ class RolesAuthorization {
 				return array(
 					'wordpress_role' => $rule['wordpress_role'],
 					'login_allowed'  => $rule['login_allowed'],
-					'group_ids'      => $rule['group_ids'],
 				);
 			}
 		}
 
 		return $mapping['default'];
-	}
-
-	/**
-	 * Applies the current role and optional Groups memberships for a user.
-	 *
-	 * @since Unreleased Applies SOL role mapping decisions.
-	 *
-	 * @param int                                                             $user_id WordPress user ID.
-	 * @param array{wordpress_role: string, login_allowed: bool, group_ids: array<int, int>} $decision Role mapping decision.
-	 * @return bool Whether the decision could be applied.
-	 */
-	public static function scouting_oidc_roles_authorization_apply_decision( int $user_id, array $decision ): bool {
-		return self::scouting_oidc_roles_authorization_apply_wordpress_role( $user_id, $decision['wordpress_role'] )
-			&& GroupsIntegration::scouting_oidc_groups_integration_sync_user_groups( $user_id, $decision['group_ids'] );
 	}
 
 	/**
@@ -223,7 +206,7 @@ class RolesAuthorization {
 	 *
 	 * @param mixed               $stored_rule Stored rule value.
 	 * @param array<string, array> $wordpress_roles Available WordPress roles.
-	 * @return array{id: string, organisation_id: string, organisation_unit_id: int, role_id: int, wordpress_role: string, login_allowed: bool, group_ids: array<int, int>}|null Normalized rule or null when invalid.
+	 * @return array{id: string, organisation_id: string, organisation_unit_id: int, role_id: int, wordpress_role: string, login_allowed: bool}|null Normalized rule or null when invalid.
 	 */
 	private static function scouting_oidc_roles_authorization_normalize_rule( mixed $stored_rule, array $wordpress_roles ): ?array {
 		if ( ! is_array( $stored_rule ) ) {
@@ -242,7 +225,6 @@ class RolesAuthorization {
 		$role_id              = self::scouting_oidc_roles_authorization_normalize_positive_id( $stored_rule['role_id'] ?? 0 );
 		$wordpress_role       = isset( $stored_rule['wordpress_role'] ) && is_string( $stored_rule['wordpress_role'] ) ? sanitize_key( $stored_rule['wordpress_role'] ) : '';
 		$id                   = isset( $stored_rule['id'] ) && is_string( $stored_rule['id'] ) ? sanitize_text_field( $stored_rule['id'] ) : '';
-		$group_ids            = GroupsIntegration::scouting_oidc_groups_integration_normalize_group_ids( $stored_rule['group_ids'] ?? array() );
 
 		if ( ! isset( $wordpress_roles[ $wordpress_role ] ) || ( '' === $organisation_id && 0 === $organisation_unit_id && 0 === $role_id ) ) {
 			return null;
@@ -255,7 +237,6 @@ class RolesAuthorization {
 			'role_id'              => $role_id,
 			'wordpress_role'       => $wordpress_role,
 			'login_allowed'        => ! empty( $stored_rule['login_allowed'] ),
-			'group_ids'            => $group_ids,
 		);
 	}
 
@@ -264,7 +245,7 @@ class RolesAuthorization {
 	 *
 	 * @since Unreleased Matches role mapping conditions against active assignments.
 	 *
-	 * @param array{id: string, organisation_id: string, organisation_unit_id: int, role_id: int, wordpress_role: string, login_allowed: bool, group_ids: array<int, int>} $rule Mapping rule.
+	 * @param array{id: string, organisation_id: string, organisation_unit_id: int, role_id: int, wordpress_role: string, login_allowed: bool} $rule Mapping rule.
 	 * @param array<int, array{role_id: int, organisation_unit_id: int, organisation_id: string}> $assignments Active assignments.
 	 * @return bool Whether the rule matches.
 	 */

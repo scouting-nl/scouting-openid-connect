@@ -148,8 +148,6 @@ Yes, there is a settings page where you can set up a redirect after login, confi
 
 Yes. Configure ordered rules under **Scouting OIDC > SOL Role Mapping**. After a successful Scouting OIDC login, the first matching active SOL assignment determines the WordPress role managed by this plugin and whether the user may sign in. The default rule applies when no earlier rule matches.
 
-When the optional Groups plugin is active, a mapping rule can also assign Groups memberships. The plugin removes only memberships it created itself when a later SOL mapping no longer selects them; memberships assigned independently are left unchanged.
-
 WooCommerce product and WooCommerce Bookings product editors can optionally restrict ordering to selected SOL organisations or SOL roles. A customer must have an active assignment matching at least one selected organisation or role. Leaving both fields empty keeps the product unrestricted.
 
 ### Can my parents or guardian also sign in?

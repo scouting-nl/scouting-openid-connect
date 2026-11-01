@@ -51,7 +51,8 @@ class WooCommerceRestrictions {
 			return;
 		}
 
-		add_action( 'woocommerce_product_options_general_product_data', array( $this, 'scouting_oidc_woocommerce_restrictions_render_product_fields' ) );
+		add_filter( 'woocommerce_product_data_tabs', array( $this, 'scouting_oidc_woocommerce_restrictions_add_product_data_tab' ) );
+		add_action( 'woocommerce_product_data_panels', array( $this, 'scouting_oidc_woocommerce_restrictions_render_product_data_panel' ) );
 		add_action( 'woocommerce_admin_process_product_object', array( $this, 'scouting_oidc_woocommerce_restrictions_save_product_fields' ) );
 		add_filter( 'woocommerce_is_purchasable', array( $this, 'scouting_oidc_woocommerce_restrictions_is_purchasable' ), 10, 2 );
 		add_filter( 'woocommerce_add_to_cart_validation', array( $this, 'scouting_oidc_woocommerce_restrictions_validate_add_to_cart' ), 10, 4 );
@@ -60,11 +61,29 @@ class WooCommerceRestrictions {
 	}
 
 	/**
-	 * Renders SOL organisation and role fields in the WooCommerce product editor.
+	 * Adds the SOL restrictions tab to WooCommerce Product data.
 	 *
-	 * @since Unreleased Adds WooCommerce SOL restriction fields.
+	 * @since Unreleased Adds WooCommerce SOL restriction product data tab.
+	 *
+	 * @param array<string, array> $tabs WooCommerce Product data tabs.
+	 * @return array<string, array> WooCommerce Product data tabs.
 	 */
-	public function scouting_oidc_woocommerce_restrictions_render_product_fields(): void {
+	public function scouting_oidc_woocommerce_restrictions_add_product_data_tab( array $tabs ): array {
+		$tabs['scouting_oidc'] = array(
+			'label'    => __( 'SOL Access', 'scouting-openid-connect' ),
+			'target'   => 'scouting_oidc_product_data',
+			'priority' => 80,
+		);
+
+		return $tabs;
+	}
+
+	/**
+	 * Renders the SOL restrictions panel in WooCommerce Product data.
+	 *
+	 * @since Unreleased Adds WooCommerce SOL restriction product data panel.
+	 */
+	public function scouting_oidc_woocommerce_restrictions_render_product_data_panel(): void {
 		global $post;
 
 		$product_id               = $post instanceof \WP_Post ? $post->ID : 0;
@@ -75,30 +94,32 @@ class WooCommerceRestrictions {
 		$organisation_ids         = array_column( $organisations, 'organisation_id' );
 		$role_ids                 = array_map( 'intval', array_column( $roles, 'role_id' ) );
 		?>
-		<div class="options_group">
-			<p class="form-field">
-				<label for="scouting-oidc-allowed-organisations"><?php esc_html_e( 'Allowed SOL organisations', 'scouting-openid-connect' ); ?></label>
-				<select id="scouting-oidc-allowed-organisations" class="wc-enhanced-select" name="scouting_oidc_allowed_organisation_ids[]" multiple="multiple" data-placeholder="<?php esc_attr_e( 'No organisation restriction', 'scouting-openid-connect' ); ?>">
-					<?php foreach ( $organisations as $organisation ) : ?>
-						<option value="<?php echo esc_attr( $organisation['organisation_id'] ); ?>" <?php selected( in_array( $organisation['organisation_id'], $allowed_organisation_ids, true ) ); ?>><?php echo esc_html( $organisation['name'] . ' (' . $organisation['organisation_id'] . ')' ); ?></option>
-					<?php endforeach; ?>
-					<?php foreach ( array_diff( $allowed_organisation_ids, $organisation_ids ) as $organisation_id ) : ?>
-						<option value="<?php echo esc_attr( $organisation_id ); ?>" selected="selected"><?php echo esc_html( sprintf( __( '%s (no longer synchronized)', 'scouting-openid-connect' ), $organisation_id ) ); ?></option>
-					<?php endforeach; ?>
-				</select>
-				<span class="description"><?php esc_html_e( 'Leave both SOL fields empty to allow every customer. A matching active organisation or role allows ordering.', 'scouting-openid-connect' ); ?></span>
-			</p>
-			<p class="form-field">
-				<label for="scouting-oidc-allowed-roles"><?php esc_html_e( 'Allowed SOL roles', 'scouting-openid-connect' ); ?></label>
-				<select id="scouting-oidc-allowed-roles" class="wc-enhanced-select" name="scouting_oidc_allowed_role_ids[]" multiple="multiple" data-placeholder="<?php esc_attr_e( 'No role restriction', 'scouting-openid-connect' ); ?>">
-					<?php foreach ( $roles as $role ) : ?>
-						<option value="<?php echo esc_attr( (string) $role['role_id'] ); ?>" <?php selected( in_array( (int) $role['role_id'], $allowed_role_ids, true ) ); ?>><?php echo esc_html( $role['role_name'] . ' (' . $role['role_id'] . ')' ); ?></option>
-					<?php endforeach; ?>
-					<?php foreach ( array_diff( $allowed_role_ids, $role_ids ) as $role_id ) : ?>
-						<option value="<?php echo esc_attr( (string) $role_id ); ?>" selected="selected"><?php echo esc_html( sprintf( __( '%d (no longer synchronized)', 'scouting-openid-connect' ), $role_id ) ); ?></option>
-					<?php endforeach; ?>
-				</select>
-			</p>
+		<div id="scouting_oidc_product_data" class="panel woocommerce_options_panel hidden">
+			<div class="options_group">
+				<p class="form-field">
+					<label for="scouting-oidc-allowed-organisations"><?php esc_html_e( 'Allowed SOL organisations', 'scouting-openid-connect' ); ?></label>
+					<select id="scouting-oidc-allowed-organisations" class="wc-enhanced-select" name="scouting_oidc_allowed_organisation_ids[]" multiple="multiple" data-placeholder="<?php esc_attr_e( 'No organisation restriction', 'scouting-openid-connect' ); ?>">
+						<?php foreach ( $organisations as $organisation ) : ?>
+							<option value="<?php echo esc_attr( $organisation['organisation_id'] ); ?>" <?php selected( in_array( $organisation['organisation_id'], $allowed_organisation_ids, true ) ); ?>><?php echo esc_html( $organisation['name'] . ' (' . $organisation['organisation_id'] . ')' ); ?></option>
+						<?php endforeach; ?>
+						<?php foreach ( array_diff( $allowed_organisation_ids, $organisation_ids ) as $organisation_id ) : ?>
+							<option value="<?php echo esc_attr( $organisation_id ); ?>" selected="selected"><?php echo esc_html( sprintf( __( '%s (no longer synchronized)', 'scouting-openid-connect' ), $organisation_id ) ); ?></option>
+						<?php endforeach; ?>
+					</select>
+					<span class="description"><?php esc_html_e( 'Leave both SOL fields empty to allow every customer. A matching active organisation or role allows ordering.', 'scouting-openid-connect' ); ?></span>
+				</p>
+				<p class="form-field">
+					<label for="scouting-oidc-allowed-roles"><?php esc_html_e( 'Allowed SOL roles', 'scouting-openid-connect' ); ?></label>
+					<select id="scouting-oidc-allowed-roles" class="wc-enhanced-select" name="scouting_oidc_allowed_role_ids[]" multiple="multiple" data-placeholder="<?php esc_attr_e( 'No role restriction', 'scouting-openid-connect' ); ?>">
+						<?php foreach ( $roles as $role ) : ?>
+							<option value="<?php echo esc_attr( (string) $role['role_id'] ); ?>" <?php selected( in_array( (int) $role['role_id'], $allowed_role_ids, true ) ); ?>><?php echo esc_html( $role['role_name'] . ' (' . $role['role_id'] . ')' ); ?></option>
+						<?php endforeach; ?>
+						<?php foreach ( array_diff( $allowed_role_ids, $role_ids ) as $role_id ) : ?>
+							<option value="<?php echo esc_attr( (string) $role_id ); ?>" selected="selected"><?php echo esc_html( sprintf( __( '%d (no longer synchronized)', 'scouting-openid-connect' ), $role_id ) ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</p>
+			</div>
 		</div>
 		<?php
 	}

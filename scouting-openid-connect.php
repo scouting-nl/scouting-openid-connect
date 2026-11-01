@@ -44,7 +44,6 @@ require_once SCOUTING_OIDC_PATH . 'src/logging/class-logging.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/class-actions.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/class-description.php';
 require_once SCOUTING_OIDC_PATH . 'src/user/class-fields.php';
-require_once SCOUTING_OIDC_PATH . 'src/groups/class-groupsintegration.php';
 require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolesdatabase.php';
 require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolesauthorization.php';
 require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolessync.php';
