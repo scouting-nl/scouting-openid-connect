@@ -33,6 +33,20 @@ class WooCommerceRestrictions {
 	private const ALLOWED_ROLES_META_KEY = '_scouting_oidc_allowed_role_ids';
 
 	/**
+	 * Product meta key for denied SOL organisation IDs.
+	 *
+	 * @since Unreleased Stores WooCommerce organisation denials.
+	 */
+	private const DENIED_ORGANISATIONS_META_KEY = '_scouting_oidc_denied_organisation_ids';
+
+	/**
+	 * Product meta key for denied SOL role IDs.
+	 *
+	 * @since Unreleased Stores WooCommerce role denials.
+	 */
+	private const DENIED_ROLES_META_KEY = '_scouting_oidc_denied_role_ids';
+
+	/**
 	 * Registers WooCommerce hooks after active plugins have loaded.
 	 *
 	 * @since Unreleased Defers WooCommerce integration registration.
@@ -53,6 +67,7 @@ class WooCommerceRestrictions {
 
 		add_filter( 'woocommerce_product_data_tabs', array( $this, 'scouting_oidc_woocommerce_restrictions_add_product_data_tab' ) );
 		add_action( 'woocommerce_product_data_panels', array( $this, 'scouting_oidc_woocommerce_restrictions_render_product_data_panel' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'scouting_oidc_woocommerce_restrictions_enqueue_product_data_tab_style' ) );
 		add_action( 'woocommerce_admin_process_product_object', array( $this, 'scouting_oidc_woocommerce_restrictions_save_product_fields' ) );
 		add_filter( 'woocommerce_is_purchasable', array( $this, 'scouting_oidc_woocommerce_restrictions_is_purchasable' ), 10, 2 );
 		add_filter( 'woocommerce_add_to_cart_validation', array( $this, 'scouting_oidc_woocommerce_restrictions_validate_add_to_cart' ), 10, 4 );
@@ -72,10 +87,36 @@ class WooCommerceRestrictions {
 		$tabs['scouting_oidc'] = array(
 			'label'    => __( 'SOL Access', 'scouting-openid-connect' ),
 			'target'   => 'scouting_oidc_product_data',
+			'class'    => array( 'scouting_oidc_tab' ),
 			'priority' => 80,
 		);
 
 		return $tabs;
+	}
+
+	/**
+	 * Enqueues the SOL Product data tab icon for product editor screens.
+	 *
+	 * @since Unreleased Adds WooCommerce SOL restriction tab styling.
+	 *
+	 * @param string $hook_suffix Current WordPress admin page hook suffix.
+	 */
+	public function scouting_oidc_woocommerce_restrictions_enqueue_product_data_tab_style( string $hook_suffix ): void {
+		if ( ! in_array( $hook_suffix, array( 'post.php', 'post-new.php' ), true ) ) {
+			return;
+		}
+
+		$screen = get_current_screen();
+		if ( ! $screen instanceof \WP_Screen || 'product' !== $screen->post_type ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'scouting-oidc-woocommerce-restrictions',
+			plugins_url( 'woocommerce-restrictions.css', __FILE__ ),
+			array( 'woocommerce_admin_styles' ),
+			SCOUTING_OIDC_VERSION
+		);
 	}
 
 	/**
@@ -89,6 +130,8 @@ class WooCommerceRestrictions {
 		$product_id               = $post instanceof \WP_Post ? $post->ID : 0;
 		$allowed_organisation_ids = $this->scouting_oidc_woocommerce_restrictions_get_organisation_ids( $product_id );
 		$allowed_role_ids         = $this->scouting_oidc_woocommerce_restrictions_get_role_ids( $product_id );
+		$denied_organisation_ids  = $this->scouting_oidc_woocommerce_restrictions_get_organisation_ids( $product_id, self::DENIED_ORGANISATIONS_META_KEY );
+		$denied_role_ids          = $this->scouting_oidc_woocommerce_restrictions_get_role_ids( $product_id, self::DENIED_ROLES_META_KEY );
 		$organisations            = $this->scouting_oidc_woocommerce_restrictions_get_organisations();
 		$roles                    = $this->scouting_oidc_woocommerce_restrictions_get_roles();
 		$organisation_ids         = array_column( $organisations, 'organisation_id' );
@@ -96,9 +139,11 @@ class WooCommerceRestrictions {
 		?>
 		<div id="scouting_oidc_product_data" class="panel woocommerce_options_panel hidden">
 			<div class="options_group">
+				<h3><?php esc_html_e( 'Allow Access', 'scouting-openid-connect' ); ?></h3>
+				<p class="form-field form-field-wide"><span class="description"><?php esc_html_e( 'Select organisations or roles that may order this product. A customer needs one matching active organisation or role. Leave both allow fields empty to allow every customer unless a deny rule matches.', 'scouting-openid-connect' ); ?></span></p>
 				<p class="form-field">
 					<label for="scouting-oidc-allowed-organisations"><?php esc_html_e( 'Allowed SOL organisations', 'scouting-openid-connect' ); ?></label>
-					<select id="scouting-oidc-allowed-organisations" class="wc-enhanced-select" name="scouting_oidc_allowed_organisation_ids[]" multiple="multiple" data-placeholder="<?php esc_attr_e( 'No organisation restriction', 'scouting-openid-connect' ); ?>">
+					<select id="scouting-oidc-allowed-organisations" class="wc-enhanced-select" name="scouting_oidc_allowed_organisation_ids[]" multiple="multiple" data-placeholder="<?php esc_attr_e( 'No organisation allow rule', 'scouting-openid-connect' ); ?>">
 						<?php foreach ( $organisations as $organisation ) : ?>
 							<option value="<?php echo esc_attr( $organisation['organisation_id'] ); ?>" <?php selected( in_array( $organisation['organisation_id'], $allowed_organisation_ids, true ) ); ?>><?php echo esc_html( $organisation['name'] . ' (' . $organisation['organisation_id'] . ')' ); ?></option>
 						<?php endforeach; ?>
@@ -106,15 +151,40 @@ class WooCommerceRestrictions {
 							<option value="<?php echo esc_attr( $organisation_id ); ?>" selected="selected"><?php echo esc_html( sprintf( __( '%s (no longer synchronized)', 'scouting-openid-connect' ), $organisation_id ) ); ?></option>
 						<?php endforeach; ?>
 					</select>
-					<span class="description"><?php esc_html_e( 'Leave both SOL fields empty to allow every customer. A matching active organisation or role allows ordering.', 'scouting-openid-connect' ); ?></span>
 				</p>
 				<p class="form-field">
 					<label for="scouting-oidc-allowed-roles"><?php esc_html_e( 'Allowed SOL roles', 'scouting-openid-connect' ); ?></label>
-					<select id="scouting-oidc-allowed-roles" class="wc-enhanced-select" name="scouting_oidc_allowed_role_ids[]" multiple="multiple" data-placeholder="<?php esc_attr_e( 'No role restriction', 'scouting-openid-connect' ); ?>">
+					<select id="scouting-oidc-allowed-roles" class="wc-enhanced-select" name="scouting_oidc_allowed_role_ids[]" multiple="multiple" data-placeholder="<?php esc_attr_e( 'No role allow rule', 'scouting-openid-connect' ); ?>">
 						<?php foreach ( $roles as $role ) : ?>
 							<option value="<?php echo esc_attr( (string) $role['role_id'] ); ?>" <?php selected( in_array( (int) $role['role_id'], $allowed_role_ids, true ) ); ?>><?php echo esc_html( $role['role_name'] . ' (' . $role['role_id'] . ')' ); ?></option>
 						<?php endforeach; ?>
 						<?php foreach ( array_diff( $allowed_role_ids, $role_ids ) as $role_id ) : ?>
+							<option value="<?php echo esc_attr( (string) $role_id ); ?>" selected="selected"><?php echo esc_html( sprintf( __( '%d (no longer synchronized)', 'scouting-openid-connect' ), $role_id ) ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</p>
+			</div>
+			<div class="options_group">
+				<h3><?php esc_html_e( 'Deny Access', 'scouting-openid-connect' ); ?></h3>
+				<p class="form-field form-field-wide"><span class="description"><?php esc_html_e( 'Select organisations or roles that may not order this product. Any matching deny rule blocks ordering, even when the customer also matches an allow rule.', 'scouting-openid-connect' ); ?></span></p>
+				<p class="form-field">
+					<label for="scouting-oidc-denied-organisations"><?php esc_html_e( 'Denied SOL organisations', 'scouting-openid-connect' ); ?></label>
+					<select id="scouting-oidc-denied-organisations" class="wc-enhanced-select" name="scouting_oidc_denied_organisation_ids[]" multiple="multiple" data-placeholder="<?php esc_attr_e( 'No organisation deny rule', 'scouting-openid-connect' ); ?>">
+						<?php foreach ( $organisations as $organisation ) : ?>
+							<option value="<?php echo esc_attr( $organisation['organisation_id'] ); ?>" <?php selected( in_array( $organisation['organisation_id'], $denied_organisation_ids, true ) ); ?>><?php echo esc_html( $organisation['name'] . ' (' . $organisation['organisation_id'] . ')' ); ?></option>
+						<?php endforeach; ?>
+						<?php foreach ( array_diff( $denied_organisation_ids, $organisation_ids ) as $organisation_id ) : ?>
+							<option value="<?php echo esc_attr( $organisation_id ); ?>" selected="selected"><?php echo esc_html( sprintf( __( '%s (no longer synchronized)', 'scouting-openid-connect' ), $organisation_id ) ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</p>
+				<p class="form-field">
+					<label for="scouting-oidc-denied-roles"><?php esc_html_e( 'Denied SOL roles', 'scouting-openid-connect' ); ?></label>
+					<select id="scouting-oidc-denied-roles" class="wc-enhanced-select" name="scouting_oidc_denied_role_ids[]" multiple="multiple" data-placeholder="<?php esc_attr_e( 'No role deny rule', 'scouting-openid-connect' ); ?>">
+						<?php foreach ( $roles as $role ) : ?>
+							<option value="<?php echo esc_attr( (string) $role['role_id'] ); ?>" <?php selected( in_array( (int) $role['role_id'], $denied_role_ids, true ) ); ?>><?php echo esc_html( $role['role_name'] . ' (' . $role['role_id'] . ')' ); ?></option>
+						<?php endforeach; ?>
+						<?php foreach ( array_diff( $denied_role_ids, $role_ids ) as $role_id ) : ?>
 							<option value="<?php echo esc_attr( (string) $role_id ); ?>" selected="selected"><?php echo esc_html( sprintf( __( '%d (no longer synchronized)', 'scouting-openid-connect' ), $role_id ) ); ?></option>
 						<?php endforeach; ?>
 					</select>
@@ -139,9 +209,13 @@ class WooCommerceRestrictions {
 		// WooCommerce verifies the product-edit nonce before this action runs.
 		$organisation_ids = isset( $_POST['scouting_oidc_allowed_organisation_ids'] ) ? $this->scouting_oidc_woocommerce_restrictions_normalize_organisation_ids( wp_unslash( $_POST['scouting_oidc_allowed_organisation_ids'] ) ) : array();
 		$role_ids         = isset( $_POST['scouting_oidc_allowed_role_ids'] ) ? $this->scouting_oidc_woocommerce_restrictions_normalize_role_ids( wp_unslash( $_POST['scouting_oidc_allowed_role_ids'] ) ) : array();
+		$denied_organisation_ids = isset( $_POST['scouting_oidc_denied_organisation_ids'] ) ? $this->scouting_oidc_woocommerce_restrictions_normalize_organisation_ids( wp_unslash( $_POST['scouting_oidc_denied_organisation_ids'] ) ) : array();
+		$denied_role_ids         = isset( $_POST['scouting_oidc_denied_role_ids'] ) ? $this->scouting_oidc_woocommerce_restrictions_normalize_role_ids( wp_unslash( $_POST['scouting_oidc_denied_role_ids'] ) ) : array();
 
 		$this->scouting_oidc_woocommerce_restrictions_update_product_meta( $product, self::ALLOWED_ORGANISATIONS_META_KEY, $organisation_ids );
 		$this->scouting_oidc_woocommerce_restrictions_update_product_meta( $product, self::ALLOWED_ROLES_META_KEY, $role_ids );
+		$this->scouting_oidc_woocommerce_restrictions_update_product_meta( $product, self::DENIED_ORGANISATIONS_META_KEY, $denied_organisation_ids );
+		$this->scouting_oidc_woocommerce_restrictions_update_product_meta( $product, self::DENIED_ROLES_META_KEY, $denied_role_ids );
 	}
 
 	/**
@@ -232,14 +306,20 @@ class WooCommerceRestrictions {
 		$restriction_product_id = $this->scouting_oidc_woocommerce_restrictions_get_restriction_product_id( $product_id );
 		$organisation_ids       = $this->scouting_oidc_woocommerce_restrictions_get_organisation_ids( $restriction_product_id );
 		$role_ids               = $this->scouting_oidc_woocommerce_restrictions_get_role_ids( $restriction_product_id );
-		$can_order              = empty( $organisation_ids ) && empty( $role_ids );
+		$denied_organisation_ids = $this->scouting_oidc_woocommerce_restrictions_get_organisation_ids( $restriction_product_id, self::DENIED_ORGANISATIONS_META_KEY );
+		$denied_role_ids         = $this->scouting_oidc_woocommerce_restrictions_get_role_ids( $restriction_product_id, self::DENIED_ROLES_META_KEY );
+		$has_allow_rule          = ! empty( $organisation_ids ) || ! empty( $role_ids );
+		$can_order               = ! $has_allow_rule;
 		$user_id                = get_current_user_id();
 
-		if ( ! $can_order && $user_id > 0 ) {
+		if ( $user_id > 0 ) {
 			foreach ( RolesAuthorization::scouting_oidc_roles_authorization_get_active_assignments( $user_id ) as $assignment ) {
+				if ( in_array( $assignment['organisation_id'], $denied_organisation_ids, true ) || in_array( $assignment['role_id'], $denied_role_ids, true ) ) {
+					return false;
+				}
+
 				if ( in_array( $assignment['organisation_id'], $organisation_ids, true ) || in_array( $assignment['role_id'], $role_ids, true ) ) {
 					$can_order = true;
-					break;
 				}
 			}
 		}
@@ -265,27 +345,29 @@ class WooCommerceRestrictions {
 	}
 
 	/**
-	 * Gets the saved allowed SOL organisation IDs for a product.
+	 * Gets saved SOL organisation IDs for a product restriction rule.
 	 *
-	 * @since Unreleased Reads WooCommerce organisation restrictions.
+	 * @since Unreleased Reads WooCommerce organisation restriction rules.
 	 *
 	 * @param int $product_id Product ID.
+	 * @param string $meta_key Product meta key.
 	 * @return array<int, string> Organisation IDs.
 	 */
-	private function scouting_oidc_woocommerce_restrictions_get_organisation_ids( int $product_id ): array {
-		return $this->scouting_oidc_woocommerce_restrictions_normalize_organisation_ids( get_post_meta( $product_id, self::ALLOWED_ORGANISATIONS_META_KEY, true ) );
+	private function scouting_oidc_woocommerce_restrictions_get_organisation_ids( int $product_id, string $meta_key = self::ALLOWED_ORGANISATIONS_META_KEY ): array {
+		return $this->scouting_oidc_woocommerce_restrictions_normalize_organisation_ids( get_post_meta( $product_id, $meta_key, true ) );
 	}
 
 	/**
-	 * Gets the saved allowed SOL role IDs for a product.
+	 * Gets saved SOL role IDs for a product restriction rule.
 	 *
-	 * @since Unreleased Reads WooCommerce role restrictions.
+	 * @since Unreleased Reads WooCommerce role restriction rules.
 	 *
 	 * @param int $product_id Product ID.
+	 * @param string $meta_key Product meta key.
 	 * @return array<int, int> Role IDs.
 	 */
-	private function scouting_oidc_woocommerce_restrictions_get_role_ids( int $product_id ): array {
-		return $this->scouting_oidc_woocommerce_restrictions_normalize_role_ids( get_post_meta( $product_id, self::ALLOWED_ROLES_META_KEY, true ) );
+	private function scouting_oidc_woocommerce_restrictions_get_role_ids( int $product_id, string $meta_key = self::ALLOWED_ROLES_META_KEY ): array {
+		return $this->scouting_oidc_woocommerce_restrictions_normalize_role_ids( get_post_meta( $product_id, $meta_key, true ) );
 	}
 
 	/**

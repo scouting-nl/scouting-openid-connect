@@ -93,6 +93,8 @@ $wpdb->query( $wpdb->prepare( $scouting_oidc_delete_usermeta_sql, $scouting_oidc
 $scouting_oidc_product_metas = array(
 	'_scouting_oidc_allowed_organisation_ids',
 	'_scouting_oidc_allowed_role_ids',
+	'_scouting_oidc_denied_organisation_ids',
+	'_scouting_oidc_denied_role_ids',
 );
 
 foreach ( $scouting_oidc_product_metas as $scouting_oidc_product_meta ) {
