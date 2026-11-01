@@ -153,39 +153,68 @@ class RolesExplorer {
 	 */
 	private function get_assignments( array $filters, int $page ): array {
 		global $wpdb;
-		$where       = array( '1 = 1' );
-		$filter_args = array();
-		if ( '' !== $filters['organisation_id'] ) {
-			$where[]       = 'unit.organisation_id = %s';
-			$filter_args[] = $filters['organisation_id'];
-		}
-		if ( $filters['organisation_unit_id'] > 0 ) {
-			$where[]       = 'unit.organisation_unit_id = %d';
-			$filter_args[] = $filters['organisation_unit_id'];
-		}
-		if ( $filters['role_id'] > 0 ) {
-			$where[]       = 'role.role_id = %d';
-			$filter_args[] = $filters['role_id'];
-		}
-
 		$assignment_table    = $wpdb->prefix . 'scouting_oidc_sol_role_assignments';
 		$roles_table         = $wpdb->prefix . 'scouting_oidc_sol_roles';
 		$units_table         = $wpdb->prefix . 'scouting_oidc_sol_organisation_units';
 		$organisations_table = $wpdb->prefix . 'scouting_oidc_sol_organisations';
-		$tables              = array( $assignment_table, $roles_table, $units_table, $organisations_table, $wpdb->users );
-		$where_sql           = implode( ' AND ', $where );
-		$joins               = ' FROM %i AS assignment INNER JOIN %i AS role ON role.role_id = assignment.role_id INNER JOIN %i AS unit ON unit.organisation_unit_id = role.organisation_unit_id';
-		$count_sql           = 'SELECT COUNT(*)' . $joins . ' WHERE ' . $where_sql;
-		$count_args          = array_merge( array_slice( $tables, 0, 3 ), $filter_args );
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
-		$total = (int) $wpdb->get_var( $wpdb->prepare( $count_sql, $count_args ) );
 
 		$limit  = self::PAGE_SIZE;
 		$offset = ( $page - 1 ) * $limit;
-		$sql    = 'SELECT assignment.user_id, assignment.role_id, assignment.start_date, assignment.end_date, organisation.organisation_id, organisation.name AS organisation_name, unit.organisation_unit_id, unit.name AS unit_name, role.role_name, user.display_name, user.user_login, user.user_email' . $joins . ' INNER JOIN %i AS organisation ON organisation.organisation_id = unit.organisation_id INNER JOIN %i AS user ON user.ID = assignment.user_id WHERE ' . $where_sql . ' ORDER BY organisation.name, unit.name, role.role_name, user.display_name, assignment.start_date DESC LIMIT %d OFFSET %d';
-		$args   = array_merge( $tables, $filter_args, array( $limit, $offset ) );
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
-		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $args ), ARRAY_A );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$total = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i AS assignment ' .
+				'INNER JOIN %i AS role ON role.role_id = assignment.role_id ' .
+				'INNER JOIN %i AS unit ON unit.organisation_unit_id = role.organisation_unit_id ' .
+				'WHERE ( %s = \'\' OR unit.organisation_id = %s ) ' .
+				'AND ( %d = 0 OR unit.organisation_unit_id = %d ) ' .
+				'AND ( %d = 0 OR role.role_id = %d )',
+				$assignment_table,
+				$roles_table,
+				$units_table,
+				$filters['organisation_id'],
+				$filters['organisation_id'],
+				$filters['organisation_unit_id'],
+				$filters['organisation_unit_id'],
+				$filters['role_id'],
+				$filters['role_id']
+			)
+		);
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT assignment.user_id, assignment.role_id, assignment.start_date, assignment.end_date, ' .
+				'organisation.organisation_id, organisation.name AS organisation_name, ' .
+				'unit.organisation_unit_id, unit.name AS unit_name, role.role_name, ' .
+				'user.display_name, user.user_login, user.user_email ' .
+				'FROM %i AS assignment ' .
+				'INNER JOIN %i AS role ON role.role_id = assignment.role_id ' .
+				'INNER JOIN %i AS unit ON unit.organisation_unit_id = role.organisation_unit_id ' .
+				'INNER JOIN %i AS organisation ON organisation.organisation_id = unit.organisation_id ' .
+				'INNER JOIN %i AS user ON user.ID = assignment.user_id ' .
+				'WHERE ( %s = \'\' OR unit.organisation_id = %s ) ' .
+				'AND ( %d = 0 OR unit.organisation_unit_id = %d ) ' .
+				'AND ( %d = 0 OR role.role_id = %d ) ' .
+				'ORDER BY organisation.name, unit.name, role.role_name, user.display_name, assignment.start_date DESC ' .
+				'LIMIT %d OFFSET %d',
+				$assignment_table,
+				$roles_table,
+				$units_table,
+				$organisations_table,
+				$wpdb->users,
+				$filters['organisation_id'],
+				$filters['organisation_id'],
+				$filters['organisation_unit_id'],
+				$filters['organisation_unit_id'],
+				$filters['role_id'],
+				$filters['role_id'],
+				$limit,
+				$offset
+			),
+			ARRAY_A
+		);
 
 		return array(
 			'rows'  => is_array( $rows ) ? $rows : array(),
