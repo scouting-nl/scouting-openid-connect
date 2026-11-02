@@ -1,0 +1,322 @@
+/**
+ * SOL role mapping layout.
+ *
+ * @since 2.7.0 Styles native selectors and a responsive modal editor.
+ */
+
+.scouting-oidc-rule-list {
+	overflow-x: auto;
+}
+
+.scouting-oidc-rule-list td,
+.scouting-oidc-rule-list th {
+	vertical-align: middle;
+}
+
+.scouting-oidc-rule-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 12px;
+}
+
+.scouting-oidc-rule-actions form {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+}
+
+.scouting-oidc-rule-actions a,
+.scouting-oidc-rule-actions .button-link,
+.scouting-oidc-rule-actions label {
+	display: inline-flex;
+	align-items: center;
+	box-sizing: border-box;
+	min-height: 32px;
+	margin: 0;
+	padding: 0;
+	font: inherit;
+	line-height: 1.5;
+}
+
+.scouting-oidc-rule-actions input[type="number"] {
+	box-sizing: border-box;
+	width: 5em;
+	height: 32px;
+	min-height: 32px;
+	margin: 0;
+	padding: 0 8px;
+	font: inherit;
+	line-height: 1.5;
+}
+
+.scouting-oidc-rule-actions .button.button-small {
+	display: inline-flex;
+	align-items: center;
+	box-sizing: border-box;
+	height: 32px;
+	min-height: 32px;
+	margin: 0;
+	padding: 0 10px;
+	font: inherit;
+	line-height: 1.5;
+}
+
+.scouting-oidc-selector-search {
+	margin-bottom: 8px;
+}
+
+.scouting-oidc-selector-search label {
+	display: block;
+}
+
+.scouting-oidc-role-mapping .form-table select,
+.scouting-oidc-selector-search input {
+	width: 100%;
+	max-width: 36em;
+}
+
+.scouting-oidc-role-mapping [hidden],
+.scouting-oidc-rule-dialog .form-table tr[hidden] {
+	display: none;
+}
+
+.scouting-oidc-dialogs-pending .scouting-oidc-role-mapping > #sol-rule-panel,
+.scouting-oidc-dialogs-pending .scouting-oidc-role-mapping > #sol-user-test-panel {
+	display: none;
+}
+
+.scouting-oidc-role-mapping :focus-visible {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+}
+
+.scouting-oidc-mapping-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+}
+
+.scouting-oidc-editor-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 16px;
+}
+
+.scouting-oidc-editor-header h2 {
+	margin: 0;
+}
+
+.scouting-oidc-rule-dialog {
+	box-sizing: border-box;
+	width: min( 760px, calc( 100% - 32px ) );
+	max-width: none;
+	max-height: calc( 100% - 32px );
+	padding: 0;
+	border: 1px solid #c3c4c7;
+	border-radius: 12px;
+	background: #fff;
+	color: #1d2327;
+	box-shadow: 0 24px 64px rgb(0 0 0 / 24%);
+	scroll-padding-block: 96px;
+}
+
+.scouting-oidc-rule-dialog::backdrop {
+	background: rgb(0 0 0 / 60%);
+}
+
+.scouting-oidc-rule-dialog .scouting-oidc-editor-header {
+	position: sticky;
+	z-index: 2;
+	top: 0;
+	gap: 16px;
+	margin: 0;
+	padding: 20px 24px;
+	border-bottom: 1px solid #dcdcde;
+	background: #fff;
+}
+
+.scouting-oidc-rule-dialog .scouting-oidc-editor-header h2 {
+	flex: 1;
+	font-size: 20px;
+	line-height: 1.4;
+}
+
+.scouting-oidc-dialog-close {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border: 0;
+	border-radius: 8px;
+	background: transparent;
+	color: #50575e;
+	cursor: pointer;
+}
+
+.scouting-oidc-dialog-close:hover {
+	background: #f0f0f1;
+	color: #1d2327;
+}
+
+.scouting-oidc-rule-dialog form {
+	padding: 24px;
+}
+
+.scouting-oidc-rule-dialog h3 {
+	margin: 0 0 12px;
+	font-size: 16px;
+}
+
+.scouting-oidc-rule-dialog .form-table {
+	margin: 16px 0 24px;
+}
+
+.scouting-oidc-rule-dialog .form-table tbody {
+	display: grid;
+	gap: 20px;
+}
+
+.scouting-oidc-rule-dialog .form-table tr,
+.scouting-oidc-rule-dialog .form-table th,
+.scouting-oidc-rule-dialog .form-table td {
+	display: block;
+	width: auto;
+	padding: 0;
+}
+
+.scouting-oidc-rule-dialog .form-table th {
+	margin-bottom: 8px;
+}
+
+.scouting-oidc-rule-dialog .form-table select,
+.scouting-oidc-rule-dialog .scouting-oidc-selector-search input {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: none;
+	min-height: 44px;
+	margin: 0;
+	padding: 10px 12px;
+	border: 1px solid #8c8f94;
+	border-radius: 8px;
+	background-color: #fff;
+	color: #1d2327;
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+.scouting-oidc-rule-dialog .form-table select[size="1"],
+.scouting-oidc-rule-dialog .form-table select:not([size]) {
+	padding-right: 40px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='m5 7 5 5 5-5' fill='none' stroke='%2350575e' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 12px center;
+	background-size: 20px;
+	appearance: none;
+}
+
+.scouting-oidc-rule-dialog .form-table select[size]:not([size="1"]) {
+	height: auto;
+	background-image: none;
+}
+
+.scouting-oidc-rule-dialog .form-table select[size]:not([size="1"]) option {
+	padding: 8px 10px;
+	border-radius: 4px;
+}
+
+.scouting-oidc-rule-dialog .scouting-oidc-selector-search {
+	margin-bottom: 12px;
+}
+
+.scouting-oidc-rule-dialog .scouting-oidc-selector-search label {
+	margin-bottom: 6px;
+	color: #50575e;
+	font-size: 13px;
+}
+
+.scouting-oidc-rule-dialog .description {
+	margin: 8px 0 0;
+	color: #50575e;
+}
+
+.scouting-oidc-editor-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+}
+
+.scouting-oidc-rule-dialog .scouting-oidc-editor-actions {
+	position: sticky;
+	z-index: 1;
+	bottom: 0;
+	margin: 24px -24px -24px;
+	padding: 16px 24px;
+	border-top: 1px solid #dcdcde;
+	background: #fff;
+}
+
+.scouting-oidc-rule-dialog .scouting-oidc-editor-actions .button {
+	min-height: 40px;
+	padding: 4px 16px;
+	border-radius: 6px;
+}
+
+.scouting-oidc-rule-dialog .scouting-oidc-user-test-body {
+	padding: 24px;
+}
+
+.scouting-oidc-rule-dialog .scouting-oidc-user-test-body form {
+	padding: 0;
+}
+
+.scouting-oidc-user-test-body label {
+	display: block;
+	margin-bottom: 8px;
+}
+
+.scouting-oidc-user-test-body input[type="text"] {
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 44px;
+	margin-bottom: 16px;
+	padding: 10px 12px;
+	border: 1px solid #8c8f94;
+	border-radius: 8px;
+}
+
+.scouting-oidc-rule-dialog .scouting-oidc-user-test-body .scouting-oidc-editor-actions {
+	position: static;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+@media (forced-colors: active) {
+	.scouting-oidc-rule-dialog .form-table select {
+		background-image: none;
+		appearance: auto;
+	}
+}
+
+@media screen and (max-width: 782px) {
+	.scouting-oidc-rule-dialog .scouting-oidc-editor-header,
+	.scouting-oidc-rule-dialog form,
+	.scouting-oidc-rule-dialog .scouting-oidc-user-test-body {
+		padding: 16px;
+	}
+
+	.scouting-oidc-rule-dialog .scouting-oidc-editor-actions {
+		margin: 24px -16px -16px;
+		padding: 16px;
+	}
+}

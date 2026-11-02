@@ -33,6 +33,8 @@ $scouting_oidc_options = array(
 	'scouting_oidc_log_retention_days',
 	'scouting_oidc_last_log_cleanup',
 	'scouting_oidc_logs_schema_version',
+	'scouting_oidc_roles_schema_version',
+	'scouting_oidc_sol_role_mapping_rules',
 );
 
 foreach ( $scouting_oidc_options as $scouting_oidc_option ) {
@@ -76,6 +78,7 @@ $scouting_oidc_metas = array(
 	'scouting_oidc_postal_code',
 	'scouting_oidc_locality',
 	'scouting_oidc_country_code',
+	'scouting_oidc_managed_wordpress_role',
 );
 
 // Prepare placeholders for the IN clause based on the number of meta keys to delete.
@@ -86,8 +89,35 @@ $scouting_oidc_delete_usermeta_sql = "DELETE FROM {$wpdb->usermeta} WHERE meta_k
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 $wpdb->query( $wpdb->prepare( $scouting_oidc_delete_usermeta_sql, $scouting_oidc_metas ) );
 
+// Delete product restrictions configured by the plugin.
+$scouting_oidc_product_metas = array(
+	'_scouting_oidc_allowed_organisation_ids',
+	'_scouting_oidc_allowed_role_ids',
+	'_scouting_oidc_denied_organisation_ids',
+	'_scouting_oidc_denied_role_ids',
+);
+
+foreach ( $scouting_oidc_product_metas as $scouting_oidc_product_meta ) {
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- A fixed plugin meta key is removed once during uninstall.
+	$wpdb->delete( $wpdb->postmeta, array( 'meta_key' => $scouting_oidc_product_meta ), array( '%s' ) );
+}
+
 // Drop the logs table if it exists.
 $scouting_oidc_logs_table = $wpdb->prefix . 'scouting_oidc_logs';
 
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching
 $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $scouting_oidc_logs_table ) );
+
+// Drop the role tables in dependency order.
+$scouting_oidc_roles_tables = array(
+	$wpdb->prefix . 'scouting_oidc_sol_role_assignments',
+	$wpdb->prefix . 'scouting_oidc_sol_roles',
+	$wpdb->prefix . 'scouting_oidc_sol_organisation_units',
+	$wpdb->prefix . 'scouting_oidc_sol_organisation_parents',
+	$wpdb->prefix . 'scouting_oidc_sol_organisations',
+);
+
+foreach ( $scouting_oidc_roles_tables as $scouting_oidc_roles_table ) {
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching
+	$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $scouting_oidc_roles_table ) );
+}

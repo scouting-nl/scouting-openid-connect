@@ -80,6 +80,7 @@ class Support {
 					<ul style="list-style: disc; margin-left: 20px;">
 						<li>address</li>
 						<li>phone</li>
+						<li>roles</li>
 					</ul>
 				</li>
 				<li><?php esc_html_e( 'Fill in the General Settings.', 'scouting-openid-connect' ); ?></li>

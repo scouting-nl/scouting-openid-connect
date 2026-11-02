@@ -12,7 +12,7 @@
 **Contributors:** [jobvk](https://github.com/jobvk) \
 **Requires at least:** 6.9.5 \
 **Tested up to:** 7.1 \
-**Stable tag:** 2.6.2 \
+**Stable tag:** 2.7.0 \
 **Tags:** scouting, scouting nederland, sol, openid connect, oidc \
 **License:** GPLv3 \
 **License URI:** <https://www.gnu.org/licenses/gpl-3.0.html>
@@ -100,6 +100,7 @@ Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scout
     * `email` (Required)
     * `address` (Optional)
     * `phone` (Optional)
+    * `roles` (Optional)
 12. Fill in the General Settings.
 13. Press `Save Settings`.
 14. Log out and try to log in with the Scouts Login button.
@@ -146,7 +147,7 @@ Yes, there is a settings page where you can set up a redirect after login, confi
 
 ### Can roles also be imported into WordPress from SOL?
 
-Currently not, but this is planned for a future update of this plugin.
+Yes, roles can be imported into WordPress from SOL using the plugin's role mapping feature.
 
 ### Can my parents or guardian also sign in?
 
