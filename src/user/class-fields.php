@@ -303,6 +303,7 @@ class Fields {
 	public function scouting_oidc_fields_user_profile( WP_User $user ): void {
 		?>
 		<h2><?php esc_html_e( 'Scouts Online (SOL) Profile Information', 'scouting-openid-connect' ); ?></h2>
+		<p class="description" id="scouting-oidc-profile-help"><?php esc_html_e( 'Managed by Scouts Online. Update your profile information there.', 'scouting-openid-connect' ); ?></p>
 
 		<table class="form-table" role="presentation">
 			<?php
@@ -340,14 +341,14 @@ class Fields {
 		<tr>
 			<th><label for="birthdate"><?php esc_html_e( 'Birthdate', 'scouting-openid-connect' ); ?></label></th>
 			<td>
-				<input type="date" name="birthdate" id="birthdate" value="<?php echo esc_attr( get_the_author_meta( 'scouting_oidc_birthdate', $user->ID ) ); ?>" class="regular-text" style="background-color: #fff;" readonly />
+				<input type="date" name="birthdate" id="birthdate" value="<?php echo esc_attr( get_the_author_meta( 'scouting_oidc_birthdate', $user->ID ) ); ?>" class="regular-text" style="background-color: #fff;" aria-describedby="scouting-oidc-profile-help" readonly />
 			</td>
 		</tr>
 		<?php
 	}
 
 	/**
-	 * Displays the Gender field.
+	 * Displays the Gender dropdown with only the synchronized value enabled.
 	 *
 	 * @since 1.0.0
 	 * @since 2.4.0 Updated the parameter type.
@@ -358,15 +359,19 @@ class Fields {
 		if ( get_the_author_meta( 'scouting_oidc_gender', $user->ID ) === '' ) {
 			update_user_meta( $user->ID, 'scouting_oidc_gender', 'unknown' );
 		}
+		$gender = get_the_author_meta( 'scouting_oidc_gender', $user->ID );
 		?>
 		<tr>
 			<th><label for="gender"><?php esc_html_e( 'Gender', 'scouting-openid-connect' ); ?></label></th>
 			<td>
-				<select name="gender" id="gender" style="width: 15em; background-color: #fff;" readonly>
-					<option value="male" <?php selected( get_the_author_meta( 'scouting_oidc_gender', $user->ID ), 'male' ); ?>><?php esc_html_e( 'Male', 'scouting-openid-connect' ); ?></option>
-					<option value="female" <?php selected( get_the_author_meta( 'scouting_oidc_gender', $user->ID ), 'female' ); ?>><?php esc_html_e( 'Female', 'scouting-openid-connect' ); ?></option>
-					<option value="other" <?php selected( get_the_author_meta( 'scouting_oidc_gender', $user->ID ), 'other' ); ?>><?php esc_html_e( 'Other', 'scouting-openid-connect' ); ?></option>
-					<option value="unknown" <?php selected( get_the_author_meta( 'scouting_oidc_gender', $user->ID ), 'unknown' ); ?>><?php esc_html_e( 'Unknown', 'scouting-openid-connect' ); ?></option>
+				<select name="gender" id="gender" style="width: 15em; background-color: #fff;" aria-describedby="scouting-oidc-profile-help">
+					<option value="male" <?php selected( $gender, 'male' ); ?> <?php disabled( 'male' !== $gender ); ?>><?php esc_html_e( 'Male', 'scouting-openid-connect' ); ?></option>
+					<option value="female" <?php selected( $gender, 'female' ); ?> <?php disabled( 'female' !== $gender ); ?>><?php esc_html_e( 'Female', 'scouting-openid-connect' ); ?></option>
+					<option value="other" <?php selected( $gender, 'other' ); ?> <?php disabled( 'other' !== $gender ); ?>><?php esc_html_e( 'Other', 'scouting-openid-connect' ); ?></option>
+					<option value="unknown" <?php selected( $gender, 'unknown' ); ?> <?php disabled( 'unknown' !== $gender ); ?>><?php esc_html_e( 'Unknown', 'scouting-openid-connect' ); ?></option>
+					<?php if ( ! in_array( $gender, array( 'male', 'female', 'other', 'unknown' ), true ) ) : ?>
+						<option value="<?php echo esc_attr( $gender ); ?>" selected="selected"><?php echo esc_html( $gender ); ?></option>
+					<?php endif; ?>
 				</select>
 			</td>
 		</tr>
@@ -386,7 +391,7 @@ class Fields {
 		<tr>
 			<th><label for="phone_number"><?php esc_html_e( 'Phone Number', 'scouting-openid-connect' ); ?></label></th>
 			<td>
-				<input type="tel" name="phone_number" id="phone_number" value="<?php echo esc_attr( get_the_author_meta( 'scouting_oidc_phone_number', $user->ID ) ); ?>" class="regular-text" readonly/>
+				<input type="tel" name="phone_number" id="phone_number" value="<?php echo esc_attr( get_the_author_meta( 'scouting_oidc_phone_number', $user->ID ) ); ?>" class="regular-text" aria-describedby="scouting-oidc-profile-help" readonly />
 			</td>
 		</tr>
 		<?php
@@ -406,7 +411,7 @@ class Fields {
 		<tr>
 			<th><label for="street"><?php esc_html_e( 'Street', 'scouting-openid-connect' ); ?></label></th>
 			<td>
-				<input type="text" name="street" id="street" value="<?php echo esc_attr( get_the_author_meta( 'scouting_oidc_street', $user->ID ) ); ?>" class="regular-text" readonly/>
+				<input type="text" name="street" id="street" value="<?php echo esc_attr( get_the_author_meta( 'scouting_oidc_street', $user->ID ) ); ?>" class="regular-text" aria-describedby="scouting-oidc-profile-help" readonly />
 			</td>
 		</tr>
 		<?php
@@ -425,7 +430,7 @@ class Fields {
 		<tr>
 			<th><label for="house_number"><?php esc_html_e( 'House Number', 'scouting-openid-connect' ); ?></label></th>
 			<td>
-				<input type="text" name="house_number" id="house_number" value="<?php echo esc_attr( get_the_author_meta( 'scouting_oidc_house_number', $user->ID ) ); ?>" class="regular-text" readonly/>
+				<input type="text" name="house_number" id="house_number" value="<?php echo esc_attr( get_the_author_meta( 'scouting_oidc_house_number', $user->ID ) ); ?>" class="regular-text" aria-describedby="scouting-oidc-profile-help" readonly />
 			</td>
 		</tr>
 		<?php
@@ -444,7 +449,7 @@ class Fields {
 		<tr>
 			<th><label for="postal_code"><?php esc_html_e( 'Postal Code', 'scouting-openid-connect' ); ?></label></th>
 			<td>
-				<input type="text" name="postal_code" id="postal_code" value="<?php echo esc_attr( get_the_author_meta( 'scouting_oidc_postal_code', $user->ID ) ); ?>" class="regular-text" readonly/>
+				<input type="text" name="postal_code" id="postal_code" value="<?php echo esc_attr( get_the_author_meta( 'scouting_oidc_postal_code', $user->ID ) ); ?>" class="regular-text" aria-describedby="scouting-oidc-profile-help" readonly />
 			</td>
 		</tr>
 		<?php
@@ -463,7 +468,7 @@ class Fields {
 		<tr>
 			<th><label for="locality"><?php esc_html_e( 'City', 'scouting-openid-connect' ); ?></label></th>
 			<td>
-				<input type="text" name="locality" id="locality" value="<?php echo esc_attr( get_the_author_meta( 'scouting_oidc_locality', $user->ID ) ); ?>" class="regular-text" readonly/>
+				<input type="text" name="locality" id="locality" value="<?php echo esc_attr( get_the_author_meta( 'scouting_oidc_locality', $user->ID ) ); ?>" class="regular-text" aria-describedby="scouting-oidc-profile-help" readonly />
 			</td>
 		</tr>
 		<?php
@@ -482,7 +487,7 @@ class Fields {
 		<tr>
 			<th><label for="country_code"><?php esc_html_e( 'Country Code', 'scouting-openid-connect' ); ?></label></th>
 			<td>
-				<input type="text" name="country_code" id="country_code" value="<?php echo esc_attr( get_the_author_meta( 'scouting_oidc_country_code', $user->ID ) ); ?>" class="regular-text" readonly/>
+				<input type="text" name="country_code" id="country_code" value="<?php echo esc_attr( get_the_author_meta( 'scouting_oidc_country_code', $user->ID ) ); ?>" class="regular-text" aria-describedby="scouting-oidc-profile-help" readonly />
 			</td>
 		</tr>
 		<?php

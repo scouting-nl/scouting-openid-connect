@@ -2195,6 +2195,10 @@ msgstr "Overige"
 msgid "Unknown"
 msgstr "Onbekend"
 
+#: user/class-fields.php:307
+msgid "Managed by Scouts Online. Update your profile information there."
+msgstr "Beheerd door Scouts Online. Wijzig je profielgegevens daar."
+
 #: user/class-fields.php:387
 msgid "Phone Number"
 msgstr "Telefoonnummer"

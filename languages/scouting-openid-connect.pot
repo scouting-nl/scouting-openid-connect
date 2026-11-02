@@ -1952,6 +1952,10 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
+#: user/class-fields.php:307
+msgid "Managed by Scouts Online. Update your profile information there."
+msgstr ""
+
 #: user/class-fields.php:387
 msgid "Phone Number"
 msgstr ""

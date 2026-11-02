@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- Fixed the SOL gender profile dropdown to allow only the synchronized value while retaining native dropdown interaction and its white background. Added a shared accessible notice for all SOL profile fields explaining that profile information must be updated in Scouts Online.
+
 ## [[2.7.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.7.0)] - 02/11/2026
 
 - Added SOL role mapping with searchable organisation, unit, and role selectors, allow and deny rules, rule duplication and reordering, accessible dialogs, a read-only user tester, and contextual help. Unmatched users use the WordPress default role.
