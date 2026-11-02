@@ -3,7 +3,7 @@ Contributors: jobvk
 Tags: scouting, scouting nederland, sol, openid connect, oidc
 Requires at least: 6.9.5
 Tested up to: 7.1
-Stable tag: 2.6.2.1
+Stable tag: 2.7.0
 Requires PHP: 8.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -98,6 +98,11 @@ Currently not, but this is planned for a future update of this plugin.
 4. Support Page
 
 == Changelog ==
+
+= 2.7.0 =
+* Added SOL role mapping with searchable organisation, unit, and role selectors, allow and deny rules, rule duplication and reordering, accessible dialogs, a read-only user tester, and contextual help. Unmatched users use the WordPress default role.
+* Added the SOL Role Explorer to browse synchronized organisations, units, roles, and user assignments.
+* Added WooCommerce SOL Access restrictions with organisation and role allow and deny rules, optional descendant matching, and optional organisation-and-role matching on the same active assignment. Deny rules take precedence.
 
 = 2.6.2 =
 * Preserved historical log entries when WordPress users are deleted.

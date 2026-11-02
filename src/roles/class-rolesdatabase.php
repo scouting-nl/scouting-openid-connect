@@ -3,7 +3,7 @@
  * Scouting OpenID Connect plugin file
  *
  * @package ScoutingOIDC
- * @since Unreleased Adds role database support.
+ * @since 2.7.0 Adds role database support.
  */
 
 namespace ScoutingOIDC;
@@ -15,27 +15,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Creates and upgrades the tables used to store Scouts Online roles.
  *
- * @since Unreleased Creates and upgrades role assignment tables.
+ * @since 2.7.0 Creates and upgrades role assignment tables.
  */
 class RolesDatabase {
 	/**
 	 * Current schema version for the role tables.
 	 *
-	 * @since Unreleased Defines the initial role schema.
+	 * @since 2.7.0 Defines the initial role schema.
 	 */
 	private const SCHEMA_VERSION = '2';
 
 	/**
 	 * Option key used to persist the installed role schema version.
 	 *
-	 * @since Unreleased Stores the role schema version.
+	 * @since 2.7.0 Stores the role schema version.
 	 */
 	private const SCHEMA_VERSION_OPTION = 'scouting_oidc_roles_schema_version';
 
 	/**
 	 * Ensures the role tables exist and are current after plugin updates.
 	 *
-	 * @since Unreleased Creates role tables after plugin updates.
+	 * @since 2.7.0 Creates role tables after plugin updates.
 	 */
 	public function scouting_oidc_roles_database_maybe_upgrade(): void {
 		$tables            = $this->scouting_oidc_roles_database_get_table_names();
@@ -51,7 +51,7 @@ class RolesDatabase {
 	/**
 	 * Creates or updates the tables used to store Scouts Online roles.
 	 *
-	 * @since Unreleased Creates the normalized role schema.
+	 * @since 2.7.0 Creates the normalized role schema.
 	 */
 	public function scouting_oidc_roles_database_create(): void {
 		global $wpdb;
@@ -100,7 +100,7 @@ class RolesDatabase {
 	/**
 	 * Gets the organisation hierarchy table SQL.
 	 *
-	 * @since Unreleased Defines parent organisation relationships.
+	 * @since 2.7.0 Defines parent organisation relationships.
 	 *
 	 * @param string $table Full table name.
 	 * @param string $charset_collate Database character set and collation SQL.
@@ -120,7 +120,7 @@ class RolesDatabase {
 	/**
 	 * Gets the shared role definition table SQL.
 	 *
-	 * @since Unreleased Defines roles keyed by provider ID.
+	 * @since 2.7.0 Defines roles keyed by provider ID.
 	 *
 	 * @param string $table Full table name.
 	 * @param string $charset_collate Database character set and collation SQL.
@@ -144,7 +144,7 @@ class RolesDatabase {
 	/**
 	 * Gets the dated user role assignment table SQL.
 	 *
-	 * @since Unreleased Defines normalized user role assignments.
+	 * @since 2.7.0 Defines normalized user role assignments.
 	 *
 	 * @param string $table Full table name.
 	 * @param string $charset_collate Database character set and collation SQL.
@@ -166,7 +166,7 @@ class RolesDatabase {
 	/**
 	 * Gets the current role-domain table names.
 	 *
-	 * @since Unreleased Gets normalized role table names.
+	 * @since 2.7.0 Gets normalized role table names.
 	 *
 	 * @return array<string, string> Role table names keyed by purpose.
 	 */
@@ -185,7 +185,7 @@ class RolesDatabase {
 	/**
 	 * Checks whether every current role table exists.
 	 *
-	 * @since Unreleased Checks role table availability.
+	 * @since 2.7.0 Checks role table availability.
 	 *
 	 * @param array<string, string> $tables Role table names keyed by purpose.
 	 * @return bool True when every table exists.
@@ -203,7 +203,7 @@ class RolesDatabase {
 	/**
 	 * Checks whether a database table exists.
 	 *
-	 * @since Unreleased Checks individual role tables.
+	 * @since 2.7.0 Checks individual role tables.
 	 *
 	 * @param string $table Full table name.
 	 * @return bool Whether the table exists.

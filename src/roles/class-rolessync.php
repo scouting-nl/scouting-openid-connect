@@ -3,7 +3,7 @@
  * Scouting OpenID Connect plugin file
  *
  * @package ScoutingOIDC
- * @since Unreleased Adds UserInfo role synchronization.
+ * @since 2.7.0 Adds UserInfo role synchronization.
  */
 
 namespace ScoutingOIDC;
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Synchronizes Scouts Online role data.
  *
- * @since Unreleased Adds UserInfo role synchronization.
+ * @since 2.7.0 Adds UserInfo role synchronization.
  */
 class RolesSync {
 	/**
@@ -25,7 +25,7 @@ class RolesSync {
 	 * not change stored role data. An explicitly empty assignment list removes
 	 * the user's previously synchronized SOL assignments.
 	 *
-	 * @since Unreleased Synchronizes UserInfo role claims.
+	 * @since 2.7.0 Synchronizes UserInfo role claims.
 	 *
 	 * @param int   $user_id WordPress user ID.
 	 * @param array $user_info Validated UserInfo response.
@@ -59,7 +59,7 @@ class RolesSync {
 	/**
 	 * Deletes role assignments for a deleted user.
 	 *
-	 * @since Unreleased Deletes synchronized role data with the WordPress user.
+	 * @since 2.7.0 Deletes synchronized role data with the WordPress user.
 	 *
 	 * @param int $user_id WordPress user ID being deleted.
 	 */
@@ -81,7 +81,7 @@ class RolesSync {
 	/**
 	 * Normalizes the role graph supplied by UserInfo.
 	 *
-	 * @since Unreleased Validates UserInfo role claims.
+	 * @since 2.7.0 Validates UserInfo role claims.
 	 *
 	 * @param array $user_info Validated UserInfo response.
 	 * @return array|\WP_Error|null Normalized role graph, invalid-data error, or null when role claims are absent.
@@ -129,7 +129,7 @@ class RolesSync {
 	/**
 	 * Normalizes organisations from UserInfo.
 	 *
-	 * @since Unreleased Normalizes UserInfo organisations.
+	 * @since 2.7.0 Normalizes UserInfo organisations.
 	 *
 	 * @param array $raw_organisations Raw UserInfo organisations claim.
 	 * @return array<string, array{organisation_id: string, name: string, parent_ids: array<int, string>, has_parent_data: bool}>|\WP_Error Normalized organisations, or an error.
@@ -210,7 +210,7 @@ class RolesSync {
 	/**
 	 * Normalizes organisation units from UserInfo.
 	 *
-	 * @since Unreleased Normalizes UserInfo organisation units.
+	 * @since 2.7.0 Normalizes UserInfo organisation units.
 	 *
 	 * @param array                                                                                                              $raw_organisation_units Raw UserInfo organisation units claim.
 	 * @param array<string, array{organisation_id: string, name: string, parent_ids: array<int, string>, has_parent_data: bool}> $organisations Normalized organisations.
@@ -256,7 +256,7 @@ class RolesSync {
 	/**
 	 * Normalizes role definitions from UserInfo.
 	 *
-	 * @since Unreleased Normalizes UserInfo role assignments.
+	 * @since 2.7.0 Normalizes UserInfo role assignments.
 	 *
 	 * @param array $raw_roles Raw UserInfo roles claim.
 	 * @param array $organisation_units Normalized organisation units.
@@ -310,7 +310,7 @@ class RolesSync {
 	/**
 	 * Validates dated user assignments against the role definitions.
 	 *
-	 * @since Unreleased Stores source role assignment dates.
+	 * @since 2.7.0 Stores source role assignment dates.
 	 *
 	 * @param array $raw_assignments Raw UserInfo assignments.
 	 * @param array $roles Normalized roles keyed by source ID.
@@ -358,7 +358,7 @@ class RolesSync {
 	/**
 	 * Normalizes an ISO date or RFC 3339 timestamp to a UTC database timestamp.
 	 *
-	 * @since Unreleased Validates role assignment timestamps.
+	 * @since 2.7.0 Validates role assignment timestamps.
 	 *
 	 * @param mixed $value Raw date or date-time.
 	 * @return string|null UTC timestamp or null.
@@ -390,7 +390,7 @@ class RolesSync {
 	/**
 	 * Validates a six-digit Scouts Online organisation identifier.
 	 *
-	 * @since Unreleased Preserves leading zeroes in organisation IDs.
+	 * @since 2.7.0 Preserves leading zeroes in organisation IDs.
 	 *
 	 * @param mixed $value Raw organisation identifier.
 	 * @return string|null Identifier or null when invalid.
@@ -402,7 +402,7 @@ class RolesSync {
 	/**
 	 * Persists a normalized role graph for a WordPress user.
 	 *
-	 * @since Unreleased Persists UserInfo role claims.
+	 * @since 2.7.0 Persists UserInfo role claims.
 	 *
 	 * @param int   $user_id WordPress user ID.
 	 * @param array $role_graph Normalized role graph with dated assignments.
@@ -476,7 +476,7 @@ class RolesSync {
 	/**
 	 * Persists organisations and any optional parent relationships.
 	 *
-	 * @since Unreleased Synchronizes UserInfo organisation hierarchies.
+	 * @since 2.7.0 Synchronizes UserInfo organisation hierarchies.
 	 *
 	 * @param string                                                                                                             $organisations_table Full organisations table name.
 	 * @param string                                                                                                             $organisation_parents_table Full organisation parent table name.
@@ -503,7 +503,7 @@ class RolesSync {
 	/**
 	 * Upserts a synchronized organisation.
 	 *
-	 * @since Unreleased Saves synchronized organisations.
+	 * @since 2.7.0 Saves synchronized organisations.
 	 *
 	 * @param string                                                                                              $organisations_table Full organisations table name.
 	 * @param array{organisation_id: string, name: string, parent_ids: array<int, string>, has_parent_data: bool} $organisation Normalized organisation.
@@ -532,7 +532,7 @@ class RolesSync {
 	/**
 	 * Replaces the known parent relationships for an organisation.
 	 *
-	 * @since Unreleased Synchronizes optional UserInfo organisation parents.
+	 * @since 2.7.0 Synchronizes optional UserInfo organisation parents.
 	 *
 	 * @param string                                                                                              $organisation_parents_table Full organisation parent table name.
 	 * @param array{organisation_id: string, name: string, parent_ids: array<int, string>, has_parent_data: bool} $organisation Normalized organisation.
@@ -570,7 +570,7 @@ class RolesSync {
 	/**
 	 * Upserts a synchronized organisation unit.
 	 *
-	 * @since Unreleased Saves synchronized organisation units.
+	 * @since 2.7.0 Saves synchronized organisation units.
 	 *
 	 * @param string                                                                                          $organisation_units_table Full organisation units table name.
 	 * @param int                                                                                             $organisation_unit_id Organisation unit ID.
@@ -607,7 +607,7 @@ class RolesSync {
 	/**
 	 * Upserts a shared synchronized role definition.
 	 *
-	 * @since Unreleased Saves shared synchronized roles.
+	 * @since 2.7.0 Saves shared synchronized roles.
 	 *
 	 * @param string $roles_table Full roles table name.
 	 * @param array  $role Normalized role.
@@ -646,7 +646,7 @@ class RolesSync {
 	/**
 	 * Inserts a dated role assignment for a WordPress user.
 	 *
-	 * @since Unreleased Saves normalized user role assignments.
+	 * @since 2.7.0 Saves normalized user role assignments.
 	 *
 	 * @param string $assignments_table Full assignments table name.
 	 * @param int    $user_id WordPress user ID.
@@ -677,7 +677,7 @@ class RolesSync {
 	/**
 	 * Normalizes a positive integer identifier.
 	 *
-	 * @since Unreleased Validates source identifiers.
+	 * @since 2.7.0 Validates source identifiers.
 	 *
 	 * @param mixed $value Raw numeric identifier.
 	 * @return int|null Positive integer, or null when invalid.
@@ -699,7 +699,7 @@ class RolesSync {
 	/**
 	 * Normalizes required source text.
 	 *
-	 * @since Unreleased Validates required role graph text.
+	 * @since 2.7.0 Validates required role graph text.
 	 *
 	 * @param mixed $value Raw source text.
 	 * @param int   $maximum_length Maximum stored length.

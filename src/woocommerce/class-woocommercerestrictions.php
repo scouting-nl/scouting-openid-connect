@@ -3,7 +3,7 @@
  * Scouting OpenID Connect plugin file
  *
  * @package ScoutingOIDC
- * @since Unreleased Adds WooCommerce SOL ordering restrictions.
+ * @since 2.7.0 Adds WooCommerce SOL ordering restrictions.
  */
 
 namespace ScoutingOIDC;
@@ -15,69 +15,69 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Restricts WooCommerce products to customers with matching SOL assignments.
  *
- * @since Unreleased Adds WooCommerce SOL ordering restrictions.
+ * @since 2.7.0 Adds WooCommerce SOL ordering restrictions.
  */
 class WooCommerceRestrictions {
 	/**
 	 * Product meta key for allowed SOL organisation IDs.
 	 *
-	 * @since Unreleased Stores WooCommerce organisation restrictions.
+	 * @since 2.7.0 Stores WooCommerce organisation restrictions.
 	 */
 	private const ALLOWED_ORGANISATIONS_META_KEY = '_scouting_oidc_allowed_organisation_ids';
 
 	/**
 	 * Product meta key for allowed SOL role IDs.
 	 *
-	 * @since Unreleased Stores WooCommerce role restrictions.
+	 * @since 2.7.0 Stores WooCommerce role restrictions.
 	 */
 	private const ALLOWED_ROLES_META_KEY = '_scouting_oidc_allowed_role_ids';
 
 	/**
 	 * Product meta key for denied SOL organisation IDs.
 	 *
-	 * @since Unreleased Stores WooCommerce organisation denials.
+	 * @since 2.7.0 Stores WooCommerce organisation denials.
 	 */
 	private const DENIED_ORGANISATIONS_META_KEY = '_scouting_oidc_denied_organisation_ids';
 
 	/**
 	 * Product meta key for denied SOL role IDs.
 	 *
-	 * @since Unreleased Stores WooCommerce role denials.
+	 * @since 2.7.0 Stores WooCommerce role denials.
 	 */
 	private const DENIED_ROLES_META_KEY = '_scouting_oidc_denied_role_ids';
 
 	/**
 	 * Product meta key controlling descendant organisation allow matches.
 	 *
-	 * @since Unreleased Supports direct organisation allow rules.
+	 * @since 2.7.0 Supports direct organisation allow rules.
 	 */
 	private const ALLOWED_DESCENDANTS_META_KEY = '_scouting_oidc_allowed_include_descendants';
 
 	/**
 	 * Product meta key controlling descendant organisation deny matches.
 	 *
-	 * @since Unreleased Supports direct organisation deny rules.
+	 * @since 2.7.0 Supports direct organisation deny rules.
 	 */
 	private const DENIED_DESCENDANTS_META_KEY = '_scouting_oidc_denied_include_descendants';
 
 	/**
 	 * Product meta key requiring both allow conditions on one assignment.
 	 *
-	 * @since Unreleased Supports combined organisation and role allow rules.
+	 * @since 2.7.0 Supports combined organisation and role allow rules.
 	 */
 	private const ALLOWED_REQUIRE_BOTH_META_KEY = '_scouting_oidc_allowed_require_both';
 
 	/**
 	 * Product meta key requiring both deny conditions on one assignment.
 	 *
-	 * @since Unreleased Supports combined organisation and role deny rules.
+	 * @since 2.7.0 Supports combined organisation and role deny rules.
 	 */
 	private const DENIED_REQUIRE_BOTH_META_KEY = '_scouting_oidc_denied_require_both';
 
 	/**
 	 * Registers WooCommerce hooks after active plugins have loaded.
 	 *
-	 * @since Unreleased Defers WooCommerce integration registration.
+	 * @since 2.7.0 Defers WooCommerce integration registration.
 	 */
 	public function __construct() {
 		add_action( 'plugins_loaded', array( $this, 'scouting_oidc_woocommerce_restrictions_register_hooks' ), 20 );
@@ -86,7 +86,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Registers product-editor and purchasing hooks when WooCommerce is active.
 	 *
-	 * @since Unreleased Registers WooCommerce SOL ordering restrictions.
+	 * @since 2.7.0 Registers WooCommerce SOL ordering restrictions.
 	 */
 	public function scouting_oidc_woocommerce_restrictions_register_hooks(): void {
 		if ( ! class_exists( 'WooCommerce' ) ) {
@@ -106,7 +106,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Adds the SOL restrictions tab to WooCommerce Product data.
 	 *
-	 * @since Unreleased Adds WooCommerce SOL restriction product data tab.
+	 * @since 2.7.0 Adds WooCommerce SOL restriction product data tab.
 	 *
 	 * @param array<string, array> $tabs WooCommerce Product data tabs.
 	 * @return array<string, array> WooCommerce Product data tabs.
@@ -125,7 +125,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Enqueues SOL Product data tab and field styling for product editor screens.
 	 *
-	 * @since Unreleased Adds WooCommerce SOL restriction tab styling.
+	 * @since 2.7.0 Adds WooCommerce SOL restriction tab styling.
 	 *
 	 * @param string $hook_suffix Current WordPress admin page hook suffix.
 	 */
@@ -150,7 +150,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Renders the SOL restrictions panel in WooCommerce Product data.
 	 *
-	 * @since Unreleased Adds contextual role labels and configurable organisation and role matching.
+	 * @since 2.7.0 Adds contextual role labels and configurable organisation and role matching.
 	 */
 	public function scouting_oidc_woocommerce_restrictions_render_product_data_panel(): void {
 		global $post;
@@ -243,7 +243,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Renders a native checkbox and marker distinguishing absent legacy forms.
 	 *
-	 * @since Unreleased Renders labelled organisation and role matching controls.
+	 * @since 2.7.0 Renders labelled organisation and role matching controls.
 	 *
 	 * @param string $name Checkbox field name.
 	 * @param string $description_id Instructions ID.
@@ -263,7 +263,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Preserves descendant matching for products without an explicit opt-out.
 	 *
-	 * @since Unreleased Defaults existing products to descendant matching.
+	 * @since 2.7.0 Defaults existing products to descendant matching.
 	 *
 	 * @param int    $product_id Restriction owner product ID.
 	 * @param string $meta_key Descendant matching meta key.
@@ -276,7 +276,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Saves SOL ordering restrictions through the WooCommerce product data API.
 	 *
-	 * @since Unreleased Saves WooCommerce SOL restriction fields and matching modes.
+	 * @since 2.7.0 Saves WooCommerce SOL restriction fields and matching modes.
 	 *
 	 * @param \WC_Product $product Product being saved.
 	 */
@@ -316,7 +316,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Makes restricted products unavailable to unauthorised customers.
 	 *
-	 * @since Unreleased Hides purchase controls for restricted products.
+	 * @since 2.7.0 Hides purchase controls for restricted products.
 	 *
 	 * @param bool        $purchasable Whether WooCommerce considers the product purchasable.
 	 * @param \WC_Product $product Product being evaluated.
@@ -333,7 +333,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Rejects attempts to add an unauthorised product or booking to the cart.
 	 *
-	 * @since Unreleased Validates SOL restrictions before adding cart items.
+	 * @since 2.7.0 Validates SOL restrictions before adding cart items.
 	 *
 	 * @param bool $passed Whether previous validation passed.
 	 * @param int  $product_id Product ID.
@@ -354,7 +354,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Revalidates restricted items already present in the cart.
 	 *
-	 * @since Unreleased Prevents checkout when SOL access changes.
+	 * @since 2.7.0 Prevents checkout when SOL access changes.
 	 */
 	public function scouting_oidc_woocommerce_restrictions_validate_cart(): void {
 		if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
@@ -377,7 +377,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Displays a clear availability message on restricted single product pages.
 	 *
-	 * @since Unreleased Explains unavailable restricted products.
+	 * @since 2.7.0 Explains unavailable restricted products.
 	 */
 	public function scouting_oidc_woocommerce_restrictions_render_purchase_notice(): void {
 		global $product;
@@ -392,7 +392,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Checks whether the current user may order a product under its SOL rules.
 	 *
-	 * @since Unreleased Applies configurable organisation and role conditions to active assignments.
+	 * @since 2.7.0 Applies configurable organisation and role conditions to active assignments.
 	 *
 	 * @param int $product_id Product or variation ID.
 	 * @return bool Whether the current user can order the product.
@@ -431,7 +431,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Matches populated organisation and role conditions against one assignment.
 	 *
-	 * @since Unreleased Shares OR and same-assignment AND matching for allow and deny rules.
+	 * @since 2.7.0 Shares OR and same-assignment AND matching for allow and deny rules.
 	 *
 	 * @param array<string> $assignment_ids Organisation IDs eligible for this assignment.
 	 * @param int           $assignment_role_id Active assignment role ID.
@@ -454,7 +454,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Gets the parent product that owns restrictions for a product or variation.
 	 *
-	 * @since Unreleased Shares restrictions between variable products and variations.
+	 * @since 2.7.0 Shares restrictions between variable products and variations.
 	 *
 	 * @param int $product_id Product or variation ID.
 	 * @return int Product ID that owns restriction metadata.
@@ -471,7 +471,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Gets saved SOL organisation IDs for a product restriction rule.
 	 *
-	 * @since Unreleased Reads WooCommerce organisation restriction rules.
+	 * @since 2.7.0 Reads WooCommerce organisation restriction rules.
 	 *
 	 * @param int    $product_id Product ID.
 	 * @param string $meta_key Product meta key.
@@ -484,7 +484,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Gets saved SOL role IDs for a product restriction rule.
 	 *
-	 * @since Unreleased Reads WooCommerce role restriction rules.
+	 * @since 2.7.0 Reads WooCommerce role restriction rules.
 	 *
 	 * @param int    $product_id Product ID.
 	 * @param string $meta_key Product meta key.
@@ -497,7 +497,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Gets organisation choices for the WooCommerce product editor.
 	 *
-	 * @since Unreleased Lists SOL organisations for WooCommerce restrictions.
+	 * @since 2.7.0 Lists SOL organisations for WooCommerce restrictions.
 	 *
 	 * @return array<int, array{organisation_id: string, name: string}> Organisations.
 	 */
@@ -514,7 +514,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Gets role choices for the WooCommerce product editor.
 	 *
-	 * @since Unreleased Lists SOL roles with organisation and unit context.
+	 * @since 2.7.0 Lists SOL roles with organisation and unit context.
 	 *
 	 * @return array<int, array{role_id: int|string, role_name: string, organisation_unit_id: int|string, unit_name: string|null, organisation_id: string|null, organisation_name: string|null}> Roles.
 	 */
@@ -541,7 +541,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Distinguishes identically named roles by their organisation and unit.
 	 *
-	 * @since Unreleased Describes the assignment context in both role selectors.
+	 * @since 2.7.0 Describes the assignment context in both role selectors.
 	 *
 	 * @param array $role Synchronized role with joined context.
 	 * @return string Human-readable role choice.
@@ -556,7 +556,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Stores a normalized product metadata list through WooCommerce's data API.
 	 *
-	 * @since Unreleased Saves WooCommerce SOL restriction metadata.
+	 * @since 2.7.0 Saves WooCommerce SOL restriction metadata.
 	 *
 	 * @param \WC_Product $product Product being saved.
 	 * @param string      $meta_key Product meta key.
@@ -574,7 +574,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Normalizes organisation IDs while preserving their leading zeroes.
 	 *
-	 * @since Unreleased Validates WooCommerce SOL organisation restrictions.
+	 * @since 2.7.0 Validates WooCommerce SOL organisation restrictions.
 	 *
 	 * @param mixed $value Raw organisation IDs.
 	 * @return array<int, string> Normalized organisation IDs.
@@ -594,7 +594,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Normalizes positive role IDs.
 	 *
-	 * @since Unreleased Validates WooCommerce SOL role restrictions.
+	 * @since 2.7.0 Validates WooCommerce SOL role restrictions.
 	 *
 	 * @param mixed $value Raw role IDs.
 	 * @return array<int, int> Normalized role IDs.
@@ -617,7 +617,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Gets the customer-facing message for unavailable restricted products.
 	 *
-	 * @since Unreleased Explains SOL ordering restrictions.
+	 * @since 2.7.0 Explains SOL ordering restrictions.
 	 *
 	 * @return string Restriction message.
 	 */

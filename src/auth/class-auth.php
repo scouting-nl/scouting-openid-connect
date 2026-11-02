@@ -361,7 +361,7 @@ class Auth {
 	/**
 	 * Applies the matching SOL role mapping and blocks denied OIDC logins.
 	 *
-	 * @since Unreleased Enforces SOL role mapping decisions during login.
+	 * @since 2.7.0 Enforces SOL role mapping decisions during login.
 	 *
 	 * @param int $user_id WordPress user ID.
 	 */

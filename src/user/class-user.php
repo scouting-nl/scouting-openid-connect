@@ -325,7 +325,7 @@ class User {
 	 *
 	 * @since 1.0.0
 	 * @since 2.0.0 Changed account creation to use the SOL member ID.
-	 * @since Unreleased Returns the created WordPress user ID.
+	 * @since 2.7.0 Returns the created WordPress user ID.
 	 *
 	 * @return int Created WordPress user ID.
 	 */
@@ -393,7 +393,7 @@ class User {
 	 * @since 1.0.0
 	 * @since 2.0.0 Changed account updates to use the SOL member ID.
 	 * @since 2.0.1 Restored compatibility with version 1.2.0 accounts.
-	 * @since Unreleased Returns the updated WordPress user ID.
+	 * @since 2.7.0 Returns the updated WordPress user ID.
 	 *
 	 * @return int Updated WordPress user ID.
 	 */

@@ -3,7 +3,7 @@
  * Scouting OpenID Connect plugin file
  *
  * @package ScoutingOIDC
- * @since Unreleased Adds SOL role authorization.
+ * @since 2.7.0 Adds SOL role authorization.
  */
 
 namespace ScoutingOIDC;
@@ -15,34 +15,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Evaluates SOL role mappings and applies the plugin-managed WordPress role.
  *
- * @since Unreleased Adds SOL role authorization.
+ * @since 2.7.0 Adds SOL role authorization.
  */
 class RolesAuthorization {
 	/**
 	 * Option storing ordered SOL role mapping rules.
 	 *
-	 * @since Unreleased Reads SOL role mapping rules.
+	 * @since 2.7.0 Reads SOL role mapping rules.
 	 */
 	private const RULES_OPTION = 'scouting_oidc_sol_role_mapping_rules';
 
 	/**
 	 * User meta key tracking the WordPress role managed by this plugin.
 	 *
-	 * @since Unreleased Preserves independently managed WordPress roles.
+	 * @since 2.7.0 Preserves independently managed WordPress roles.
 	 */
 	private const MANAGED_ROLE_META_KEY = 'scouting_oidc_managed_wordpress_role';
 
 	/**
 	 * Pattern for a six-digit Scouts Online organisation identifier.
 	 *
-	 * @since Unreleased Validates SOL organisation identifiers.
+	 * @since 2.7.0 Validates SOL organisation identifiers.
 	 */
 	private const ORGANISATION_ID_PATTERN = '/^\d{6}$/';
 
 	/**
 	 * Active SOL assignments cached by WordPress user ID for the current request.
 	 *
-	 * @since Unreleased Avoids repeated authorization queries in a request.
+	 * @since 2.7.0 Avoids repeated authorization queries in a request.
 	 *
 	 * @var array<int, array<int, array{role_id: int, organisation_unit_id: int, organisation_id: string, organisation_ids: array<int, string>}>>
 	 */
@@ -51,7 +51,7 @@ class RolesAuthorization {
 	/**
 	 * Gets configured rules without the retired plugin-specific fallback.
 	 *
-	 * @since Unreleased Normalizes SOL role mapping rules and ignores legacy defaults.
+	 * @since 2.7.0 Normalizes SOL role mapping rules and ignores legacy defaults.
 	 *
 	 * @return array{rules: array<int, array{id: string, organisation_id: string, organisation_unit_id: int, role_id: int, wordpress_role: string, login_allowed: bool}>} Mapping configuration.
 	 */
@@ -75,7 +75,7 @@ class RolesAuthorization {
 	/**
 	 * Gets the first matching authorization decision for a WordPress user.
 	 *
-	 * @since Unreleased Evaluates SOL role mapping rules.
+	 * @since 2.7.0 Evaluates SOL role mapping rules.
 	 *
 	 * @param int $user_id WordPress user ID.
 	 * @return array{wordpress_role: string, login_allowed: bool} Role and login decision.
@@ -89,7 +89,7 @@ class RolesAuthorization {
 	/**
 	 * Previews the saved mapping without changing roles or login state.
 	 *
-	 * @since Unreleased Uses the WordPress default role when no mapping rule matches.
+	 * @since 2.7.0 Uses the WordPress default role when no mapping rule matches.
 	 *
 	 * @param int $user_id WordPress user ID.
 	 * @return array{decision: array{wordpress_role: string, login_allowed: bool}, rule_index: int|null, assignments: array} Authorization preview; a null index means no rule matched.
@@ -133,7 +133,7 @@ class RolesAuthorization {
 	 *
 	 * Existing roles not previously assigned by this plugin are left intact.
 	 *
-	 * @since Unreleased Applies SOL role mappings without removing manual roles.
+	 * @since 2.7.0 Applies SOL role mappings without removing manual roles.
 	 *
 	 * @param int    $user_id WordPress user ID.
 	 * @param string $wordpress_role WordPress role slug to apply.
@@ -162,7 +162,7 @@ class RolesAuthorization {
 	/**
 	 * Gets active SOL assignments for a user.
 	 *
-	 * @since Unreleased Reads active SOL role assignments for authorization.
+	 * @since 2.7.0 Reads active SOL role assignments for authorization.
 	 *
 	 * @param int $user_id WordPress user ID.
 	 * @return array<int, array{role_id: int, organisation_unit_id: int, organisation_id: string, organisation_ids: array<int, string>}> Active assignments with organisation ancestry.
@@ -220,7 +220,7 @@ class RolesAuthorization {
 	/**
 	 * Gets each organisation together with every reachable parent organisation.
 	 *
-	 * @since Unreleased Shares SOL organisation hierarchy matches with the mapping editor.
+	 * @since 2.7.0 Shares SOL organisation hierarchy matches with the mapping editor.
 	 *
 	 * @param array<int, string> $organisation_ids Direct organisation IDs.
 	 * @return array<string, array<int, string>> Organisation IDs keyed by direct organisation ID.
@@ -243,7 +243,7 @@ class RolesAuthorization {
 	/**
 	 * Normalizes organisation identifiers for hierarchy lookups.
 	 *
-	 * @since Unreleased Validates SOL organisation hierarchy identifiers.
+	 * @since 2.7.0 Validates SOL organisation hierarchy identifiers.
 	 *
 	 * @param array<int, string> $organisation_ids Raw organisation IDs.
 	 * @return array<int, string> Normalized organisation IDs.
@@ -262,7 +262,7 @@ class RolesAuthorization {
 	/**
 	 * Gets direct parent organisation IDs keyed by child organisation ID.
 	 *
-	 * @since Unreleased Reads SOL organisation hierarchy relationships.
+	 * @since 2.7.0 Reads SOL organisation hierarchy relationships.
 	 *
 	 * @return array<string, array<int, string>> Parent IDs keyed by child organisation ID.
 	 */
@@ -287,7 +287,7 @@ class RolesAuthorization {
 	/**
 	 * Gets one organisation and all of its reachable parents.
 	 *
-	 * @since Unreleased Traverses SOL organisation hierarchy relationships.
+	 * @since 2.7.0 Traverses SOL organisation hierarchy relationships.
 	 *
 	 * @param string                            $organisation_id Direct organisation ID.
 	 * @param array<string, array<int, string>> $parents_by_child Parent IDs keyed by child organisation ID.
@@ -312,7 +312,7 @@ class RolesAuthorization {
 	/**
 	 * Clears cached active assignments after synchronization changes them.
 	 *
-	 * @since Unreleased Keeps same-request authorization data current.
+	 * @since 2.7.0 Keeps same-request authorization data current.
 	 *
 	 * @param int $user_id WordPress user ID.
 	 */
@@ -323,7 +323,7 @@ class RolesAuthorization {
 	/**
 	 * Normalizes one stored role mapping rule.
 	 *
-	 * @since Unreleased Safely reads stored SOL role mapping rules.
+	 * @since 2.7.0 Safely reads stored SOL role mapping rules.
 	 *
 	 * @param mixed                $stored_rule Stored rule value.
 	 * @param array<string, array> $wordpress_roles Available WordPress roles.
@@ -364,7 +364,7 @@ class RolesAuthorization {
 	/**
 	 * Checks whether an ordered mapping rule matches any active assignment.
 	 *
-	 * @since Unreleased Matches role mapping conditions against active assignments.
+	 * @since 2.7.0 Matches role mapping conditions against active assignments.
 	 *
 	 * @param array{id: string, organisation_id: string, organisation_unit_id: int, role_id: int, wordpress_role: string, login_allowed: bool} $rule Mapping rule.
 	 * @param array<int, array{role_id: int, organisation_unit_id: int, organisation_id: string, organisation_ids: array<int, string>}>        $assignments Active assignments.
@@ -391,7 +391,7 @@ class RolesAuthorization {
 	/**
 	 * Normalizes a positive integer identifier or zero.
 	 *
-	 * @since Unreleased Reads optional role mapping identifiers.
+	 * @since 2.7.0 Reads optional role mapping identifiers.
 	 *
 	 * @param mixed $value Raw identifier.
 	 * @return int Positive identifier or zero.

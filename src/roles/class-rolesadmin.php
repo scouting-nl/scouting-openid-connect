@@ -3,7 +3,7 @@
  * Scouting OpenID Connect plugin file
  *
  * @package ScoutingOIDC
- * @since Unreleased Adds SOL role administration pages and contextual mapping help.
+ * @since 2.7.0 Adds SOL role administration pages and contextual mapping help.
  */
 
 namespace ScoutingOIDC;
@@ -15,20 +15,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Provides administration pages for SOL role mappings and assignments.
  *
- * @since Unreleased Adds SOL role administration pages.
+ * @since 2.7.0 Adds SOL role administration pages.
  */
 class RolesAdmin {
 	/**
 	 * Option storing ordered SOL role mapping rules.
 	 *
-	 * @since Unreleased Stores SOL role mapping rules.
+	 * @since 2.7.0 Stores SOL role mapping rules.
 	 */
 	private const RULES_OPTION = 'scouting_oidc_sol_role_mapping_rules';
 
 	/**
 	 * Actual WordPress hook for the registered mapping page.
 	 *
-	 * @since Unreleased Loads mapping assets without guessing the menu hook.
+	 * @since 2.7.0 Loads mapping assets without guessing the menu hook.
 	 *
 	 * @var string|null
 	 */
@@ -37,7 +37,7 @@ class RolesAdmin {
 	/**
 	 * Registers admin-post handlers before protected forms can be submitted.
 	 *
-	 * @since Unreleased Registers SOL mapping actions.
+	 * @since 2.7.0 Registers SOL mapping actions.
 	 */
 	public function __construct() {
 		add_action( 'admin_post_scouting_oidc_roles_save_rule', array( $this, 'scouting_oidc_roles_admin_save_rule' ) );
@@ -50,7 +50,7 @@ class RolesAdmin {
 	/**
 	 * Loads progressive enhancements only on the mapping page.
 	 *
-	 * @since Unreleased Loads dialog enhancements before rendering to prevent inline panel flashes.
+	 * @since 2.7.0 Loads dialog enhancements before rendering to prevent inline panel flashes.
 	 *
 	 * @param string $hook_suffix Current admin page hook.
 	 */
@@ -66,7 +66,7 @@ class RolesAdmin {
 	/**
 	 * Registers the SOL role administration pages.
 	 *
-	 * @since Unreleased Adds SOL role administration pages.
+	 * @since 2.7.0 Adds SOL role administration pages.
 	 */
 	public function scouting_oidc_roles_admin_register_pages(): void {
 		$explorer = new RolesExplorer();
@@ -99,7 +99,7 @@ class RolesAdmin {
 	/**
 	 * Registers native WordPress contextual help for the mapping screen.
 	 *
-	 * @since Unreleased Explains rule precedence, editing and user previews.
+	 * @since 2.7.0 Explains rule precedence, editing and user previews.
 	 */
 	public function scouting_oidc_roles_admin_register_help_tabs(): void {
 		$screen = get_current_screen();
@@ -159,7 +159,7 @@ class RolesAdmin {
 	/**
 	 * Renders ordered role mapping rules without a separate fallback setting.
 	 *
-	 * @since Unreleased Adds the SOL role mapping page and styled progressive modal editor.
+	 * @since 2.7.0 Adds the SOL role mapping page and styled progressive modal editor.
 	 */
 	public function scouting_oidc_roles_admin_render_mapping_page(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -344,7 +344,7 @@ class RolesAdmin {
 	/**
 	 * Renders a progressively enhanced search and its local result feedback.
 	 *
-	 * @since Unreleased Shows live search matches next to each native selector.
+	 * @since 2.7.0 Shows live search matches next to each native selector.
 	 *
 	 * @param string $selector_id Associated selector ID.
 	 * @param string $label Localized search label.
@@ -362,7 +362,7 @@ class RolesAdmin {
 	/**
 	 * Saves a mapping rule after capability, nonce and field validation.
 	 *
-	 * @since Unreleased Saves ordered SOL mapping rules.
+	 * @since 2.7.0 Saves ordered SOL mapping rules.
 	 */
 	public function scouting_oidc_roles_admin_save_rule(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -402,7 +402,7 @@ class RolesAdmin {
 	/**
 	 * Deletes a mapping rule.
 	 *
-	 * @since Unreleased Deletes SOL mapping rules.
+	 * @since 2.7.0 Deletes SOL mapping rules.
 	 */
 	public function scouting_oidc_roles_admin_delete_rule(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -424,7 +424,7 @@ class RolesAdmin {
 	/**
 	 * Moves a mapping rule up or down one position.
 	 *
-	 * @since Unreleased Reorders SOL mapping rules.
+	 * @since 2.7.0 Reorders SOL mapping rules.
 	 */
 	public function scouting_oidc_roles_admin_move_rule(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -475,7 +475,7 @@ class RolesAdmin {
 	/**
 	 * Copies a saved rule to the end so existing precedence is preserved.
 	 *
-	 * @since Unreleased Adds rule duplication.
+	 * @since 2.7.0 Adds rule duplication.
 	 */
 	public function scouting_oidc_roles_admin_duplicate_rule(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -513,7 +513,7 @@ class RolesAdmin {
 	/**
 	 * Describes a mapping outcome without implying denied users receive a role.
 	 *
-	 * @since Unreleased Simplifies mapping summaries.
+	 * @since 2.7.0 Simplifies mapping summaries.
 	 *
 	 * @param array $rule Mapping rule or authorization decision.
 	 * @param array $wordpress_roles Registered WordPress roles.
@@ -531,7 +531,7 @@ class RolesAdmin {
 	/**
 	 * Tests a saved mapping against a user's synchronized active assignments.
 	 *
-	 * @since Unreleased Adds a read-only authorization tester with a progressive modal.
+	 * @since 2.7.0 Adds a read-only authorization tester with a progressive modal.
 	 *
 	 * @param array $organisations Synchronized organisations.
 	 * @param array $units Synchronized units.
@@ -615,7 +615,7 @@ class RolesAdmin {
 	/**
 	 * Validates mapping rule fields against synchronized source data.
 	 *
-	 * @since Unreleased Validates SOL mapping rules.
+	 * @since 2.7.0 Validates SOL mapping rules.
 	 *
 	 * @param array $input Unsanitized form fields.
 	 * @return array|\WP_Error Normalized mapping rule or a validation error.
@@ -665,7 +665,7 @@ class RolesAdmin {
 	/**
 	 * Gets the configured mapping rules.
 	 *
-	 * @since Unreleased Reads SOL mapping configuration.
+	 * @since 2.7.0 Reads SOL mapping configuration.
 	 *
 	 * @return array{rules: array} Mapping configuration.
 	 */
@@ -676,7 +676,7 @@ class RolesAdmin {
 	/**
 	 * Gets synchronized organisations keyed by their exact ID.
 	 *
-	 * @since Unreleased Lists synchronized organisations.
+	 * @since 2.7.0 Lists synchronized organisations.
 	 *
 	 * @return array<string, array> Organisations keyed by ID.
 	 */
@@ -697,7 +697,7 @@ class RolesAdmin {
 	/**
 	 * Gets synchronized organisation units keyed by their ID.
 	 *
-	 * @since Unreleased Lists synchronized organisation units.
+	 * @since 2.7.0 Lists synchronized organisation units.
 	 *
 	 * @return array<int, array> Organisation units keyed by ID.
 	 */
@@ -726,7 +726,7 @@ class RolesAdmin {
 	/**
 	 * Gets synchronized roles keyed by their provider ID.
 	 *
-	 * @since Unreleased Lists synchronized SOL roles.
+	 * @since 2.7.0 Lists synchronized SOL roles.
 	 *
 	 * @return array<int, array> Roles keyed by ID.
 	 */
@@ -755,7 +755,7 @@ class RolesAdmin {
 	/**
 	 * Displays action forms for a mapping rule.
 	 *
-	 * @since Unreleased Adds mapping rule actions.
+	 * @since 2.7.0 Adds mapping rule actions.
 	 *
 	 * @param string $action Form action name.
 	 * @param string $label Visible and accessible action label.
@@ -784,7 +784,7 @@ class RolesAdmin {
 	/**
 	 * Generates readable condition text for a mapping rule.
 	 *
-	 * @since Unreleased Describes SOL mapping conditions.
+	 * @since 2.7.0 Describes SOL mapping conditions.
 	 *
 	 * @param array $rule Mapping rule.
 	 * @param array $organisations Organisations keyed by ID.
@@ -816,7 +816,7 @@ class RolesAdmin {
 	/**
 	 * Renders action results on either role page.
 	 *
-	 * @since Unreleased Reports role administration actions.
+	 * @since 2.7.0 Reports role administration actions.
 	 */
 	private function scouting_oidc_roles_admin_render_notice(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This value only selects a fixed, escaped status message.
@@ -837,7 +837,7 @@ class RolesAdmin {
 	/**
 	 * Redirects to the mapping page after a completed action.
 	 *
-	 * @since Unreleased Returns to the mapping page after an action.
+	 * @since 2.7.0 Returns to the mapping page after an action.
 	 *
 	 * @param string $notice Notice identifier.
 	 */

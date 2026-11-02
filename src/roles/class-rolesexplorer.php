@@ -3,7 +3,7 @@
  * Scouting OpenID Connect plugin file
  *
  * @package ScoutingOIDC
- * @since Unreleased Adds SOL role explorer.
+ * @since 2.7.0 Adds SOL role explorer.
  */
 
 namespace ScoutingOIDC;
@@ -15,20 +15,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Displays synchronized SOL roles and their user assignments.
  *
- * @since Unreleased Adds SOL role explorer.
+ * @since 2.7.0 Adds SOL role explorer.
  */
 class RolesExplorer {
 	/**
 	 * Assignments displayed per page.
 	 *
-	 * @since Unreleased Paginates SOL role assignments.
+	 * @since 2.7.0 Paginates SOL role assignments.
 	 */
 	private const PAGE_SIZE = 50;
 
 	/**
 	 * Renders organisation, unit, role and assigned-user filters.
 	 *
-	 * @since Unreleased Displays SOL assignments without an email column.
+	 * @since 2.7.0 Displays SOL assignments without an email column.
 	 */
 	public function render_page(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -124,7 +124,7 @@ class RolesExplorer {
 	/**
 	 * Gets scoped organisations, units and roles for the filter controls.
 	 *
-	 * @since Unreleased Lists synchronized SOL role data.
+	 * @since 2.7.0 Lists synchronized SOL role data.
 	 *
 	 * @param array $filters Requested filters.
 	 * @return array{filters: array, organisations: array, units: array, roles: array} Normalized filters and filter options.
@@ -195,7 +195,7 @@ class RolesExplorer {
 	/**
 	 * Gets one assignment page and the total count for the selected filters.
 	 *
-	 * @since Unreleased Lists SOL role assignments.
+	 * @since 2.7.0 Lists SOL role assignments.
 	 *
 	 * @param array $filters Normalized filters.
 	 * @param int   $page Current page.
@@ -275,7 +275,7 @@ class RolesExplorer {
 	/**
 	 * Renders assignment pagination and retains current filters.
 	 *
-	 * @since Unreleased Paginates SOL role assignments.
+	 * @since 2.7.0 Paginates SOL role assignments.
 	 *
 	 * @param array $filters Current filters.
 	 * @param int   $page Current page.

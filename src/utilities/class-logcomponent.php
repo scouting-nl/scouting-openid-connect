@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Each log entry has a component to support filtering and analysis.
  *
  * @since 2.4.0
- * @since Unreleased Adds the roles component.
+ * @since 2.7.0 Adds the roles component.
  */
 enum LogComponent: string {
 	case ASSETS   = 'assets';

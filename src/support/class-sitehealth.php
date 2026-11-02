@@ -34,7 +34,7 @@ class SiteHealth {
 	 *
 	 * @since 2.5.0
 	 * @since 2.6.2 Expects the logging schema without a user foreign key.
-	 * @since Unreleased Expects the logging schema with the roles component.
+	 * @since 2.7.0 Expects the logging schema with the roles component.
 	 *
 	 * @var string
 	 */

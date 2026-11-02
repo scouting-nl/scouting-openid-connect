@@ -31,7 +31,7 @@ class Logger {
 	 *
 	 * @since 2.4.0
 	 * @since 2.6.2 Removes the user foreign key while preserving historical logs.
-	 * @since Unreleased Adds the roles log component.
+	 * @since 2.7.0 Adds the roles log component.
 	 */
 	private const LOGS_SCHEMA_VERSION = '3';
 

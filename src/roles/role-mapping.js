@@ -1,13 +1,13 @@
 /**
  * Progressive enhancements for the SOL mapping rule editor.
  *
- * @since Unreleased Adds flash-free progressive dialogs and visible live search results.
+ * @since 2.7.0 Adds flash-free progressive dialogs and visible live search results.
  */
 
 /**
  * Initializes searches without replacing native keyboard-operable controls.
  *
- * @since Unreleased Filters options live and progressively enhances the editor.
+ * @since 2.7.0 Filters options live and progressively enhances the editor.
  * @return {void}
  */
 function scoutingOidcInitializeRoleMapping() {
@@ -36,7 +36,7 @@ function scoutingOidcInitializeRoleMapping() {
 	/**
 	 * Rebuilds one selector; incompatible values reset, search alone never clears.
 	 *
-	 * @since Unreleased Displays matching choices as a list while searching.
+	 * @since 2.7.0 Displays matching choices as a list while searching.
 	 * @param {number} index Selector index.
 	 * @return {number} Number of matching non-wildcard choices.
 	 */
@@ -84,7 +84,7 @@ function scoutingOidcInitializeRoleMapping() {
 	/**
 	 * Applies parent filters first and announces the available choices.
 	 *
-	 * @since Unreleased Provides accessible search feedback.
+	 * @since 2.7.0 Provides accessible search feedback.
 	 * @param {boolean} announce Whether to update the live status.
 	 * @return {void}
 	 */
@@ -123,7 +123,7 @@ function scoutingOidcInitializeRoleMapping() {
 	/**
 	 * Keeps the stored role submitted even when login is denied.
 	 *
-	 * @since Unreleased Hides irrelevant role selection without changing data.
+	 * @since 2.7.0 Hides irrelevant role selection without changing data.
 	 * @return {void}
 	 */
 	function updateOutcome() {
@@ -152,7 +152,7 @@ function scoutingOidcInitializeRoleMapping() {
 /**
  * Moves the server-rendered editor into a native, keyboard-accessible dialog.
  *
- * @since Unreleased Opens add, edit and duplicate flows in a modal.
+ * @since 2.7.0 Opens add, edit and duplicate flows in a modal.
  * @return {void}
  */
 function scoutingOidcInitializeRuleDialog() {
@@ -173,7 +173,7 @@ function scoutingOidcInitializeRuleDialog() {
 /**
  * Enhances an inline panel with shared modal and focus behavior.
  *
- * @since Unreleased Shares accessible dialogs between editing and user testing.
+ * @since 2.7.0 Shares accessible dialogs between editing and user testing.
  * @param {Object} options Dialog elements, identifiers and opening behavior.
  * @return {void}
  */
@@ -213,7 +213,7 @@ function scoutingOidcInitializeDialog( options ) {
 	/**
 	 * Closes the editor and immediately restores focus to the page action.
 	 *
-	 * @since Unreleased Restores focus for add and automatically opened editors.
+	 * @since 2.7.0 Restores focus for add and automatically opened editors.
 	 * @return {void}
 	 */
 	function closeDialog() {
@@ -245,7 +245,7 @@ function scoutingOidcInitializeDialog( options ) {
 /**
  * Hides inline dialog panels before rendering while retaining failure fallback.
  *
- * @since Unreleased Prevents editor and tester flashes during page loading.
+ * @since 2.7.0 Prevents editor and tester flashes during page loading.
  */
 if ( typeof document.createElement( 'dialog' ).showModal === 'function' ) {
 	document.documentElement.classList.add( 'scouting-oidc-dialogs-pending' );
@@ -254,7 +254,7 @@ if ( typeof document.createElement( 'dialog' ).showModal === 'function' ) {
 /**
  * Initializes the completed markup and restores any unenhanced inline panels.
  *
- * @since Unreleased Preserves inline fallback even when initialization throws.
+ * @since 2.7.0 Preserves inline fallback even when initialization throws.
  * @return {void}
  */
 function scoutingOidcInitializeRoleMappingWhenReady() {
