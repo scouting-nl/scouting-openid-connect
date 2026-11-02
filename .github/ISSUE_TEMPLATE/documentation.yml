@@ -1,0 +1,60 @@
+name: Report incorrect wiki documentation
+description: Report missing, outdated, or incorrect information in the project wiki.
+assignees:
+  - jobvk
+type: bug
+labels:
+  - documentation
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for problems in the [project wiki](https://github.com/scouting-nl/scouting-openid-connect/wiki).
+        For plugin bugs, use the bug report form. For support or feature requests, use [Discussions](https://github.com/scouting-nl/scouting-openid-connect/discussions).
+
+        Reports are public. Remove personal data and secrets from text and screenshots.
+        If the problem may reveal a security vulnerability, submit a [private vulnerability report](https://github.com/scouting-nl/scouting-openid-connect/security/advisories/new) instead.
+  - type: input
+    id: page
+    attributes:
+      label: Wiki page URL
+      description: Link to the affected wiki page, including the section if possible.
+      placeholder: https://github.com/scouting-nl/scouting-openid-connect/wiki/Configuration
+    validations:
+      required: true
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      description: Enter the version the documentation should describe.
+      placeholder: 2.7.0
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is incorrect or missing?
+      description: Quote the affected text and explain how it differs from the plugin's behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: Suggested correction
+      description: Describe the correct behavior or wording. Include a reference or reproduction steps if available.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Include relevant WordPress, PHP, or WooCommerce versions and redacted screenshots if helpful.
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I checked the current wiki and existing issues for this problem.
+          required: true
+        - label: I removed personal data, credentials, tokens, and session cookies from this report.
+          required: true
