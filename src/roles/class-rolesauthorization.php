@@ -98,13 +98,16 @@ class RolesAuthorization {
 	 * @since 2.7.0 Uses the WordPress default role when no mapping rule matches.
 	 *
 	 * @param int $user_id WordPress user ID.
-	 * @return array{decision: array{wordpress_role: string, login_allowed: bool}, rule_index: int|null, assignments: array}|\WP_Error Authorization preview or a database read error; a null index means no rule matched.
+	 * @return array{decision: array{wordpress_role: string, login_allowed: bool}, rule_index: int|null, assignments: array}|\WP_Error Authorization preview or an unavailable-data/read error; a null index means no rule matched.
 	 */
 	public static function scouting_oidc_roles_authorization_get_user_preview( int $user_id ): array|\WP_Error {
 		$mapping     = self::scouting_oidc_roles_authorization_get_mapping();
 		$assignments = self::scouting_oidc_roles_authorization_get_active_assignments( $user_id );
 		if ( is_wp_error( $assignments ) ) {
-			return $assignments;
+			if ( 'sol_assignments_unavailable' !== $assignments->get_error_code() || ! empty( $mapping['rules'] ) ) {
+				return $assignments;
+			}
+			$assignments = array();
 		}
 
 		foreach ( $mapping['rules'] as $index => $rule ) {
@@ -174,11 +177,17 @@ class RolesAuthorization {
 	 * @since 2.7.0 Reads active SOL role assignments for authorization.
 	 *
 	 * @param int $user_id WordPress user ID.
-	 * @return array<int, array{role_id: int, organisation_unit_id: int, organisation_id: string, organisation_ids: array<int, string>}>|\WP_Error Active assignments with organisation ancestry, or a database read error.
+	 * @return array<int, array{role_id: int, organisation_unit_id: int, organisation_id: string, organisation_ids: array<int, string>}>|\WP_Error Active assignments with organisation ancestry, or an unavailable-data/read error.
 	 */
 	public static function scouting_oidc_roles_authorization_get_active_assignments( int $user_id ): array|\WP_Error {
 		if ( $user_id <= 0 ) {
 			return array();
+		}
+
+		$scopes = get_option( 'scouting_oidc_scopes', '' );
+		if ( ! is_string( $scopes ) || ! in_array( 'roles', preg_split( '/\s+/', trim( $scopes ) ), true ) || 'yes' !== get_user_meta( $user_id, 'scouting_oidc_roles_available', true ) ) {
+			Logger::warning( LogComponent::ROLES, 'SOL assignments are unavailable for authorization; enable the roles scope and complete a fresh OIDC login.', $user_id );
+			return new \WP_Error( 'sol_assignments_unavailable', __( 'Your access level could not be updated. Please contact the site administrator.', 'scouting-openid-connect' ) );
 		}
 
 		if ( isset( self::$active_assignments[ $user_id ] ) ) {

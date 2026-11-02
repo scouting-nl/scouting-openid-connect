@@ -585,7 +585,7 @@ class RolesAdmin {
 				$preview = RolesAuthorization::scouting_oidc_roles_authorization_get_user_preview( $user->ID );
 				?>
 				<?php if ( is_wp_error( $preview ) ) : ?>
-					<p role="alert"><?php esc_html_e( 'The preview could not read SOL assignments. Check the database before relying on a login decision.', 'scouting-openid-connect' ); ?></p>
+					<p role="alert"><?php echo esc_html( 'sol_assignments_unavailable' === $preview->get_error_code() ? $preview->get_error_message() : __( 'The preview could not read SOL assignments. Check the database before relying on a login decision.', 'scouting-openid-connect' ) ); ?></p>
 				<?php else : ?>
 					<h3><?php echo esc_html( $user->display_name . ' (' . $user->user_login . ')' ); ?></h3>
 					<p>

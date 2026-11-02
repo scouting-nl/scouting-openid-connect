@@ -21,8 +21,8 @@ class RolesSync {
 	/**
 	 * Synchronizes the role graph from a validated UserInfo response.
 	 *
-	 * A missing role graph is treated as an unavailable optional claim and does
-	 * not change stored role data. An explicitly empty assignment list removes
+	 * A missing role graph preserves stored data but makes it unavailable for
+	 * authorization. An explicitly empty assignment list removes
 	 * the user's previously synchronized SOL assignments.
 	 *
 	 * @since 2.7.0 Synchronizes UserInfo role claims.
@@ -37,9 +37,16 @@ class RolesSync {
 			return false;
 		}
 
+		RolesAuthorization::scouting_oidc_roles_authorization_clear_active_assignments( $user_id );
+		update_user_meta( $user_id, 'scouting_oidc_roles_available', 'no' );
+		if ( 'no' !== get_user_meta( $user_id, 'scouting_oidc_roles_available', true ) ) {
+			Logger::error( LogComponent::ROLES, 'Could not invalidate stored SOL assignments before synchronization.', $user_id );
+			return false;
+		}
+
 		$role_graph = self::scouting_oidc_roles_sync_normalize_role_graph( $user_info );
 		if ( null === $role_graph ) {
-			Logger::debug( LogComponent::ROLES, 'Skipped SOL role synchronization because the UserInfo response did not include a role graph.', $user_id );
+			Logger::warning( LogComponent::ROLES, 'SOL role data is unavailable; stored assignments cannot authorize access.', $user_id );
 			return true;
 		}
 
@@ -53,7 +60,11 @@ class RolesSync {
 			return false;
 		}
 
-		RolesAuthorization::scouting_oidc_roles_authorization_clear_active_assignments( $user_id );
+		update_user_meta( $user_id, 'scouting_oidc_roles_available', 'yes' );
+		if ( 'yes' !== get_user_meta( $user_id, 'scouting_oidc_roles_available', true ) ) {
+			Logger::error( LogComponent::ROLES, 'Could not mark synchronized SOL assignments as available.', $user_id );
+			return false;
+		}
 		Logger::debug( LogComponent::ROLES, 'SOL role synchronization completed.', $user_id );
 		return true;
 	}

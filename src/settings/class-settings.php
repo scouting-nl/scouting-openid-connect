@@ -110,7 +110,7 @@ class Settings {
 		// Set default options for OIDC.
 		add_option( 'scouting_oidc_client_id', '' );
 		add_option( 'scouting_oidc_client_secret', '' );
-		add_option( 'scouting_oidc_scopes', 'openid membership profile email address phone roles' );
+		add_option( 'scouting_oidc_scopes', 'openid membership profile email' );
 
 		// Set default options for general settings.
 		add_option( 'scouting_oidc_user_display_name', 'fullname' );
