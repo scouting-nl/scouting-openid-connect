@@ -34,6 +34,10 @@ class RolesExplorer {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have permission to view SOL assignments.', 'scouting-openid-connect' ) );
 		}
+		if ( ! RolesAuthorization::scouting_oidc_roles_authorization_has_roles_scope() ) {
+			RolesAdmin::scouting_oidc_roles_admin_render_scope_notice();
+			return;
+		}
 
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- These query parameters only filter read-only administrator data.
 		$filters = array(
@@ -52,6 +56,7 @@ class RolesExplorer {
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'SOL Role Explorer', 'scouting-openid-connect' ); ?></h1>
+			<?php RolesAdmin::scouting_oidc_roles_admin_render_scope_notice(); ?>
 			<p><?php esc_html_e( 'Browse organisations, units and roles, then inspect synchronized user assignments and their dates.', 'scouting-openid-connect' ); ?></p>
 			<form method="get">
 				<input type="hidden" name="page" value="scouting-oidc-role-explorer" />

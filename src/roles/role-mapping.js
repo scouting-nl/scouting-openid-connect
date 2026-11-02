@@ -1,24 +1,59 @@
 /**
  * Progressive enhancements for the SOL mapping rule editor.
  *
- * @since 2.7.0 Adds flash-free progressive dialogs and visible live search results.
+ * @since 2.7.0 Adds progressive dialogs, live search and wrapping native checkbox choices.
  */
 
 /**
- * Initializes searches without replacing native keyboard-operable controls.
+ * Initializes searches and enhances multi-selects with native checkbox groups.
  *
- * @since 2.7.0 Filters options live and progressively enhances the editor.
+ * @since 2.7.0 Filters options live, preserving selections and the no-JavaScript multi-select fallback.
  * @return {void}
  */
 function scoutingOidcInitializeRoleMapping() {
+	scoutingOidcInitializeRuleSubmission();
 	const organisation = document.getElementById( 'sol-organisation' );
 	if ( ! organisation ) {
 		return;
 	}
 
+	/**
+	 * Prevents repeat submissions while allowing native validation and back navigation.
+	 *
+	 * @since 2.7.0 Guards mapping saves against rapid clicks and repeated Enter presses.
+	 * @return {void}
+	 */
+	function scoutingOidcInitializeRuleSubmission() {
+		const form = document.getElementById( 'sol-rule-form' );
+		if ( ! form ) {
+			return;
+		}
+		const submit = form.querySelector( '[type="submit"]' );
+		let submitting = false;
+		form.addEventListener( 'submit', ( event ) => {
+			if ( submitting ) {
+				event.preventDefault();
+				return;
+			}
+			submitting = true;
+			submit.disabled = true;
+			form.setAttribute( 'aria-busy', 'true' );
+		} );
+		window.addEventListener( 'pageshow', () => {
+			submitting = false;
+			submit.disabled = false;
+			form.removeAttribute( 'aria-busy' );
+		} );
+	}
+
 	const unit = document.getElementById( 'sol-unit' );
 	const role = document.getElementById( 'sol-role' );
 	const selectors = [ organisation, unit, role ];
+	const operators = [
+		document.getElementById( 'sol-organisation-operator' ),
+		document.getElementById( 'sol-organisation_unit-operator' ),
+		document.getElementById( 'sol-role-operator' ),
+	];
 	const searches = selectors.map( ( select ) =>
 		document.getElementById( select.id + '-search' ),
 	);
@@ -34,48 +69,126 @@ function scoutingOidcInitializeRoleMapping() {
 	).textContent;
 
 	/**
-	 * Rebuilds one selector; incompatible values reset, search alone never clears.
+	 * Wrapping checkbox groups backed by the original named selects.
+	 *
+	 * @since 2.7.0 Preserves submitted values while improving readability and touch selection.
+	 * @type {HTMLDivElement[]}
+	 */
+	const choiceGroups = selectors.map( ( select, index ) => {
+		const label = select.labels[ 0 ];
+		const heading = document.createElement( 'span' );
+		heading.id = select.id + '-label';
+		heading.textContent = label.textContent;
+		const group = document.createElement( 'div' );
+		group.id = select.id + '-choices';
+		group.className = 'scouting-oidc-checkbox-choices';
+		group.setAttribute( 'role', 'group' );
+		group.setAttribute( 'aria-labelledby', heading.id );
+		group.setAttribute( 'aria-describedby', 'sol-condition-help ' + select.id + '-results' );
+		choices[ index ].forEach( ( option ) => {
+			const row = document.createElement( 'label' );
+			const checkbox = document.createElement( 'input' );
+			checkbox.type = 'checkbox';
+			checkbox.value = option.value;
+			checkbox.checked = option.selected;
+			const text = document.createElement( 'span' );
+			text.textContent = option.textContent;
+			row.append( checkbox, text );
+			group.append( row );
+		} );
+		group.addEventListener( 'change', ( event ) => {
+			const checkbox = event.target;
+			if ( checkbox instanceof HTMLInputElement ) {
+				const option = Array.from( select.options ).find(
+					( item ) => item.value === checkbox.value,
+				);
+				option.selected = checkbox.checked;
+				select.dispatchEvent( new Event( 'change' ) );
+			}
+		} );
+		group.addEventListener( 'keydown', ( event ) => {
+			if ( event.key === 'Enter' ) {
+				event.preventDefault();
+				searches[ index ].focus();
+			}
+		} );
+		label.replaceWith( heading );
+		select.after( group );
+		select.hidden = true;
+		searches[ index ].setAttribute( 'aria-controls', group.id );
+		searches[ index ].parentElement.querySelector( '.sol-clear-selection' )
+			.setAttribute( 'aria-controls', group.id );
+		return group;
+	} );
+
+	/**
+	 * Moves from search to the first visible choice, if any.
+	 *
+	 * @since 2.7.0 Keeps search and checkbox choices keyboard operable.
+	 * @param {number} index Selector index.
+	 * @return {void}
+	 */
+	function focusChoice( index ) {
+		const checkbox = choiceGroups[ index ].querySelector( 'label:not([hidden]) input' );
+		( checkbox || searches[ index ] ).focus();
+	}
+
+	/**
+	 * Rebuilds a multi-selector without dropping selected values during filtering.
 	 *
 	 * @since 2.7.0 Displays matching choices as a list while searching.
 	 * @param {number} index Selector index.
-	 * @return {number} Number of matching non-wildcard choices.
+	 * @return {number} Number of matching choices.
 	 */
 	function filterSelector( index ) {
 		const select = selectors[ index ];
-		const selected = select.value;
+		const selected = Array.from( select.selectedOptions, ( option ) => option.value );
+		const organisations = Array.from( organisation.selectedOptions, ( option ) => option.value );
+		const units = Array.from( unit.selectedOptions, ( option ) => option.value );
 		const search = searches[ index ].value.trim().toLocaleLowerCase();
 		let count = 0;
 		select.replaceChildren();
-		choices[ index ].forEach( ( option, optionIndex ) => {
+		choices[ index ].forEach( ( option ) => {
+			const ancestry = ( option.dataset.organisations || '' ).split( ' ' );
 			const compatible =
 				( index === 0 ||
-					! organisation.value ||
-					( option.dataset.organisations || '' )
-						.split( ' ' ).includes( organisation.value ) ) &&
+					organisations.length === 0 ||
+					( operators[ 0 ].value === 'not_in'
+						? ! organisations.some( ( id ) => ancestry.includes( id ) )
+						: organisations.some( ( id ) => ancestry.includes( id ) ) ) ) &&
 				( index !== 2 ||
-					unit.value === '0' ||
-					option.dataset.unit === unit.value );
+					units.length === 0 ||
+					( operators[ 1 ].value === 'not_in'
+						? ! units.includes( option.dataset.unit )
+						: units.includes( option.dataset.unit ) ) );
 			const matches = option.textContent
 				.toLocaleLowerCase()
 				.includes( search );
-			if ( optionIndex === 0 || ( compatible && matches ) ) {
-				select.append( option.cloneNode( true ) );
-				if ( optionIndex > 0 ) {
+			const isSelected = selected.includes( option.value );
+			if ( ( compatible && matches ) || isSelected ) {
+				const clone = option.cloneNode( true );
+				clone.selected = isSelected;
+				select.append( clone );
+				if ( compatible && matches ) {
 					count += 1;
 				}
-			} else if ( compatible && option.value === selected ) {
-				select.append( option.cloneNode( true ) );
 			}
 		} );
-		if ( Array.from( select.options ).some( ( option ) => option.value === selected ) ) {
-			select.value = selected;
-		} else {
-			select.selectedIndex = 0;
-		}
-		select.size = search ? Math.max( 2, Math.min( 6, select.options.length ) ) : 1;
+		select.size = 6;
+		const visibleOptions = new Map(
+			Array.from( select.options, ( option ) => [ option.value, option ] ),
+		);
+		choiceGroups[ index ].querySelectorAll( 'input' ).forEach( ( checkbox ) => {
+			const option = visibleOptions.get( checkbox.value );
+			checkbox.checked = Boolean( option && option.selected );
+			checkbox.parentElement.hidden = ! option;
+			if ( ! option && checkbox === checkbox.ownerDocument.activeElement ) {
+				searches[ index ].focus();
+			}
+		} );
 		document.getElementById( select.id + '-results' ).textContent = search
 			? resultTemplate.replace( '{count}', count ).replace(
-				'{selection}', select.selectedOptions[ 0 ].textContent,
+				'{selection}', Array.from( select.selectedOptions, ( option ) => option.textContent ).join( ', ' ),
 			)
 			: '';
 		return count;
@@ -100,20 +213,23 @@ function scoutingOidcInitializeRoleMapping() {
 
 	selectors.forEach( ( select, index ) => {
 		searches[ index ].parentElement.hidden = false;
+		searches[ index ].parentElement.querySelector( '.sol-clear-selection' )
+			.addEventListener( 'click', () => {
+				Array.from( select.options ).forEach( ( option ) => {
+					option.selected = false;
+				} );
+				refresh( true );
+				focusChoice( index );
+			} );
 		searches[ index ].addEventListener( 'input', () => refresh( true ) );
 		searches[ index ].addEventListener( 'keydown', ( event ) => {
 			if ( event.key === 'ArrowDown' || event.key === 'Enter' ) {
 				event.preventDefault();
-				select.focus();
-			}
-		} );
-		select.addEventListener( 'keydown', ( event ) => {
-			if ( event.key === 'Enter' && select.size > 1 ) {
-				event.preventDefault();
-				searches[ index ].focus();
+				focusChoice( index );
 			}
 		} );
 		select.addEventListener( 'change', () => refresh( true ) );
+		operators[ index ].addEventListener( 'change', () => refresh( true ) );
 	} );
 	refresh( false );
 

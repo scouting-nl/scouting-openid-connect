@@ -116,6 +116,15 @@ function scouting_oidc_init(): void {
 
 	// Add a link to Scouts Online after View in each applicable user row.
 	add_filter( 'user_row_actions', array( $scouting_oidc_fields, 'scouting_oidc_fields_user_row_actions' ), 10, 2 );
+	add_filter( 'manage_users_columns', array( $scouting_oidc_fields, 'scouting_oidc_fields_user_columns' ) );
+	add_filter( 'manage_users_custom_column', array( $scouting_oidc_fields, 'scouting_oidc_fields_user_column' ), 10, 3 );
+	add_action( 'show_user_profile', array( $scouting_oidc_fields, 'scouting_oidc_fields_user_roles' ) );
+	add_action( 'edit_user_profile', array( $scouting_oidc_fields, 'scouting_oidc_fields_user_roles' ) );
+	add_action( 'personal_options_update', array( $scouting_oidc_fields, 'scouting_oidc_fields_preserve_roles' ) );
+	add_action( 'edit_user_profile_update', array( $scouting_oidc_fields, 'scouting_oidc_fields_preserve_roles' ) );
+	add_action( 'user_profile_update_errors', array( $scouting_oidc_fields, 'scouting_oidc_fields_validate_roles' ), 10, 3 );
+	add_action( 'profile_update', array( $scouting_oidc_fields, 'scouting_oidc_fields_save_roles' ) );
+	add_action( 'admin_enqueue_scripts', array( $scouting_oidc_fields, 'scouting_oidc_fields_enqueue_role_style' ) );
 
 	// Normalize plus-addressed Scouting OIDC recipient aliases in outgoing mail.
 	add_filter( 'wp_mail', array( Mail::class, 'scouting_oidc_mail_filter_wp_mail' ), 20 );

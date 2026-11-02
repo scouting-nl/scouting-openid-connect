@@ -325,13 +325,20 @@ class User {
 	 *
 	 * @since 1.0.0
 	 * @since 2.0.0 Changed account creation to use the SOL member ID.
-	 * @since 2.7.0 Returns the created WordPress user ID.
+	 * @since 2.7.0 Creates the account without an initial role so role mapping can assign and track its roles.
 	 *
 	 * @return int Created WordPress user ID.
 	 */
 	public function scouting_oidc_user_create(): int {
 		Logger::info( LogComponent::USER, "Creating an account for user '{$this->full_name}'", null, $this->sol_id );
-		$user_id = wp_create_user( $this->sol_id, wp_generate_password( 18, true, true ), $this->email );
+		$user_id = wp_insert_user(
+			array(
+				'user_login' => $this->sol_id,
+				'user_pass'  => wp_generate_password( 18, true, true ),
+				'user_email' => $this->email,
+				'role'       => '',
+			)
+		);
 
 		// If user creation failed because the email address is already in use, append the SOL ID to the email (local-part+sol_id@example.com).
 		if ( is_wp_error( $user_id ) && $user_id->get_error_code() === 'existing_user_email' ) {
@@ -352,7 +359,14 @@ class User {
 				}
 
 				// Try creating the user again with the plus-addressed email.
-				$user_id = wp_create_user( $this->sol_id, wp_generate_password( 18, true, true ), $plus_address_email );
+				$user_id = wp_insert_user(
+					array(
+						'user_login' => $this->sol_id,
+						'user_pass'  => wp_generate_password( 18, true, true ),
+						'user_email' => $plus_address_email,
+						'role'       => '',
+					)
+				);
 				if ( is_wp_error( $user_id ) ) {
 					Logger::log_wp_error( LogComponent::USER, LogLevel::ERROR, $user_id, null, $this->sol_id );
 					ErrorHandler::redirect_to_login_error( 'error', $user_id->get_error_message(), 'login_email_mismatch' );
@@ -375,6 +389,7 @@ class User {
 		 * Fires after a user is created through Scouting OpenID Connect.
 		 *
 		 * @since 2.3.0
+		 * @since 2.7.0 Runs before the initial role mapping or default-role assignment.
 		 *
 		 * @param int    $user_id WordPress user ID.
 		 * @param string $sol_id  Scouts Online member ID.

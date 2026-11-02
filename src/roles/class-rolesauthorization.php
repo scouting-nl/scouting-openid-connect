@@ -13,20 +13,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Evaluates SOL role mappings and applies the plugin-managed WordPress role.
+ * Combines SOL role mappings and reconciles plugin-managed WordPress roles.
  *
  * @since 2.7.0 Adds SOL role authorization.
  */
 class RolesAuthorization {
 	/**
-	 * Option storing ordered SOL role mapping rules.
+	 * Option storing SOL role mapping rules.
 	 *
 	 * @since 2.7.0 Reads SOL role mapping rules.
 	 */
 	private const RULES_OPTION = 'scouting_oidc_sol_role_mapping_rules';
 
 	/**
-	 * User meta key proving which role was added rather than already present.
+	 * User meta key tracking roles added rather than already present.
 	 *
 	 * @since 2.7.0 Tracks ownership for safe role removal and uninstall.
 	 */
@@ -49,11 +49,11 @@ class RolesAuthorization {
 	private static array $active_assignments = array();
 
 	/**
-	 * Gets configured rules without the retired plugin-specific fallback.
+	 * Gets configured role mapping rules.
 	 *
-	 * @since 2.7.0 Normalizes SOL role mapping rules and ignores legacy defaults.
+	 * @since 2.7.0 Normalizes SOL role mapping rules.
 	 *
-	 * @return array{rules: array<int, array{id: string, organisation_id: string, organisation_unit_id: int, role_id: int, wordpress_role: string, login_allowed: bool}>} Mapping configuration.
+	 * @return array{rules: array} Mapping configuration with normalized selection lists.
 	 */
 	public static function scouting_oidc_roles_authorization_get_mapping(): array {
 		$wordpress_roles = wp_roles()->roles;
@@ -73,19 +73,20 @@ class RolesAuthorization {
 	}
 
 	/**
-	 * Gets the first matching authorization decision for a WordPress user.
+	 * Combines all matching rules; any matching deny blocks login.
 	 *
 	 * @since 2.7.0 Evaluates SOL role mapping rules.
 	 *
-	 * @param int $user_id WordPress user ID.
-	 * @return array{wordpress_role: string, login_allowed: bool} Role and login decision.
+	 * @param int  $user_id WordPress user ID.
+	 * @param bool $new_user Whether the account was created during this login.
+	 * @return array{wordpress_roles: string[], login_allowed: bool} Roles and login decision.
 	 */
-	public static function scouting_oidc_roles_authorization_get_user_decision( int $user_id ): array {
-		$preview = self::scouting_oidc_roles_authorization_get_user_preview( $user_id );
+	public static function scouting_oidc_roles_authorization_get_user_decision( int $user_id, bool $new_user = false ): array {
+		$preview = self::scouting_oidc_roles_authorization_get_user_preview( $user_id, $new_user );
 		if ( is_wp_error( $preview ) ) {
 			return array(
-				'wordpress_role' => '',
-				'login_allowed'  => false,
+				'wordpress_roles' => array(),
+				'login_allowed'   => false,
 			);
 		}
 
@@ -95,14 +96,16 @@ class RolesAuthorization {
 	/**
 	 * Previews the saved mapping without changing roles or login state.
 	 *
-	 * @since 2.7.0 Uses the WordPress default role when no mapping rule matches.
+	 * @since 2.7.0 Combines matching roles and optionally adds the WordPress default role; pauses saved rules when the roles scope is disabled.
 	 *
-	 * @param int $user_id WordPress user ID.
-	 * @return array{decision: array{wordpress_role: string, login_allowed: bool}, rule_index: int|null, assignments: array}|\WP_Error Authorization preview or an unavailable-data/read error; a null index means no rule matched.
+	 * @param int  $user_id WordPress user ID.
+	 * @param bool $new_user Whether to preview a newly created account.
+	 * @return array{decision: array{wordpress_roles: string[], login_allowed: bool}, rule_indexes: int[], assignments: array}|\WP_Error Authorization preview or an unavailable-data/read error.
 	 */
-	public static function scouting_oidc_roles_authorization_get_user_preview( int $user_id ): array|\WP_Error {
-		$mapping     = self::scouting_oidc_roles_authorization_get_mapping();
-		$assignments = self::scouting_oidc_roles_authorization_get_active_assignments( $user_id );
+	public static function scouting_oidc_roles_authorization_get_user_preview( int $user_id, bool $new_user = false ): array|\WP_Error {
+		$roles_enabled = self::scouting_oidc_roles_authorization_has_roles_scope();
+		$mapping       = $roles_enabled ? self::scouting_oidc_roles_authorization_get_mapping() : array( 'rules' => array() );
+		$assignments   = $roles_enabled ? self::scouting_oidc_roles_authorization_get_active_assignments( $user_id ) : array();
 		if ( is_wp_error( $assignments ) ) {
 			if ( 'sol_assignments_unavailable' !== $assignments->get_error_code() || ! empty( $mapping['rules'] ) ) {
 				return $assignments;
@@ -110,72 +113,124 @@ class RolesAuthorization {
 			$assignments = array();
 		}
 
+		$matched_roles = array();
+		$rule_indexes  = array();
+		$login_allowed = true;
 		foreach ( $mapping['rules'] as $index => $rule ) {
 			if ( self::scouting_oidc_roles_authorization_rule_matches_assignments( $rule, $assignments ) ) {
-				return array(
-					'decision'    => array(
-						'wordpress_role' => $rule['wordpress_role'],
-						'login_allowed'  => $rule['login_allowed'],
-					),
-					'rule_index'  => $index,
-					'assignments' => $assignments,
-				);
+				$rule_indexes[] = $index;
+				if ( ! $rule['login_allowed'] ) {
+					$login_allowed = false;
+				} else {
+					$matched_roles[] = $rule['wordpress_role'];
+				}
 			}
 		}
 
-		$wordpress_roles = wp_roles()->roles;
-		$default_role    = get_option( 'default_role', 'subscriber' );
-		if ( ! is_string( $default_role ) || ! isset( $wordpress_roles[ $default_role ] ) ) {
-			Logger::error( LogComponent::ROLES, 'The configured WordPress default role is unavailable.', $user_id );
-			$default_role = isset( $wordpress_roles['subscriber'] ) ? 'subscriber' : (string) array_key_first( $wordpress_roles );
+		if ( $login_allowed && ( ( empty( $rule_indexes ) && $new_user ) || ( ! empty( $matched_roles ) && get_option( 'scouting_oidc_roles_add_default_role', false ) ) ) ) {
+			$wordpress_roles = wp_roles()->roles;
+			$default_role    = get_option( 'default_role', 'subscriber' );
+			if ( ! is_string( $default_role ) || ! isset( $wordpress_roles[ $default_role ] ) ) {
+				Logger::error( LogComponent::ROLES, 'The configured WordPress default role is unavailable.', $user_id );
+				return new \WP_Error( 'sol_default_role_unavailable', __( 'Your access level could not be updated. Please contact the site administrator.', 'scouting-openid-connect' ) );
+			}
+			$matched_roles[] = $default_role;
 		}
 
 		return array(
-			'decision'    => array(
-				'wordpress_role' => $default_role,
-				'login_allowed'  => true,
+			'decision'     => array(
+				'wordpress_roles' => $login_allowed ? array_values( array_unique( $matched_roles ) ) : array(),
+				'login_allowed'   => $login_allowed,
 			),
-			'rule_index'  => null,
-			'assignments' => $assignments,
+			'rule_indexes' => $rule_indexes,
+			'assignments'  => $assignments,
 		);
 	}
 
 	/**
-	 * Applies the current plugin-managed WordPress role for a user.
+	 * Checks whether the configured scopes request SOL role assignments.
+	 *
+	 * @since 2.7.0 Shares the roles-scope check with administration notices.
+	 *
+	 * @return bool Whether the roles scope is enabled.
+	 */
+	public static function scouting_oidc_roles_authorization_has_roles_scope(): bool {
+		$scopes = get_option( 'scouting_oidc_scopes', '' );
+		return is_string( $scopes ) && in_array( 'roles', preg_split( '/\s+/', trim( $scopes ) ), true );
+	}
+
+	/**
+	 * Reads the list of plugin-owned roles.
+	 *
+	 * @since 2.7.0 Supports multiple positively owned WordPress roles and single-role values already stored by development builds.
+	 *
+	 * @param int $user_id WordPress user ID.
+	 * @return string[]|\WP_Error Owned role slugs or an invalid tracking error.
+	 */
+	public static function scouting_oidc_roles_authorization_get_owned_roles( int $user_id ): array|\WP_Error {
+		$stored = get_user_meta( $user_id, self::OWNED_ROLE_META_KEY, true );
+		if ( '' === $stored ) {
+			return array();
+		}
+		// Earlier development builds stored one positively owned role as a string.
+		if ( is_string( $stored ) ) {
+			$stored = array( $stored );
+		}
+		if ( ! is_array( $stored ) || count( array_filter( $stored, static fn( $role ): bool => is_string( $role ) && '' !== $role ) ) !== count( $stored ) ) {
+			Logger::error( LogComponent::ROLES, 'Stored WordPress role ownership is invalid.', $user_id );
+			return new \WP_Error( 'sol_role_ownership_invalid', __( 'Your access level could not be updated. Please contact the site administrator.', 'scouting-openid-connect' ) );
+		}
+		return array_values( array_unique( $stored ) );
+	}
+
+	/**
+	 * Reconciles all plugin-managed WordPress roles for a user.
 	 *
 	 * Existing roles not previously assigned by this plugin are left intact.
-	 * Legacy managed-role markers alone do not prove ownership.
 	 *
-	 * @since 2.7.0 Applies SOL role mappings without removing manual roles.
+	 * @since 2.7.0 Adds matching roles and removes obsolete owned roles without removing manual roles.
 	 *
-	 * @param int    $user_id WordPress user ID.
-	 * @param string $wordpress_role WordPress role slug to apply.
-	 * @return bool Whether the role could be applied.
+	 * @param int      $user_id WordPress user ID.
+	 * @param string[] $wordpress_roles WordPress role slugs to apply.
+	 * @return bool Whether the roles could be reconciled.
 	 */
-	public static function scouting_oidc_roles_authorization_apply_wordpress_role( int $user_id, string $wordpress_role ): bool {
+	public static function scouting_oidc_roles_authorization_apply_wordpress_roles( int $user_id, array $wordpress_roles ): bool {
 		$user = get_userdata( $user_id );
-		if ( ! $user instanceof \WP_User || ! isset( wp_roles()->roles[ $wordpress_role ] ) ) {
+		if ( ! $user instanceof \WP_User ) {
 			return false;
 		}
-
-		$managed_role = get_user_meta( $user_id, self::OWNED_ROLE_META_KEY, true );
-		if ( is_string( $managed_role ) && '' !== $managed_role && $managed_role !== $wordpress_role ) {
+		foreach ( $wordpress_roles as $role ) {
+			if ( ! is_string( $role ) || ! isset( wp_roles()->roles[ $role ] ) ) {
+				Logger::error( LogComponent::ROLES, 'A mapped WordPress role is unavailable.', $user_id );
+				return false;
+			}
+		}
+		$owned_roles = self::scouting_oidc_roles_authorization_get_owned_roles( $user_id );
+		if ( is_wp_error( $owned_roles ) ) {
+			return false;
+		}
+		foreach ( array_diff( $owned_roles, $wordpress_roles ) as $managed_role ) {
 			$user->remove_role( $managed_role );
 			$saved_user = get_userdata( $user_id );
 			if ( ! $saved_user instanceof \WP_User || in_array( $managed_role, $saved_user->roles, true ) ) {
 				Logger::error( LogComponent::ROLES, 'Could not remove the previous plugin-owned WordPress role.', $user_id );
 				return false;
 			}
-			delete_user_meta( $user_id, self::OWNED_ROLE_META_KEY );
-			if ( '' !== get_user_meta( $user_id, self::OWNED_ROLE_META_KEY, true ) ) {
-				Logger::error( LogComponent::ROLES, 'Could not clear ownership of the previous mapped WordPress role.', $user_id );
+			$owned_roles = array_values( array_diff( $owned_roles, array( $managed_role ) ) );
+			update_user_meta( $user_id, self::OWNED_ROLE_META_KEY, $owned_roles );
+			if ( get_user_meta( $user_id, self::OWNED_ROLE_META_KEY, true ) !== $owned_roles ) {
+				Logger::error( LogComponent::ROLES, 'Could not update ownership of the mapped WordPress roles.', $user_id );
 				return false;
 			}
 		}
 
-		if ( ! in_array( $wordpress_role, $user->roles, true ) ) {
-			update_user_meta( $user_id, self::OWNED_ROLE_META_KEY, $wordpress_role );
-			if ( get_user_meta( $user_id, self::OWNED_ROLE_META_KEY, true ) !== $wordpress_role ) {
+		foreach ( array_unique( $wordpress_roles ) as $wordpress_role ) {
+			if ( in_array( $wordpress_role, $user->roles, true ) ) {
+				continue;
+			}
+			$owned_roles = array_values( array_unique( array_merge( $owned_roles, array( $wordpress_role ) ) ) );
+			update_user_meta( $user_id, self::OWNED_ROLE_META_KEY, $owned_roles );
+			if ( get_user_meta( $user_id, self::OWNED_ROLE_META_KEY, true ) !== $owned_roles ) {
 				Logger::error( LogComponent::ROLES, 'Could not record ownership of the mapped WordPress role.', $user_id );
 				return false;
 			}
@@ -203,8 +258,7 @@ class RolesAuthorization {
 			return array();
 		}
 
-		$scopes = get_option( 'scouting_oidc_scopes', '' );
-		if ( ! is_string( $scopes ) || ! in_array( 'roles', preg_split( '/\s+/', trim( $scopes ) ), true ) || 'yes' !== get_user_meta( $user_id, 'scouting_oidc_roles_available', true ) ) {
+		if ( ! self::scouting_oidc_roles_authorization_has_roles_scope() || 'yes' !== get_user_meta( $user_id, 'scouting_oidc_roles_available', true ) ) {
 			Logger::warning( LogComponent::ROLES, 'SOL assignments are unavailable for authorization; enable the roles scope and complete a fresh OIDC login.', $user_id );
 			return new \WP_Error( 'sol_assignments_unavailable', __( 'Your access level could not be updated. Please contact the site administrator.', 'scouting-openid-connect' ) );
 		}
@@ -379,59 +433,97 @@ class RolesAuthorization {
 	 *
 	 * @param mixed                $stored_rule Stored rule value.
 	 * @param array<string, array> $wordpress_roles Available WordPress roles.
-	 * @return array{id: string, organisation_id: string, organisation_unit_id: int, role_id: int, wordpress_role: string, login_allowed: bool}|null Normalized rule or null when invalid.
+	 * @return array|null Normalized rule with selection lists and operators, or null when invalid.
 	 */
 	private static function scouting_oidc_roles_authorization_normalize_rule( mixed $stored_rule, array $wordpress_roles ): ?array {
 		if ( ! is_array( $stored_rule ) ) {
 			return null;
 		}
 
-		$organisation_id = '';
-		if ( isset( $stored_rule['organisation_id'] ) && '' !== $stored_rule['organisation_id'] ) {
-			if ( ! is_string( $stored_rule['organisation_id'] ) || 1 !== preg_match( self::ORGANISATION_ID_PATTERN, $stored_rule['organisation_id'] ) ) {
-				return null;
-			}
-			$organisation_id = $stored_rule['organisation_id'];
+		$conditions = self::scouting_oidc_roles_authorization_normalize_conditions( $stored_rule );
+		if ( is_wp_error( $conditions ) ) {
+			return null;
 		}
+		$wordpress_role = isset( $stored_rule['wordpress_role'] ) && is_string( $stored_rule['wordpress_role'] ) ? sanitize_key( $stored_rule['wordpress_role'] ) : '';
+		$id             = isset( $stored_rule['id'] ) && is_string( $stored_rule['id'] ) ? sanitize_text_field( $stored_rule['id'] ) : '';
 
-		$organisation_unit_id = self::scouting_oidc_roles_authorization_normalize_positive_id( $stored_rule['organisation_unit_id'] ?? 0 );
-		$role_id              = self::scouting_oidc_roles_authorization_normalize_positive_id( $stored_rule['role_id'] ?? 0 );
-		$wordpress_role       = isset( $stored_rule['wordpress_role'] ) && is_string( $stored_rule['wordpress_role'] ) ? sanitize_key( $stored_rule['wordpress_role'] ) : '';
-		$id                   = isset( $stored_rule['id'] ) && is_string( $stored_rule['id'] ) ? sanitize_text_field( $stored_rule['id'] ) : '';
-
-		if ( ! isset( $wordpress_roles[ $wordpress_role ] ) || ( '' === $organisation_id && 0 === $organisation_unit_id && 0 === $role_id ) ) {
+		if ( ! isset( $wordpress_roles[ $wordpress_role ] ) ) {
 			return null;
 		}
 
-		return array(
-			'id'                   => $id,
-			'organisation_id'      => $organisation_id,
-			'organisation_unit_id' => $organisation_unit_id,
-			'role_id'              => $role_id,
-			'wordpress_role'       => $wordpress_role,
-			'login_allowed'        => ! empty( $stored_rule['login_allowed'] ),
+		return array_merge(
+			array( 'id' => $id ),
+			$conditions,
+			array(
+				'wordpress_role' => $wordpress_role,
+				'login_allowed'  => ! empty( $stored_rule['login_allowed'] ),
+			)
 		);
 	}
 
 	/**
-	 * Checks whether an ordered mapping rule matches any active assignment.
+	 * Normalizes inclusive/exclusive selection lists.
+	 *
+	 * @since 2.7.0 Supports multiple values per condition.
+	 *
+	 * @param array $input Rule conditions.
+	 * @return array|\WP_Error Normalized conditions or invalid-input error.
+	 */
+	public static function scouting_oidc_roles_authorization_normalize_conditions( array $input ): array|\WP_Error {
+		$conditions = array();
+		$has_values = false;
+		foreach ( array( 'organisation', 'organisation_unit', 'role' ) as $field ) {
+			$key    = $field . '_ids';
+			$values = $input[ $key ] ?? array();
+			$mode   = $input[ $field . '_operator' ] ?? 'in';
+			if ( ! is_array( $values ) || ! in_array( $mode, array( 'in', 'not_in' ), true ) ) {
+				return new \WP_Error( 'invalid_rule' );
+			}
+			$normalized = array();
+			foreach ( $values as $value ) {
+				if ( 'organisation' === $field ) {
+					if ( ! is_string( $value ) || 1 !== preg_match( self::ORGANISATION_ID_PATTERN, $value ) ) {
+						return new \WP_Error( 'invalid_organisation' );
+					}
+					$normalized[] = $value;
+				} else {
+					$identifier = self::scouting_oidc_roles_authorization_normalize_positive_id( $value );
+					if ( $identifier <= 0 ) {
+						return new \WP_Error( 'invalid_rule' );
+					}
+					$normalized[] = $identifier;
+				}
+			}
+			$normalized = array_values( array_unique( $normalized ) );
+			sort( $normalized, 'organisation' === $field ? SORT_STRING : SORT_NUMERIC );
+			$conditions[ $key ]                 = $normalized;
+			$conditions[ $field . '_operator' ] = empty( $normalized ) ? 'in' : $mode;
+			$has_values                         = $has_values || ! empty( $normalized );
+		}
+		return $has_values ? $conditions : new \WP_Error( 'invalid_rule' );
+	}
+
+	/**
+	 * Checks all populated conditions against one active assignment at a time.
 	 *
 	 * @since 2.7.0 Matches role mapping conditions against active assignments.
 	 *
-	 * @param array{id: string, organisation_id: string, organisation_unit_id: int, role_id: int, wordpress_role: string, login_allowed: bool} $rule Mapping rule.
-	 * @param array<int, array{role_id: int, organisation_unit_id: int, organisation_id: string, organisation_ids: array<int, string>}>        $assignments Active assignments.
+	 * @param array $rule Normalized mapping rule.
+	 * @param array $assignments Active assignments with organisation ancestry.
 	 * @return bool Whether the rule matches.
 	 */
 	private static function scouting_oidc_roles_authorization_rule_matches_assignments( array $rule, array $assignments ): bool {
 		foreach ( $assignments as $assignment ) {
-			if ( '' !== $rule['organisation_id'] && ! in_array( $rule['organisation_id'], $assignment['organisation_ids'], true ) ) {
-				continue;
-			}
-			if ( 0 !== $rule['organisation_unit_id'] && $rule['organisation_unit_id'] !== $assignment['organisation_unit_id'] ) {
-				continue;
-			}
-			if ( 0 !== $rule['role_id'] && $rule['role_id'] !== $assignment['role_id'] ) {
-				continue;
+			foreach ( array( 'organisation', 'organisation_unit', 'role' ) as $field ) {
+				$selected = $rule[ $field . '_ids' ];
+				if ( empty( $selected ) ) {
+					continue;
+				}
+				$actual  = 'organisation' === $field ? $assignment['organisation_ids'] : array( $assignment[ $field . '_id' ] );
+				$matches = ! empty( array_intersect( $selected, $actual ) );
+				if ( ( 'in' === $rule[ $field . '_operator' ] && ! $matches ) || ( 'not_in' === $rule[ $field . '_operator' ] && $matches ) ) {
+					continue 2;
+				}
 			}
 
 			return true;
