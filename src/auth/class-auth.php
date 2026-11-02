@@ -335,16 +335,14 @@ class Auth {
 		if ( $user->scouting_oidc_user_check_if_exist() ) {
 			Logger::info( LogComponent::AUTH, "User '{$user->get_display_name()}' has an existing account, updating user information and logging in", null, $user->get_username() );
 			$user_id = $user->scouting_oidc_user_update();
-			RolesSync::scouting_oidc_roles_sync_user_info( $user_id, $user_info );
-			$this->scouting_oidc_auth_apply_role_mapping( $user_id );
+			$this->scouting_oidc_auth_apply_role_mapping( $user_id, $user_info );
 			// Promote per-state redirect only after successful callback validation and right before login.
 			$this->oidc_client->apply_redirect_for_state_to_session( $state );
 			$user->scouting_oidc_user_login();
 		} elseif ( get_option( 'scouting_oidc_user_auto_create' ) ) {
 				Logger::info( LogComponent::AUTH, "User '{$user->get_display_name()}' does not have an account, auto-creation is enabled, creating account and logging in", null, $user->get_username() );
 				$user_id = $user->scouting_oidc_user_create();
-				RolesSync::scouting_oidc_roles_sync_user_info( $user_id, $user_info );
-				$this->scouting_oidc_auth_apply_role_mapping( $user_id );
+				$this->scouting_oidc_auth_apply_role_mapping( $user_id, $user_info );
 				// Promote per-state redirect only after successful callback validation and right before login.
 				$this->oidc_client->apply_redirect_for_state_to_session( $state );
 				$user->scouting_oidc_user_login();
@@ -359,13 +357,24 @@ class Auth {
 	}
 
 	/**
-	 * Applies the matching SOL role mapping and blocks denied OIDC logins.
+	 * Synchronizes SOL assignments and applies role mapping before OIDC login.
 	 *
 	 * @since 2.7.0 Enforces SOL role mapping decisions during login.
 	 *
-	 * @param int $user_id WordPress user ID.
+	 * @param int   $user_id WordPress user ID.
+	 * @param array $user_info Validated UserInfo response.
 	 */
-	private function scouting_oidc_auth_apply_role_mapping( int $user_id ): void {
+	private function scouting_oidc_auth_apply_role_mapping( int $user_id, array $user_info ): void {
+		if ( ! RolesSync::scouting_oidc_roles_sync_user_info( $user_id, $user_info ) ) {
+			Logger::error( LogComponent::ROLES, 'Blocked OIDC login because SOL role synchronization failed.', $user_id );
+			ErrorHandler::redirect_to_login_error(
+				'server_error',
+				__( 'Your access level could not be updated. Please contact the site administrator.', 'scouting-openid-connect' ),
+				__( 'We could not complete your sign-in.', 'scouting-openid-connect' ),
+				'roles_sync_failed'
+			);
+		}
+
 		$decision = RolesAuthorization::scouting_oidc_roles_authorization_get_user_decision( $user_id );
 		if ( ! $decision['login_allowed'] ) {
 			Logger::warning( LogComponent::ROLES, 'Blocked OIDC login because the SOL role mapping does not allow access.', $user_id );

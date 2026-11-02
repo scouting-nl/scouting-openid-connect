@@ -95,6 +95,10 @@ $scouting_oidc_product_metas = array(
 	'_scouting_oidc_allowed_role_ids',
 	'_scouting_oidc_denied_organisation_ids',
 	'_scouting_oidc_denied_role_ids',
+	'_scouting_oidc_allowed_include_descendants',
+	'_scouting_oidc_denied_include_descendants',
+	'_scouting_oidc_allowed_require_both',
+	'_scouting_oidc_denied_require_both',
 );
 
 foreach ( $scouting_oidc_product_metas as $scouting_oidc_product_meta ) {

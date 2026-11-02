@@ -186,6 +186,9 @@ class RolesAdmin {
 		$roles              = $this->scouting_oidc_roles_admin_get_roles();
 		$wordpress_roles    = wp_roles()->roles;
 		$organisation_paths = RolesAuthorization::scouting_oidc_roles_authorization_get_organisation_paths( array_map( 'strval', array_keys( $organisations ) ) );
+		if ( is_wp_error( $organisation_paths ) ) {
+			wp_die( esc_html__( 'The preview could not read SOL assignments. Check the database before relying on a login decision.', 'scouting-openid-connect' ) );
+		}
 		?>
 		<div class="wrap scouting-oidc-role-mapping">
 			<h1 class="wp-heading-inline"><?php esc_html_e( 'SOL Role Mapping', 'scouting-openid-connect' ); ?></h1>
@@ -373,7 +376,7 @@ class RolesAdmin {
 		$rule_id = isset( $_POST['rule_id'] ) ? sanitize_text_field( wp_unslash( $_POST['rule_id'] ) ) : '';
 		$rule    = $this->scouting_oidc_roles_admin_validate_rule( $_POST );
 		if ( is_wp_error( $rule ) ) {
-			$this->scouting_oidc_roles_admin_redirect( 'invalid' );
+			$this->scouting_oidc_roles_admin_redirect( 'sol_hierarchy_read_failed' === $rule->get_error_code() ? 'save-failed' : 'invalid' );
 		}
 
 		if ( '' !== $rule_id ) {
@@ -579,11 +582,9 @@ class RolesAdmin {
 				<p id="sol-user-test-error" role="alert"><?php echo esc_html( $error ); ?></p>
 			<?php elseif ( $user ) : ?>
 				<?php
-				global $wpdb;
 				$preview = RolesAuthorization::scouting_oidc_roles_authorization_get_user_preview( $user->ID );
 				?>
-				<?php if ( '' !== $wpdb->last_error ) : ?>
-					<?php Logger::error( LogComponent::ROLES, 'SOL mapping preview could not read synchronized assignments.', $user->ID ); ?>
+				<?php if ( is_wp_error( $preview ) ) : ?>
 					<p role="alert"><?php esc_html_e( 'The preview could not read SOL assignments. Check the database before relying on a login decision.', 'scouting-openid-connect' ); ?></p>
 				<?php else : ?>
 					<h3><?php echo esc_html( $user->display_name . ' (' . $user->user_login . ')' ); ?></h3>
@@ -630,6 +631,9 @@ class RolesAdmin {
 		$units              = $this->scouting_oidc_roles_admin_get_organisation_units();
 		$roles              = $this->scouting_oidc_roles_admin_get_roles();
 		$organisation_paths = RolesAuthorization::scouting_oidc_roles_authorization_get_organisation_paths( array_map( 'strval', array_column( $units, 'organisation_id' ) ) );
+		if ( is_wp_error( $organisation_paths ) ) {
+			return $organisation_paths;
+		}
 
 		if ( '' !== $organisation_id && ! isset( $this->scouting_oidc_roles_admin_get_organisations()[ $organisation_id ] ) ) {
 			return new \WP_Error( 'invalid_organisation' );

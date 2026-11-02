@@ -411,8 +411,16 @@ class WooCommerceRestrictions {
 		$allowed_require_both    = 'yes' === get_post_meta( $restriction_product_id, self::ALLOWED_REQUIRE_BOTH_META_KEY, true );
 		$denied_require_both     = 'yes' === get_post_meta( $restriction_product_id, self::DENIED_REQUIRE_BOTH_META_KEY, true );
 
+		if ( ! $has_allow_rule && empty( $denied_organisation_ids ) && empty( $denied_role_ids ) ) {
+			return true;
+		}
+
 		if ( $user_id > 0 ) {
-			foreach ( RolesAuthorization::scouting_oidc_roles_authorization_get_active_assignments( $user_id ) as $assignment ) {
+			$assignments = RolesAuthorization::scouting_oidc_roles_authorization_get_active_assignments( $user_id );
+			if ( is_wp_error( $assignments ) ) {
+				return false;
+			}
+			foreach ( $assignments as $assignment ) {
 				$allowed_assignment_ids = $allowed_descendants ? $assignment['organisation_ids'] : array( $assignment['organisation_id'] );
 				$denied_assignment_ids  = $denied_descendants ? $assignment['organisation_ids'] : array( $assignment['organisation_id'] );
 				if ( $this->scouting_oidc_woocommerce_restrictions_assignment_matches( $denied_assignment_ids, $assignment['role_id'], $denied_organisation_ids, $denied_role_ids, $denied_require_both ) ) {

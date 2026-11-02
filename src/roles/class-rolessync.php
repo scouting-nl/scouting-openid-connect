@@ -29,31 +29,33 @@ class RolesSync {
 	 *
 	 * @param int   $user_id WordPress user ID.
 	 * @param array $user_info Validated UserInfo response.
+	 * @return bool Whether synchronization succeeded or optional role claims were absent.
 	 */
-	public static function scouting_oidc_roles_sync_user_info( int $user_id, array $user_info ): void {
+	public static function scouting_oidc_roles_sync_user_info( int $user_id, array $user_info ): bool {
 		if ( $user_id <= 0 || ! get_userdata( $user_id ) ) {
 			Logger::warning( LogComponent::ROLES, 'Skipped SOL role synchronization because the WordPress user could not be found.', $user_id > 0 ? $user_id : null );
-			return;
+			return false;
 		}
 
 		$role_graph = self::scouting_oidc_roles_sync_normalize_role_graph( $user_info );
 		if ( null === $role_graph ) {
 			Logger::debug( LogComponent::ROLES, 'Skipped SOL role synchronization because the UserInfo response did not include a role graph.', $user_id );
-			return;
+			return true;
 		}
 
 		if ( is_wp_error( $role_graph ) ) {
 			Logger::warning( LogComponent::ROLES, 'Skipped SOL role synchronization because the UserInfo role graph was invalid.', $user_id );
-			return;
+			return false;
 		}
 
 		if ( ! self::scouting_oidc_roles_sync_persist_role_graph( $user_id, $role_graph ) ) {
 			Logger::error( LogComponent::ROLES, 'SOL role synchronization could not be saved.', $user_id );
-			return;
+			return false;
 		}
 
 		RolesAuthorization::scouting_oidc_roles_authorization_clear_active_assignments( $user_id );
 		Logger::debug( LogComponent::ROLES, 'SOL role synchronization completed.', $user_id );
+		return true;
 	}
 
 	/**

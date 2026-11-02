@@ -82,6 +82,12 @@ class RolesAuthorization {
 	 */
 	public static function scouting_oidc_roles_authorization_get_user_decision( int $user_id ): array {
 		$preview = self::scouting_oidc_roles_authorization_get_user_preview( $user_id );
+		if ( is_wp_error( $preview ) ) {
+			return array(
+				'wordpress_role' => '',
+				'login_allowed'  => false,
+			);
+		}
 
 		return $preview['decision'];
 	}
@@ -92,11 +98,14 @@ class RolesAuthorization {
 	 * @since 2.7.0 Uses the WordPress default role when no mapping rule matches.
 	 *
 	 * @param int $user_id WordPress user ID.
-	 * @return array{decision: array{wordpress_role: string, login_allowed: bool}, rule_index: int|null, assignments: array} Authorization preview; a null index means no rule matched.
+	 * @return array{decision: array{wordpress_role: string, login_allowed: bool}, rule_index: int|null, assignments: array}|\WP_Error Authorization preview or a database read error; a null index means no rule matched.
 	 */
-	public static function scouting_oidc_roles_authorization_get_user_preview( int $user_id ): array {
+	public static function scouting_oidc_roles_authorization_get_user_preview( int $user_id ): array|\WP_Error {
 		$mapping     = self::scouting_oidc_roles_authorization_get_mapping();
 		$assignments = self::scouting_oidc_roles_authorization_get_active_assignments( $user_id );
+		if ( is_wp_error( $assignments ) ) {
+			return $assignments;
+		}
 
 		foreach ( $mapping['rules'] as $index => $rule ) {
 			if ( self::scouting_oidc_roles_authorization_rule_matches_assignments( $rule, $assignments ) ) {
@@ -165,9 +174,9 @@ class RolesAuthorization {
 	 * @since 2.7.0 Reads active SOL role assignments for authorization.
 	 *
 	 * @param int $user_id WordPress user ID.
-	 * @return array<int, array{role_id: int, organisation_unit_id: int, organisation_id: string, organisation_ids: array<int, string>}> Active assignments with organisation ancestry.
+	 * @return array<int, array{role_id: int, organisation_unit_id: int, organisation_id: string, organisation_ids: array<int, string>}>|\WP_Error Active assignments with organisation ancestry, or a database read error.
 	 */
-	public static function scouting_oidc_roles_authorization_get_active_assignments( int $user_id ): array {
+	public static function scouting_oidc_roles_authorization_get_active_assignments( int $user_id ): array|\WP_Error {
 		if ( $user_id <= 0 ) {
 			return array();
 		}
@@ -199,10 +208,18 @@ class RolesAuthorization {
 			ARRAY_A
 		);
 
-		$organisation_ids   = array_map( 'strval', array_column( is_array( $rows ) ? $rows : array(), 'organisation_id' ) );
+		if ( ! is_array( $rows ) || '' !== $wpdb->last_error ) {
+			Logger::error( LogComponent::ROLES, 'Could not read active SOL assignments; authorization cannot be evaluated.', $user_id );
+			return new \WP_Error( 'sol_assignments_read_failed' );
+		}
+
+		$organisation_ids   = array_map( 'strval', array_column( $rows, 'organisation_id' ) );
 		$organisation_paths = self::scouting_oidc_roles_authorization_get_organisation_paths( $organisation_ids );
-		$assignments        = array();
-		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
+		if ( is_wp_error( $organisation_paths ) ) {
+			return $organisation_paths;
+		}
+		$assignments = array();
+		foreach ( $rows as $row ) {
 			$organisation_id = (string) $row['organisation_id'];
 			$assignments[]   = array(
 				'role_id'              => (int) $row['role_id'],
@@ -223,16 +240,19 @@ class RolesAuthorization {
 	 * @since 2.7.0 Shares SOL organisation hierarchy matches with the mapping editor.
 	 *
 	 * @param array<int, string> $organisation_ids Direct organisation IDs.
-	 * @return array<string, array<int, string>> Organisation IDs keyed by direct organisation ID.
+	 * @return array<string, array<int, string>>|\WP_Error Organisation IDs keyed by direct organisation ID, or a database read error.
 	 */
-	public static function scouting_oidc_roles_authorization_get_organisation_paths( array $organisation_ids ): array {
+	public static function scouting_oidc_roles_authorization_get_organisation_paths( array $organisation_ids ): array|\WP_Error {
 		$organisation_ids = self::scouting_oidc_roles_authorization_normalize_organisation_ids( $organisation_ids );
 		if ( empty( $organisation_ids ) ) {
 			return array();
 		}
 
 		$parents_by_child = self::scouting_oidc_roles_authorization_get_organisation_parents();
-		$paths            = array();
+		if ( is_wp_error( $parents_by_child ) ) {
+			return $parents_by_child;
+		}
+		$paths = array();
 		foreach ( $organisation_ids as $organisation_id ) {
 			$paths[ $organisation_id ] = self::scouting_oidc_roles_authorization_get_organisation_path( $organisation_id, $parents_by_child );
 		}
@@ -264,16 +284,20 @@ class RolesAuthorization {
 	 *
 	 * @since 2.7.0 Reads SOL organisation hierarchy relationships.
 	 *
-	 * @return array<string, array<int, string>> Parent IDs keyed by child organisation ID.
+	 * @return array<string, array<int, string>>|\WP_Error Parent IDs keyed by child organisation ID, or a database read error.
 	 */
-	private static function scouting_oidc_roles_authorization_get_organisation_parents(): array {
+	private static function scouting_oidc_roles_authorization_get_organisation_parents(): array|\WP_Error {
 		global $wpdb;
 
 		$organisation_parents_table = $wpdb->prefix . 'scouting_oidc_sol_organisation_parents';
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$rows   = $wpdb->get_results( $wpdb->prepare( 'SELECT child_organisation_id, parent_organisation_id FROM %i', $organisation_parents_table ), ARRAY_A );
+		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT child_organisation_id, parent_organisation_id FROM %i', $organisation_parents_table ), ARRAY_A );
+		if ( ! is_array( $rows ) || '' !== $wpdb->last_error ) {
+			Logger::error( LogComponent::ROLES, 'Could not read SOL organisation hierarchy; authorization cannot be evaluated.' );
+			return new \WP_Error( 'sol_hierarchy_read_failed' );
+		}
 		$result = array();
-		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
+		foreach ( $rows as $row ) {
 			$child_organisation_id  = isset( $row['child_organisation_id'] ) ? (string) $row['child_organisation_id'] : '';
 			$parent_organisation_id = isset( $row['parent_organisation_id'] ) ? (string) $row['parent_organisation_id'] : '';
 			if ( 1 === preg_match( self::ORGANISATION_ID_PATTERN, $child_organisation_id ) && 1 === preg_match( self::ORGANISATION_ID_PATTERN, $parent_organisation_id ) ) {
