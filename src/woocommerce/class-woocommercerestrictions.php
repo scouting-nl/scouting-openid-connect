@@ -19,6 +19,20 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class WooCommerceRestrictions {
 	/**
+	 * Product meta key requiring a signed-in SOL account.
+	 *
+	 * @since 2.7.0 Adds an explicit SOL sign-in requirement.
+	 */
+	private const REQUIRE_SOL_LOGIN_META_KEY = '_scouting_oidc_require_sol_login';
+
+	/**
+	 * WooCommerce option enforcing SOL sign-in for every product.
+	 *
+	 * @since 2.7.0 Adds the global product access override.
+	 */
+	private const REQUIRE_SOL_LOGIN_OPTION = 'scouting_oidc_woocommerce_require_sol_login';
+
+	/**
 	 * Product meta key for allowed SOL organisation IDs.
 	 *
 	 * @since 2.7.0 Stores WooCommerce organisation restrictions.
@@ -86,7 +100,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Registers product-editor and purchasing hooks when WooCommerce is active.
 	 *
-	 * @since 2.7.0 Registers WooCommerce SOL ordering restrictions.
+	 * @since 2.7.0 Registers SOL ordering restrictions, global sign-in settings and variation purchase checks.
 	 */
 	public function scouting_oidc_woocommerce_restrictions_register_hooks(): void {
 		if ( ! class_exists( 'WooCommerce' ) ) {
@@ -94,13 +108,52 @@ class WooCommerceRestrictions {
 		}
 
 		add_filter( 'woocommerce_product_data_tabs', array( $this, 'scouting_oidc_woocommerce_restrictions_add_product_data_tab' ) );
+		add_filter( 'woocommerce_get_settings_products', array( $this, 'scouting_oidc_woocommerce_restrictions_product_settings' ), 10, 2 );
 		add_action( 'woocommerce_product_data_panels', array( $this, 'scouting_oidc_woocommerce_restrictions_render_product_data_panel' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'scouting_oidc_woocommerce_restrictions_enqueue_product_data_tab_style' ) );
 		add_action( 'woocommerce_admin_process_product_object', array( $this, 'scouting_oidc_woocommerce_restrictions_save_product_fields' ) );
 		add_filter( 'woocommerce_is_purchasable', array( $this, 'scouting_oidc_woocommerce_restrictions_is_purchasable' ), 10, 2 );
+		add_filter( 'woocommerce_variation_is_purchasable', array( $this, 'scouting_oidc_woocommerce_restrictions_is_purchasable' ), 10, 2 );
 		add_filter( 'woocommerce_add_to_cart_validation', array( $this, 'scouting_oidc_woocommerce_restrictions_validate_add_to_cart' ), 10, 4 );
 		add_action( 'woocommerce_check_cart_items', array( $this, 'scouting_oidc_woocommerce_restrictions_validate_cart' ) );
 		add_action( 'woocommerce_single_product_summary', array( $this, 'scouting_oidc_woocommerce_restrictions_render_purchase_notice' ), 6 );
+	}
+
+	/**
+	 * Adds the global SOL sign-in override to WooCommerce Products settings.
+	 *
+	 * @since 2.7.0 Uses WooCommerce's standard settings save and nonce handling.
+	 *
+	 * @param array  $settings Existing product settings.
+	 * @param string $current_section Current Products settings section.
+	 * @return array Settings including the SOL Access section on the general page.
+	 */
+	public function scouting_oidc_woocommerce_restrictions_product_settings( array $settings, string $current_section = '' ): array {
+		if ( '' !== $current_section ) {
+			return $settings;
+		}
+		return array_merge(
+			$settings,
+			array(
+				array(
+					'title' => __( 'SOL Access', 'scouting-openid-connect' ),
+					'type'  => 'title',
+					'id'    => 'scouting_oidc_sol_access',
+				),
+				array(
+					'title'    => __( 'Require SOL sign-in', 'scouting-openid-connect' ),
+					'desc'     => __( 'Require a signed-in SOL account for all products', 'scouting-openid-connect' ),
+					'desc_tip' => __( 'Off by default. When enabled, guests and non-SOL accounts cannot purchase any product. This overrides individual product settings; organisation and role restrictions still apply.', 'scouting-openid-connect' ),
+					'id'       => self::REQUIRE_SOL_LOGIN_OPTION,
+					'type'     => 'checkbox',
+					'default'  => 'no',
+				),
+				array(
+					'type' => 'sectionend',
+					'id'   => 'scouting_oidc_sol_access',
+				),
+			)
+		);
 	}
 
 	/**
@@ -150,7 +203,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Renders the SOL restrictions panel in WooCommerce Product data.
 	 *
-	 * @since 2.7.0 Adds contextual role labels and configurable organisation and role matching.
+	 * @since 2.7.0 Adds contextual role labels and scoped assignment controls; keeps SOL sign-in settings available without the roles scope.
 	 */
 	public function scouting_oidc_woocommerce_restrictions_render_product_data_panel(): void {
 		global $post;
@@ -160,12 +213,23 @@ class WooCommerceRestrictions {
 		$allowed_role_ids         = $this->scouting_oidc_woocommerce_restrictions_get_role_ids( $product_id );
 		$denied_organisation_ids  = $this->scouting_oidc_woocommerce_restrictions_get_organisation_ids( $product_id, self::DENIED_ORGANISATIONS_META_KEY );
 		$denied_role_ids          = $this->scouting_oidc_woocommerce_restrictions_get_role_ids( $product_id, self::DENIED_ROLES_META_KEY );
-		$organisations            = $this->scouting_oidc_woocommerce_restrictions_get_organisations();
-		$roles                    = $this->scouting_oidc_woocommerce_restrictions_get_roles();
+		$roles_enabled            = RolesAuthorization::scouting_oidc_roles_authorization_has_roles_scope();
+		$organisations            = $roles_enabled ? $this->scouting_oidc_woocommerce_restrictions_get_organisations() : array();
+		$roles                    = $roles_enabled ? $this->scouting_oidc_woocommerce_restrictions_get_roles() : array();
 		$organisation_ids         = array_column( $organisations, 'organisation_id' );
 		$role_ids                 = array_map( 'intval', array_column( $roles, 'role_id' ) );
 		?>
 		<div id="scouting_oidc_product_data" class="panel woocommerce_options_panel hidden">
+			<div class="options_group">
+				<p id="scouting-oidc-login-help" class="scouting-oidc-access-description"><?php esc_html_e( 'Off by default. Require a signed-in SOL account to order this product, even when no organisation or role is selected. Guests and non-SOL accounts are blocked, including after logout with items already in the cart. Organisation and role rules apply only when the roles scope is enabled. The global setting under WooCommerce > Settings > Products can require SOL sign-in for all products and cannot be overridden here.', 'scouting-openid-connect' ); ?></p>
+				<?php $this->scouting_oidc_woocommerce_restrictions_render_checkbox( 'scouting_oidc_require_sol_login', 'scouting-oidc-login-help', __( 'Require SOL sign-in', 'scouting-openid-connect' ), 'yes' === get_post_meta( $product_id, self::REQUIRE_SOL_LOGIN_META_KEY, true ) ); ?>
+				<?php if ( 'yes' === get_option( self::REQUIRE_SOL_LOGIN_OPTION, 'no' ) ) : ?>
+					<p class="scouting-oidc-access-description"><?php esc_html_e( 'SOL sign-in is currently required for all products by the global WooCommerce setting, regardless of this checkbox.', 'scouting-openid-connect' ); ?></p>
+				<?php endif; ?>
+			</div>
+			<?php if ( ! $roles_enabled ) : ?>
+				<p class="scouting-oidc-access-description"><?php esc_html_e( 'The roles scope is disabled. Saved organisation and role restrictions are paused and preserved. Only the product or global SOL sign-in requirement applies; without it, these products may be purchased by guests.', 'scouting-openid-connect' ); ?></p>
+			<?php else : ?>
 			<div class="options_group">
 				<p id="scouting-oidc-allow-help" class="scouting-oidc-access-description"><?php esc_html_e( 'Select organisations or roles that may order this product. A customer needs one matching active organisation or role. Enable Require both organisation and role to match both fields on the same active assignment when both fields contain selections; with only one field selected, only that field is required. Include descendant organisations to match assignments in groups beneath a selected parent; turn it off to require a direct assignment in a selected organisation. Leave both allow fields empty to allow every customer unless a deny rule matches.', 'scouting-openid-connect' ); ?></p>
 				<p class="form-field">
@@ -236,6 +300,7 @@ class WooCommerceRestrictions {
 				</p>
 				<?php $this->scouting_oidc_woocommerce_restrictions_render_checkbox( 'scouting_oidc_denied_require_both', 'scouting-oidc-deny-help', __( 'Require both organisation and role', 'scouting-openid-connect' ), 'yes' === get_post_meta( $product_id, self::DENIED_REQUIRE_BOTH_META_KEY, true ) ); ?>
 			</div>
+			<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -276,7 +341,7 @@ class WooCommerceRestrictions {
 	/**
 	 * Saves SOL ordering restrictions through the WooCommerce product data API.
 	 *
-	 * @since 2.7.0 Saves WooCommerce SOL restriction fields and matching modes.
+	 * @since 2.7.0 Saves SOL restriction fields, matching modes and the per-product SOL sign-in policy.
 	 *
 	 * @param \WC_Product $product Product being saved.
 	 */
@@ -287,6 +352,12 @@ class WooCommerceRestrictions {
 
 		$nonce = isset( $_POST['woocommerce_meta_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['woocommerce_meta_nonce'] ) ) : '';
 		if ( ! wp_verify_nonce( $nonce, 'woocommerce_save_data' ) ) {
+			return;
+		}
+		if ( isset( $_POST['scouting_oidc_require_sol_login_present'] ) ) {
+			$product->update_meta_data( self::REQUIRE_SOL_LOGIN_META_KEY, isset( $_POST['scouting_oidc_require_sol_login'] ) && 'yes' === $_POST['scouting_oidc_require_sol_login'] ? 'yes' : 'no' );
+		}
+		if ( ! RolesAuthorization::scouting_oidc_roles_authorization_has_roles_scope() ) {
 			return;
 		}
 
@@ -346,7 +417,7 @@ class WooCommerceRestrictions {
 			return $passed;
 		}
 
-		wc_add_notice( $this->scouting_oidc_woocommerce_restrictions_get_purchase_message(), 'error' );
+		wc_add_notice( $this->scouting_oidc_woocommerce_restrictions_get_purchase_message( $variation_id > 0 ? $variation_id : $product_id ), 'error' );
 
 		return false;
 	}
@@ -370,7 +441,7 @@ class WooCommerceRestrictions {
 		}
 
 		foreach ( array_unique( $restricted_product_ids ) as $product_id ) {
-			wc_add_notice( $this->scouting_oidc_woocommerce_restrictions_get_purchase_message(), 'error' );
+			wc_add_notice( $this->scouting_oidc_woocommerce_restrictions_get_purchase_message( $product_id ), 'error' );
 		}
 	}
 
@@ -386,19 +457,25 @@ class WooCommerceRestrictions {
 			return;
 		}
 
-		wc_print_notice( $this->scouting_oidc_woocommerce_restrictions_get_purchase_message(), 'notice' );
+		wc_print_notice( $this->scouting_oidc_woocommerce_restrictions_get_purchase_message( $product->get_id() ), 'notice' );
 	}
 
 	/**
 	 * Checks whether the current user may order a product under its SOL rules.
 	 *
-	 * @since 2.7.0 Applies configurable organisation and role conditions to active assignments.
+	 * @since 2.7.0 Enforces product and global SOL sign-in policies before matching organisation and role conditions against active assignments.
 	 *
 	 * @param int $product_id Product or variation ID.
 	 * @return bool Whether the current user can order the product.
 	 */
 	private function scouting_oidc_woocommerce_restrictions_current_user_can_order_product( int $product_id ): bool {
-		$restriction_product_id  = $this->scouting_oidc_woocommerce_restrictions_get_restriction_product_id( $product_id );
+		$restriction_product_id = $this->scouting_oidc_woocommerce_restrictions_get_restriction_product_id( $product_id );
+		if ( $this->scouting_oidc_woocommerce_restrictions_requires_sol_login( $restriction_product_id ) && ! $this->scouting_oidc_woocommerce_restrictions_has_sol_account() ) {
+			return false;
+		}
+		if ( ! RolesAuthorization::scouting_oidc_roles_authorization_has_roles_scope() ) {
+			return true;
+		}
 		$organisation_ids        = $this->scouting_oidc_woocommerce_restrictions_get_organisation_ids( $restriction_product_id );
 		$role_ids                = $this->scouting_oidc_woocommerce_restrictions_get_role_ids( $restriction_product_id );
 		$denied_organisation_ids = $this->scouting_oidc_woocommerce_restrictions_get_organisation_ids( $restriction_product_id, self::DENIED_ORGANISATIONS_META_KEY );
@@ -434,6 +511,30 @@ class WooCommerceRestrictions {
 		}
 
 		return $can_order;
+	}
+
+	/**
+	 * Checks whether either the global or product policy requires SOL sign-in.
+	 *
+	 * @since 2.7.0 Shares the access policy with purchasing feedback.
+	 *
+	 * @param int $product_id Parent product ID owning the policy.
+	 * @return bool Whether a signed-in SOL account is required.
+	 */
+	private function scouting_oidc_woocommerce_restrictions_requires_sol_login( int $product_id ): bool {
+		return 'yes' === get_option( self::REQUIRE_SOL_LOGIN_OPTION, 'no' ) || 'yes' === get_post_meta( $product_id, self::REQUIRE_SOL_LOGIN_META_KEY, true );
+	}
+
+	/**
+	 * Checks the current signed-in account's explicit SOL marker.
+	 *
+	 * @since 2.7.0 Rejects guests and local accounts, including a stored false marker.
+	 *
+	 * @return bool Whether the customer is signed in to a SOL account.
+	 */
+	private function scouting_oidc_woocommerce_restrictions_has_sol_account(): bool {
+		$user_id = get_current_user_id();
+		return $user_id > 0 && 'true' === get_user_meta( $user_id, 'scouting_oidc_user', true );
 	}
 
 	/**
@@ -625,11 +726,16 @@ class WooCommerceRestrictions {
 	/**
 	 * Gets the customer-facing message for unavailable restricted products.
 	 *
-	 * @since 2.7.0 Explains SOL ordering restrictions.
+	 * @since 2.7.0 Explains SOL ordering restrictions and distinguishes sign-in requirements from assignment restrictions.
 	 *
+	 * @param int $product_id Product or variation ID.
 	 * @return string Restriction message.
 	 */
-	private function scouting_oidc_woocommerce_restrictions_get_purchase_message(): string {
+	private function scouting_oidc_woocommerce_restrictions_get_purchase_message( int $product_id ): string {
+		$restriction_product_id = $this->scouting_oidc_woocommerce_restrictions_get_restriction_product_id( $product_id );
+		if ( $this->scouting_oidc_woocommerce_restrictions_requires_sol_login( $restriction_product_id ) && ! $this->scouting_oidc_woocommerce_restrictions_has_sol_account() ) {
+			return __( 'Sign in with your Scouts Online account to order this product.', 'scouting-openid-connect' );
+		}
 		return __( 'Your current Scouts Online role or organisation does not permit ordering this product.', 'scouting-openid-connect' );
 	}
 }

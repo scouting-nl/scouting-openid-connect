@@ -342,7 +342,7 @@ class Auth {
 		} elseif ( get_option( 'scouting_oidc_user_auto_create' ) ) {
 				Logger::info( LogComponent::AUTH, "User '{$user->get_display_name()}' does not have an account, auto-creation is enabled, creating account and logging in", null, $user->get_username() );
 				$user_id = $user->scouting_oidc_user_create();
-				$this->scouting_oidc_auth_apply_role_mapping( $user_id, $user_info );
+				$this->scouting_oidc_auth_apply_role_mapping( $user_id, $user_info, true );
 				// Promote per-state redirect only after successful callback validation and right before login.
 				$this->oidc_client->apply_redirect_for_state_to_session( $state );
 				$user->scouting_oidc_user_login();
@@ -359,13 +359,18 @@ class Auth {
 	/**
 	 * Synchronizes SOL assignments and applies role mapping before OIDC login.
 	 *
-	 * @since 2.7.0 Enforces SOL role mapping decisions during login.
+	 * @since 2.7.0 Enforces enabled SOL role mappings; preserves existing roles or assigns new users the default when disabled.
 	 *
 	 * @param int   $user_id WordPress user ID.
 	 * @param array $user_info Validated UserInfo response.
+	 * @param bool  $new_user Whether the account was created during this login.
 	 */
-	private function scouting_oidc_auth_apply_role_mapping( int $user_id, array $user_info ): void {
-		if ( ! RolesSync::scouting_oidc_roles_sync_user_info( $user_id, $user_info ) ) {
+	private function scouting_oidc_auth_apply_role_mapping( int $user_id, array $user_info, bool $new_user = false ): void {
+		$roles_enabled = RolesAuthorization::scouting_oidc_roles_authorization_has_roles_scope();
+		if ( ! $roles_enabled && ! $new_user ) {
+			return;
+		}
+		if ( $roles_enabled && ! RolesSync::scouting_oidc_roles_sync_user_info( $user_id, $user_info ) ) {
 			Logger::error( LogComponent::ROLES, 'Blocked OIDC login because SOL role synchronization failed.', $user_id );
 			ErrorHandler::redirect_to_login_error(
 				'server_error',
@@ -375,7 +380,7 @@ class Auth {
 			);
 		}
 
-		$decision = RolesAuthorization::scouting_oidc_roles_authorization_get_user_decision( $user_id );
+		$decision = RolesAuthorization::scouting_oidc_roles_authorization_get_user_decision( $user_id, $new_user );
 		if ( ! $decision['login_allowed'] ) {
 			Logger::warning( LogComponent::ROLES, 'Blocked OIDC login because the SOL role mapping does not allow access.', $user_id );
 			ErrorHandler::redirect_to_login_error(
@@ -386,7 +391,7 @@ class Auth {
 			);
 		}
 
-		if ( ! RolesAuthorization::scouting_oidc_roles_authorization_apply_wordpress_role( $user_id, $decision['wordpress_role'] ) ) {
+		if ( ! RolesAuthorization::scouting_oidc_roles_authorization_apply_wordpress_roles( $user_id, $decision['wordpress_roles'] ) ) {
 			Logger::error( LogComponent::ROLES, 'Could not apply the SOL role mapping during OIDC login.', $user_id );
 			ErrorHandler::redirect_to_login_error(
 				'server_error',

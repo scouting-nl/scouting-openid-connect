@@ -102,7 +102,7 @@ Currently not, but this is planned for a future update of this plugin.
 = 2.7.0 =
 * Added SOL role mapping with searchable organisation, unit, and role selectors, allow and deny rules, rule duplication and reordering, accessible dialogs, a read-only user tester, and contextual help. Unmatched users use the WordPress default role.
 * Added the SOL Role Explorer to browse synchronized organisations, units, roles, and user assignments.
-* Added WooCommerce SOL Access restrictions with organisation and role allow and deny rules, optional descendant matching, and optional organisation-and-role matching on the same active assignment. Deny rules take precedence.
+* Added WooCommerce SOL Access with organisation and role allow/deny rules, optional descendant and same-assignment matching, and optional SOL sign-in requirements per product or globally under WooCommerce Products settings. Deny rules take precedence; restrictions apply to purchase availability, add-to-cart, and existing carts after logout.
 
 = 2.6.2 =
 * Preserved historical log entries when WordPress users are deleted.

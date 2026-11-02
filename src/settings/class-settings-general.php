@@ -102,6 +102,25 @@ class Settings_General {
 			'scouting_oidc_general_settings'
 		);
 
+		if ( RolesAuthorization::scouting_oidc_roles_authorization_has_roles_scope() ) {
+			add_settings_field(
+				'scouting_oidc_roles_add_default_role',
+				__( 'Default role alongside mapped roles', 'scouting-openid-connect' ),
+				array( $this, 'scouting_oidc_settings_general_roles_default_callback' ),
+				'scouting-openid-connect-settings',
+				'scouting_oidc_general_settings'
+			);
+			register_setting(
+				'scouting_oidc_settings_group',
+				'scouting_oidc_roles_add_default_role',
+				array(
+					'type'              => 'boolean',
+					'default'           => false,
+					'sanitize_callback' => array( $this, 'scouting_oidc_sanitize_boolean_option' ),
+				)
+			);
+		}
+
 		// Add a settings selectbox field.
 		add_settings_field(
 			'scouting_oidc_user_duplicate_email',
@@ -357,6 +376,25 @@ class Settings_General {
 
 		// Return the input if it’s a valid option; otherwise, default to 'fullname'.
 		return in_array( $input, $valid, true ) ? $input : 'fullname';
+	}
+
+	/**
+	 * Renders the setting for adding the default role alongside mapped roles.
+	 *
+	 * @since 2.7.0 Adds the optional additional default role to Settings.
+	 */
+	public function scouting_oidc_settings_general_roles_default_callback(): void {
+		if ( ! RolesAuthorization::scouting_oidc_roles_authorization_has_roles_scope() ) {
+			return;
+		}
+		?>
+		<input type="hidden" name="scouting_oidc_roles_add_default_role" value="0" />
+		<label for="scouting_oidc_roles_add_default_role">
+			<input type="checkbox" id="scouting_oidc_roles_add_default_role" name="scouting_oidc_roles_add_default_role" value="1" aria-describedby="scouting-oidc-default-role-help" <?php checked( (bool) get_option( 'scouting_oidc_roles_add_default_role', false ) ); ?> />
+			<?php esc_html_e( 'Also assign the WordPress default role when a mapping grants roles', 'scouting-openid-connect' ); ?>
+		</label>
+		<p id="scouting-oidc-default-role-help" class="description"><?php esc_html_e( 'Disabled by default. Applies to new and existing users at successful OIDC login. Unmatched new users always receive the default role; unmatched existing users receive no replacement role. Manual roles are preserved. Set the default role under Settings > General.', 'scouting-openid-connect' ); ?></p>
+		<?php
 	}
 
 	/**

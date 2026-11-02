@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class RolesAdmin {
 	/**
-	 * Option storing ordered SOL role mapping rules.
+	 * Option storing SOL role mapping rules.
 	 *
 	 * @since 2.7.0 Stores SOL role mapping rules.
 	 */
@@ -42,8 +42,6 @@ class RolesAdmin {
 	public function __construct() {
 		add_action( 'admin_post_scouting_oidc_roles_save_rule', array( $this, 'scouting_oidc_roles_admin_save_rule' ) );
 		add_action( 'admin_post_scouting_oidc_roles_delete_rule', array( $this, 'scouting_oidc_roles_admin_delete_rule' ) );
-		add_action( 'admin_post_scouting_oidc_roles_move_rule', array( $this, 'scouting_oidc_roles_admin_move_rule' ) );
-		add_action( 'admin_post_scouting_oidc_roles_duplicate_rule', array( $this, 'scouting_oidc_roles_admin_duplicate_rule' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'scouting_oidc_roles_admin_enqueue_assets' ) );
 	}
 
@@ -69,6 +67,9 @@ class RolesAdmin {
 	 * @since 2.7.0 Adds SOL role administration pages.
 	 */
 	public function scouting_oidc_roles_admin_register_pages(): void {
+		if ( ! RolesAuthorization::scouting_oidc_roles_authorization_has_roles_scope() ) {
+			return;
+		}
 		$explorer = new RolesExplorer();
 
 		$mapping_page_hook       = add_submenu_page(
@@ -112,8 +113,8 @@ class RolesAdmin {
 				'id'      => 'scouting_oidc_role_mapping_help_overview',
 				'title'   => __( 'Overview', 'scouting-openid-connect' ),
 				'content' =>
-					'<p>' . esc_html__( 'Mapping rules control Scouting OIDC login and the WordPress role managed by this plugin. Rules are evaluated from top to bottom; only the first matching rule applies. When no rule matches, the WordPress default role is used and role mapping does not block login. The General Settings option for creating new users still applies.', 'scouting-openid-connect' ) . '</p>' .
-					'<p>' . esc_html__( 'All selected conditions must match the same active SOL assignment. A user may have multiple SOL assignments, but matching rules do not accumulate WordPress roles. Independently managed WordPress roles are retained.', 'scouting-openid-connect' ) . '</p>' .
+					'<p>' . esc_html__( 'Every matching allow rule contributes its WordPress role. Duplicate roles are assigned once. Any matching deny rule blocks login, regardless of rule order. New unmatched users receive the WordPress default role. The plugin Settings page can also enable the default role alongside mapped roles.', 'scouting-openid-connect' ) . '</p>' .
+					'<p>' . esc_html__( 'All selected conditions in a rule must match the same active SOL assignment. At each successful OIDC login, obsolete plugin-granted roles are removed. Independently managed WordPress roles are retained.', 'scouting-openid-connect' ) . '</p>' .
 					'<p>' . esc_html__( 'When Scouts Online supplies parent organisations, an organisation condition also matches active assignments in descendant organisations.', 'scouting-openid-connect' ) . '</p>',
 			)
 		);
@@ -124,18 +125,17 @@ class RolesAdmin {
 				'title'   => __( 'Adding and Editing Rules', 'scouting-openid-connect' ),
 				'content' =>
 					'<p>' . esc_html__( 'Use Add Mapping Rule beside Test a User, or Edit on an existing rule, to open the When / Then editor. Choose at least one organisation, unit or SOL role condition, then allow or deny login. Allowed users receive the selected WordPress role.', 'scouting-openid-connect' ) . '</p>' .
-					'<p>' . esc_html__( 'Search results update while typing. Searching retains the current selection; choose a result to change it. Organisation and unit selections narrow dependent choices. Arrow Down or Enter in a search field focuses its results.', 'scouting-openid-connect' ) . '</p>' .
+					'<p>' . esc_html__( 'Search results update while typing and retain all selected values. Organisation and unit conditions narrow dependent choices without removing selections. Is one of accepts any selected value; Is not one of excludes those values on the same assignment, not across the whole user. Empty conditions are ignored. Arrow Down or Enter in a search field focuses its results.', 'scouting-openid-connect' ) . '</p>' .
 					'<p>' . esc_html__( 'Save or add the rule with the primary button. The close icon, Cancel and Escape close the modal without saving. Without JavaScript or native dialog support, the editor remains inline.', 'scouting-openid-connect' ) . '</p>',
 			)
 		);
 
 		$screen->add_help_tab(
 			array(
-				'id'      => 'scouting_oidc_role_mapping_help_order',
-				'title'   => __( 'Rule Ordering', 'scouting-openid-connect' ),
+				'id'      => 'scouting_oidc_role_mapping_help_manage',
+				'title'   => __( 'Managing Rules', 'scouting-openid-connect' ),
 				'content' =>
-					'<p>' . esc_html__( 'Use Move up, Move down or Position to change rule precedence. Put more specific rules before broader rules when they should take priority. A later deny rule does not override an earlier matching allow rule.', 'scouting-openid-connect' ) . '</p>' .
-					'<p>' . esc_html__( 'Duplicate appends a saved copy at the end and opens it for editing. Change its conditions or outcome and move it if needed. Delete removes a rule.', 'scouting-openid-connect' ) . '</p>',
+					'<p>' . esc_html__( 'Rule order does not affect authorization. Duplicate opens an unsaved copy; change its conditions or outcome before saving. Identical rules cannot be saved twice. Delete removes a rule.', 'scouting-openid-connect' ) . '</p>',
 			)
 		);
 
@@ -144,8 +144,8 @@ class RolesAdmin {
 				'id'      => 'scouting_oidc_role_mapping_help_test',
 				'title'   => __( 'Testing a User', 'scouting-openid-connect' ),
 				'content' =>
-					'<p>' . esc_html__( 'Test a User accepts an exact WordPress username or user ID. It shows active stored SOL assignments, the winning saved rule, and the resulting login and role decision.', 'scouting-openid-connect' ) . '</p>' .
-					'<p>' . esc_html__( 'The preview does not include unsaved edits, refresh provider data, change user roles or sign the user in. If no rule matches, it shows the WordPress default role. This previews role mapping only, not other login or new-user registration checks. Updated provider data is synchronized during Scouting OIDC login.', 'scouting-openid-connect' ) . '</p>',
+					'<p>' . esc_html__( 'Test a User accepts an exact WordPress username or user ID. It shows active stored SOL assignments, every matching rule, and the combined login and role decision for an existing user.', 'scouting-openid-connect' ) . '</p>' .
+					'<p>' . esc_html__( 'The preview does not include unsaved edits, refresh provider data, change user roles or sign the user in. It includes the optional default role alongside matched roles, but does not apply the new-user fallback. New-user registration and other login checks still apply.', 'scouting-openid-connect' ) . '</p>',
 			)
 		);
 
@@ -157,13 +157,17 @@ class RolesAdmin {
 	}
 
 	/**
-	 * Renders ordered role mapping rules without a separate fallback setting.
+	 * Renders all-match role mapping rules.
 	 *
 	 * @since 2.7.0 Adds the SOL role mapping page and styled progressive modal editor.
 	 */
 	public function scouting_oidc_roles_admin_render_mapping_page(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have permission to manage SOL role mappings.', 'scouting-openid-connect' ) );
+		}
+		if ( ! RolesAuthorization::scouting_oidc_roles_authorization_has_roles_scope() ) {
+			self::scouting_oidc_roles_admin_render_scope_notice();
+			return;
 		}
 
 		$mapping = $this->scouting_oidc_roles_admin_get_mapping();
@@ -173,10 +177,16 @@ class RolesAdmin {
 		if ( isset( $_GET['edit'] ) ) {
 			check_admin_referer( 'scouting_oidc_roles_edit_rule' );
 			$edit_id = sanitize_text_field( wp_unslash( $_GET['edit'] ) );
+		} elseif ( isset( $_GET['copy'] ) ) {
+			check_admin_referer( 'scouting_oidc_roles_duplicate_rule' );
+			$edit_id = sanitize_text_field( wp_unslash( $_GET['copy'] ) );
 		}
 		foreach ( $rules as $rule ) {
 			if ( $rule['id'] === $edit_id ) {
 				$editing = $rule;
+				if ( isset( $_GET['copy'] ) && ! isset( $_GET['edit'] ) ) {
+					$editing['id'] = '';
+				}
 				break;
 			}
 		}
@@ -193,20 +203,20 @@ class RolesAdmin {
 		<div class="wrap scouting-oidc-role-mapping">
 			<h1 class="wp-heading-inline"><?php esc_html_e( 'SOL Role Mapping', 'scouting-openid-connect' ); ?></h1>
 			<hr class="wp-header-end" />
+			<?php self::scouting_oidc_roles_admin_render_scope_notice(); ?>
 			<?php $this->scouting_oidc_roles_admin_render_notice(); ?>
 			<p class="scouting-oidc-mapping-actions">
 				<a id="sol-add-rule" class="button button-primary" href="<?php echo esc_url( admin_url( 'admin.php?page=scouting-oidc-role-mapping' ) ); ?>#scouting-oidc-rule-editor"><?php esc_html_e( 'Add Mapping Rule', 'scouting-openid-connect' ); ?></a>
 				<a id="sol-open-user-test" class="button" href="#sol-user-test-heading"><?php esc_html_e( 'Test a User', 'scouting-openid-connect' ); ?></a>
 			</p>
-			<p><?php esc_html_e( 'Rules are evaluated from top to bottom. The first matching rule wins. When no rule matches, the WordPress default role is used; the General Settings option for creating new users still applies.', 'scouting-openid-connect' ); ?></p>
-			<p><?php esc_html_e( 'The first matching rule allows or denies Scouting OIDC login. Allowed users receive one plugin-managed WordPress role; other independently managed roles are retained. All selected conditions must match the same active SOL assignment.', 'scouting-openid-connect' ); ?></p>
+			<p><?php esc_html_e( 'Every matching allow rule contributes its WordPress role. Duplicate roles are assigned once. Any matching deny rule blocks login, regardless of rule order. New unmatched users receive the WordPress default role. The plugin Settings page can also enable the default role alongside mapped roles.', 'scouting-openid-connect' ); ?></p>
+			<p><?php esc_html_e( 'All selected conditions in a rule must match the same active SOL assignment. At each successful OIDC login, obsolete plugin-granted roles are removed. Independently managed WordPress roles are retained.', 'scouting-openid-connect' ); ?></p>
 			<div class="notice notice-info inline"><p><?php esc_html_e( 'When Scouts Online supplies parent organisations, an organisation condition also matches assignments in its descendant organisations.', 'scouting-openid-connect' ); ?></p></div>
 			<div class="scouting-oidc-rule-list">
 				<table class="widefat striped">
-					<caption class="screen-reader-text"><?php esc_html_e( 'Saved rules in evaluation order', 'scouting-openid-connect' ); ?></caption>
+					<caption class="screen-reader-text"><?php esc_html_e( 'Saved mapping rules', 'scouting-openid-connect' ); ?></caption>
 					<thead>
 						<tr>
-							<th scope="col"><?php esc_html_e( 'Number', 'scouting-openid-connect' ); ?></th>
 							<th scope="col"><?php esc_html_e( 'When', 'scouting-openid-connect' ); ?></th>
 							<th scope="col"><?php esc_html_e( 'Then', 'scouting-openid-connect' ); ?></th>
 							<th scope="col"><?php esc_html_e( 'Actions', 'scouting-openid-connect' ); ?></th>
@@ -214,11 +224,11 @@ class RolesAdmin {
 					</thead>
 					<tbody>
 					<?php if ( empty( $rules ) ) : ?>
-						<tr><td colspan="4"><?php esc_html_e( 'No mapping rules yet.', 'scouting-openid-connect' ); ?></td></tr>
+						<tr><td colspan="3"><?php esc_html_e( 'No mapping rules yet.', 'scouting-openid-connect' ); ?></td></tr>
 					<?php endif; ?>
-					<?php foreach ( $rules as $index => $rule ) : ?>
+					<?php foreach ( $rules as $rule ) : ?>
 						<?php
-						$edit_url = wp_nonce_url(
+						$edit_url   = wp_nonce_url(
 							add_query_arg(
 								array(
 									'page' => 'scouting-oidc-role-mapping',
@@ -228,28 +238,29 @@ class RolesAdmin {
 							),
 							'scouting_oidc_roles_edit_rule'
 						);
-						/* translators: %d: rule position. */
-						$actions_label = sprintf( __( 'Actions for rule %d', 'scouting-openid-connect' ), $index + 1 );
+						$copy_url   = wp_nonce_url(
+							add_query_arg(
+								array(
+									'page' => 'scouting-oidc-role-mapping',
+									'copy' => $rule['id'],
+								),
+								admin_url( 'admin.php' )
+							),
+							'scouting_oidc_roles_duplicate_rule'
+						);
+						$conditions = $this->scouting_oidc_roles_admin_describe_conditions( $rule, $organisations, $organisation_units, $roles );
+						$outcome    = $this->scouting_oidc_roles_admin_describe_outcome( $rule, $wordpress_roles );
+						/* translators: 1: rule conditions, 2: rule outcome. */
+						$actions_label = sprintf( __( 'Actions for rule: %1$s; %2$s', 'scouting-openid-connect' ), $conditions, $outcome );
 						?>
 						<tr>
-							<td><?php echo esc_html( (string) ( $index + 1 ) ); ?></td>
-							<td><?php echo esc_html( $this->scouting_oidc_roles_admin_describe_conditions( $rule, $organisations, $organisation_units, $roles ) ); ?></td>
-							<td><?php echo esc_html( $this->scouting_oidc_roles_admin_describe_outcome( $rule, $wordpress_roles ) ); ?></td>
+							<td><?php echo esc_html( $conditions ); ?></td>
+							<td><?php echo esc_html( $outcome ); ?></td>
 							<td>
 								<div class="scouting-oidc-rule-actions" role="group" aria-label="<?php echo esc_attr( $actions_label ); ?>">
 									<a href="<?php echo esc_url( $edit_url ); ?>#scouting-oidc-rule-editor"><?php esc_html_e( 'Edit', 'scouting-openid-connect' ); ?></a>
-									<?php $this->scouting_oidc_roles_admin_render_rule_action( 'scouting_oidc_roles_duplicate_rule', __( 'Duplicate', 'scouting-openid-connect' ), $rule['id'] ); ?>
-									<?php $this->scouting_oidc_roles_admin_render_rule_action( 'scouting_oidc_roles_move_rule', __( 'Move up', 'scouting-openid-connect' ), $rule['id'], 'up', $index > 0 ); ?>
-									<?php $this->scouting_oidc_roles_admin_render_rule_action( 'scouting_oidc_roles_move_rule', __( 'Move down', 'scouting-openid-connect' ), $rule['id'], 'down', $index < count( $rules ) - 1 ); ?>
+									<a href="<?php echo esc_url( $copy_url ); ?>#scouting-oidc-rule-editor"><?php esc_html_e( 'Duplicate', 'scouting-openid-connect' ); ?></a>
 									<?php $this->scouting_oidc_roles_admin_render_rule_action( 'scouting_oidc_roles_delete_rule', __( 'Delete', 'scouting-openid-connect' ), $rule['id'] ); ?>
-									<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-										<input type="hidden" name="action" value="scouting_oidc_roles_move_rule" />
-										<input type="hidden" name="rule_id" value="<?php echo esc_attr( $rule['id'] ); ?>" />
-										<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'scouting_oidc_roles_move_rule' ) ); ?>" />
-										<label for="<?php echo esc_attr( 'rule-position-' . $index ); ?>"><?php esc_html_e( 'Position', 'scouting-openid-connect' ); ?></label>
-										<input id="<?php echo esc_attr( 'rule-position-' . $index ); ?>" type="number" name="position" min="1" max="<?php echo esc_attr( (string) count( $rules ) ); ?>" value="<?php echo esc_attr( (string) ( $index + 1 ) ); ?>" required />
-										<button class="button button-small" type="submit"><?php esc_html_e( 'Move', 'scouting-openid-connect' ); ?></button>
-									</form>
 								</div>
 							</td>
 						</tr>
@@ -260,58 +271,65 @@ class RolesAdmin {
 
 			<section id="sol-rule-panel" data-editing="<?php echo $editing ? 'true' : 'false'; ?>" aria-labelledby="scouting-oidc-rule-editor">
 				<div class="scouting-oidc-editor-header">
-					<h2 id="scouting-oidc-rule-editor" tabindex="-1"><?php echo esc_html( $editing ? __( 'Edit Mapping Rule', 'scouting-openid-connect' ) : __( 'Add Mapping Rule', 'scouting-openid-connect' ) ); ?></h2>
+					<h2 id="scouting-oidc-rule-editor" tabindex="-1"><?php echo esc_html( ! empty( $editing['id'] ) ? __( 'Edit Mapping Rule', 'scouting-openid-connect' ) : __( 'Add Mapping Rule', 'scouting-openid-connect' ) ); ?></h2>
 					<button class="scouting-oidc-dialog-close sol-close-dialog" type="button" aria-label="<?php esc_attr_e( 'Close', 'scouting-openid-connect' ); ?>" hidden>
 						<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
 							<path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
 						</svg>
 					</button>
 				</div>
-				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<form id="sol-rule-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<input type="hidden" name="action" value="scouting_oidc_roles_save_rule" />
 					<input type="hidden" name="rule_id" value="<?php echo esc_attr( $editing['id'] ?? '' ); ?>" />
 					<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'scouting_oidc_roles_save_rule' ) ); ?>" />
 					<h3><?php esc_html_e( 'When an active SOL assignment matches', 'scouting-openid-connect' ); ?></h3>
-					<p id="sol-condition-help"><?php esc_html_e( 'Choose at least one condition. Search results appear as you type. Searching keeps the current selection; choose a result to change it. Changing an organisation or unit clears incompatible selections.', 'scouting-openid-connect' ); ?></p>
-					<table class="form-table" role="presentation">
+					<details class="scouting-oidc-condition-help">
+						<summary><?php esc_html_e( 'Selection and matching help', 'scouting-openid-connect' ); ?></summary>
+						<p id="sol-condition-help"><?php esc_html_e( 'Select one or more values per condition using the checkboxes. Values within a condition mean any of those values; all populated conditions must match the same active assignment. Empty conditions impose no restriction. Without JavaScript, use the selection lists and hold Ctrl (Command on Mac) to select multiple values, or use Shift with the arrow keys.', 'scouting-openid-connect' ); ?></p>
+						<p><?php esc_html_e( 'Is not one of excludes values on the assignment being checked. It does not mean the user has no such assignments elsewhere. A user without active assignments never matches, including exclusions.', 'scouting-openid-connect' ); ?></p>
+					</details>
+					<table class="form-table scouting-oidc-condition-fields" role="presentation">
 						<tbody>
 							<tr>
 								<th scope="row"><label for="sol-organisation"><?php esc_html_e( 'Organisation', 'scouting-openid-connect' ); ?></label></th>
 								<td>
+									<?php $this->scouting_oidc_roles_admin_render_operator( 'organisation', __( 'Organisation condition', 'scouting-openid-connect' ), $editing ); ?>
 									<?php $this->scouting_oidc_roles_admin_render_search( 'sol-organisation', __( 'Search organisations', 'scouting-openid-connect' ) ); ?>
-									<select id="sol-organisation" name="organisation_id" aria-describedby="sol-condition-help"><option value=""><?php esc_html_e( 'Any organisation', 'scouting-openid-connect' ); ?></option>
+									<select id="sol-organisation" name="organisation_ids[]" multiple size="6" aria-describedby="sol-condition-help">
 								<?php
 								foreach ( $organisations as $organisation ) :
 									?>
-									<option value="<?php echo esc_attr( $organisation['organisation_id'] ); ?>" <?php selected( $editing['organisation_id'] ?? '', $organisation['organisation_id'] ); ?>><?php echo esc_html( $organisation['name'] . ' (' . $organisation['organisation_id'] . ')' ); ?></option><?php endforeach; ?></select></td>
+									<option value="<?php echo esc_attr( $organisation['organisation_id'] ); ?>" <?php selected( in_array( (string) $organisation['organisation_id'], $editing['organisation_ids'] ?? array(), true ) ); ?>><?php echo esc_html( $organisation['name'] . ' (' . $organisation['organisation_id'] . ')' ); ?></option><?php endforeach; ?></select></td>
 							</tr>
 							<tr>
 								<th scope="row"><label for="sol-unit"><?php esc_html_e( 'Organisation Unit', 'scouting-openid-connect' ); ?></label></th>
 								<td>
+									<?php $this->scouting_oidc_roles_admin_render_operator( 'organisation_unit', __( 'Unit condition', 'scouting-openid-connect' ), $editing ); ?>
 									<?php $this->scouting_oidc_roles_admin_render_search( 'sol-unit', __( 'Search units', 'scouting-openid-connect' ) ); ?>
-									<select id="sol-unit" name="organisation_unit_id" aria-describedby="sol-condition-help"><option value="0"><?php esc_html_e( 'Any unit', 'scouting-openid-connect' ); ?></option>
+									<select id="sol-unit" name="organisation_unit_ids[]" multiple size="6" aria-describedby="sol-condition-help">
 								<?php
 								foreach ( $organisation_units as $unit ) :
 									?>
-									<option value="<?php echo esc_attr( (string) $unit['organisation_unit_id'] ); ?>" data-organisations="<?php echo esc_attr( implode( ' ', $organisation_paths[ $unit['organisation_id'] ] ?? array( $unit['organisation_id'] ) ) ); ?>" <?php selected( (string) ( $editing['organisation_unit_id'] ?? 0 ), (string) $unit['organisation_unit_id'] ); ?>><?php echo esc_html( $unit['organisation_name'] . ' / ' . $unit['name'] . ' (' . $unit['organisation_unit_id'] . ')' ); ?></option><?php endforeach; ?></select></td>
+									<option value="<?php echo esc_attr( (string) $unit['organisation_unit_id'] ); ?>" data-organisations="<?php echo esc_attr( implode( ' ', $organisation_paths[ $unit['organisation_id'] ] ?? array( $unit['organisation_id'] ) ) ); ?>" <?php selected( in_array( (int) $unit['organisation_unit_id'], $editing['organisation_unit_ids'] ?? array(), true ) ); ?>><?php echo esc_html( $unit['organisation_name'] . ' / ' . $unit['name'] . ' (' . $unit['organisation_unit_id'] . ')' ); ?></option><?php endforeach; ?></select></td>
 							</tr>
 							<tr>
 								<th scope="row"><label for="sol-role"><?php esc_html_e( 'SOL Role', 'scouting-openid-connect' ); ?></label></th>
 								<td>
+									<?php $this->scouting_oidc_roles_admin_render_operator( 'role', __( 'SOL role condition', 'scouting-openid-connect' ), $editing ); ?>
 									<?php $this->scouting_oidc_roles_admin_render_search( 'sol-role', __( 'Search SOL roles', 'scouting-openid-connect' ) ); ?>
-									<select id="sol-role" name="role_id" aria-describedby="sol-condition-help"><option value="0"><?php esc_html_e( 'Any role', 'scouting-openid-connect' ); ?></option>
+									<select id="sol-role" name="role_ids[]" multiple size="6" aria-describedby="sol-condition-help">
 								<?php
 								foreach ( $roles as $role ) :
 									?>
-									<option value="<?php echo esc_attr( (string) $role['role_id'] ); ?>" data-organisations="<?php echo esc_attr( implode( ' ', $organisation_paths[ $role['organisation_id'] ] ?? array( $role['organisation_id'] ) ) ); ?>" data-unit="<?php echo esc_attr( (string) $role['organisation_unit_id'] ); ?>" <?php selected( (string) ( $editing['role_id'] ?? 0 ), (string) $role['role_id'] ); ?>><?php echo esc_html( $role['role_name'] . ' / ' . $role['unit_name'] . ' (' . $role['role_id'] . ')' ); ?></option><?php endforeach; ?></select></td>
+									<option value="<?php echo esc_attr( (string) $role['role_id'] ); ?>" data-organisations="<?php echo esc_attr( implode( ' ', $organisation_paths[ $role['organisation_id'] ] ?? array( $role['organisation_id'] ) ) ); ?>" data-unit="<?php echo esc_attr( (string) $role['organisation_unit_id'] ); ?>" <?php selected( in_array( (int) $role['role_id'], $editing['role_ids'] ?? array(), true ) ); ?>><?php echo esc_html( $role['role_name'] . ' / ' . $role['unit_name'] . ' (' . $role['role_id'] . ')' ); ?></option><?php endforeach; ?></select></td>
 							</tr>
 						</tbody>
 					</table>
 					<p id="sol-search-status" role="status" aria-live="polite" aria-atomic="true"></p>
 					<span id="sol-search-status-template" hidden><?php esc_html_e( 'Search matches: organisations {organisations}, units {units}, SOL roles {roles}.', 'scouting-openid-connect' ); ?></span>
-					<span id="sol-search-result-template" hidden><?php esc_html_e( '{count} matches. Current selection: {selection}.', 'scouting-openid-connect' ); ?></span>
+					<span id="sol-search-result-template" hidden><?php esc_html_e( '{count} matches. Selected values: {selection}.', 'scouting-openid-connect' ); ?></span>
 					<h3><?php esc_html_e( 'Then', 'scouting-openid-connect' ); ?></h3>
-					<table class="form-table" role="presentation">
+					<table class="form-table scouting-oidc-outcome-fields" role="presentation">
 						<tbody>
 							<tr>
 								<th scope="row"><label for="login-allowed"><?php esc_html_e( 'Scouting OIDC login', 'scouting-openid-connect' ); ?></label></th>
@@ -328,7 +346,7 @@ class RolesAdmin {
 						</tbody>
 					</table>
 					<div class="scouting-oidc-editor-actions">
-						<?php submit_button( $editing ? __( 'Save Rule', 'scouting-openid-connect' ) : __( 'Add Rule', 'scouting-openid-connect' ), 'primary', 'submit', false ); ?>
+						<?php submit_button( ! empty( $editing['id'] ) ? __( 'Save Rule', 'scouting-openid-connect' ) : __( 'Add Rule', 'scouting-openid-connect' ), 'primary', 'submit', false ); ?>
 						<button class="button sol-close-dialog" type="button" hidden><?php esc_html_e( 'Cancel', 'scouting-openid-connect' ); ?></button>
 						<?php
 						if ( $editing ) :
@@ -345,6 +363,26 @@ class RolesAdmin {
 	}
 
 	/**
+	 * Renders a plain-language inclusion/exclusion operator.
+	 *
+	 * @since 2.7.0 Provides translated condition operators.
+	 *
+	 * @param string     $field Condition field.
+	 * @param string     $label Accessible operator label.
+	 * @param array|null $editing Rule being edited.
+	 */
+	private function scouting_oidc_roles_admin_render_operator( string $field, string $label, ?array $editing ): void {
+		$id = 'sol-' . $field . '-operator';
+		?>
+		<label class="screen-reader-text" for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $label ); ?></label>
+		<select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $field . '_operator' ); ?>">
+			<option value="in" <?php selected( $editing[ $field . '_operator' ] ?? 'in', 'in' ); ?>><?php esc_html_e( 'Is one of', 'scouting-openid-connect' ); ?></option>
+			<option value="not_in" <?php selected( $editing[ $field . '_operator' ] ?? 'in', 'not_in' ); ?>><?php esc_html_e( 'Is not one of', 'scouting-openid-connect' ); ?></option>
+		</select>
+		<?php
+	}
+
+	/**
 	 * Renders a progressively enhanced search and its local result feedback.
 	 *
 	 * @since 2.7.0 Shows live search matches next to each native selector.
@@ -357,7 +395,25 @@ class RolesAdmin {
 		<div class="scouting-oidc-selector-search" hidden>
 			<label for="<?php echo esc_attr( $selector_id . '-search' ); ?>"><?php echo esc_html( $label ); ?></label>
 			<input id="<?php echo esc_attr( $selector_id . '-search' ); ?>" type="search" aria-controls="<?php echo esc_attr( $selector_id ); ?>" aria-describedby="<?php echo esc_attr( 'sol-condition-help ' . $selector_id . '-results' ); ?>" />
+			<button class="button sol-clear-selection" type="button" aria-controls="<?php echo esc_attr( $selector_id ); ?>"><?php esc_html_e( 'Clear selection', 'scouting-openid-connect' ); ?></button>
 			<p id="<?php echo esc_attr( $selector_id . '-results' ); ?>" class="description" role="status" aria-atomic="true"></p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Warns administrators when SOL role data is not requested.
+	 *
+	 * @since 2.7.0 Shows the same scope guidance on both SOL role pages.
+	 */
+	public static function scouting_oidc_roles_admin_render_scope_notice(): void {
+		if ( RolesAuthorization::scouting_oidc_roles_authorization_has_roles_scope() ) {
+			return;
+		}
+		?>
+		<div class="notice notice-warning" role="status">
+			<p><?php esc_html_e( 'The roles scope is not enabled. SOL role pages and role-dependent settings are hidden. Saved mapping and product organisation/role rules are paused, not deleted. Existing WordPress roles are unchanged; new users receive the WordPress default role. WooCommerce SOL sign-in requirements remain active.', 'scouting-openid-connect' ); ?></p>
+			<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=scouting-oidc-settings' ) ); ?>"><?php esc_html_e( 'Open plugin Settings to enable the roles scope', 'scouting-openid-connect' ); ?></a></p>
 		</div>
 		<?php
 	}
@@ -365,21 +421,55 @@ class RolesAdmin {
 	/**
 	 * Saves a mapping rule after capability, nonce and field validation.
 	 *
-	 * @since 2.7.0 Saves ordered SOL mapping rules.
+	 * @since 2.7.0 Saves SOL mapping rules without duplicates.
 	 */
 	public function scouting_oidc_roles_admin_save_rule(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have permission to manage SOL role mappings.', 'scouting-openid-connect' ) );
 		}
 		check_admin_referer( 'scouting_oidc_roles_save_rule' );
-		$mapping  = $this->scouting_oidc_roles_admin_get_mapping();
-		$original = $mapping;
-		$rule_id  = isset( $_POST['rule_id'] ) ? sanitize_text_field( wp_unslash( $_POST['rule_id'] ) ) : '';
-		$rule     = $this->scouting_oidc_roles_admin_validate_rule( $_POST );
+		$rule_id = isset( $_POST['rule_id'] ) ? sanitize_text_field( wp_unslash( $_POST['rule_id'] ) ) : '';
+		$rule    = $this->scouting_oidc_roles_admin_validate_rule( $_POST );
 		if ( is_wp_error( $rule ) ) {
 			$this->scouting_oidc_roles_admin_redirect( 'sol_hierarchy_read_failed' === $rule->get_error_code() ? 'save-failed' : 'invalid' );
 		}
 
+		if ( ! $this->scouting_oidc_roles_admin_lock_mapping( true ) ) {
+			$this->scouting_oidc_roles_admin_redirect( 'save-failed' );
+		}
+		try {
+			$notice = $this->scouting_oidc_roles_admin_store_rule( $rule, $rule_id );
+		} finally {
+			$released = $this->scouting_oidc_roles_admin_lock_mapping( false );
+		}
+		$this->scouting_oidc_roles_admin_redirect( $released ? $notice : 'save-failed' );
+	}
+
+	/**
+	 * Stores a validated rule while the mapping lock is held.
+	 *
+	 * @since 2.7.0 Rejects identical rules on both add and edit.
+	 *
+	 * @param array  $rule Validated rule with normalized conditions.
+	 * @param string $rule_id Existing rule ID, or empty for a new rule.
+	 * @return string Result notice identifier.
+	 */
+	private function scouting_oidc_roles_admin_store_rule( array $rule, string $rule_id ): string {
+		$mapping  = $this->scouting_oidc_roles_admin_get_mapping();
+		$original = $mapping;
+		foreach ( $mapping['rules'] as $existing_rule ) {
+			if ( $existing_rule['id'] === $rule_id ) {
+				continue;
+			}
+			$comparison       = $existing_rule;
+			$comparison['id'] = '';
+			if ( ! $rule['login_allowed'] && ! $comparison['login_allowed'] ) {
+				$comparison['wordpress_role'] = $rule['wordpress_role'];
+			}
+			if ( $comparison === $rule ) {
+				return 'duplicate';
+			}
+		}
 		if ( '' !== $rule_id ) {
 			$found = false;
 			foreach ( $mapping['rules'] as &$existing_rule ) {
@@ -392,7 +482,7 @@ class RolesAdmin {
 			}
 			unset( $existing_rule );
 			if ( ! $found ) {
-				$this->scouting_oidc_roles_admin_redirect( 'invalid' );
+				return 'invalid';
 			}
 		} else {
 			$rule['id']         = wp_generate_uuid4();
@@ -400,9 +490,9 @@ class RolesAdmin {
 		}
 
 		if ( $original !== $mapping && ! update_option( self::RULES_OPTION, $mapping, false ) ) {
-			$this->scouting_oidc_roles_admin_redirect( 'save-failed' );
+			return 'save-failed';
 		}
-		$this->scouting_oidc_roles_admin_redirect( 'saved' );
+		return 'saved';
 	}
 
 	/**
@@ -415,108 +505,54 @@ class RolesAdmin {
 			wp_die( esc_html__( 'You do not have permission to manage SOL role mappings.', 'scouting-openid-connect' ) );
 		}
 		check_admin_referer( 'scouting_oidc_roles_delete_rule' );
-		$rule_id          = isset( $_POST['rule_id'] ) ? sanitize_text_field( wp_unslash( $_POST['rule_id'] ) ) : '';
-		$mapping          = $this->scouting_oidc_roles_admin_get_mapping();
-		$original         = $mapping;
-		$mapping['rules'] = array_values(
-			array_filter(
-				$mapping['rules'],
-				static fn( array $rule ): bool => $rule['id'] !== $rule_id
-			)
-		);
-		if ( $original !== $mapping && ! update_option( self::RULES_OPTION, $mapping, false ) ) {
-			$this->scouting_oidc_roles_admin_redirect( 'save-failed' );
-		}
-		$this->scouting_oidc_roles_admin_redirect( 'deleted' );
-	}
-
-	/**
-	 * Moves a mapping rule up or down one position.
-	 *
-	 * @since 2.7.0 Reorders SOL mapping rules.
-	 */
-	public function scouting_oidc_roles_admin_move_rule(): void {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You do not have permission to manage SOL role mappings.', 'scouting-openid-connect' ) );
-		}
-		check_admin_referer( 'scouting_oidc_roles_move_rule' );
-		$rule_id   = isset( $_POST['rule_id'] ) ? sanitize_text_field( wp_unslash( $_POST['rule_id'] ) ) : '';
-		$direction = isset( $_POST['direction'] ) ? sanitize_key( wp_unslash( $_POST['direction'] ) ) : '';
-		$mapping   = $this->scouting_oidc_roles_admin_get_mapping();
-		$index     = array_search( $rule_id, array_column( $mapping['rules'], 'id' ), true );
-		if ( false === $index ) {
-			$this->scouting_oidc_roles_admin_redirect( 'invalid' );
-		}
-		if ( isset( $_POST['position'] ) ) {
-			$original = $mapping;
-			$position = filter_var( wp_unslash( $_POST['position'] ), FILTER_VALIDATE_INT );
-			if ( false === $position || $position < 1 || $position > count( $mapping['rules'] ) ) {
-				$this->scouting_oidc_roles_admin_redirect( 'invalid' );
-			}
-			$rule = $mapping['rules'][ $index ];
-			array_splice( $mapping['rules'], $index, 1 );
-			array_splice( $mapping['rules'], $position - 1, 0, array( $rule ) );
-			if ( $original !== $mapping && ! update_option( self::RULES_OPTION, $mapping, false ) ) {
-				$this->scouting_oidc_roles_admin_redirect( 'save-failed' );
-			}
-			$this->scouting_oidc_roles_admin_redirect( 'saved' );
-		}
-		$offset = 0;
-		if ( 'up' === $direction ) {
-			$offset = -1;
-		} elseif ( 'down' === $direction ) {
-			$offset = 1;
-		}
-		$target = $index + $offset;
-		if ( 0 === $offset || ! isset( $mapping['rules'][ $target ] ) ) {
-			$this->scouting_oidc_roles_admin_redirect( 'invalid' );
-		}
-		$current_rule                = $mapping['rules'][ $index ];
-		$mapping['rules'][ $index ]  = $mapping['rules'][ $target ];
-		$mapping['rules'][ $target ] = $current_rule;
-		if ( ! update_option( self::RULES_OPTION, $mapping, false ) ) {
-			$this->scouting_oidc_roles_admin_redirect( 'save-failed' );
-		}
-
-		$this->scouting_oidc_roles_admin_redirect( 'saved' );
-	}
-
-	/**
-	 * Copies a saved rule to the end so existing precedence is preserved.
-	 *
-	 * @since 2.7.0 Adds rule duplication.
-	 */
-	public function scouting_oidc_roles_admin_duplicate_rule(): void {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You do not have permission to manage SOL role mappings.', 'scouting-openid-connect' ) );
-		}
-		check_admin_referer( 'scouting_oidc_roles_duplicate_rule' );
 		$rule_id = isset( $_POST['rule_id'] ) ? sanitize_text_field( wp_unslash( $_POST['rule_id'] ) ) : '';
-		$mapping = $this->scouting_oidc_roles_admin_get_mapping();
-		foreach ( $mapping['rules'] as $rule ) {
-			if ( $rule['id'] === $rule_id ) {
-				$rule['id']         = wp_generate_uuid4();
-				$mapping['rules'][] = $rule;
-				if ( ! update_option( self::RULES_OPTION, $mapping, false ) ) {
-					$this->scouting_oidc_roles_admin_redirect( 'save-failed' );
-				}
-				wp_safe_redirect(
-					wp_nonce_url(
-						add_query_arg(
-							array(
-								'page'   => 'scouting-oidc-role-mapping',
-								'edit'   => $rule['id'],
-								'notice' => 'duplicated',
-							),
-							admin_url( 'admin.php' )
-						),
-						'scouting_oidc_roles_edit_rule'
-					) . '#scouting-oidc-rule-editor'
-				);
-				exit;
-			}
+		if ( ! $this->scouting_oidc_roles_admin_lock_mapping( true ) ) {
+			$this->scouting_oidc_roles_admin_redirect( 'save-failed' );
 		}
-		$this->scouting_oidc_roles_admin_redirect( 'invalid' );
+		try {
+			$mapping          = $this->scouting_oidc_roles_admin_get_mapping();
+			$original         = $mapping;
+			$mapping['rules'] = array_values(
+				array_filter(
+					$mapping['rules'],
+					static fn( array $rule ): bool => $rule['id'] !== $rule_id
+				)
+			);
+			$notice           = $original !== $mapping && ! update_option( self::RULES_OPTION, $mapping, false ) ? 'save-failed' : 'deleted';
+		} finally {
+			$released = $this->scouting_oidc_roles_admin_lock_mapping( false );
+		}
+		$this->scouting_oidc_roles_admin_redirect( $released ? $notice : 'save-failed' );
+	}
+
+	/**
+	 * Serializes mapping changes and refreshes the option after acquiring the lock.
+	 *
+	 * @since 2.7.0 Prevents overlapping submissions from duplicating or overwriting rules.
+	 *
+	 * @param bool $acquire Whether to acquire or release the database lock.
+	 * @return bool Whether the lock operation succeeded.
+	 */
+	private function scouting_oidc_roles_admin_lock_mapping( bool $acquire ): bool {
+		global $wpdb;
+		$lock_name = 'scouting_oidc_mapping_' . md5( DB_NAME . ':' . $wpdb->options );
+		if ( $acquire ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Connection-scoped advisory locks must not be cached.
+			$result = $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 5)', $lock_name ) );
+		} else {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Connection-scoped advisory locks must not be cached.
+			$result = $wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock_name ) );
+		}
+		if ( '1' !== (string) $result ) {
+			Logger::error( LogComponent::ROLES, 'Could not acquire or release the SOL role mapping write lock.' );
+			return false;
+		}
+		if ( $acquire ) {
+			wp_cache_delete( self::RULES_OPTION, 'options' );
+			wp_cache_delete( 'notoptions', 'options' );
+			wp_cache_delete( 'alloptions', 'options' );
+		}
+		return true;
 	}
 
 	/**
@@ -532,15 +568,19 @@ class RolesAdmin {
 		if ( ! $rule['login_allowed'] ) {
 			return __( 'Deny login', 'scouting-openid-connect' );
 		}
-		$name = $wordpress_roles[ $rule['wordpress_role'] ]['name'] ?? $rule['wordpress_role'];
-		/* translators: %s: WordPress role name. */
-		return sprintf( __( 'Allow login; assign %s', 'scouting-openid-connect' ), translate_user_role( $name ) );
+		$role_slugs = $rule['wordpress_roles'] ?? array( $rule['wordpress_role'] );
+		if ( empty( $role_slugs ) ) {
+			return __( 'Allow login; remove obsolete plugin-granted roles without adding a role', 'scouting-openid-connect' );
+		}
+		$names = array_map( static fn( string $role ): string => translate_user_role( $wordpress_roles[ $role ]['name'] ?? $role ), $role_slugs );
+		/* translators: %s: comma-separated WordPress role names. */
+		return sprintf( __( 'Allow login; assign %s', 'scouting-openid-connect' ), implode( ', ', $names ) );
 	}
 
 	/**
 	 * Tests a saved mapping against a user's synchronized active assignments.
 	 *
-	 * @since 2.7.0 Adds a read-only authorization tester with a progressive modal.
+	 * @since 2.7.0 Adds a read-only authorization tester with grouped results and a complete active-assignment table.
 	 *
 	 * @param array $organisations Synchronized organisations.
 	 * @param array $units Synchronized units.
@@ -583,33 +623,64 @@ class RolesAdmin {
 					<button class="button sol-close-dialog" type="button" hidden><?php esc_html_e( 'Cancel', 'scouting-openid-connect' ); ?></button>
 				</div>
 			</form>
-			<div id="sol-user-test-result" tabindex="-1">
+			<div id="sol-user-test-result" tabindex="-1" <?php echo '' === $error && ! $user ? 'hidden' : ''; ?>>
 			<?php if ( '' !== $error ) : ?>
-				<p id="sol-user-test-error" role="alert"><?php echo esc_html( $error ); ?></p>
+				<p id="sol-user-test-error" class="notice notice-error inline" role="alert"><?php echo esc_html( $error ); ?></p>
 			<?php elseif ( $user ) : ?>
 				<?php
 				$preview = RolesAuthorization::scouting_oidc_roles_authorization_get_user_preview( $user->ID );
 				?>
 				<?php if ( is_wp_error( $preview ) ) : ?>
-					<p role="alert"><?php echo esc_html( 'sol_assignments_unavailable' === $preview->get_error_code() ? $preview->get_error_message() : __( 'The preview could not read SOL assignments. Check the database before relying on a login decision.', 'scouting-openid-connect' ) ); ?></p>
+					<p class="notice notice-error inline" role="alert"><?php echo esc_html( 'sol_assignments_unavailable' === $preview->get_error_code() ? $preview->get_error_message() : __( 'The preview could not read SOL assignments. Check the database before relying on a login decision.', 'scouting-openid-connect' ) ); ?></p>
 				<?php else : ?>
 					<h3><?php echo esc_html( $user->display_name . ' (' . $user->user_login . ')' ); ?></h3>
-					<p>
+					<div class="notice inline <?php echo $preview['decision']['login_allowed'] ? 'notice-success' : 'notice-error'; ?>">
+						<p><strong><?php echo esc_html( $this->scouting_oidc_roles_admin_describe_outcome( $preview['decision'], $wordpress_roles ) ); ?></strong></p>
 						<?php
-						/* translators: %d: winning rule position. */
-						echo esc_html( null === $preview['rule_index'] ? __( 'No matching rule: use the WordPress default role. Other login and new-user registration checks still apply.', 'scouting-openid-connect' ) : sprintf( __( 'Winning rule: %d', 'scouting-openid-connect' ), $preview['rule_index'] + 1 ) );
+						if ( empty( $preview['rule_indexes'] ) ) {
+							?>
+							<p><?php esc_html_e( 'No matching rules: remove obsolete plugin-granted roles without adding a role for this existing user.', 'scouting-openid-connect' ); ?></p>
+							<?php
+						}
 						?>
-						<br /><?php echo esc_html( $this->scouting_oidc_roles_admin_describe_outcome( $preview['decision'], $wordpress_roles ) ); ?>
-					</p>
-					<h4><?php esc_html_e( 'Active SOL assignments', 'scouting-openid-connect' ); ?></h4>
+					</div>
+					<?php if ( ! empty( $preview['rule_indexes'] ) ) : ?>
+						<?php $saved_mapping = $this->scouting_oidc_roles_admin_get_mapping(); ?>
+						<h4><?php esc_html_e( 'Matching rules', 'scouting-openid-connect' ); ?></h4>
+						<ul class="scouting-oidc-test-rules">
+							<?php foreach ( $preview['rule_indexes'] as $rule_index ) : ?>
+								<li>
+									<p><?php echo esc_html( $this->scouting_oidc_roles_admin_describe_conditions( $saved_mapping['rules'][ $rule_index ], $organisations, $units, $roles ) ); ?></p>
+									<p><strong><?php echo esc_html( $this->scouting_oidc_roles_admin_describe_outcome( $saved_mapping['rules'][ $rule_index ], $wordpress_roles ) ); ?></strong></p>
+								</li>
+							<?php endforeach; ?>
+						</ul>
+					<?php endif; ?>
 					<?php if ( empty( $preview['assignments'] ) ) : ?>
+						<h4><?php esc_html_e( 'Active SOL assignments', 'scouting-openid-connect' ); ?></h4>
 						<p><?php esc_html_e( 'No stored active SOL assignments.', 'scouting-openid-connect' ); ?></p>
 					<?php else : ?>
-						<ul>
-						<?php foreach ( $preview['assignments'] as $assignment ) : ?>
-							<li><?php echo esc_html( $this->scouting_oidc_roles_admin_describe_conditions( $assignment, $organisations, $units, $roles ) ); ?></li>
-						<?php endforeach; ?>
-						</ul>
+						<div class="scouting-oidc-test-assignments">
+							<table class="widefat striped">
+								<caption><?php esc_html_e( 'Active SOL assignments', 'scouting-openid-connect' ); ?></caption>
+								<thead>
+									<tr>
+										<th scope="col"><?php esc_html_e( 'Organisation', 'scouting-openid-connect' ); ?></th>
+										<th scope="col"><?php esc_html_e( 'Organisation Unit', 'scouting-openid-connect' ); ?></th>
+										<th scope="col"><?php esc_html_e( 'SOL Role', 'scouting-openid-connect' ); ?></th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ( $preview['assignments'] as $assignment ) : ?>
+										<tr>
+											<td><?php echo esc_html( ( $organisations[ $assignment['organisation_id'] ]['name'] ?? $assignment['organisation_id'] ) . ' (' . $assignment['organisation_id'] . ')' ); ?></td>
+											<td><?php echo esc_html( ( $units[ $assignment['organisation_unit_id'] ]['name'] ?? $assignment['organisation_unit_id'] ) . ' (' . $assignment['organisation_unit_id'] . ')' ); ?></td>
+											<td><?php echo esc_html( ( $roles[ $assignment['role_id'] ]['role_name'] ?? $assignment['role_id'] ) . ' (' . $assignment['role_id'] . ')' ); ?></td>
+										</tr>
+									<?php endforeach; ?>
+								</tbody>
+							</table>
+						</div>
 					<?php endif; ?>
 				<?php endif; ?>
 			<?php endif; ?>
@@ -628,9 +699,10 @@ class RolesAdmin {
 	 * @return array|\WP_Error Normalized mapping rule or a validation error.
 	 */
 	private function scouting_oidc_roles_admin_validate_rule( array $input ): array|\WP_Error {
-		$organisation_id    = isset( $input['organisation_id'] ) ? sanitize_text_field( wp_unslash( $input['organisation_id'] ) ) : '';
-		$unit_id            = isset( $input['organisation_unit_id'] ) ? absint( $input['organisation_unit_id'] ) : 0;
-		$role_id            = isset( $input['role_id'] ) ? absint( $input['role_id'] ) : 0;
+		$conditions = RolesAuthorization::scouting_oidc_roles_authorization_normalize_conditions( wp_unslash( $input ) );
+		if ( is_wp_error( $conditions ) ) {
+			return $conditions;
+		}
 		$wordpress_role     = isset( $input['wordpress_role'] ) ? sanitize_key( wp_unslash( $input['wordpress_role'] ) ) : '';
 		$login_allowed      = isset( $input['login_allowed'] ) ? sanitize_text_field( wp_unslash( $input['login_allowed'] ) ) : '';
 		$wordpress_roles    = wp_roles()->roles;
@@ -641,35 +713,29 @@ class RolesAdmin {
 			return $organisation_paths;
 		}
 
-		if ( '' !== $organisation_id && ! isset( $this->scouting_oidc_roles_admin_get_organisations()[ $organisation_id ] ) ) {
-			return new \WP_Error( 'invalid_organisation' );
+		$available = array(
+			'organisation'      => $this->scouting_oidc_roles_admin_get_organisations(),
+			'organisation_unit' => $units,
+			'role'              => $roles,
+		);
+		foreach ( $available as $field => $choices ) {
+			foreach ( $conditions[ $field . '_ids' ] as $identifier ) {
+				if ( ! isset( $choices[ $identifier ] ) ) {
+					return new \WP_Error( 'invalid_rule' );
+				}
+			}
 		}
-		if ( $unit_id > 0 && ! isset( $units[ $unit_id ] ) ) {
-			return new \WP_Error( 'invalid_organisation_unit' );
-		}
-		if ( $role_id > 0 && ! isset( $roles[ $role_id ] ) ) {
-			return new \WP_Error( 'invalid_role' );
-		}
-		if ( $unit_id > 0 && '' !== $organisation_id && ! in_array( $organisation_id, $organisation_paths[ $units[ $unit_id ]['organisation_id'] ] ?? array(), true ) ) {
-			return new \WP_Error( 'invalid_rule' );
-		}
-		if ( $role_id > 0 && $unit_id > 0 && (int) $roles[ $role_id ]['organisation_unit_id'] !== $unit_id ) {
-			return new \WP_Error( 'invalid_rule' );
-		}
-		if ( $role_id > 0 && '' !== $organisation_id && ! in_array( $organisation_id, $organisation_paths[ $roles[ $role_id ]['organisation_id'] ] ?? array(), true ) ) {
-			return new \WP_Error( 'invalid_rule' );
-		}
-		if ( ! isset( $wordpress_roles[ $wordpress_role ] ) || ! in_array( $login_allowed, array( '0', '1' ), true ) || ( '' === $organisation_id && 0 === $unit_id && 0 === $role_id ) ) {
+		if ( ! isset( $wordpress_roles[ $wordpress_role ] ) || ! in_array( $login_allowed, array( '0', '1' ), true ) ) {
 			return new \WP_Error( 'invalid_rule' );
 		}
 
-		return array(
-			'id'                   => '',
-			'organisation_id'      => $organisation_id,
-			'organisation_unit_id' => $unit_id,
-			'role_id'              => $role_id,
-			'wordpress_role'       => $wordpress_role,
-			'login_allowed'        => '1' === $login_allowed,
+		return array_merge(
+			array( 'id' => '' ),
+			$conditions,
+			array(
+				'wordpress_role' => $wordpress_role,
+				'login_allowed'  => '1' === $login_allowed,
+			)
 		);
 	}
 
@@ -771,21 +837,12 @@ class RolesAdmin {
 	 * @param string $action Form action name.
 	 * @param string $label Visible and accessible action label.
 	 * @param string $rule_id Mapping rule ID.
-	 * @param string $direction Optional move direction.
-	 * @param bool   $enabled Whether the action is available.
 	 */
-	private function scouting_oidc_roles_admin_render_rule_action( string $action, string $label, string $rule_id, string $direction = '', bool $enabled = true ): void {
-		if ( ! $enabled ) {
-			return;
-		}
+	private function scouting_oidc_roles_admin_render_rule_action( string $action, string $label, string $rule_id ): void {
 		?>
 		<form class="inline-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 			<input type="hidden" name="action" value="<?php echo esc_attr( $action ); ?>" />
 			<input type="hidden" name="rule_id" value="<?php echo esc_attr( $rule_id ); ?>" />
-			<?php
-			if ( '' !== $direction ) :
-				?>
-				<input type="hidden" name="direction" value="<?php echo esc_attr( $direction ); ?>" /><?php endif; ?>
 			<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( $action ) ); ?>" />
 			<button class="button-link" type="submit"><?php echo esc_html( $label ); ?></button>
 		</form>
@@ -805,6 +862,23 @@ class RolesAdmin {
 	 */
 	private function scouting_oidc_roles_admin_describe_conditions( array $rule, array $organisations, array $units, array $roles ): string {
 		$conditions = array();
+		if ( isset( $rule['organisation_ids'] ) ) {
+			$fields = array(
+				'organisation'      => array( __( 'Organisation', 'scouting-openid-connect' ), $organisations, 'name' ),
+				'organisation_unit' => array( __( 'Organisation Unit', 'scouting-openid-connect' ), $units, 'name' ),
+				'role'              => array( __( 'SOL Role', 'scouting-openid-connect' ), $roles, 'role_name' ),
+			);
+			foreach ( $fields as $field => $details ) {
+				list( $label, $choices, $name_key ) = $details;
+				if ( empty( $rule[ $field . '_ids' ] ) ) {
+					continue;
+				}
+				$names = array_map( static fn( $id ): string => ( $choices[ $id ][ $name_key ] ?? (string) $id ) . ' (' . $id . ')', $rule[ $field . '_ids' ] );
+				/* translators: 1: condition label, 2: inclusion/exclusion operator, 3: selected values. */
+				$conditions[] = sprintf( __( '%1$s: %2$s [%3$s]', 'scouting-openid-connect' ), $label, 'not_in' === $rule[ $field . '_operator' ] ? __( 'Is not one of', 'scouting-openid-connect' ) : __( 'Is one of', 'scouting-openid-connect' ), implode( ', ', $names ) );
+			}
+			return implode( '; ', $conditions );
+		}
 		if ( '' !== $rule['organisation_id'] ) {
 			$name = $organisations[ $rule['organisation_id'] ]['name'] ?? $rule['organisation_id'];
 			/* translators: 1: organisation name, 2: organisation ID. */
@@ -821,7 +895,7 @@ class RolesAdmin {
 			$conditions[] = sprintf( __( 'SOL role is %1$s (%2$d)', 'scouting-openid-connect' ), $name, $rule['role_id'] );
 		}
 
-		return implode( ' AND ', $conditions );
+		return implode( '; ', $conditions );
 	}
 
 	/**
@@ -834,13 +908,13 @@ class RolesAdmin {
 		$message  = isset( $_GET['notice'] ) ? sanitize_key( wp_unslash( $_GET['notice'] ) ) : '';
 		$messages = array(
 			'save-failed' => __( 'The role mapping could not be saved. Please try again or check the database.', 'scouting-openid-connect' ),
-			'duplicated'  => __( 'Rule duplicated at the end. Edit its conditions or outcome, then move it if needed.', 'scouting-openid-connect' ),
+			'duplicate'   => __( 'An identical mapping rule already exists. No duplicate was saved.', 'scouting-openid-connect' ),
 			'saved'       => __( 'Role mapping saved.', 'scouting-openid-connect' ),
 			'deleted'     => __( 'Role mapping deleted.', 'scouting-openid-connect' ),
 			'invalid'     => __( 'The rule was invalid or referenced data that is no longer synchronized.', 'scouting-openid-connect' ),
 		);
 		if ( isset( $messages[ $message ] ) ) {
-			$is_error = in_array( $message, array( 'invalid', 'save-failed' ), true );
+			$is_error = in_array( $message, array( 'invalid', 'save-failed', 'duplicate' ), true );
 			printf( '<div class="notice notice-%1$s is-dismissible" role="%2$s"><p>%3$s</p></div>', $is_error ? 'error' : 'success', $is_error ? 'alert' : 'status', esc_html( $messages[ $message ] ) );
 		}
 	}
