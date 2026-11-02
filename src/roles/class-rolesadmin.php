@@ -372,9 +372,10 @@ class RolesAdmin {
 			wp_die( esc_html__( 'You do not have permission to manage SOL role mappings.', 'scouting-openid-connect' ) );
 		}
 		check_admin_referer( 'scouting_oidc_roles_save_rule' );
-		$mapping = $this->scouting_oidc_roles_admin_get_mapping();
-		$rule_id = isset( $_POST['rule_id'] ) ? sanitize_text_field( wp_unslash( $_POST['rule_id'] ) ) : '';
-		$rule    = $this->scouting_oidc_roles_admin_validate_rule( $_POST );
+		$mapping  = $this->scouting_oidc_roles_admin_get_mapping();
+		$original = $mapping;
+		$rule_id  = isset( $_POST['rule_id'] ) ? sanitize_text_field( wp_unslash( $_POST['rule_id'] ) ) : '';
+		$rule     = $this->scouting_oidc_roles_admin_validate_rule( $_POST );
 		if ( is_wp_error( $rule ) ) {
 			$this->scouting_oidc_roles_admin_redirect( 'sol_hierarchy_read_failed' === $rule->get_error_code() ? 'save-failed' : 'invalid' );
 		}
@@ -398,7 +399,9 @@ class RolesAdmin {
 			$mapping['rules'][] = $rule;
 		}
 
-		update_option( self::RULES_OPTION, $mapping, false );
+		if ( $original !== $mapping && ! update_option( self::RULES_OPTION, $mapping, false ) ) {
+			$this->scouting_oidc_roles_admin_redirect( 'save-failed' );
+		}
 		$this->scouting_oidc_roles_admin_redirect( 'saved' );
 	}
 
@@ -414,13 +417,16 @@ class RolesAdmin {
 		check_admin_referer( 'scouting_oidc_roles_delete_rule' );
 		$rule_id          = isset( $_POST['rule_id'] ) ? sanitize_text_field( wp_unslash( $_POST['rule_id'] ) ) : '';
 		$mapping          = $this->scouting_oidc_roles_admin_get_mapping();
+		$original         = $mapping;
 		$mapping['rules'] = array_values(
 			array_filter(
 				$mapping['rules'],
 				static fn( array $rule ): bool => $rule['id'] !== $rule_id
 			)
 		);
-		update_option( self::RULES_OPTION, $mapping, false );
+		if ( $original !== $mapping && ! update_option( self::RULES_OPTION, $mapping, false ) ) {
+			$this->scouting_oidc_roles_admin_redirect( 'save-failed' );
+		}
 		$this->scouting_oidc_roles_admin_redirect( 'deleted' );
 	}
 
@@ -658,6 +664,7 @@ class RolesAdmin {
 		}
 
 		return array(
+			'id'                   => '',
 			'organisation_id'      => $organisation_id,
 			'organisation_unit_id' => $unit_id,
 			'role_id'              => $role_id,

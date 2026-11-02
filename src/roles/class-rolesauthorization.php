@@ -26,11 +26,11 @@ class RolesAuthorization {
 	private const RULES_OPTION = 'scouting_oidc_sol_role_mapping_rules';
 
 	/**
-	 * User meta key tracking the WordPress role managed by this plugin.
+	 * User meta key proving which role was added rather than already present.
 	 *
-	 * @since 2.7.0 Preserves independently managed WordPress roles.
+	 * @since 2.7.0 Tracks ownership for safe role removal and uninstall.
 	 */
-	private const MANAGED_ROLE_META_KEY = 'scouting_oidc_managed_wordpress_role';
+	private const OWNED_ROLE_META_KEY = 'scouting_oidc_owned_wordpress_role';
 
 	/**
 	 * Pattern for a six-digit Scouts Online organisation identifier.
@@ -144,6 +144,7 @@ class RolesAuthorization {
 	 * Applies the current plugin-managed WordPress role for a user.
 	 *
 	 * Existing roles not previously assigned by this plugin are left intact.
+	 * Legacy managed-role markers alone do not prove ownership.
 	 *
 	 * @since 2.7.0 Applies SOL role mappings without removing manual roles.
 	 *
@@ -157,16 +158,34 @@ class RolesAuthorization {
 			return false;
 		}
 
-		$managed_role = get_user_meta( $user_id, self::MANAGED_ROLE_META_KEY, true );
+		$managed_role = get_user_meta( $user_id, self::OWNED_ROLE_META_KEY, true );
 		if ( is_string( $managed_role ) && '' !== $managed_role && $managed_role !== $wordpress_role ) {
 			$user->remove_role( $managed_role );
+			$saved_user = get_userdata( $user_id );
+			if ( ! $saved_user instanceof \WP_User || in_array( $managed_role, $saved_user->roles, true ) ) {
+				Logger::error( LogComponent::ROLES, 'Could not remove the previous plugin-owned WordPress role.', $user_id );
+				return false;
+			}
+			delete_user_meta( $user_id, self::OWNED_ROLE_META_KEY );
+			if ( '' !== get_user_meta( $user_id, self::OWNED_ROLE_META_KEY, true ) ) {
+				Logger::error( LogComponent::ROLES, 'Could not clear ownership of the previous mapped WordPress role.', $user_id );
+				return false;
+			}
 		}
 
 		if ( ! in_array( $wordpress_role, $user->roles, true ) ) {
+			update_user_meta( $user_id, self::OWNED_ROLE_META_KEY, $wordpress_role );
+			if ( get_user_meta( $user_id, self::OWNED_ROLE_META_KEY, true ) !== $wordpress_role ) {
+				Logger::error( LogComponent::ROLES, 'Could not record ownership of the mapped WordPress role.', $user_id );
+				return false;
+			}
 			$user->add_role( $wordpress_role );
+			$saved_user = get_userdata( $user_id );
+			if ( ! $saved_user instanceof \WP_User || ! in_array( $wordpress_role, $saved_user->roles, true ) ) {
+				Logger::error( LogComponent::ROLES, 'Could not save the mapped WordPress role.', $user_id );
+				return false;
+			}
 		}
-
-		update_user_meta( $user_id, self::MANAGED_ROLE_META_KEY, $wordpress_role );
 
 		return true;
 	}
@@ -343,13 +362,13 @@ class RolesAuthorization {
 	}
 
 	/**
-	 * Clears cached active assignments after synchronization changes them.
+	 * Clears only the request-local assignment cache, never persisted assignments.
 	 *
 	 * @since 2.7.0 Keeps same-request authorization data current.
 	 *
 	 * @param int $user_id WordPress user ID.
 	 */
-	public static function scouting_oidc_roles_authorization_clear_active_assignments( int $user_id ): void {
+	public static function scouting_oidc_roles_authorization_clear_active_assignments_cache( int $user_id ): void {
 		unset( self::$active_assignments[ $user_id ] );
 	}
 

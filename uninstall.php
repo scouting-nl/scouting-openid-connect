@@ -13,6 +13,34 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 
 global $wpdb;
 
+// Revoke only roles positively recorded as added by the plugin, preserving pre-existing roles.
+$scouting_oidc_user_offset = 0;
+do {
+	$scouting_oidc_owned_users = get_users(
+		array(
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Only positively owned roles can safely be revoked.
+			'meta_key' => 'scouting_oidc_owned_wordpress_role',
+			'number'   => 100,
+			'offset'   => $scouting_oidc_user_offset,
+		)
+	);
+	if ( '' !== $wpdb->last_error ) {
+		wp_die( esc_html__( 'Your access level could not be updated. Please contact the site administrator.', 'scouting-openid-connect' ) );
+	}
+	foreach ( $scouting_oidc_owned_users as $scouting_oidc_owned_user ) {
+		$scouting_oidc_owned_role = get_user_meta( $scouting_oidc_owned_user->ID, 'scouting_oidc_owned_wordpress_role', true );
+		if ( is_string( $scouting_oidc_owned_role ) && '' !== $scouting_oidc_owned_role ) {
+			$scouting_oidc_owned_user->remove_role( $scouting_oidc_owned_role );
+			$scouting_oidc_saved_user = get_userdata( $scouting_oidc_owned_user->ID );
+			if ( ! $scouting_oidc_saved_user instanceof WP_User || in_array( $scouting_oidc_owned_role, $scouting_oidc_saved_user->roles, true ) ) {
+				wp_die( esc_html__( 'Your access level could not be updated. Please contact the site administrator.', 'scouting-openid-connect' ) );
+			}
+		}
+	}
+	$scouting_oidc_owned_count  = count( $scouting_oidc_owned_users );
+	$scouting_oidc_user_offset += 100;
+} while ( 100 === $scouting_oidc_owned_count );
+
 // Delete options.
 $scouting_oidc_options = array(
 	'scouting_oidc_client_id',
@@ -64,7 +92,8 @@ $scouting_oidc_delete_transients_sql  = "DELETE FROM {$wpdb->options} WHERE $sco
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared
 $wpdb->query( $wpdb->prepare( $scouting_oidc_delete_transients_sql, $scouting_oidc_transient_like_patterns ) );
 
-// Delete user meta.
+// Preserve ambiguous legacy managed-role markers for manual reconciliation.
+// Delete other plugin user meta after positively owned roles have been revoked.
 $scouting_oidc_metas = array(
 	'scouting_oidc_user',
 	'scouting_oidc_subject',
@@ -78,7 +107,7 @@ $scouting_oidc_metas = array(
 	'scouting_oidc_postal_code',
 	'scouting_oidc_locality',
 	'scouting_oidc_country_code',
-	'scouting_oidc_managed_wordpress_role',
+	'scouting_oidc_owned_wordpress_role',
 	'scouting_oidc_roles_available',
 );
 

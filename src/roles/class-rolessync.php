@@ -37,7 +37,7 @@ class RolesSync {
 			return false;
 		}
 
-		RolesAuthorization::scouting_oidc_roles_authorization_clear_active_assignments( $user_id );
+		RolesAuthorization::scouting_oidc_roles_authorization_clear_active_assignments_cache( $user_id );
 		update_user_meta( $user_id, 'scouting_oidc_roles_available', 'no' );
 		if ( 'no' !== get_user_meta( $user_id, 'scouting_oidc_roles_available', true ) ) {
 			Logger::error( LogComponent::ROLES, 'Could not invalidate stored SOL assignments before synchronization.', $user_id );
