@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: Scouting OpenID Connect 2.7.0\n"
 "Report-Msgid-Bugs-To: https://github.com/scouting-nl/scouting-openid-connect/"
 "issues\n"
-"POT-Creation-Date: 2026-11-02 08:53+0100\n"
+"POT-Creation-Date: 2026-11-02 12:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
@@ -45,32 +45,33 @@ msgstr ""
 msgid "Code is missing"
 msgstr ""
 
-#: auth/class-auth.php:353
+#: auth/class-auth.php:351
 msgid "Webmaster disabled creation of new accounts"
 msgstr ""
 
-#: auth/class-auth.php:374
-msgid "Your Scouts Online role is not permitted to access this site."
-msgstr ""
-
-#: auth/class-auth.php:375
-msgid "You are not allowed to sign in to this site."
-msgstr ""
-
-#: auth/class-auth.php:384
+#: auth/class-auth.php:372 auth/class-auth.php:393
+#: roles/class-rolesauthorization.php:209
 msgid ""
 "Your access level could not be updated. Please contact the site administrator."
 msgstr ""
 
-#: auth/class-auth.php:385
+#: auth/class-auth.php:373 auth/class-auth.php:394
 msgid "We could not complete your sign-in."
 msgstr ""
 
-#: auth/class-auth.php:423
+#: auth/class-auth.php:383
+msgid "Your Scouts Online role is not permitted to access this site."
+msgstr ""
+
+#: auth/class-auth.php:384
+msgid "You are not allowed to sign in to this site."
+msgstr ""
+
+#: auth/class-auth.php:432
 msgid "The user denied the request"
 msgstr ""
 
-#: auth/class-auth.php:427 auth/class-openidconnectclient.php:796
+#: auth/class-auth.php:436 auth/class-openidconnectclient.php:796
 #: auth/class-openidconnectclient.php:833 auth/class-openidconnectclient.php:855
 msgid "Details:"
 msgstr ""
@@ -409,7 +410,7 @@ msgid ""
 msgstr ""
 
 #: roles/class-rolesadmin.php:76 roles/class-rolesadmin.php:77
-#: roles/class-rolesadmin.php:191
+#: roles/class-rolesadmin.php:194
 msgid "SOL Role Mapping"
 msgstr ""
 
@@ -507,28 +508,34 @@ msgstr ""
 msgid "Open the SOL Role Explorer"
 msgstr ""
 
-#: roles/class-rolesadmin.php:166 roles/class-rolesadmin.php:369
-#: roles/class-rolesadmin.php:409 roles/class-rolesadmin.php:431
-#: roles/class-rolesadmin.php:482
+#: roles/class-rolesadmin.php:166 roles/class-rolesadmin.php:372
+#: roles/class-rolesadmin.php:415 roles/class-rolesadmin.php:440
+#: roles/class-rolesadmin.php:491
 msgid "You do not have permission to manage SOL role mappings."
 msgstr ""
 
-#: roles/class-rolesadmin.php:195 roles/class-rolesadmin.php:260
+#: roles/class-rolesadmin.php:190 roles/class-rolesadmin.php:594
+msgid ""
+"The preview could not read SOL assignments. Check the database before relying "
+"on a login decision."
+msgstr ""
+
+#: roles/class-rolesadmin.php:198 roles/class-rolesadmin.php:263
 msgid "Add Mapping Rule"
 msgstr ""
 
-#: roles/class-rolesadmin.php:196 roles/class-rolesadmin.php:559
+#: roles/class-rolesadmin.php:199 roles/class-rolesadmin.php:568
 msgid "Test a User"
 msgstr ""
 
-#: roles/class-rolesadmin.php:198
+#: roles/class-rolesadmin.php:201
 msgid ""
 "Rules are evaluated from top to bottom. The first matching rule wins. When no "
 "rule matches, the WordPress default role is used; the General Settings option "
 "for creating new users still applies."
 msgstr ""
 
-#: roles/class-rolesadmin.php:199
+#: roles/class-rolesadmin.php:202
 msgid ""
 "The first matching rule allows or denies Scouting OIDC login. Allowed users "
 "receive one plugin-managed WordPress role; other independently managed roles "
@@ -536,250 +543,244 @@ msgid ""
 "assignment."
 msgstr ""
 
-#: roles/class-rolesadmin.php:200
+#: roles/class-rolesadmin.php:203
 msgid ""
 "When Scouts Online supplies parent organisations, an organisation condition "
 "also matches assignments in its descendant organisations."
 msgstr ""
 
-#: roles/class-rolesadmin.php:203
+#: roles/class-rolesadmin.php:206
 msgid "Saved rules in evaluation order"
 msgstr ""
 
-#: roles/class-rolesadmin.php:206
+#: roles/class-rolesadmin.php:209
 msgid "Number"
 msgstr ""
 
-#: roles/class-rolesadmin.php:207
+#: roles/class-rolesadmin.php:210
 msgid "When"
 msgstr ""
 
-#: roles/class-rolesadmin.php:208 roles/class-rolesadmin.php:310
+#: roles/class-rolesadmin.php:211 roles/class-rolesadmin.php:313
 msgid "Then"
 msgstr ""
 
-#: roles/class-rolesadmin.php:209
+#: roles/class-rolesadmin.php:212
 msgid "Actions"
 msgstr ""
 
-#: roles/class-rolesadmin.php:214
+#: roles/class-rolesadmin.php:217
 msgid "No mapping rules yet."
 msgstr ""
 
-#: roles/class-rolesadmin.php:229
+#: roles/class-rolesadmin.php:232
 #, php-format
 msgid "Actions for rule %d"
 msgstr ""
 
-#: roles/class-rolesadmin.php:237
+#: roles/class-rolesadmin.php:240
 msgid "Edit"
 msgstr ""
 
-#: roles/class-rolesadmin.php:238
+#: roles/class-rolesadmin.php:241
 msgid "Duplicate"
 msgstr ""
 
-#: roles/class-rolesadmin.php:239
+#: roles/class-rolesadmin.php:242
 msgid "Move up"
 msgstr ""
 
-#: roles/class-rolesadmin.php:240
+#: roles/class-rolesadmin.php:243
 msgid "Move down"
 msgstr ""
 
-#: roles/class-rolesadmin.php:241
+#: roles/class-rolesadmin.php:244
 msgid "Delete"
 msgstr ""
 
-#: roles/class-rolesadmin.php:246
+#: roles/class-rolesadmin.php:249
 msgid "Position"
 msgstr ""
 
-#: roles/class-rolesadmin.php:248
+#: roles/class-rolesadmin.php:251
 msgid "Move"
 msgstr ""
 
-#: roles/class-rolesadmin.php:260
+#: roles/class-rolesadmin.php:263
 msgid "Edit Mapping Rule"
 msgstr ""
 
-#: roles/class-rolesadmin.php:261 roles/class-rolesadmin.php:560
+#: roles/class-rolesadmin.php:264 roles/class-rolesadmin.php:569
 msgid "Close"
 msgstr ""
 
-#: roles/class-rolesadmin.php:271
+#: roles/class-rolesadmin.php:274
 msgid "When an active SOL assignment matches"
 msgstr ""
 
-#: roles/class-rolesadmin.php:272
+#: roles/class-rolesadmin.php:275
 msgid ""
 "Choose at least one condition. Search results appear as you type. Searching "
 "keeps the current selection; choose a result to change it. Changing an "
 "organisation or unit clears incompatible selections."
 msgstr ""
 
-#: roles/class-rolesadmin.php:276 roles/class-rolesexplorer.php:58
+#: roles/class-rolesadmin.php:279 roles/class-rolesexplorer.php:58
 #: roles/class-rolesexplorer.php:93
 msgid "Organisation"
 msgstr ""
 
-#: roles/class-rolesadmin.php:278
+#: roles/class-rolesadmin.php:281
 msgid "Search organisations"
 msgstr ""
 
-#: roles/class-rolesadmin.php:279
+#: roles/class-rolesadmin.php:282
 msgid "Any organisation"
 msgstr ""
 
-#: roles/class-rolesadmin.php:286 roles/class-rolesexplorer.php:65
+#: roles/class-rolesadmin.php:289 roles/class-rolesexplorer.php:65
 #: roles/class-rolesexplorer.php:94
 msgid "Organisation Unit"
 msgstr ""
 
-#: roles/class-rolesadmin.php:288
+#: roles/class-rolesadmin.php:291
 msgid "Search units"
 msgstr ""
 
-#: roles/class-rolesadmin.php:289
+#: roles/class-rolesadmin.php:292
 msgid "Any unit"
 msgstr ""
 
-#: roles/class-rolesadmin.php:296 roles/class-rolesexplorer.php:72
+#: roles/class-rolesadmin.php:299 roles/class-rolesexplorer.php:72
 #: roles/class-rolesexplorer.php:95
 msgid "SOL Role"
 msgstr ""
 
-#: roles/class-rolesadmin.php:298
+#: roles/class-rolesadmin.php:301
 msgid "Search SOL roles"
 msgstr ""
 
-#: roles/class-rolesadmin.php:299
+#: roles/class-rolesadmin.php:302
 msgid "Any role"
 msgstr ""
 
-#: roles/class-rolesadmin.php:308
+#: roles/class-rolesadmin.php:311
 msgid ""
 "Search matches: organisations {organisations}, units {units}, SOL roles "
 "{roles}."
 msgstr ""
 
-#: roles/class-rolesadmin.php:309
+#: roles/class-rolesadmin.php:312
 msgid "{count} matches. Current selection: {selection}."
 msgstr ""
 
-#: roles/class-rolesadmin.php:314
+#: roles/class-rolesadmin.php:317
 msgid "Scouting OIDC login"
 msgstr ""
 
-#: roles/class-rolesadmin.php:315
+#: roles/class-rolesadmin.php:318
 msgid "Allow login"
 msgstr ""
 
-#: roles/class-rolesadmin.php:315 roles/class-rolesadmin.php:524
+#: roles/class-rolesadmin.php:318 roles/class-rolesadmin.php:533
 msgid "Deny login"
 msgstr ""
 
-#: roles/class-rolesadmin.php:318
+#: roles/class-rolesadmin.php:321
 msgid "WordPress Role"
 msgstr ""
 
-#: roles/class-rolesadmin.php:328
+#: roles/class-rolesadmin.php:331
 msgid "Save Rule"
 msgstr ""
 
-#: roles/class-rolesadmin.php:328
+#: roles/class-rolesadmin.php:331
 msgid "Add Rule"
 msgstr ""
 
-#: roles/class-rolesadmin.php:329 roles/class-rolesadmin.php:333
-#: roles/class-rolesadmin.php:574
+#: roles/class-rolesadmin.php:332 roles/class-rolesadmin.php:336
+#: roles/class-rolesadmin.php:583
 msgid "Cancel"
 msgstr ""
 
-#: roles/class-rolesadmin.php:528
+#: roles/class-rolesadmin.php:537
 #, php-format
 msgid "Allow login; assign %s"
 msgstr ""
 
-#: roles/class-rolesadmin.php:553
+#: roles/class-rolesadmin.php:562
 msgid "No WordPress user was found. Enter an exact username or user ID."
 msgstr ""
 
-#: roles/class-rolesadmin.php:567
+#: roles/class-rolesadmin.php:576
 msgid ""
 "Preview saved rules using currently stored active SOL assignments. Unsaved "
 "edits are not included. This does not sign the user in, refresh SOL data, or "
 "change their roles."
 msgstr ""
 
-#: roles/class-rolesadmin.php:570
+#: roles/class-rolesadmin.php:579
 msgid "Username or user ID"
 msgstr ""
 
-#: roles/class-rolesadmin.php:573
+#: roles/class-rolesadmin.php:582
 msgid "Test User"
 msgstr ""
 
-#: roles/class-rolesadmin.php:587
-msgid ""
-"The preview could not read SOL assignments. Check the database before relying "
-"on a login decision."
-msgstr ""
-
-#: roles/class-rolesadmin.php:593
+#: roles/class-rolesadmin.php:600
 msgid ""
 "No matching rule: use the WordPress default role. Other login and new-user "
 "registration checks still apply."
 msgstr ""
 
-#: roles/class-rolesadmin.php:593
+#: roles/class-rolesadmin.php:600
 #, php-format
 msgid "Winning rule: %d"
 msgstr ""
 
-#: roles/class-rolesadmin.php:597
+#: roles/class-rolesadmin.php:604
 msgid "Active SOL assignments"
 msgstr ""
 
-#: roles/class-rolesadmin.php:599
+#: roles/class-rolesadmin.php:606
 msgid "No stored active SOL assignments."
 msgstr ""
 
-#: roles/class-rolesadmin.php:800
+#: roles/class-rolesadmin.php:811
 #, php-format
 msgid "Organisation is %1$s (%2$s)"
 msgstr ""
 
-#: roles/class-rolesadmin.php:805
+#: roles/class-rolesadmin.php:816
 #, php-format
 msgid "Unit is %1$s (%2$d)"
 msgstr ""
 
-#: roles/class-rolesadmin.php:810
+#: roles/class-rolesadmin.php:821
 #, php-format
 msgid "SOL role is %1$s (%2$d)"
 msgstr ""
 
-#: roles/class-rolesadmin.php:825
+#: roles/class-rolesadmin.php:836
 msgid ""
 "The role mapping could not be saved. Please try again or check the database."
 msgstr ""
 
-#: roles/class-rolesadmin.php:826
+#: roles/class-rolesadmin.php:837
 msgid ""
 "Rule duplicated at the end. Edit its conditions or outcome, then move it if "
 "needed."
 msgstr ""
 
-#: roles/class-rolesadmin.php:827
+#: roles/class-rolesadmin.php:838
 msgid "Role mapping saved."
 msgstr ""
 
-#: roles/class-rolesadmin.php:828
+#: roles/class-rolesadmin.php:839
 msgid "Role mapping deleted."
 msgstr ""
 
-#: roles/class-rolesadmin.php:829
+#: roles/class-rolesadmin.php:840
 msgid "The rule was invalid or referenced data that is no longer synchronized."
 msgstr ""
 
@@ -2010,16 +2011,16 @@ msgstr ""
 msgid "No role deny rule"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:550
+#: woocommerce/class-woocommercerestrictions.php:558
 msgid "Unknown organisation"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:553
+#: woocommerce/class-woocommercerestrictions.php:561
 #, php-format
 msgid "%1$s - %2$s / %3$s (%4$d)"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:625
+#: woocommerce/class-woocommercerestrictions.php:633
 msgid ""
 "Your current Scouts Online role or organisation does not permit ordering this "
 "product."
