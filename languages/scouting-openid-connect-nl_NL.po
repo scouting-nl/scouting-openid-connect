@@ -5,8 +5,8 @@ msgstr ""
 "Project-Id-Version: Scouting OpenID Connect 2.7.0\n"
 "Report-Msgid-Bugs-To: https://github.com/scouting-nl/scouting-openid-connect/"
 "issues\n"
-"POT-Creation-Date: 2026-11-02 21:49+0100\n"
-"PO-Revision-Date: 2026-11-02 17:31+0100\n"
+"POT-Creation-Date: 2026-11-02 22:10+0100\n"
+"PO-Revision-Date: 2026-11-02 22:10+0100\n"
 "Last-Translator: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language: nl_NL\n"
@@ -129,7 +129,6 @@ msgstr "Het token_endpoint is niet beschikbaar in de well-known data."
 msgid "The code_verifier for PKCE is missing from the session."
 msgstr "De code_verifier voor PKCE ontbreekt in de sessie."
 
-#. translators: 1: HTTP status code returned by the token endpoint. 2: Error detail from the token endpoint response.
 #: auth/class-openidconnectclient.php:348
 #, php-format
 msgid "Token endpoint error %1$s: %2$s"
@@ -399,7 +398,6 @@ msgstr ""
 "Gebruik de knop ‘.log downloaden’ om de momenteel gefilterde logbestanden te "
 "exporteren."
 
-#. translators: %d: Number of days log entries are kept before cleanup.
 #: logging/class-logginghelp.php:64
 #, php-format
 msgid "A daily cleanup task removes log entries older than %d day(s)."
@@ -636,7 +634,6 @@ msgstr "Acties"
 msgid "No mapping rules yet."
 msgstr "Er zijn nog geen toewijzingsregels."
 
-#. translators: 1: rule conditions, 2: rule outcome.
 #: roles/class-rolesadmin.php:254
 #, php-format
 msgid "Actions for rule: %1$s; %2$s"
@@ -767,12 +764,12 @@ msgid "WordPress Role"
 msgstr "WordPress-rol"
 
 #: roles/class-rolesadmin.php:349
-msgid "Add Rule"
-msgstr "Regel toevoegen"
-
-#: roles/class-rolesadmin.php:349
 msgid "Save Rule"
 msgstr "Regel opslaan"
+
+#: roles/class-rolesadmin.php:349
+msgid "Add Rule"
+msgstr "Regel toevoegen"
 
 #: roles/class-rolesadmin.php:350 roles/class-rolesadmin.php:354
 #: roles/class-rolesadmin.php:623
@@ -815,7 +812,6 @@ msgstr ""
 "Inloggen toestaan; verouderde, door de plugin toegekende rollen verwijderen "
 "zonder een rol toe te voegen"
 
-#. translators: %s: comma-separated WordPress role names.
 #: roles/class-rolesadmin.php:577
 #, php-format
 msgid "Allow login; assign %s"
@@ -866,25 +862,21 @@ msgstr "Actieve SOL-functietoewijzingen"
 msgid "No stored active SOL assignments."
 msgstr "Geen opgeslagen actieve SOL-functietoewijzingen."
 
-#. translators: 1: condition label, 2: inclusion/exclusion operator, 3: selected values.
 #: roles/class-rolesadmin.php:878
 #, php-format
 msgid "%1$s: %2$s [%3$s]"
 msgstr "%1$s: %2$s [%3$s]"
 
-#. translators: 1: organisation name, 2: organisation ID.
 #: roles/class-rolesadmin.php:885
 #, php-format
 msgid "Organisation is %1$s (%2$s)"
 msgstr "Organisatie is %1$s (%2$s)"
 
-#. translators: 1: organisation unit name, 2: organisation unit ID.
 #: roles/class-rolesadmin.php:890
 #, php-format
 msgid "Unit is %1$s (%2$d)"
 msgstr "Organisatieonderdeel is %1$s (%2$d)"
 
-#. translators: 1: SOL role name, 2: SOL role ID.
 #: roles/class-rolesadmin.php:895
 #, php-format
 msgid "SOL role is %1$s (%2$d)"
@@ -934,19 +926,18 @@ msgstr ""
 msgid "Select an organisation"
 msgstr "Selecteer een organisatie"
 
-#: roles/class-rolesexplorer.php:72 roles/class-rolesexplorer.php:79
-msgid "All"
-msgstr "Alle"
-
 #: roles/class-rolesexplorer.php:72
 msgid "Choose an organisation first"
 msgstr "Kies eerst een organisatie"
+
+#: roles/class-rolesexplorer.php:72 roles/class-rolesexplorer.php:79
+msgid "All"
+msgstr "Alle"
 
 #: roles/class-rolesexplorer.php:79
 msgid "Choose an organisation unit first"
 msgstr "Kies eerst een organisatieonderdeel"
 
-#. translators: %s: number of matching SOL role assignments.
 #: roles/class-rolesexplorer.php:91
 #, php-format
 msgid "%s assignment found."
@@ -1190,12 +1181,12 @@ msgstr ""
 "zijn automatisch omgezet."
 
 #: settings/class-settings-oidc.php:212
-msgid "Supported scopes are:"
-msgstr "De volgende scopes worden ondersteund:"
-
-#: settings/class-settings-oidc.php:212
 msgid "Unsupported scopes were removed:"
 msgstr "Niet-ondersteunde scopes zijn verwijderd:"
+
+#: settings/class-settings-oidc.php:212
+msgid "Supported scopes are:"
+msgstr "De volgende scopes worden ondersteund:"
 
 #: settings/class-settings.php:56
 msgid "Need help with setting up?"
@@ -1418,7 +1409,6 @@ msgstr ""
 msgid "The Scouts Online OpenID Connect provider could not be reached"
 msgstr "De OpenID Connect-provider van Scouts Online kon niet worden bereikt"
 
-#. translators: %s: Error message returned while requesting provider discovery.
 #: support/class-providerhealth.php:91
 #, php-format
 msgid "Provider discovery failed: %s"
@@ -1428,7 +1418,6 @@ msgstr "Provider-discoverie mislukt: %s"
 msgid "The Scouts Online provider returned an unexpected response"
 msgstr "De Scouts Online-provider heeft een onverwacht antwoord teruggegeven"
 
-#. translators: %d: HTTP status code returned by provider discovery.
 #: support/class-providerhealth.php:101
 #, php-format
 msgid "Provider discovery returned HTTP status %d instead of 200."
@@ -1472,7 +1461,6 @@ msgstr ""
 msgid "The provider discovery data is incomplete"
 msgstr "De discovery-gegevens van de provider zijn onvolledig"
 
-#. translators: %s: Comma-separated list of missing or invalid provider endpoints.
 #: support/class-providerhealth.php:206
 #, php-format
 msgid "These required endpoints are missing or invalid: %s."
@@ -1492,7 +1480,6 @@ msgstr "Scouting OpenID Connect vereist de S256-codechallenge-methode."
 msgid "The provider is missing required OpenID Connect capabilities"
 msgstr "De vereiste nonce-claim ontbreekt in het ID-token"
 
-#. translators: %s: Comma-separated list of missing OpenID Connect capabilities.
 #: support/class-providerhealth.php:252
 #, php-format
 msgid "These capabilities are not advertised: %s."
@@ -1502,7 +1489,6 @@ msgstr "Deze capabilities worden niet aangeboden: %s."
 msgid "Configured scopes are not advertised by the provider"
 msgstr "Geconfigureerde scopes worden niet door de provider aangeboden"
 
-#. translators: %s: Comma-separated list of scopes not advertised by the provider.
 #: support/class-providerhealth.php:281
 #, php-format
 msgid "Review these scopes: %s."
@@ -1512,7 +1498,6 @@ msgstr "Bekijk deze scopes: %s."
 msgid "The provider signing keys could not be reached"
 msgstr "The ID token payload could not be decoded"
 
-#. translators: %s: Error message returned while requesting provider signing keys.
 #: support/class-providerhealth.php:326
 #, php-format
 msgid "Signing-key retrieval failed: %s"
@@ -1522,7 +1507,6 @@ msgstr "Het ophalen van de ondertekeningssleutels is mislukt: %s"
 msgid "The provider signing keys returned an unexpected response"
 msgstr "Het UserInfo-eindpunt heeft een onverwacht antwoord geretourneerd"
 
-#. translators: %d: HTTP status code returned by the signing-key endpoint.
 #: support/class-providerhealth.php:336
 #, php-format
 msgid "Signing-key retrieval returned HTTP status %d instead of 200."
@@ -1596,7 +1580,6 @@ msgid "The server is missing functions required for Scouts Online login"
 msgstr ""
 "De server mist functies die nodig zijn voor het inloggen bij Scouts Online"
 
-#. translators: %s: Comma-separated list of missing PHP functions.
 #: support/class-sitehealth.php:142
 #, php-format
 msgid ""
@@ -1634,7 +1617,6 @@ msgstr ""
 msgid "Scouting OpenID Connect is not fully configured"
 msgstr "Scouting OpenID Connect is niet volledig geconfigureerd"
 
-#. translators: %s: Comma-separated list of missing configuration values.
 #: support/class-sitehealth.php:190
 #, php-format
 msgid ""
@@ -1659,7 +1641,6 @@ msgstr ""
 msgid "Required OpenID Connect scopes are missing"
 msgstr "Vereiste OpenID Connect-scopes ontbreken"
 
-#. translators: %s: Comma-separated list of missing OpenID Connect scopes.
 #: support/class-sitehealth.php:223
 #, php-format
 msgid ""
@@ -1694,7 +1675,6 @@ msgstr ""
 msgid "OpenID Connect scopes match the enabled features"
 msgstr "OpenID Connect-scopes komen overeen met de ingeschakelde functies"
 
-#. translators: %s: Space-separated list of configured OpenID Connect scopes.
 #: support/class-sitehealth.php:257
 #, php-format
 msgid "All required scopes are configured. Current scopes: %s."
@@ -1704,7 +1684,6 @@ msgstr "Alle vereiste scopes zijn geconfigureerd. Huidige scopes: %s."
 msgid "The login redirect mode is invalid"
 msgstr "De inlog-omleidingsmodus is ongeldig"
 
-#. translators: %s: Stored post-login redirect mode.
 #: support/class-sitehealth.php:281
 #, php-format
 msgid "The stored redirect mode \"%s\" is not recognized."
@@ -1724,7 +1703,6 @@ msgstr ""
 msgid "The login redirect is configured"
 msgstr "De login-redirect is geconfigureerd"
 
-#. translators: %s: Current post-login redirect mode.
 #: support/class-sitehealth.php:305
 #, php-format
 msgid "The current post-login redirect mode is %s."
@@ -1740,13 +1718,11 @@ msgstr ""
 "Deactiveer en activeer de plug-in opnieuw om de logopslag opnieuw aan te "
 "maken."
 
-#. translators: %s: Comma-separated list of missing database column names.
 #: support/class-sitehealth.php:336
 #, php-format
 msgid "Missing database columns: %s."
 msgstr "Ontbrekende databasekolommen: %s."
 
-#. translators: 1: Installed log schema version. 2: Expected log schema version.
 #: support/class-sitehealth.php:343
 #, php-format
 msgid "Installed schema version is %1$s; expected %2$s."
@@ -1788,7 +1764,6 @@ msgstr ""
 msgid "The cleanup event is not using the daily schedule."
 msgstr "De opschooningsgebeurtenis gebruikt niet de dagelijkse planning."
 
-#. translators: %s: Date and time of the overdue log cleanup event.
 #: support/class-sitehealth.php:409
 #, php-format
 msgid ""
@@ -1798,7 +1773,6 @@ msgstr ""
 "Automatisch starten van WP-Cron is uitgeschakeld, en de externe cron-runner "
 "heeft de voor %s geplande opschoning nog niet verwerkt."
 
-#. translators: %s: Date and time of the overdue log cleanup event.
 #: support/class-sitehealth.php:415
 #, php-format
 msgid ""
@@ -1816,7 +1790,6 @@ msgstr "De logopschoning van Scouting OpenID Connect heeft aandacht nodig"
 msgid "Scouting OpenID Connect log cleanup is scheduled"
 msgstr "De logopschoning van Scouting OpenID Connect is gepland"
 
-#. translators: 1: Date and time of the next log cleanup. 2: Number of days logs are retained.
 #: support/class-sitehealth.php:437
 #, php-format
 msgid ""
@@ -1902,7 +1875,6 @@ msgstr "Vereiste scopes"
 msgid "All present"
 msgstr "Alles aanwezig"
 
-#. translators: %s: Comma-separated list of missing OpenID Connect scopes.
 #: support/class-sitehealth.php:523
 #, php-format
 msgid "Missing: %s"
@@ -1954,19 +1926,18 @@ msgstr "Debug-loggen"
 msgid "Log retention"
 msgstr "Bewaartermijn van logs"
 
-#. translators: %d: Number of days logs are retained.
 #: support/class-sitehealth.php:543
 #, php-format
 msgid "%d days"
 msgstr "%d dagen"
 
 #: support/class-sitehealth.php:547
-msgid "Available"
-msgstr "Beschikbaar"
-
-#: support/class-sitehealth.php:547
 msgid "Log table"
 msgstr "Logtabel"
+
+#: support/class-sitehealth.php:547
+msgid "Available"
+msgstr "Beschikbaar"
 
 #: support/class-sitehealth.php:547
 msgid "Missing"
@@ -2374,7 +2345,6 @@ msgstr "Toegestane SOL-organisaties"
 msgid "No organisation allow rule"
 msgstr "Geen toestemmingsregel voor organisaties"
 
-#. translators: %s: organisation ID.
 #: woocommerce/class-woocommercerestrictions.php:244
 #: woocommerce/class-woocommercerestrictions.php:279
 #, php-format
@@ -2394,7 +2364,6 @@ msgstr "Toegestane SOL-rollen"
 msgid "No role allow rule"
 msgstr "Geen toestemmingsregel voor rollen"
 
-#. translators: %d: role ID.
 #: woocommerce/class-woocommercerestrictions.php:260
 #: woocommerce/class-woocommercerestrictions.php:295
 #, php-format
@@ -2447,7 +2416,6 @@ msgstr "Geen weigerregel voor rollen"
 msgid "Unknown organisation"
 msgstr "Onbekende organisatie"
 
-#. translators: 1: SOL role name, 2: organisation name or ID, 3: unit name or ID, 4: role ID.
 #: woocommerce/class-woocommercerestrictions.php:662
 #, php-format
 msgid "%1$s - %2$s / %3$s (%4$d)"
