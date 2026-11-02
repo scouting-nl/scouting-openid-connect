@@ -1,0 +1,67 @@
+name: Report an incorrect or missing translation
+description: Report untranslated text or suggest a correction to a plugin translation.
+assignees:
+  - jobvk
+type: bug
+labels:
+  - translation
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for missing or incorrect plugin translations.
+        For incorrect wiki instructions, use the documentation report form.
+
+        Reports are public. Do not include real member details, credentials, tokens, or session cookies.
+        Redact personal data from screenshots.
+  - type: input
+    id: language
+    attributes:
+      label: Language and locale
+      description: Enter the affected language and WordPress locale.
+      placeholder: Dutch (nl_NL)
+    validations:
+      required: true
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      placeholder: 2.7.0
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: Where does the text appear?
+      description: Identify the page, field, button, or message and how to reach it.
+      placeholder: Scouting OIDC > SOL Role Mapping > Add Mapping Rule
+    validations:
+      required: true
+  - type: textarea
+    id: current-text
+    attributes:
+      label: Current text
+      description: Copy the incorrect translation or the untranslated text exactly as displayed.
+    validations:
+      required: true
+  - type: textarea
+    id: suggested-text
+    attributes:
+      label: Suggested translation
+      description: Provide the corrected translation. Keep placeholders such as %s, %d, and {count} unchanged.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Explanation and additional context
+      description: Explain the correction and optionally attach a redacted screenshot or the original English text.
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I checked existing issues for this translation problem.
+          required: true
+        - label: I removed personal data and secrets from this report.
+          required: true

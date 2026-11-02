@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [[2.7.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.7.0)] - 02/11/2026
+
+- Added SOL role mapping with searchable organisation, unit, and role selectors, allow and deny rules, rule duplication and reordering, accessible dialogs, a read-only user tester, and contextual help. Unmatched users use the WordPress default role.
+- Added the SOL Role Explorer to browse synchronized organisations, units, roles, and user assignments.
+- Added WooCommerce SOL Access with organisation and role allow/deny rules, optional descendant and same-assignment matching, and optional SOL sign-in requirements per product or globally under WooCommerce Products settings. Deny rules take precedence; restrictions apply to purchase availability, add-to-cart, and existing carts after logout.
+
 ## [[2.6.2](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.6.2)] - 26/08/2026
 
 - Preserved historical log entries when WordPress users are deleted.

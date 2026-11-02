@@ -3,7 +3,7 @@ Contributors: jobvk
 Tags: scouting, scouting nederland, sol, openid connect, oidc
 Requires at least: 6.9.5
 Tested up to: 7.1
-Stable tag: 2.6.2
+Stable tag: 2.7.0
 Requires PHP: 8.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -48,6 +48,7 @@ Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scout
     - `email` (Required)
     - `address` (Optional)
     - `phone` (Optional)
+    - `roles` (Optional)
 12. Fill in the General Settings.
 13. Press `Save Settings`.
 14. Log out and try to log in with the Scouts Login button.
@@ -83,7 +84,7 @@ Yes, there is a settings page where you can set up a redirect after login, confi
 
 = Can roles also be imported into WordPress from SOL? =
 
-Currently not, but this is planned for a future update of this plugin.
+Yes, roles can be imported into WordPress from SOL using the plugin's role mapping feature.
 
 = Can my parents or guardian also sign in? =
 
@@ -97,6 +98,11 @@ Currently not, but this is planned for a future update of this plugin.
 4. Support Page
 
 == Changelog ==
+
+= 2.7.0 =
+* Added SOL role mapping with searchable organisation, unit, and role selectors, allow and deny rules, rule duplication and reordering, accessible dialogs, a read-only user tester, and contextual help. Unmatched users use the WordPress default role.
+* Added the SOL Role Explorer to browse synchronized organisations, units, roles, and user assignments.
+* Added WooCommerce SOL Access with organisation and role allow/deny rules, optional descendant and same-assignment matching, and optional SOL sign-in requirements per product or globally under WooCommerce Products settings. Deny rules take precedence; restrictions apply to purchase availability, add-to-cart, and existing carts after logout.
 
 = 2.6.2 =
 * Preserved historical log entries when WordPress users are deleted.

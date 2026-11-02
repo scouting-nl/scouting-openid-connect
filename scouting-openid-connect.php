@@ -7,7 +7,7 @@
  * @author     Job van Koeveringe <job.van.koeveringe@scouting.nl>
  * @copyright  2026 Scouting Nederland
  * @license    GPLv3
- * @version    2.6.2
+ * @version    2.7.0
  * @since      1.0.0
  * @link       https://github.com/Scouting-nl/scouting-openid-connect
  *
@@ -15,7 +15,7 @@
  * Plugin Name:          Scouting OpenID Connect
  * Plugin URI:           https://github.com/Scouting-nl/scouting-openid-connect
  * Description:          WordPress plugin for logging in with Scouting Nederland OpenID Connect Server.
- * Version:              2.6.2
+ * Version:              2.7.0
  * Requires at least:    6.9.5
  * Requires PHP:         8.2
  * Author:               Job van Koeveringe
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 define( 'SCOUTING_OIDC_PATH', plugin_dir_path( __FILE__ ) );
-define( 'SCOUTING_OIDC_VERSION', '2.6.2' );
+define( 'SCOUTING_OIDC_VERSION', '2.7.0' );
 require_once SCOUTING_OIDC_PATH . 'src/auth/class-auth.php';
 require_once SCOUTING_OIDC_PATH . 'src/auth/class-session.php';
 require_once SCOUTING_OIDC_PATH . 'src/menu/class-menu.php';
@@ -44,9 +44,15 @@ require_once SCOUTING_OIDC_PATH . 'src/logging/class-logging.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/class-actions.php';
 require_once SCOUTING_OIDC_PATH . 'src/plugin/class-description.php';
 require_once SCOUTING_OIDC_PATH . 'src/user/class-fields.php';
+require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolesdatabase.php';
+require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolesauthorization.php';
+require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolessync.php';
+require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolesexplorer.php';
+require_once SCOUTING_OIDC_PATH . 'src/roles/class-rolesadmin.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-logger.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-cronjobs.php';
 require_once SCOUTING_OIDC_PATH . 'src/utilities/class-mail.php';
+require_once SCOUTING_OIDC_PATH . 'src/woocommerce/class-woocommercerestrictions.php';
 
 use ScoutingOIDC\Auth;
 use ScoutingOIDC\Session;
@@ -60,6 +66,10 @@ use ScoutingOIDC\ProviderHealth;
 use ScoutingOIDC\SiteHealth;
 use ScoutingOIDC\Logging;
 use ScoutingOIDC\Fields;
+use ScoutingOIDC\RolesDatabase;
+use ScoutingOIDC\RolesSync;
+use ScoutingOIDC\RolesAdmin;
+use ScoutingOIDC\WooCommerceRestrictions;
 use ScoutingOIDC\CronJobs;
 use ScoutingOIDC\Mail;
 use ScoutingOIDC\Logger;
@@ -76,8 +86,12 @@ $scouting_oidc_provider_health = new ProviderHealth();
 $scouting_oidc_site_health     = new SiteHealth( $scouting_oidc_provider_health );
 $scouting_oidc_logging         = new Logging();
 $scouting_oidc_fields          = new Fields();
+$scouting_oidc_roles_database  = new RolesDatabase();
+$scouting_oidc_roles_admin     = new RolesAdmin();
 $scouting_oidc_logger          = new Logger();
 $scouting_oidc_cron_jobs       = new CronJobs();
+
+$scouting_oidc_woocommerce_restrictions = new WooCommerceRestrictions();
 
 /**
  * Registers the plugin's WordPress hooks.
@@ -102,6 +116,15 @@ function scouting_oidc_init(): void {
 
 	// Add a link to Scouts Online after View in each applicable user row.
 	add_filter( 'user_row_actions', array( $scouting_oidc_fields, 'scouting_oidc_fields_user_row_actions' ), 10, 2 );
+	add_filter( 'manage_users_columns', array( $scouting_oidc_fields, 'scouting_oidc_fields_user_columns' ) );
+	add_filter( 'manage_users_custom_column', array( $scouting_oidc_fields, 'scouting_oidc_fields_user_column' ), 10, 3 );
+	add_action( 'show_user_profile', array( $scouting_oidc_fields, 'scouting_oidc_fields_user_roles' ) );
+	add_action( 'edit_user_profile', array( $scouting_oidc_fields, 'scouting_oidc_fields_user_roles' ) );
+	add_action( 'personal_options_update', array( $scouting_oidc_fields, 'scouting_oidc_fields_preserve_roles' ) );
+	add_action( 'edit_user_profile_update', array( $scouting_oidc_fields, 'scouting_oidc_fields_preserve_roles' ) );
+	add_action( 'user_profile_update_errors', array( $scouting_oidc_fields, 'scouting_oidc_fields_validate_roles' ), 10, 3 );
+	add_action( 'profile_update', array( $scouting_oidc_fields, 'scouting_oidc_fields_save_roles' ) );
+	add_action( 'admin_enqueue_scripts', array( $scouting_oidc_fields, 'scouting_oidc_fields_enqueue_role_style' ) );
 
 	// Normalize plus-addressed Scouting OIDC recipient aliases in outgoing mail.
 	add_filter( 'wp_mail', array( Mail::class, 'scouting_oidc_mail_filter_wp_mail' ), 20 );
@@ -118,7 +141,9 @@ function scouting_oidc_init(): void {
 }
 add_action( 'plugins_loaded', 'scouting_oidc_init' );
 add_action( 'plugins_loaded', array( $scouting_oidc_logger, 'scouting_oidc_logger_maybe_upgrade_database' ) );
+add_action( 'plugins_loaded', array( $scouting_oidc_roles_database, 'scouting_oidc_roles_database_maybe_upgrade' ) );
 add_action( 'delete_user', array( Logger::class, 'scouting_oidc_logger_log_user_deletion' ), 10, 1 );
+add_action( 'delete_user', array( RolesSync::class, 'scouting_oidc_roles_sync_delete_user_roles' ), 10, 1 );
 
 // Add pages to the admin menu.
 add_action( 'admin_menu', array( $scouting_oidc_menu, 'scouting_oidc_menu' ) );
@@ -126,6 +151,7 @@ add_action( 'admin_menu', array( $scouting_oidc_settings, 'scouting_oidc_setting
 add_action( 'admin_menu', array( $scouting_oidc_shortcode, 'scouting_oidc_shortcode_submenu_page' ) );
 add_action( 'admin_menu', array( $scouting_oidc_support, 'scouting_oidc_support_submenu_page' ) );
 add_action( 'admin_menu', array( $scouting_oidc_logging, 'scouting_oidc_logging_submenu_page' ) );
+add_action( 'admin_menu', array( $scouting_oidc_roles_admin, 'scouting_oidc_roles_admin_register_pages' ) );
 
 // Hook into admin_init to initialize settings.
 add_action( 'admin_init', array( $scouting_oidc_settings, 'scouting_oidc_settings_page_init' ) );
@@ -171,5 +197,6 @@ add_action( 'admin_post_' . CronJobs::RUN_CLEANUP_ACTION, array( $scouting_oidc_
 // Setup defaults during installation.
 register_activation_hook( __FILE__, array( $scouting_oidc_settings, 'scouting_oidc_settings_install' ) );
 register_activation_hook( __FILE__, array( $scouting_oidc_logger, 'scouting_oidc_logger_database_create' ) );
+register_activation_hook( __FILE__, array( $scouting_oidc_roles_database, 'scouting_oidc_roles_database_create' ) );
 register_activation_hook( __FILE__, array( $scouting_oidc_cron_jobs, 'scouting_oidc_cron_activate' ) );
 register_deactivation_hook( __FILE__, array( $scouting_oidc_cron_jobs, 'scouting_oidc_cron_deactivate' ) );

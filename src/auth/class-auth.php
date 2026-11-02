@@ -20,6 +20,8 @@ require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
 
 use ScoutingOIDC\User;
 use ScoutingOIDC\ErrorHandler;
+use ScoutingOIDC\RolesAuthorization;
+use ScoutingOIDC\RolesSync;
 
 /**
  * Handles Scouting OpenID Connect authentication.
@@ -332,13 +334,15 @@ class Auth {
 		// Check if user is already created.
 		if ( $user->scouting_oidc_user_check_if_exist() ) {
 			Logger::info( LogComponent::AUTH, "User '{$user->get_display_name()}' has an existing account, updating user information and logging in", null, $user->get_username() );
-			$user->scouting_oidc_user_update();
+			$user_id = $user->scouting_oidc_user_update();
+			$this->scouting_oidc_auth_apply_role_mapping( $user_id, $user_info );
 			// Promote per-state redirect only after successful callback validation and right before login.
 			$this->oidc_client->apply_redirect_for_state_to_session( $state );
 			$user->scouting_oidc_user_login();
 		} elseif ( get_option( 'scouting_oidc_user_auto_create' ) ) {
 				Logger::info( LogComponent::AUTH, "User '{$user->get_display_name()}' does not have an account, auto-creation is enabled, creating account and logging in", null, $user->get_username() );
-				$user->scouting_oidc_user_create();
+				$user_id = $user->scouting_oidc_user_create();
+				$this->scouting_oidc_auth_apply_role_mapping( $user_id, $user_info, true );
 				// Promote per-state redirect only after successful callback validation and right before login.
 				$this->oidc_client->apply_redirect_for_state_to_session( $state );
 				$user->scouting_oidc_user_login();
@@ -350,6 +354,52 @@ class Auth {
 		// Configured post-login redirects exit from the wp_login hook. Clean OIDC callback parameters for the default flow.
 		wp_safe_redirect( home_url( '/' ) );
 		exit;
+	}
+
+	/**
+	 * Synchronizes SOL assignments and applies role mapping before OIDC login.
+	 *
+	 * @since 2.7.0 Enforces enabled SOL role mappings; preserves existing roles or assigns new users the default when disabled.
+	 *
+	 * @param int   $user_id WordPress user ID.
+	 * @param array $user_info Validated UserInfo response.
+	 * @param bool  $new_user Whether the account was created during this login.
+	 */
+	private function scouting_oidc_auth_apply_role_mapping( int $user_id, array $user_info, bool $new_user = false ): void {
+		$roles_enabled = RolesAuthorization::scouting_oidc_roles_authorization_has_roles_scope();
+		if ( ! $roles_enabled && ! $new_user ) {
+			return;
+		}
+		if ( $roles_enabled && ! RolesSync::scouting_oidc_roles_sync_user_info( $user_id, $user_info ) ) {
+			Logger::error( LogComponent::ROLES, 'Blocked OIDC login because SOL role synchronization failed.', $user_id );
+			ErrorHandler::redirect_to_login_error(
+				'server_error',
+				__( 'Your access level could not be updated. Please contact the site administrator.', 'scouting-openid-connect' ),
+				__( 'We could not complete your sign-in.', 'scouting-openid-connect' ),
+				'roles_sync_failed'
+			);
+		}
+
+		$decision = RolesAuthorization::scouting_oidc_roles_authorization_get_user_decision( $user_id, $new_user );
+		if ( ! $decision['login_allowed'] ) {
+			Logger::warning( LogComponent::ROLES, 'Blocked OIDC login because the SOL role mapping does not allow access.', $user_id );
+			ErrorHandler::redirect_to_login_error(
+				'access_denied',
+				__( 'Your Scouts Online role is not permitted to access this site.', 'scouting-openid-connect' ),
+				__( 'You are not allowed to sign in to this site.', 'scouting-openid-connect' ),
+				'roles_not_allowed'
+			);
+		}
+
+		if ( ! RolesAuthorization::scouting_oidc_roles_authorization_apply_wordpress_roles( $user_id, $decision['wordpress_roles'] ) ) {
+			Logger::error( LogComponent::ROLES, 'Could not apply the SOL role mapping during OIDC login.', $user_id );
+			ErrorHandler::redirect_to_login_error(
+				'server_error',
+				__( 'Your access level could not be updated. Please contact the site administrator.', 'scouting-openid-connect' ),
+				__( 'We could not complete your sign-in.', 'scouting-openid-connect' ),
+				'roles_mapping_failed'
+			);
+		}
 	}
 
 	/**

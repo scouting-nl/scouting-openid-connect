@@ -2,57 +2,83 @@
 # This file is distributed under the same license as the Scouting OpenID Connect plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Scouting OpenID Connect 2.6.2\n"
-"Report-Msgid-Bugs-To: https://github.com/jobvk/scouting-openid-connect/"
+"Project-Id-Version: Scouting OpenID Connect 2.7.0\n"
+"Report-Msgid-Bugs-To: https://github.com/scouting-nl/scouting-openid-connect/"
 "issues\n"
-"POT-Creation-Date: 2026-08-25 20:52+0200\n"
-"PO-Revision-Date: 2026-08-25 21:00+0200\n"
+"POT-Creation-Date: 2026-11-02 22:10+0100\n"
+"PO-Revision-Date: 2026-11-02 22:10+0100\n"
 "Last-Translator: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
 "Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.9\n"
-"X-Poedit-KeywordsList: __;esc_html__;_e;esc_html_e\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.10\n"
+"X-Poedit-KeywordsList: "
+"__;esc_html__;_e;esc_html_e;esc_attr__;esc_attr_e;_n:1,2\n"
 "X-Poedit-Basepath: ../src\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: auth/class-auth.php:91 auth/class-auth.php:164
+#: auth/class-auth.php:93 auth/class-auth.php:166
 #: shortcode/class-shortcode.php:165
 msgid "Login with Scouts Online"
 msgstr "Inloggen met Scouts Online"
 
-#: auth/class-auth.php:146 shortcode/class-shortcode.php:166
+#: auth/class-auth.php:148 shortcode/class-shortcode.php:166
 msgid "Logout"
 msgstr "Uitloggen"
 
-#: auth/class-auth.php:212
+#: auth/class-auth.php:214
 msgid "Client ID or Client Secret are missing in the configuration"
 msgstr "Client-ID of Client Secret ontbreekt in de configuratie"
 
-#: auth/class-auth.php:235
+#: auth/class-auth.php:237
 msgid "Client ID or Client Secret are missing in the configuration."
 msgstr "Client-ID of Client Secret ontbreekt in de configuratie."
 
-#: auth/class-auth.php:299
+#: auth/class-auth.php:301
 msgid "State is invalid"
 msgstr "State is ongeldig"
 
-#: auth/class-auth.php:305 auth/class-auth.php:312
+#: auth/class-auth.php:307 auth/class-auth.php:314
 msgid "Code is missing"
 msgstr "Code ontbreekt"
 
-#: auth/class-auth.php:347
+#: auth/class-auth.php:351
 msgid "Webmaster disabled creation of new accounts"
 msgstr "Webmaster heeft het aanmaken van nieuwe accounts uitgeschakeld"
 
-#: auth/class-auth.php:387
+#: auth/class-auth.php:377 auth/class-auth.php:398
+#: roles/class-rolesauthorization.php:135
+#: roles/class-rolesauthorization.php:181
+#: roles/class-rolesauthorization.php:263 user/class-fields.php:245
+#: user/class-fields.php:260
+msgid ""
+"Your access level could not be updated. Please contact the site "
+"administrator."
+msgstr ""
+"Je toegangsniveau kon niet worden bijgewerkt. Neem contact op met de "
+"sitebeheerder."
+
+#: auth/class-auth.php:378 auth/class-auth.php:399
+msgid "We could not complete your sign-in."
+msgstr "Het inloggen kon niet worden voltooid."
+
+#: auth/class-auth.php:388
+msgid "Your Scouts Online role is not permitted to access this site."
+msgstr "Je Scouts Online-rol geeft geen toegang tot deze site."
+
+#: auth/class-auth.php:389
+msgid "You are not allowed to sign in to this site."
+msgstr "Je hebt geen toestemming om op deze site in te loggen."
+
+#: auth/class-auth.php:437
 msgid "The user denied the request"
 msgstr "De gebruiker heeft het verzoek geweigerd"
 
-#: auth/class-auth.php:391 auth/class-openidconnectclient.php:796
+#: auth/class-auth.php:441 auth/class-openidconnectclient.php:796
 #: auth/class-openidconnectclient.php:833
 #: auth/class-openidconnectclient.php:855
 msgid "Details:"
@@ -250,11 +276,13 @@ msgstr "Level"
 msgid "Component"
 msgstr "Component"
 
-#: logging/class-logging.php:249 logging/class-loggingsettings.php:93
+#: logging/class-logging.php:249 logging/class-logging.php:332
+#: logging/class-loggingsettings.php:93
 msgid "User ID"
 msgstr "Gebruikers-ID"
 
-#: logging/class-logging.php:250 logging/class-loggingsettings.php:94
+#: logging/class-logging.php:250 logging/class-logging.php:335
+#: logging/class-loggingsettings.php:94
 msgid "SOL ID"
 msgstr "SOL-ID"
 
@@ -286,27 +314,31 @@ msgstr "Filter op gebruikers-ID"
 msgid "Filter by SOL ID"
 msgstr "Filter op SOL-ID"
 
+#: logging/class-logging.php:337 roles/class-rolesexplorer.php:84
+msgid "Filter"
+msgstr "Filteren"
+
 #: logging/class-logging.php:339
 msgid "Download .log"
 msgstr ".log downloaden"
 
-#: logging/class-logging.php:341
+#: logging/class-logging.php:341 roles/class-rolesexplorer.php:85
 msgid "Reset"
 msgstr "Resetten"
 
-#: logging/class-logging.php:435
+#: logging/class-logging.php:439
 msgid "No log entries found for the selected filters."
 msgstr "Er zijn geen logs gevonden voor de geselecteerde filters."
 
-#: logging/class-logging.php:443
+#: logging/class-logging.php:447
 msgid "Logging"
 msgstr "Logging"
 
-#: logging/class-logging.php:451
+#: logging/class-logging.php:455
 msgid "Search Logs"
 msgstr "Zoek Logs"
 
-#: logging/class-logginghelp.php:36
+#: logging/class-logginghelp.php:36 roles/class-rolesadmin.php:114
 msgid "Overview"
 msgstr "Overzicht"
 
@@ -393,11 +425,11 @@ msgstr ""
 "Wanneer WP_DEBUG is ingeschakeld, worden de logberichten van de plug-in ook "
 "opgenomen in het WordPress/PHP-foutenlogboek."
 
-#: logging/class-logginghelp.php:82
+#: logging/class-logginghelp.php:82 roles/class-rolesadmin.php:153
 msgid "Need more help?"
 msgstr "Heb je nog meer hulp nodig?"
 
-#: logging/class-logginghelp.php:83
+#: logging/class-logginghelp.php:83 roles/class-rolesadmin.php:155
 msgid "Open the Support page"
 msgstr "Ga naar de support pagina"
 
@@ -416,6 +448,526 @@ msgid ""
 msgstr ""
 "WordPress plugin om in te loggen met Scouting Nederland OpenID Connect "
 "Server."
+
+#: roles/class-rolesadmin.php:77 roles/class-rolesadmin.php:78
+#: roles/class-rolesadmin.php:204
+msgid "SOL Role Mapping"
+msgstr "SOL-roltoewijzing"
+
+#: roles/class-rolesadmin.php:91 roles/class-rolesadmin.php:92
+#: roles/class-rolesexplorer.php:58
+msgid "SOL Role Explorer"
+msgstr "SOL-rolverkenner"
+
+#: roles/class-rolesadmin.php:116 roles/class-rolesadmin.php:212
+msgid ""
+"Every matching allow rule contributes its WordPress role. Duplicate roles "
+"are assigned once. Any matching deny rule blocks login, regardless of rule "
+"order. New unmatched users receive the WordPress default role. The plugin "
+"Settings page can also enable the default role alongside mapped roles."
+msgstr ""
+"Elke overeenkomende toestaanregel draagt zijn WordPress-rol bij. Dubbele "
+"rollen worden eenmaal toegewezen. Elke overeenkomende weigerregel blokkeert "
+"het inloggen, ongeacht de regelvolgorde. Nieuwe gebruikers zonder "
+"overeenkomst krijgen de standaardrol van WordPress. Op de instellingenpagina "
+"van de plugin kun je de standaardrol ook naast toegewezen rollen inschakelen."
+
+#: roles/class-rolesadmin.php:117 roles/class-rolesadmin.php:213
+msgid ""
+"All selected conditions in a rule must match the same active SOL assignment. "
+"At each successful OIDC login, obsolete plugin-granted roles are removed. "
+"Independently managed WordPress roles are retained."
+msgstr ""
+"Alle geselecteerde voorwaarden binnen een regel moeten overeenkomen met "
+"dezelfde actieve SOL-toewijzing. Bij elke geslaagde OIDC-aanmelding worden "
+"verouderde, door de plugin toegekende rollen verwijderd. Onafhankelijk "
+"beheerde WordPress-rollen blijven behouden."
+
+#: roles/class-rolesadmin.php:118
+msgid ""
+"When Scouts Online supplies parent organisations, an organisation condition "
+"also matches active assignments in descendant organisations."
+msgstr ""
+"Wanneer Scouts Online bovenliggende organisaties aanlevert, komt een "
+"organisatievoorwaarde ook overeen met actieve functietoewijzingen in "
+"onderliggende organisaties."
+
+#: roles/class-rolesadmin.php:125
+msgid "Adding and Editing Rules"
+msgstr "Regels toevoegen en bewerken"
+
+#: roles/class-rolesadmin.php:127
+msgid ""
+"Use Add Mapping Rule beside Test a User, or Edit on an existing rule, to "
+"open the When / Then editor. Choose at least one organisation, unit or SOL "
+"role condition, then allow or deny login. Allowed users receive the selected "
+"WordPress role."
+msgstr ""
+"Gebruik Toewijzingsregel toevoegen naast Gebruiker testen, of Bewerken bij "
+"een bestaande regel, om de Als / Dan-editor te openen. Kies ten minste een "
+"voorwaarde voor een organisatie, organisatieonderdeel of SOL-rol en sta "
+"vervolgens inloggen toe of weiger dit. Toegelaten gebruikers krijgen de "
+"geselecteerde WordPress-rol."
+
+#: roles/class-rolesadmin.php:128
+msgid ""
+"Search results update while typing and retain all selected values. "
+"Organisation and unit conditions narrow dependent choices without removing "
+"selections. Is one of accepts any selected value; Is not one of excludes "
+"those values on the same assignment, not across the whole user. Empty "
+"conditions are ignored. Arrow Down or Enter in a search field focuses its "
+"results."
+msgstr ""
+"Zoekresultaten worden tijdens het typen bijgewerkt en behouden alle "
+"geselecteerde waarden. Organisatie- en eenheidsvoorwaarden beperken de "
+"afhankelijke keuzes zonder selecties te verwijderen. Is één van accepteert "
+"elke geselecteerde waarde; Is niet één van sluit die waarden uit binnen "
+"dezelfde toewijzing, niet voor de hele gebruiker. Lege voorwaarden worden "
+"genegeerd. Pijl omlaag of Enter in een zoekveld verplaatst de focus naar de "
+"resultaten."
+
+#: roles/class-rolesadmin.php:129
+msgid ""
+"Save or add the rule with the primary button. The close icon, Cancel and "
+"Escape close the modal without saving. Without JavaScript or native dialog "
+"support, the editor remains inline."
+msgstr ""
+"Sla de regel op of voeg deze toe met de primaire knop. Het sluitpictogram, "
+"Annuleren en Escape sluiten het dialoogvenster zonder op te slaan. Zonder "
+"JavaScript of ondersteuning voor ingebouwde dialoogvensters blijft de editor "
+"op de pagina zichtbaar."
+
+#: roles/class-rolesadmin.php:136
+msgid "Managing Rules"
+msgstr "Regels beheren"
+
+#: roles/class-rolesadmin.php:138
+msgid ""
+"Rule order does not affect authorization. Duplicate opens an unsaved copy; "
+"change its conditions or outcome before saving. Identical rules cannot be "
+"saved twice. Delete removes a rule."
+msgstr ""
+"De volgorde van regels heeft geen invloed op autorisatie. Dupliceren opent "
+"een niet-opgeslagen kopie; wijzig de voorwaarden of het resultaat voordat je "
+"opslaat. Identieke regels kunnen niet tweemaal worden opgeslagen. "
+"Verwijderen verwijdert een regel."
+
+#: roles/class-rolesadmin.php:145
+msgid "Testing a User"
+msgstr "Een gebruiker testen"
+
+#: roles/class-rolesadmin.php:147
+msgid ""
+"Test a User accepts an exact WordPress username or user ID. It shows active "
+"stored SOL assignments, every matching rule, and the combined login and role "
+"decision for an existing user."
+msgstr ""
+"Een gebruiker testen accepteert een exacte WordPress-gebruikersnaam of "
+"gebruikers-ID. Het toont actieve opgeslagen SOL-toewijzingen, elke "
+"overeenkomende regel en de gecombineerde aanmeld- en rolbeslissing voor een "
+"bestaande gebruiker."
+
+#: roles/class-rolesadmin.php:148
+msgid ""
+"The preview does not include unsaved edits, refresh provider data, change "
+"user roles or sign the user in. It includes the optional default role "
+"alongside matched roles, but does not apply the new-user fallback. New-user "
+"registration and other login checks still apply."
+msgstr ""
+"De voorvertoning bevat geen niet-opgeslagen wijzigingen, vernieuwt geen "
+"providergegevens, wijzigt geen gebruikersrollen en meldt de gebruiker niet "
+"aan. De optionele standaardrol naast overeenkomende rollen wordt meegenomen, "
+"maar de terugval voor nieuwe gebruikers niet. Registratievoorwaarden en "
+"andere aanmeldcontroles blijven van toepassing."
+
+#: roles/class-rolesadmin.php:154
+msgid "Open the SOL Role Explorer"
+msgstr "Open de SOL-rolverkenner"
+
+#: roles/class-rolesadmin.php:166 roles/class-rolesadmin.php:428
+#: roles/class-rolesadmin.php:505
+msgid "You do not have permission to manage SOL role mappings."
+msgstr "Je hebt geen toestemming om SOL-roltoewijzingen te beheren."
+
+#: roles/class-rolesadmin.php:200 roles/class-rolesadmin.php:634
+msgid ""
+"The preview could not read SOL assignments. Check the database before "
+"relying on a login decision."
+msgstr ""
+"Het voorbeeld kon de SOL-functietoewijzingen niet lezen. Controleer de "
+"database voordat je op een inlogbeslissing vertrouwt."
+
+#: roles/class-rolesadmin.php:209 roles/class-rolesadmin.php:274
+msgid "Add Mapping Rule"
+msgstr "Toewijzingsregel toevoegen"
+
+#: roles/class-rolesadmin.php:210 roles/class-rolesadmin.php:608
+msgid "Test a User"
+msgstr "Gebruiker testen"
+
+#: roles/class-rolesadmin.php:214
+msgid ""
+"When Scouts Online supplies parent organisations, an organisation condition "
+"also matches assignments in its descendant organisations."
+msgstr ""
+"Wanneer Scouts Online bovenliggende organisaties aanlevert, komt een "
+"organisatievoorwaarde ook overeen met functietoewijzingen in de "
+"onderliggende organisaties."
+
+#: roles/class-rolesadmin.php:217
+msgid "Saved mapping rules"
+msgstr "Opgeslagen toewijzingsregels"
+
+#: roles/class-rolesadmin.php:220
+msgid "When"
+msgstr "Als"
+
+#: roles/class-rolesadmin.php:221 roles/class-rolesadmin.php:331
+msgid "Then"
+msgstr "Dan"
+
+#: roles/class-rolesadmin.php:222
+msgid "Actions"
+msgstr "Acties"
+
+#: roles/class-rolesadmin.php:227
+msgid "No mapping rules yet."
+msgstr "Er zijn nog geen toewijzingsregels."
+
+#: roles/class-rolesadmin.php:254
+#, php-format
+msgid "Actions for rule: %1$s; %2$s"
+msgstr "Acties voor regel: %1$s; %2$s"
+
+#: roles/class-rolesadmin.php:261
+msgid "Edit"
+msgstr "Bewerken"
+
+#: roles/class-rolesadmin.php:262
+msgid "Duplicate"
+msgstr "Dupliceren"
+
+#: roles/class-rolesadmin.php:263
+msgid "Delete"
+msgstr "Verwijderen"
+
+#: roles/class-rolesadmin.php:274
+msgid "Edit Mapping Rule"
+msgstr "Toewijzingsregel bewerken"
+
+#: roles/class-rolesadmin.php:275 roles/class-rolesadmin.php:609
+msgid "Close"
+msgstr "Sluiten"
+
+#: roles/class-rolesadmin.php:285
+msgid "When an active SOL assignment matches"
+msgstr "Als een actieve SOL-functietoewijzing overeenkomt"
+
+#: roles/class-rolesadmin.php:287
+msgid "Selection and matching help"
+msgstr "Hulp bij selecteren en voorwaarden"
+
+#: roles/class-rolesadmin.php:288
+msgid ""
+"Select one or more values per condition using the checkboxes. Values within "
+"a condition mean any of those values; all populated conditions must match "
+"the same active assignment. Empty conditions impose no restriction. Without "
+"JavaScript, use the selection lists and hold Ctrl (Command on Mac) to select "
+"multiple values, or use Shift with the arrow keys."
+msgstr ""
+"Selecteer met de selectievakjes een of meer waarden per voorwaarde. Binnen "
+"een voorwaarde volstaat een van de gekozen waarden; alle ingevulde "
+"voorwaarden moeten overeenkomen met dezelfde actieve toewijzing. Lege "
+"voorwaarden leggen geen beperking op. Gebruik zonder JavaScript de "
+"keuzelijsten en houd Ctrl (Command op Mac) ingedrukt om meerdere waarden te "
+"selecteren, of gebruik Shift met de pijltoetsen."
+
+#: roles/class-rolesadmin.php:289
+msgid ""
+"Is not one of excludes values on the assignment being checked. It does not "
+"mean the user has no such assignments elsewhere. A user without active "
+"assignments never matches, including exclusions."
+msgstr ""
+"Is niet één van sluit waarden uit binnen de gecontroleerde toewijzing. Dit "
+"betekent niet dat de gebruiker elders geen dergelijke toewijzingen heeft. "
+"Een gebruiker zonder actieve toewijzingen voldoet nooit aan een regel, ook "
+"niet aan uitsluitingen."
+
+#: roles/class-rolesadmin.php:294 roles/class-rolesadmin.php:668
+#: roles/class-rolesadmin.php:867 roles/class-rolesexplorer.php:63
+#: roles/class-rolesexplorer.php:98
+msgid "Organisation"
+msgstr "Organisatie"
+
+#: roles/class-rolesadmin.php:296
+msgid "Organisation condition"
+msgstr "Organisatievoorwaarde"
+
+#: roles/class-rolesadmin.php:297
+msgid "Search organisations"
+msgstr "Organisaties zoeken"
+
+#: roles/class-rolesadmin.php:305 roles/class-rolesadmin.php:669
+#: roles/class-rolesadmin.php:868 roles/class-rolesexplorer.php:70
+#: roles/class-rolesexplorer.php:99
+msgid "Organisation Unit"
+msgstr "Organisatieonderdeel"
+
+#: roles/class-rolesadmin.php:307
+msgid "Unit condition"
+msgstr "Eenheidsvoorwaarde"
+
+#: roles/class-rolesadmin.php:308
+msgid "Search units"
+msgstr "Organisatieonderdelen zoeken"
+
+#: roles/class-rolesadmin.php:316 roles/class-rolesadmin.php:670
+#: roles/class-rolesadmin.php:869 roles/class-rolesexplorer.php:77
+#: roles/class-rolesexplorer.php:100
+msgid "SOL Role"
+msgstr "SOL-rol"
+
+#: roles/class-rolesadmin.php:318
+msgid "SOL role condition"
+msgstr "SOL-rolvoorwaarde"
+
+#: roles/class-rolesadmin.php:319
+msgid "Search SOL roles"
+msgstr "SOL-rollen zoeken"
+
+#: roles/class-rolesadmin.php:329
+msgid ""
+"Search matches: organisations {organisations}, units {units}, SOL roles "
+"{roles}."
+msgstr ""
+"Zoekresultaten: organisaties {organisations}, organisatieonderdelen {units}, "
+"SOL-rollen {roles}."
+
+#: roles/class-rolesadmin.php:330
+msgid "{count} matches. Selected values: {selection}."
+msgstr "{count} overeenkomsten. Geselecteerde waarden: {selection}."
+
+#: roles/class-rolesadmin.php:335
+msgid "Scouting OIDC login"
+msgstr "Inloggen via Scouting OIDC"
+
+#: roles/class-rolesadmin.php:336
+msgid "Allow login"
+msgstr "Inloggen toestaan"
+
+#: roles/class-rolesadmin.php:336 roles/class-rolesadmin.php:569
+msgid "Deny login"
+msgstr "Inloggen weigeren"
+
+#: roles/class-rolesadmin.php:339
+msgid "WordPress Role"
+msgstr "WordPress-rol"
+
+#: roles/class-rolesadmin.php:349
+msgid "Save Rule"
+msgstr "Regel opslaan"
+
+#: roles/class-rolesadmin.php:349
+msgid "Add Rule"
+msgstr "Regel toevoegen"
+
+#: roles/class-rolesadmin.php:350 roles/class-rolesadmin.php:354
+#: roles/class-rolesadmin.php:623
+msgid "Cancel"
+msgstr "Annuleren"
+
+#: roles/class-rolesadmin.php:379 roles/class-rolesadmin.php:878
+msgid "Is one of"
+msgstr "Is één van"
+
+#: roles/class-rolesadmin.php:380 roles/class-rolesadmin.php:878
+msgid "Is not one of"
+msgstr "Is niet één van"
+
+#: roles/class-rolesadmin.php:398
+msgid "Clear selection"
+msgstr "Selectie wissen"
+
+#: roles/class-rolesadmin.php:415
+msgid ""
+"The roles scope is not enabled. SOL role pages and role-dependent settings "
+"are hidden. Saved mapping and product organisation/role rules are paused, "
+"not deleted. Existing WordPress roles are unchanged; new users receive the "
+"WordPress default role. WooCommerce SOL sign-in requirements remain active."
+msgstr ""
+"De scope roles is niet ingeschakeld. SOL-rolpagina's en rolafhankelijke "
+"instellingen zijn verborgen. Opgeslagen toewijzingsregels en organisatie- en "
+"rolregels voor producten zijn gepauzeerd, niet verwijderd. Bestaande "
+"WordPress-rollen blijven ongewijzigd; nieuwe gebruikers krijgen de "
+"standaardrol van WordPress. SOL-aanmeldvereisten voor WooCommerce blijven "
+"actief."
+
+#: roles/class-rolesadmin.php:416
+msgid "Open plugin Settings to enable the roles scope"
+msgstr "Open de plugininstellingen om de scope roles in te schakelen"
+
+#: roles/class-rolesadmin.php:573
+msgid "Allow login; remove obsolete plugin-granted roles without adding a role"
+msgstr ""
+"Inloggen toestaan; verouderde, door de plugin toegekende rollen verwijderen "
+"zonder een rol toe te voegen"
+
+#: roles/class-rolesadmin.php:577
+#, php-format
+msgid "Allow login; assign %s"
+msgstr "Inloggen toestaan; %s toewijzen"
+
+#: roles/class-rolesadmin.php:602
+msgid "No WordPress user was found. Enter an exact username or user ID."
+msgstr ""
+"Geen WordPress-gebruiker gevonden. Voer een exacte gebruikersnaam of "
+"gebruikers-ID in."
+
+#: roles/class-rolesadmin.php:616
+msgid ""
+"Preview saved rules using currently stored active SOL assignments. Unsaved "
+"edits are not included. This does not sign the user in, refresh SOL data, or "
+"change their roles."
+msgstr ""
+"Bekijk het resultaat van opgeslagen regels met de momenteel opgeslagen "
+"actieve SOL-functietoewijzingen. Niet-opgeslagen wijzigingen worden niet "
+"meegenomen. Dit logt de gebruiker niet in, vernieuwt geen SOL-gegevens en "
+"wijzigt geen rollen."
+
+#: roles/class-rolesadmin.php:619
+msgid "Username or user ID"
+msgstr "Gebruikersnaam of gebruikers-ID"
+
+#: roles/class-rolesadmin.php:622
+msgid "Test User"
+msgstr "Gebruiker testen"
+
+#: roles/class-rolesadmin.php:642
+msgid ""
+"No matching rules: remove obsolete plugin-granted roles without adding a "
+"role for this existing user."
+msgstr ""
+"Geen overeenkomende regels: verwijder vervallen door de plugin toegekende "
+"rollen zonder een rol toe te voegen voor deze bestaande gebruiker."
+
+#: roles/class-rolesadmin.php:649
+msgid "Matching rules"
+msgstr "Overeenkomende regels"
+
+#: roles/class-rolesadmin.php:660 roles/class-rolesadmin.php:665
+msgid "Active SOL assignments"
+msgstr "Actieve SOL-functietoewijzingen"
+
+#: roles/class-rolesadmin.php:661
+msgid "No stored active SOL assignments."
+msgstr "Geen opgeslagen actieve SOL-functietoewijzingen."
+
+#: roles/class-rolesadmin.php:878
+#, php-format
+msgid "%1$s: %2$s [%3$s]"
+msgstr "%1$s: %2$s [%3$s]"
+
+#: roles/class-rolesadmin.php:885
+#, php-format
+msgid "Organisation is %1$s (%2$s)"
+msgstr "Organisatie is %1$s (%2$s)"
+
+#: roles/class-rolesadmin.php:890
+#, php-format
+msgid "Unit is %1$s (%2$d)"
+msgstr "Organisatieonderdeel is %1$s (%2$d)"
+
+#: roles/class-rolesadmin.php:895
+#, php-format
+msgid "SOL role is %1$s (%2$d)"
+msgstr "SOL-rol is %1$s (%2$d)"
+
+#: roles/class-rolesadmin.php:910
+msgid ""
+"The role mapping could not be saved. Please try again or check the database."
+msgstr ""
+"De roltoewijzing kon niet worden opgeslagen. Probeer het opnieuw of "
+"controleer de database."
+
+#: roles/class-rolesadmin.php:911
+msgid "An identical mapping rule already exists. No duplicate was saved."
+msgstr ""
+"Er bestaat al een identieke toewijzingsregel. Er is geen duplicaat "
+"opgeslagen."
+
+#: roles/class-rolesadmin.php:912
+msgid "Role mapping saved."
+msgstr "Roltoewijzing opgeslagen."
+
+#: roles/class-rolesadmin.php:913
+msgid "Role mapping deleted."
+msgstr "Roltoewijzing verwijderd."
+
+#: roles/class-rolesadmin.php:914
+msgid "The rule was invalid or referenced data that is no longer synchronized."
+msgstr ""
+"De regel was ongeldig of verwees naar gegevens die niet meer "
+"gesynchroniseerd zijn."
+
+#: roles/class-rolesexplorer.php:35
+msgid "You do not have permission to view SOL assignments."
+msgstr "Je hebt geen toestemming om SOL-functietoewijzingen te bekijken."
+
+#: roles/class-rolesexplorer.php:60
+msgid ""
+"Browse organisations, units and roles, then inspect synchronized user "
+"assignments and their dates."
+msgstr ""
+"Blader door organisaties, organisatieonderdelen en rollen en bekijk "
+"vervolgens gesynchroniseerde functietoewijzingen van gebruikers en de "
+"bijbehorende datums."
+
+#: roles/class-rolesexplorer.php:65
+msgid "Select an organisation"
+msgstr "Selecteer een organisatie"
+
+#: roles/class-rolesexplorer.php:72
+msgid "Choose an organisation first"
+msgstr "Kies eerst een organisatie"
+
+#: roles/class-rolesexplorer.php:72 roles/class-rolesexplorer.php:79
+msgid "All"
+msgstr "Alle"
+
+#: roles/class-rolesexplorer.php:79
+msgid "Choose an organisation unit first"
+msgstr "Kies eerst een organisatieonderdeel"
+
+#: roles/class-rolesexplorer.php:91
+#, php-format
+msgid "%s assignment found."
+msgid_plural "%s assignments found."
+msgstr[0] "%s functietoewijzing gevonden."
+msgstr[1] "%s functietoewijzingen gevonden."
+
+#: roles/class-rolesexplorer.php:101
+msgid "User"
+msgstr "Gebruiker"
+
+#: roles/class-rolesexplorer.php:102
+msgid "Starts"
+msgstr "Begint"
+
+#: roles/class-rolesexplorer.php:103
+msgid "Ends"
+msgstr "Eindigt"
+
+#: roles/class-rolesexplorer.php:108
+msgid "Select an organisation to view role assignments."
+msgstr "Selecteer een organisatie om functietoewijzingen te bekijken."
+
+#: roles/class-rolesexplorer.php:110
+msgid "No role assignments match these filters."
+msgstr "Geen functietoewijzingen komen overeen met deze filters."
+
+#: roles/class-rolesexplorer.php:119
+msgid "No end date"
+msgstr "Geen einddatum"
 
 #: settings/class-settings-general.php:32
 msgid "General Settings"
@@ -450,50 +1002,73 @@ msgid "Allow new user accounts"
 msgstr "Sta nieuwe gebruikers accounts toe"
 
 #: settings/class-settings-general.php:108
+msgid "Default role alongside mapped roles"
+msgstr "Standaardrol naast toegewezen rollen"
+
+#: settings/class-settings-general.php:127
 msgid "When an email already exists"
 msgstr "Wanneer er al een e-mail bestaat"
 
-#: settings/class-settings-general.php:117
+#: settings/class-settings-general.php:136
 msgid "Redirect only SOL users"
 msgstr "Alleen SOL-gebruikers omleiden"
 
-#: settings/class-settings-general.php:126
+#: settings/class-settings-general.php:145
 msgid "After a successful login redirect user to"
 msgstr "Na een succesvolle aanmelding wordt de gebruiker doorgestuurd naar"
 
-#: settings/class-settings-general.php:135
+#: settings/class-settings-general.php:154
 msgid "Url to custom redirect after a successful login"
 msgstr "URL voor aangepaste omleiding na een succesvolle aanmelding"
 
-#: settings/class-settings-general.php:147
+#: settings/class-settings-general.php:166
 msgid "Enable debug logs"
 msgstr "Debug log inschakelen"
 
-#: settings/class-settings-general.php:156
+#: settings/class-settings-general.php:175
 msgid "Log retention (days)"
 msgstr "Bewaartermijn van logbestanden (dagen)"
 
-#: settings/class-settings-general.php:467
+#: settings/class-settings-general.php:394
+msgid "Also assign the WordPress default role when a mapping grants roles"
+msgstr ""
+"Wijs ook de standaardrol van WordPress toe wanneer een toewijzingsregel "
+"rollen toekent"
+
+#: settings/class-settings-general.php:396
+msgid ""
+"Disabled by default. Applies to new and existing users at successful OIDC "
+"login. Unmatched new users always receive the default role; unmatched "
+"existing users receive no replacement role. Manual roles are preserved. Set "
+"the default role under Settings > General."
+msgstr ""
+"Standaard uitgeschakeld. Geldt voor nieuwe en bestaande gebruikers bij een "
+"succesvolle OIDC-aanmelding. Nieuwe gebruikers zonder overeenkomst krijgen "
+"altijd de standaardrol; bestaande gebruikers zonder overeenkomst krijgen "
+"geen vervangende rol. Handmatig toegewezen rollen blijven behouden. Stel de "
+"standaardrol in onder Instellingen > Algemeen."
+
+#: settings/class-settings-general.php:505
 msgid "Full name"
 msgstr "Volledige naam"
 
-#: settings/class-settings-general.php:468
+#: settings/class-settings-general.php:506
 msgid "First name"
 msgstr "Voornaam"
 
-#: settings/class-settings-general.php:469
+#: settings/class-settings-general.php:507
 msgid "Last name"
 msgstr "Achternaam"
 
-#: settings/class-settings-general.php:569
+#: settings/class-settings-general.php:607
 msgid "Add plus addressing to email"
 msgstr "Voeg plus-adressering toe aan e-mail"
 
-#: settings/class-settings-general.php:570
+#: settings/class-settings-general.php:608
 msgid "Stop creation of user with an error"
 msgstr "Stop het aanmaken van gebruikers met een foutmelding"
 
-#: settings/class-settings-general.php:583
+#: settings/class-settings-general.php:621
 msgid ""
 "When a user tries to log in with an email that already exists in the system, "
 "this setting determines how to handle it. The default option is to add plus "
@@ -503,23 +1078,27 @@ msgstr ""
 "het systeem voorkomt, bepaalt deze instelling hoe hiermee wordt omgegaan. De "
 "standaardinstelling is het toevoegen van een plus-adres."
 
-#: settings/class-settings-general.php:606
+#: settings/class-settings-general.php:644
 msgid "Default (no action)"
 msgstr "Standaard (geen actie)"
 
-#: settings/class-settings-general.php:607
+#: settings/class-settings-general.php:645
 msgid "Frontpage"
 msgstr "Voorpagina"
 
-#: settings/class-settings-general.php:608
+#: settings/class-settings-general.php:646
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: settings/class-settings-general.php:609
+#: settings/class-settings-general.php:647
 msgid "Custom URL"
 msgstr "Aangepaste URL"
 
-#: settings/class-settings-general.php:642
+#: settings/class-settings-general.php:679
+msgid "custom-page"
+msgstr "aangepaste-pagina"
+
+#: settings/class-settings-general.php:680
 msgid ""
 "Enter the slug to append to the base URL where users should be redirected "
 "after login."
@@ -527,7 +1106,7 @@ msgstr ""
 "Voer de slug in die moet worden toegevoegd aan de basis-URL waarnaar "
 "gebruikers moeten worden doorgestuurd na het inloggen."
 
-#: settings/class-settings-general.php:657
+#: settings/class-settings-general.php:695
 msgid ""
 "Logs may contain personal data such as user IDs and SOL IDs. Set how many "
 "days logs are retained before daily cleanup removes older entries."
@@ -536,7 +1115,7 @@ msgstr ""
 "ID’s. Stel in hoeveel dagen logbestanden worden bewaard voordat oudere "
 "vermeldingen bij de dagelijkse opschoning worden verwijderd."
 
-#: settings/class-settings-general.php:672
+#: settings/class-settings-general.php:710
 msgid ""
 "Debug logs are stored in the plugin logs table only when enabled. If "
 "WP_DEBUG is enabled, plugin logs are also mirrored to the WordPress/PHP "
@@ -550,17 +1129,17 @@ msgstr ""
 msgid "OpenID Connect Settings"
 msgstr "OpenID Connect Instellingen"
 
-#: settings/class-settings-oidc.php:40 support/class-sitehealth.php:174
-#: support/class-sitehealth.php:503
+#: settings/class-settings-oidc.php:40 settings/class-settings-oidc.php:106
+#: support/class-sitehealth.php:176 support/class-sitehealth.php:505
 msgid "Client ID"
 msgstr "Client ID"
 
-#: settings/class-settings-oidc.php:49 support/class-sitehealth.php:178
-#: support/class-sitehealth.php:509
+#: settings/class-settings-oidc.php:49 support/class-sitehealth.php:180
+#: support/class-sitehealth.php:511
 msgid "Client Secret"
 msgstr "Client Secret"
 
-#: settings/class-settings-oidc.php:58
+#: settings/class-settings-oidc.php:58 settings/class-settings-oidc.php:137
 msgid "Scopes"
 msgstr "Scopes"
 
@@ -571,6 +1150,10 @@ msgstr "Weergeven"
 #: settings/class-settings-oidc.php:119
 msgid "Hide"
 msgstr "Verbergen"
+
+#: settings/class-settings-oidc.php:121
+msgid "Enter new client secret"
+msgstr "Voer een nieuw client secret in"
 
 #: settings/class-settings-oidc.php:124
 msgid ""
@@ -955,49 +1538,49 @@ msgstr ""
 "De provider heeft geen RSA/RS256-ondertekeningssleutel met de vereiste "
 "certificaatketen teruggegeven om ID-tokens te valideren."
 
-#: support/class-providerhealth.php:421 support/class-sitehealth.php:490
-#: support/class-sitehealth.php:593
+#: support/class-providerhealth.php:421 support/class-sitehealth.php:492
+#: support/class-sitehealth.php:595
 msgid "Scouting OpenID Connect"
 msgstr "Scouting OpenID Connect"
 
-#: support/class-providerhealth.php:441 support/class-sitehealth.php:613
+#: support/class-providerhealth.php:441 support/class-sitehealth.php:615
 msgid "Review Scouting OpenID Connect settings"
 msgstr "Controleer de OpenID Connect-instellingen van Scouting"
 
-#: support/class-sitehealth.php:87
+#: support/class-sitehealth.php:89
 msgid "Scouting OpenID Connect runtime"
 msgstr "Scouting OpenID Connect-runtime"
 
-#: support/class-sitehealth.php:91
+#: support/class-sitehealth.php:93
 msgid "Scouting OpenID Connect configuration"
 msgstr "Scouting OpenID Connect-configuratie"
 
-#: support/class-sitehealth.php:95
+#: support/class-sitehealth.php:97
 msgid "Scouting OpenID Connect scopes"
 msgstr "Scouting OpenID Connect-scopes"
 
-#: support/class-sitehealth.php:99
+#: support/class-sitehealth.php:101
 msgid "Scouting OpenID Connect provider"
 msgstr "Scouting OpenID Connect-provider"
 
-#: support/class-sitehealth.php:105
+#: support/class-sitehealth.php:107
 msgid "Scouting OpenID Connect login redirect"
 msgstr "Scouting OpenID Connect-inlogomleiding"
 
-#: support/class-sitehealth.php:109
+#: support/class-sitehealth.php:111
 msgid "Scouting OpenID Connect log storage"
 msgstr "Opslag van Scouting OpenID Connect-logs"
 
-#: support/class-sitehealth.php:113
+#: support/class-sitehealth.php:115
 msgid "Scouting OpenID Connect log cleanup"
 msgstr "Opschonen van Scouting OpenID Connect-logs"
 
-#: support/class-sitehealth.php:136
+#: support/class-sitehealth.php:138
 msgid "The server is missing functions required for Scouts Online login"
 msgstr ""
 "De server mist functies die nodig zijn voor het inloggen bij Scouts Online"
 
-#: support/class-sitehealth.php:140
+#: support/class-sitehealth.php:142
 #, php-format
 msgid ""
 "Ask the hosting provider to enable the PHP functions or extensions that "
@@ -1006,11 +1589,11 @@ msgstr ""
 "Vraag de hostingprovider om de PHP-functies of extensies in te schakelen die "
 "leveren: %s."
 
-#: support/class-sitehealth.php:149
+#: support/class-sitehealth.php:151
 msgid "Scouting OpenID Connect requires the site to use HTTPS"
 msgstr "Scouting OpenID Connect vereist dat de site HTTPS gebruikt"
 
-#: support/class-sitehealth.php:151
+#: support/class-sitehealth.php:153
 msgid ""
 "The login flow needs HTTPS to create its secure session cookie. Update both "
 "WordPress URLs to use HTTPS."
@@ -1018,11 +1601,11 @@ msgstr ""
 "De inlogstroom heeft HTTPS nodig om de beveiligde sessiecookie aan te maken. "
 "Werk beide WordPress-URL's bij zodat ze HTTPS gebruiken."
 
-#: support/class-sitehealth.php:157
+#: support/class-sitehealth.php:159
 msgid "The server meets the Scouting OpenID Connect runtime requirements"
 msgstr "De server voldoet aan de runtimevereisten van Scouting OpenID Connect"
 
-#: support/class-sitehealth.php:159
+#: support/class-sitehealth.php:161
 msgid ""
 "HTTPS and the PHP functions required for sessions and ID token validation "
 "are available."
@@ -1030,11 +1613,11 @@ msgstr ""
 "HTTPS en de PHP-functies die nodig zijn voor sessies en validatie van ID-"
 "tokens zijn beschikbaar."
 
-#: support/class-sitehealth.php:184
+#: support/class-sitehealth.php:186
 msgid "Scouting OpenID Connect is not fully configured"
 msgstr "Scouting OpenID Connect is niet volledig geconfigureerd"
 
-#: support/class-sitehealth.php:188
+#: support/class-sitehealth.php:190
 #, php-format
 msgid ""
 "Add the following value(s) before users can log in with Scouts Online: %s."
@@ -1042,11 +1625,11 @@ msgstr ""
 "Voeg de volgende waarde(n) toe voordat gebruikers kunnen inloggen met Scouts "
 "Online: %s."
 
-#: support/class-sitehealth.php:197
+#: support/class-sitehealth.php:199
 msgid "Scouting OpenID Connect credentials are configured"
 msgstr "De inloggegevens van Scouting OpenID Connect zijn geconfigureerd"
 
-#: support/class-sitehealth.php:199
+#: support/class-sitehealth.php:201
 msgid ""
 "A Client ID and Client Secret are stored. Site Health never displays the "
 "Client Secret."
@@ -1054,11 +1637,11 @@ msgstr ""
 "Er zijn een Client ID en Client Secret opgeslagen. Site Health laat het "
 "Client Secret nooit zien."
 
-#: support/class-sitehealth.php:217
+#: support/class-sitehealth.php:219
 msgid "Required OpenID Connect scopes are missing"
 msgstr "Vereiste OpenID Connect-scopes ontbreken"
 
-#: support/class-sitehealth.php:221
+#: support/class-sitehealth.php:223
 #, php-format
 msgid ""
 "Add these required scopes to the plugin and the connection in Scouts Online: "
@@ -1067,109 +1650,109 @@ msgstr ""
 "Voeg deze vereiste scopes toe aan de plug-in en de verbinding in Scouts "
 "Online: %s."
 
-#: support/class-sitehealth.php:230
+#: support/class-sitehealth.php:232
 msgid "Phone storage is enabled without the phone scope."
 msgstr "Telefoonopslag is ingeschakeld zonder de telefoon-scope."
 
-#: support/class-sitehealth.php:233
+#: support/class-sitehealth.php:235
 msgid "Address storage is enabled without the address scope."
 msgstr "Adresopslag is ingeschakeld zonder de adres-scope."
 
-#: support/class-sitehealth.php:236
+#: support/class-sitehealth.php:238
 msgid ""
 "WooCommerce synchronization is enabled while WooCommerce is not available."
 msgstr ""
 "WooCommerce-synchronisatie is ingeschakeld terwijl WooCommerce niet "
 "beschikbaar is."
 
-#: support/class-sitehealth.php:242
+#: support/class-sitehealth.php:244
 msgid "Enabled profile features do not match the configured scopes"
 msgstr ""
 "Ingeschakelde profielfuncties komen niet overeen met de geconfigureerde "
 "scopes"
 
-#: support/class-sitehealth.php:251
+#: support/class-sitehealth.php:253
 msgid "OpenID Connect scopes match the enabled features"
 msgstr "OpenID Connect-scopes komen overeen met de ingeschakelde functies"
 
-#: support/class-sitehealth.php:255
+#: support/class-sitehealth.php:257
 #, php-format
 msgid "All required scopes are configured. Current scopes: %s."
 msgstr "Alle vereiste scopes zijn geconfigureerd. Huidige scopes: %s."
 
-#: support/class-sitehealth.php:275
+#: support/class-sitehealth.php:277
 msgid "The login redirect mode is invalid"
 msgstr "De inlog-omleidingsmodus is ongeldig"
 
-#: support/class-sitehealth.php:279
+#: support/class-sitehealth.php:281
 #, php-format
 msgid "The stored redirect mode \"%s\" is not recognized."
 msgstr "De opgeslagen redirect-modus \"%s\" wordt niet herkend."
 
-#: support/class-sitehealth.php:290
+#: support/class-sitehealth.php:292
 msgid "The custom login redirect is not configured correctly"
 msgstr "De aangepaste login-redirect is niet correct geconfigureerd"
 
-#: support/class-sitehealth.php:292
+#: support/class-sitehealth.php:294
 msgid "Choose a valid page on this site or select another login redirect mode."
 msgstr ""
 "Kies een geldige pagina op deze site of selecteer een andere login-redirect-"
 "modus."
 
-#: support/class-sitehealth.php:299
+#: support/class-sitehealth.php:301
 msgid "The login redirect is configured"
 msgstr "De login-redirect is geconfigureerd"
 
-#: support/class-sitehealth.php:303
+#: support/class-sitehealth.php:305
 #, php-format
 msgid "The current post-login redirect mode is %s."
 msgstr "De huidige post-login redirect-modus is %s."
 
-#: support/class-sitehealth.php:320
+#: support/class-sitehealth.php:322
 msgid "The Scouting OpenID Connect log table is missing"
 msgstr "De logtabel van Scouting OpenID Connect ontbreekt"
 
-#: support/class-sitehealth.php:322
+#: support/class-sitehealth.php:324
 msgid "Deactivate and reactivate the plugin to recreate its log storage."
 msgstr ""
 "Deactiveer en activeer de plug-in opnieuw om de logopslag opnieuw aan te "
 "maken."
 
-#: support/class-sitehealth.php:334
+#: support/class-sitehealth.php:336
 #, php-format
 msgid "Missing database columns: %s."
 msgstr "Ontbrekende databasekolommen: %s."
 
-#: support/class-sitehealth.php:341
+#: support/class-sitehealth.php:343
 #, php-format
 msgid "Installed schema version is %1$s; expected %2$s."
 msgstr "De geïnstalleerde schemaversie is %1$s; verwacht %2$s."
 
-#: support/class-sitehealth.php:342
+#: support/class-sitehealth.php:344
 msgid "not recorded"
 msgstr "niet geregistreerd"
 
-#: support/class-sitehealth.php:350
+#: support/class-sitehealth.php:352
 msgid "The Scouting OpenID Connect log storage needs attention"
 msgstr "De logopslag van Scouting OpenID Connect heeft aandacht nodig"
 
-#: support/class-sitehealth.php:358
+#: support/class-sitehealth.php:360
 msgid "The Scouting OpenID Connect log storage is ready"
 msgstr "De logopslag van Scouting OpenID Connect is klaar"
 
-#: support/class-sitehealth.php:360
+#: support/class-sitehealth.php:362
 msgid "The log table exists with the expected schema and columns."
 msgstr "De logtabel bestaat met het verwachte schema en de verwachte kolommen."
 
-#: support/class-sitehealth.php:383
+#: support/class-sitehealth.php:385
 msgid "Run log cleanup now"
 msgstr "Voer nu de logopschoning uit"
 
-#: support/class-sitehealth.php:390
+#: support/class-sitehealth.php:392
 msgid "Scouting OpenID Connect log cleanup is not scheduled"
 msgstr "De logopschoning van Scouting OpenID Connect is niet gepland"
 
-#: support/class-sitehealth.php:392
+#: support/class-sitehealth.php:394
 msgid ""
 "The plugin could not find its daily cleanup event. Run cleanup now to "
 "recreate the schedule."
@@ -1177,11 +1760,11 @@ msgstr ""
 "De plug-in heeft zijn dagelijkse opschooningsgebeurtenis niet gevonden. Voer "
 "nu de opschoning uit om de planning opnieuw aan te maken."
 
-#: support/class-sitehealth.php:400
+#: support/class-sitehealth.php:402
 msgid "The cleanup event is not using the daily schedule."
 msgstr "De opschooningsgebeurtenis gebruikt niet de dagelijkse planning."
 
-#: support/class-sitehealth.php:407
+#: support/class-sitehealth.php:409
 #, php-format
 msgid ""
 "Automatic WP-Cron spawning is disabled, and the external cron runner has not "
@@ -1190,7 +1773,7 @@ msgstr ""
 "Automatisch starten van WP-Cron is uitgeschakeld, en de externe cron-runner "
 "heeft de voor %s geplande opschoning nog niet verwerkt."
 
-#: support/class-sitehealth.php:413
+#: support/class-sitehealth.php:415
 #, php-format
 msgid ""
 "WordPress has not dispatched the cleanup scheduled for %s. Check the core "
@@ -1199,15 +1782,15 @@ msgstr ""
 "WordPress heeft de voor %s geplande opschoning niet verzonden. Controleer de "
 "core scheduled-events en de Site Health-tests voor loopback-requests."
 
-#: support/class-sitehealth.php:422
+#: support/class-sitehealth.php:424
 msgid "Scouting OpenID Connect log cleanup needs attention"
 msgstr "De logopschoning van Scouting OpenID Connect heeft aandacht nodig"
 
-#: support/class-sitehealth.php:431
+#: support/class-sitehealth.php:433
 msgid "Scouting OpenID Connect log cleanup is scheduled"
 msgstr "De logopschoning van Scouting OpenID Connect is gepland"
 
-#: support/class-sitehealth.php:435
+#: support/class-sitehealth.php:437
 #, php-format
 msgid ""
 "The next cleanup is scheduled for %1$s and will retain %2$d days of logs."
@@ -1215,31 +1798,31 @@ msgstr ""
 "De volgende opschoning is gepland voor %1$s en zal %2$d dagen aan logs "
 "behouden."
 
-#: support/class-sitehealth.php:469 user/class-fields.php:102
+#: support/class-sitehealth.php:471 user/class-fields.php:341
 msgid "Birthdate"
 msgstr "Geboortedatum"
 
-#: support/class-sitehealth.php:470 user/class-fields.php:124
+#: support/class-sitehealth.php:472 user/class-fields.php:363
 msgid "Gender"
 msgstr "Geslacht"
 
-#: support/class-sitehealth.php:471
+#: support/class-sitehealth.php:473
 msgid "Phone"
 msgstr "Telefoon"
 
-#: support/class-sitehealth.php:472
+#: support/class-sitehealth.php:474
 msgid "Address"
 msgstr "Adres"
 
-#: support/class-sitehealth.php:482
+#: support/class-sitehealth.php:484
 msgid "Not scheduled"
 msgstr "Niet gepland"
 
-#: support/class-sitehealth.php:486
+#: support/class-sitehealth.php:488
 msgid "Never recorded"
 msgstr "Nooit vastgelegd"
 
-#: support/class-sitehealth.php:491
+#: support/class-sitehealth.php:493
 msgid ""
 "Configuration and operational details. Client secrets and personal user "
 "claims are never included."
@@ -1247,174 +1830,176 @@ msgstr ""
 "Configuratie- en operationele details. Clientsecrets en persoonlijke "
 "gebruikersclaims worden nooit opgenomen."
 
-#: support/class-sitehealth.php:494
+#: support/class-sitehealth.php:496
 msgid "Plugin version"
 msgstr "Plug-inversie"
 
-#: support/class-sitehealth.php:495
+#: support/class-sitehealth.php:497
 msgid "Issuer"
 msgstr "Issuer"
 
-#: support/class-sitehealth.php:496
+#: support/class-sitehealth.php:498
 msgid "Redirect URI"
 msgstr "Redirect URI"
 
-#: support/class-sitehealth.php:497
+#: support/class-sitehealth.php:499
 msgid "Site uses HTTPS"
 msgstr "Site gebruikt HTTPS"
 
-#: support/class-sitehealth.php:499
+#: support/class-sitehealth.php:501
 msgid "PHP OpenSSL library"
 msgstr "PHP OpenSSL-bibliotheek"
 
-#: support/class-sitehealth.php:500 support/class-sitehealth.php:698
-#: support/class-sitehealth.php:782
+#: support/class-sitehealth.php:502 support/class-sitehealth.php:700
+#: support/class-sitehealth.php:784
 msgid "Not available"
 msgstr "Niet beschikbaar"
 
-#: support/class-sitehealth.php:505 support/class-sitehealth.php:511
+#: support/class-sitehealth.php:507 support/class-sitehealth.php:513
 msgid "Not configured"
 msgstr "Niet geconfigureerd"
 
-#: support/class-sitehealth.php:506 support/class-sitehealth.php:512
+#: support/class-sitehealth.php:508 support/class-sitehealth.php:514
 msgid "Configured"
 msgstr "Geconfigureerd"
 
-#: support/class-sitehealth.php:514
+#: support/class-sitehealth.php:516
 msgid "Configured scopes"
 msgstr "Geconfigureerde scopes"
 
-#: support/class-sitehealth.php:516
+#: support/class-sitehealth.php:518
 msgid "Required scopes"
 msgstr "Vereiste scopes"
 
-#: support/class-sitehealth.php:518
+#: support/class-sitehealth.php:520
 msgid "All present"
 msgstr "Alles aanwezig"
 
-#: support/class-sitehealth.php:521
+#: support/class-sitehealth.php:523
 #, php-format
 msgid "Missing: %s"
 msgstr "Ontbreekt: %s"
 
-#: support/class-sitehealth.php:526
+#: support/class-sitehealth.php:528
 msgid "Stored profile fields"
 msgstr "Opgeslagen profielvelden"
 
-#: support/class-sitehealth.php:527 support/class-sitehealth.php:726
+#: support/class-sitehealth.php:529 support/class-sitehealth.php:728
+#: user/class-fields.php:62 user/class-fields.php:74 user/class-fields.php:118
+#: user/class-fields.php:145
 msgid "None"
 msgstr "Geen"
 
-#: support/class-sitehealth.php:529
+#: support/class-sitehealth.php:531
 msgid "Automatic account creation"
 msgstr "Automatisch aanmaken van accounts"
 
-#: support/class-sitehealth.php:530
+#: support/class-sitehealth.php:532
 msgid "Duplicate email handling"
 msgstr "Afhandeling van dubbele e-mailadressen"
 
-#: support/class-sitehealth.php:531
+#: support/class-sitehealth.php:533
 msgid "Login redirect mode"
 msgstr "Modus voor login-redirect"
 
-#: support/class-sitehealth.php:532
+#: support/class-sitehealth.php:534
 msgid "Custom login redirect"
 msgstr "Aangepaste login-redirect"
 
-#: support/class-sitehealth.php:533
+#: support/class-sitehealth.php:535
 msgid "Scouting OpenID Connect users"
 msgstr "Scouting OpenID Connect-gebruikers"
 
-#: support/class-sitehealth.php:534
+#: support/class-sitehealth.php:536
 msgid "WooCommerce available"
 msgstr "WooCommerce beschikbaar"
 
-#: support/class-sitehealth.php:535
+#: support/class-sitehealth.php:537
 msgid "WooCommerce synchronization"
 msgstr "WooCommerce-synchronisatie"
 
-#: support/class-sitehealth.php:536
+#: support/class-sitehealth.php:538
 msgid "Debug logging"
 msgstr "Debug-loggen"
 
-#: support/class-sitehealth.php:538
+#: support/class-sitehealth.php:540
 msgid "Log retention"
 msgstr "Bewaartermijn van logs"
 
-#: support/class-sitehealth.php:541
+#: support/class-sitehealth.php:543
 #, php-format
 msgid "%d days"
 msgstr "%d dagen"
 
-#: support/class-sitehealth.php:545
+#: support/class-sitehealth.php:547
 msgid "Log table"
 msgstr "Logtabel"
 
-#: support/class-sitehealth.php:545
+#: support/class-sitehealth.php:547
 msgid "Available"
 msgstr "Beschikbaar"
 
-#: support/class-sitehealth.php:545
+#: support/class-sitehealth.php:547
 msgid "Missing"
 msgstr "Ontbrekend"
 
-#: support/class-sitehealth.php:546
+#: support/class-sitehealth.php:548
 msgid "Log database schema"
 msgstr "Log-databaseschema"
 
-#: support/class-sitehealth.php:547
+#: support/class-sitehealth.php:549
 msgid "Log entries"
 msgstr "Logboekvermeldingen"
 
-#: support/class-sitehealth.php:548
+#: support/class-sitehealth.php:550
 msgid "Errors in the last 24 hours"
 msgstr "Fouten in de afgelopen 24 uur"
 
-#: support/class-sitehealth.php:549
+#: support/class-sitehealth.php:551
 msgid "Latest log entry"
 msgstr "Laatste logboekvermelding"
 
-#: support/class-sitehealth.php:550
+#: support/class-sitehealth.php:552
 msgid "Last successful log cleanup"
 msgstr "Laatste succesvolle logopschoning"
 
-#: support/class-sitehealth.php:551
+#: support/class-sitehealth.php:553
 msgid "Next log cleanup"
 msgstr "Volgende logopschoning"
 
-#: support/class-sitehealth.php:553
+#: support/class-sitehealth.php:555
 msgid "WordPress cron spawning"
 msgstr "WordPress-cronstart"
 
-#: support/class-sitehealth.php:555
+#: support/class-sitehealth.php:557
 msgid "Disabled by configuration"
 msgstr "Uitgeschakeld via configuratie"
 
-#: support/class-sitehealth.php:556 support/class-sitehealth.php:766
+#: support/class-sitehealth.php:558 support/class-sitehealth.php:768
 msgid "Enabled"
 msgstr "Ingeschakeld"
 
-#: support/class-sitehealth.php:559
+#: support/class-sitehealth.php:561
 msgid "Provider discovery cache"
 msgstr "Cache voor provider-discoverie"
 
-#: support/class-sitehealth.php:561 support/class-sitehealth.php:567
+#: support/class-sitehealth.php:563 support/class-sitehealth.php:569
 msgid "Empty"
 msgstr "Leeg"
 
-#: support/class-sitehealth.php:562 support/class-sitehealth.php:568
+#: support/class-sitehealth.php:564 support/class-sitehealth.php:570
 msgid "Populated"
 msgstr "Bevolkt"
 
-#: support/class-sitehealth.php:565
+#: support/class-sitehealth.php:567
 msgid "Provider signing-key cache"
 msgstr "Cache voor ondertekeningssleutels van de provider"
 
-#: support/class-sitehealth.php:767
+#: support/class-sitehealth.php:769
 msgid "Disabled"
 msgstr "Uitgeschakeld"
 
-#: support/class-support.php:48 support/class-support.php:90
+#: support/class-support.php:48 support/class-support.php:91
 msgid "Support"
 msgstr "Support"
 
@@ -1506,71 +2091,131 @@ msgstr "Vereiste scopes:"
 msgid "Optional scopes:"
 msgstr "Optionele scopes:"
 
-#: support/class-support.php:85
+#: support/class-support.php:86
 msgid "Fill in the General Settings."
 msgstr "Vul de Algemene Instellingen in."
 
-#: support/class-support.php:86
+#: support/class-support.php:87
 msgid "Press \"Save Settings\""
 msgstr "Druk op \"Save Settings\""
 
-#: support/class-support.php:87
+#: support/class-support.php:88
 msgid "Log out and try to log in with the Scouts Login button."
 msgstr "Log uit en probeer in te loggen met de knop Scouts Login."
 
-#: support/class-support.php:91
+#: support/class-support.php:92
 msgid "If you need help, please contact"
 msgstr "Als je hulp nodig hebt, neem dan contact op met"
 
-#: support/class-support.php:93
+#: support/class-support.php:94
 msgid "(developer of the plugin)"
 msgstr "(ontwikkelaar van de plugin)"
 
-#: user/class-fields.php:40
+#: user/class-fields.php:43 user/class-fields.php:123
+msgid "SOL-managed WordPress roles"
+msgstr "Door SOL beheerde WordPress-rollen"
+
+#: user/class-fields.php:110
+msgid "WordPress roles"
+msgstr "WordPress-rollen"
+
+#: user/class-fields.php:113
+msgid ""
+"Role ownership data is invalid. Assigned roles are shown below, but role "
+"editing is disabled to protect existing access."
+msgstr ""
+"De gegevens over het beheer van rollen zijn ongeldig. Toegewezen rollen "
+"worden hieronder getoond, maar het wijzigen van rollen is uitgeschakeld om "
+"bestaande toegang te beschermen."
+
+#: user/class-fields.php:114
+msgid "Currently assigned WordPress roles"
+msgstr "Momenteel toegewezen WordPress-rollen"
+
+#: user/class-fields.php:122
+msgid ""
+"SOL-managed roles are read-only here. Every matching allow rule contributes "
+"a role; obsolete plugin-granted roles are removed at the next successful "
+"OIDC login. Manual roles are preserved."
+msgstr ""
+"Door SOL beheerde rollen zijn hier alleen-lezen. Elke overeenkomende "
+"toestaanregel voegt een rol toe; verouderde, door de plugin toegekende "
+"rollen worden bij de volgende geslaagde OIDC-aanmelding verwijderd. "
+"Handmatige rollen blijven behouden."
+
+#: user/class-fields.php:132 user/class-fields.php:141
+msgid "Independently assigned WordPress roles"
+msgstr "Onafhankelijk toegekende WordPress-rollen"
+
+#: user/class-fields.php:133
+msgid ""
+"Select any additional roles to manage manually. These roles are not removed "
+"by SOL synchronization. Unchecking a role removes only that manual "
+"assignment."
+msgstr ""
+"Selecteer aanvullende rollen om handmatig te beheren. Deze rollen worden "
+"niet door SOL-synchronisatie verwijderd. Het uitvinken van een rol "
+"verwijdert alleen die handmatige toewijzing."
+
+#: user/class-fields.php:188 user/class-fields.php:239
+msgid "You do not have permission to change these WordPress roles."
+msgstr "Je hebt geen toestemming om deze WordPress-rollen te wijzigen."
+
+#: user/class-fields.php:198 user/class-fields.php:204
+msgid "Select valid WordPress roles."
+msgstr "Selecteer geldige WordPress-rollen."
+
+#: user/class-fields.php:220
+msgid "You cannot remove your own ability to manage user roles."
+msgstr ""
+"Je kunt je eigen mogelijkheid om gebruikersrollen te beheren niet "
+"verwijderen."
+
+#: user/class-fields.php:279
 msgid "View in SOL"
 msgstr "Bekijken in SOL"
 
-#: user/class-fields.php:66
+#: user/class-fields.php:305
 msgid "Scouts Online (SOL) Profile Information"
 msgstr "Scouts Online (SOL) Profiel Informatie"
 
-#: user/class-fields.php:127
+#: user/class-fields.php:366
 msgid "Male"
 msgstr "Man"
 
-#: user/class-fields.php:128
+#: user/class-fields.php:367
 msgid "Female"
 msgstr "Vrouw"
 
-#: user/class-fields.php:129
+#: user/class-fields.php:368
 msgid "Other"
 msgstr "Overige"
 
-#: user/class-fields.php:130
+#: user/class-fields.php:369
 msgid "Unknown"
 msgstr "Onbekend"
 
-#: user/class-fields.php:148
+#: user/class-fields.php:387
 msgid "Phone Number"
 msgstr "Telefoonnummer"
 
-#: user/class-fields.php:168
+#: user/class-fields.php:407
 msgid "Street"
 msgstr "Straat"
 
-#: user/class-fields.php:187
+#: user/class-fields.php:426
 msgid "House Number"
 msgstr "Huisnummer"
 
-#: user/class-fields.php:206
+#: user/class-fields.php:445
 msgid "Postal Code"
 msgstr "Postcode"
 
-#: user/class-fields.php:225
+#: user/class-fields.php:464
 msgid "City"
 msgstr "Plaats"
 
-#: user/class-fields.php:244
+#: user/class-fields.php:483
 msgid "Country Code"
 msgstr "Landcode"
 
@@ -1591,16 +2236,16 @@ msgstr "E-mail ontbreekt, controleer of de scope \"email\" is ingeschakeld."
 msgid "This SOL ID is already linked to another account."
 msgstr "Dit SOL-ID is al gekoppeld aan een ander account."
 
-#: user/class-user.php:348 user/class-user.php:359 user/class-user.php:417
-#: user/class-user.php:434
+#: user/class-user.php:358 user/class-user.php:376 user/class-user.php:440
+#: user/class-user.php:457
 msgid "Email address is already in use by another account"
 msgstr "Het e-mailadres wordt al gebruikt door een andere account"
 
-#: user/class-user.php:462
+#: user/class-user.php:485
 msgid "User not found for update"
 msgstr "Gebruiker niet gevonden voor update"
 
-#: user/class-user.php:480
+#: user/class-user.php:505
 msgid "Something went wrong while trying to log in"
 msgstr "Er is iets misgegaan tijdens het inloggen"
 
@@ -1610,29 +2255,459 @@ msgstr ""
 "Sorry, je hebt geen rechten om de logopschoning van Scouting OpenID Connect "
 "uit te voeren."
 
+#: woocommerce/class-woocommercerestrictions.php:139
+#: woocommerce/class-woocommercerestrictions.php:169
+msgid "SOL Access"
+msgstr "SOL-toegang"
+
+#: woocommerce/class-woocommercerestrictions.php:144
+#: woocommerce/class-woocommercerestrictions.php:225
+msgid "Require SOL sign-in"
+msgstr "SOL-aanmelding verplichten"
+
+#: woocommerce/class-woocommercerestrictions.php:145
+msgid "Require a signed-in SOL account for all products"
+msgstr "Een aangemeld SOL-account verplichten voor alle producten"
+
+#: woocommerce/class-woocommercerestrictions.php:146
+msgid ""
+"Off by default. When enabled, guests and non-SOL accounts cannot purchase "
+"any product. This overrides individual product settings; organisation and "
+"role restrictions still apply."
+msgstr ""
+"Standaard uitgeschakeld. Indien ingeschakeld kunnen gasten en niet-SOL-"
+"accounts geen enkel product kopen. Dit gaat boven individuele "
+"productinstellingen; organisatie- en rolbeperkingen blijven van toepassing."
+
+#: woocommerce/class-woocommercerestrictions.php:224
+msgid ""
+"Off by default. Require a signed-in SOL account to order this product, even "
+"when no organisation or role is selected. Guests and non-SOL accounts are "
+"blocked, including after logout with items already in the cart. Organisation "
+"and role rules apply only when the roles scope is enabled. The global "
+"setting under WooCommerce > Settings > Products can require SOL sign-in for "
+"all products and cannot be overridden here."
+msgstr ""
+"Standaard uitgeschakeld. Verplicht een aangemeld SOL-account om dit product "
+"te bestellen, ook als er geen organisatie of rol is geselecteerd. Gasten en "
+"niet-SOL-accounts worden geblokkeerd, ook na afmelden met artikelen in de "
+"winkelwagen. Organisatie- en rolregels gelden alleen als de scope roles is "
+"ingeschakeld. De algemene instelling onder WooCommerce > Instellingen > "
+"Producten kan SOL-aanmelding voor alle producten verplichten en kan hier "
+"niet worden overschreven."
+
+#: woocommerce/class-woocommercerestrictions.php:227
+msgid ""
+"SOL sign-in is currently required for all products by the global WooCommerce "
+"setting, regardless of this checkbox."
+msgstr ""
+"SOL-aanmelding is momenteel verplicht voor alle producten door de algemene "
+"WooCommerce-instelling, ongeacht dit selectievakje."
+
+#: woocommerce/class-woocommercerestrictions.php:231
+msgid ""
+"The roles scope is disabled. Saved organisation and role restrictions are "
+"paused and preserved. Only the product or global SOL sign-in requirement "
+"applies; without it, these products may be purchased by guests."
+msgstr ""
+"De scope roles is uitgeschakeld. Opgeslagen organisatie- en rolbeperkingen "
+"zijn gepauzeerd en blijven bewaard. Alleen het SOL-aanmeldvereiste per "
+"product of voor alle producten geldt; zonder dit vereiste kunnen gasten deze "
+"producten kopen."
+
+#: woocommerce/class-woocommercerestrictions.php:234
+msgid ""
+"Select organisations or roles that may order this product. A customer needs "
+"one matching active organisation or role. Enable Require both organisation "
+"and role to match both fields on the same active assignment when both fields "
+"contain selections; with only one field selected, only that field is "
+"required. Include descendant organisations to match assignments in groups "
+"beneath a selected parent; turn it off to require a direct assignment in a "
+"selected organisation. Leave both allow fields empty to allow every customer "
+"unless a deny rule matches."
+msgstr ""
+"Selecteer organisaties of rollen die dit product mogen bestellen. Een klant "
+"heeft een overeenkomende actieve organisatie of rol nodig. Schakel Zowel "
+"organisatie als rol vereisen in om beide velden met dezelfde actieve "
+"functietoewijzing te laten overeenkomen wanneer beide velden selecties "
+"bevatten; als slechts een veld is ingevuld, is alleen dat veld vereist. "
+"Gebruik Onderliggende organisaties meenemen om ook functietoewijzingen in "
+"groepen onder een geselecteerde bovenliggende organisatie mee te nemen; "
+"schakel dit uit om een directe functietoewijzing in een geselecteerde "
+"organisatie te vereisen. Laat beide toestemmingsvelden leeg om elke klant "
+"toe te laten, tenzij een weigerregel overeenkomt."
+
+#: woocommerce/class-woocommercerestrictions.php:236
+msgid "Allowed SOL organisations"
+msgstr "Toegestane SOL-organisaties"
+
+#: woocommerce/class-woocommercerestrictions.php:237
+msgid "No organisation allow rule"
+msgstr "Geen toestemmingsregel voor organisaties"
+
+#: woocommerce/class-woocommercerestrictions.php:244
+#: woocommerce/class-woocommercerestrictions.php:279
+#, php-format
+msgid "%s (no longer synchronized)"
+msgstr "%s (niet meer gesynchroniseerd)"
+
+#: woocommerce/class-woocommercerestrictions.php:250
+#: woocommerce/class-woocommercerestrictions.php:285
+msgid "Include descendant organisations"
+msgstr "Onderliggende organisaties meenemen"
+
+#: woocommerce/class-woocommercerestrictions.php:252
+msgid "Allowed SOL roles"
+msgstr "Toegestane SOL-rollen"
+
+#: woocommerce/class-woocommercerestrictions.php:253
+msgid "No role allow rule"
+msgstr "Geen toestemmingsregel voor rollen"
+
+#: woocommerce/class-woocommercerestrictions.php:260
+#: woocommerce/class-woocommercerestrictions.php:295
+#, php-format
+msgid "%d (no longer synchronized)"
+msgstr "%d (niet meer gesynchroniseerd)"
+
+#: woocommerce/class-woocommercerestrictions.php:266
+#: woocommerce/class-woocommercerestrictions.php:301
+msgid "Require both organisation and role"
+msgstr "Zowel organisatie als rol vereisen"
+
+#: woocommerce/class-woocommercerestrictions.php:269
+msgid ""
+"Select organisations or roles that may not order this product. Enable "
+"Require both organisation and role to match both fields on the same active "
+"assignment when both fields contain selections; with only one field "
+"selected, only that field is required. Include descendant organisations to "
+"deny assignments in groups beneath a selected parent; turn it off to deny "
+"only direct assignments in selected organisations. Any matching deny rule "
+"blocks ordering, even when the customer also matches an allow rule."
+msgstr ""
+"Selecteer organisaties of rollen die dit product niet mogen bestellen. "
+"Schakel Zowel organisatie als rol vereisen in om beide velden met dezelfde "
+"actieve functietoewijzing te laten overeenkomen wanneer beide velden "
+"selecties bevatten; als slechts een veld is ingevuld, is alleen dat veld "
+"vereist. Gebruik Onderliggende organisaties meenemen om ook "
+"functietoewijzingen in groepen onder een geselecteerde bovenliggende "
+"organisatie te weigeren; schakel dit uit om alleen directe "
+"functietoewijzingen in geselecteerde organisaties te weigeren. Elke "
+"overeenkomende weigerregel blokkeert het bestellen, ook als de klant tevens "
+"aan een toestemmingsregel voldoet."
+
+#: woocommerce/class-woocommercerestrictions.php:271
+msgid "Denied SOL organisations"
+msgstr "Geweigerde SOL-organisaties"
+
+#: woocommerce/class-woocommercerestrictions.php:272
+msgid "No organisation deny rule"
+msgstr "Geen weigerregel voor organisaties"
+
+#: woocommerce/class-woocommercerestrictions.php:287
+msgid "Denied SOL roles"
+msgstr "Geweigerde SOL-rollen"
+
+#: woocommerce/class-woocommercerestrictions.php:288
+msgid "No role deny rule"
+msgstr "Geen weigerregel voor rollen"
+
+#: woocommerce/class-woocommercerestrictions.php:659
+msgid "Unknown organisation"
+msgstr "Onbekende organisatie"
+
+#: woocommerce/class-woocommercerestrictions.php:662
+#, php-format
+msgid "%1$s - %2$s / %3$s (%4$d)"
+msgstr "%1$s - %2$s / %3$s (%4$d)"
+
+#: woocommerce/class-woocommercerestrictions.php:737
+msgid "Sign in with your Scouts Online account to order this product."
+msgstr "Meld je aan met je Scouts Online-account om dit product te bestellen."
+
+#: woocommerce/class-woocommercerestrictions.php:739
+msgid ""
+"Your current Scouts Online role or organisation does not permit ordering "
+"this product."
+msgstr ""
+"Je huidige Scouts Online-rol of organisatie staat het bestellen van dit "
+"product niet toe."
+
+#~ msgid ""
+#~ "Select one or more values per condition. Values within a condition mean "
+#~ "any of those values; all populated conditions must match the same active "
+#~ "assignment. Empty conditions impose no restriction. Hold Ctrl (Command on "
+#~ "Mac) to select multiple values, or use Shift with the arrow keys."
+#~ msgstr ""
+#~ "Selecteer één of meer waarden per voorwaarde. Binnen een voorwaarde "
+#~ "volstaat één van die waarden; alle ingevulde voorwaarden moeten "
+#~ "overeenkomen met dezelfde actieve toewijzing. Lege voorwaarden leggen "
+#~ "geen beperking op. Houd Ctrl (Command op Mac) ingedrukt om meerdere "
+#~ "waarden te selecteren, of gebruik Shift met de pijltjestoetsen."
+
+#~ msgid ""
+#~ "The roles scope is not enabled. SOL assignments cannot be synchronized or "
+#~ "used for authorization. Configured mapping rules block OIDC login until "
+#~ "roles is enabled and a fresh login successfully synchronizes assignments."
+#~ msgstr ""
+#~ "De scope roles is niet ingeschakeld. SOL-toewijzingen kunnen niet worden "
+#~ "gesynchroniseerd of voor autorisatie worden gebruikt. Ingestelde "
+#~ "toewijzingsregels blokkeren OIDC-aanmeldingen totdat roles is "
+#~ "ingeschakeld en een nieuwe aanmelding de toewijzingen succesvol "
+#~ "synchroniseert."
+
+#~ msgid ""
+#~ "Every matching allow rule contributes its WordPress role. Duplicate roles "
+#~ "are assigned once. Any matching deny rule blocks login, regardless of "
+#~ "rule order. New unmatched users receive the WordPress default role; the "
+#~ "fallback setting controls existing unmatched users."
+#~ msgstr ""
+#~ "Elke overeenkomende toestaanregel voegt zijn WordPress-rol toe. Dubbele "
+#~ "rollen worden eenmaal toegewezen. Elke overeenkomende weigerregel "
+#~ "blokkeert het inloggen, ongeacht de regelvolgorde. Nieuwe gebruikers "
+#~ "zonder overeenkomst krijgen de standaardrol van WordPress; de "
+#~ "terugvalinstelling bepaalt dit voor bestaande gebruikers zonder "
+#~ "overeenkomst."
+
+#~ msgid ""
+#~ "The preview does not include unsaved edits, refresh provider data, change "
+#~ "user roles or sign the user in. It uses the configured fallback for "
+#~ "existing users. New-user registration and other login checks still apply."
+#~ msgstr ""
+#~ "Het voorbeeld bevat geen niet-opgeslagen wijzigingen, vernieuwt geen "
+#~ "providergegevens, wijzigt geen gebruikersrollen en meldt de gebruiker "
+#~ "niet aan. Het gebruikt de ingestelde terugval voor bestaande gebruikers. "
+#~ "Registratiecontroles voor nieuwe gebruikers en andere aanmeldcontroles "
+#~ "blijven van toepassing."
+
+#~ msgid ""
+#~ "Assign the WordPress default role to existing users when no rule matches"
+#~ msgstr ""
+#~ "Wijs de standaardrol van WordPress toe aan bestaande gebruikers als geen "
+#~ "enkele regel overeenkomt"
+
+#~ msgid ""
+#~ "Disabled by default: only new unmatched users receive the default role. "
+#~ "Existing unmatched users lose obsolete plugin-granted roles and may have "
+#~ "no role left. Manual roles are preserved. Changes apply at the next "
+#~ "successful OIDC login."
+#~ msgstr ""
+#~ "Standaard uitgeschakeld: alleen nieuwe gebruikers zonder overeenkomst "
+#~ "krijgen de standaardrol. Bestaande gebruikers zonder overeenkomst "
+#~ "verliezen verouderde, door de plugin toegekende rollen en kunnen zonder "
+#~ "rol overblijven. Handmatige rollen blijven behouden. Wijzigingen gelden "
+#~ "bij de volgende geslaagde OIDC-aanmelding."
+
+#~ msgid "Save Settings"
+#~ msgstr "Instellingen opslaan"
+
+#~ msgid "No matching rules: use the configured fallback for existing users."
+#~ msgstr ""
+#~ "Geen overeenkomende regels: gebruik de ingestelde terugval voor bestaande "
+#~ "gebruikers."
+
+#~ msgid "Rule Ordering"
+#~ msgstr "Regelvolgorde"
+
+#~ msgid ""
+#~ "Use Move up, Move down or Position to organize the list. Ordering does "
+#~ "not change authorization: all matching allow rules contribute roles and "
+#~ "any matching deny blocks login."
+#~ msgstr ""
+#~ "Gebruik Omhoog, Omlaag of Positie om de lijst te ordenen. De volgorde "
+#~ "verandert de autorisatie niet: alle overeenkomende toestaanregels voegen "
+#~ "rollen toe en elke overeenkomende weigerregel blokkeert het inloggen."
+
+#~ msgid ""
+#~ "Duplicate appends a saved copy at the end and opens it for editing. "
+#~ "Change its conditions or outcome and move it if needed. Delete removes a "
+#~ "rule."
+#~ msgstr ""
+#~ "Dupliceren voegt een opgeslagen kopie onderaan toe en opent deze om te "
+#~ "bewerken. Wijzig de voorwaarden of het resultaat en verplaats de regel "
+#~ "indien nodig. Verwijderen verwijdert een regel."
+
+#~ msgid "Saved rules in evaluation order"
+#~ msgstr "Opgeslagen regels in beoordelingsvolgorde"
+
+#~ msgid "Number"
+#~ msgstr "Nummer"
+
+#, php-format
+#~ msgid "Actions for rule %d"
+#~ msgstr "Acties voor regel %d"
+
+#~ msgid "Move up"
+#~ msgstr "Omhoog verplaatsen"
+
+#~ msgid "Move down"
+#~ msgstr "Omlaag verplaatsen"
+
+#~ msgid "Position"
+#~ msgstr "Positie"
+
+#~ msgid "Move"
+#~ msgstr "Verplaatsen"
+
+#, php-format
+#~ msgid "Matching rules: %s"
+#~ msgstr "Overeenkomende regels: %s"
+
+#~ msgid ""
+#~ "Rule duplicated at the end. Edit its conditions or outcome, then move it "
+#~ "if needed."
+#~ msgstr ""
+#~ "Regel onderaan gedupliceerd. Bewerk de voorwaarden of het resultaat en "
+#~ "verplaats de regel indien nodig."
+
+#~ msgid ""
+#~ "Search results update while typing. Searching retains the current "
+#~ "selection; choose a result to change it. Organisation and unit selections "
+#~ "narrow dependent choices. Arrow Down or Enter in a search field focuses "
+#~ "its results."
+#~ msgstr ""
+#~ "Zoekresultaten worden tijdens het typen bijgewerkt. Zoeken behoudt de "
+#~ "huidige selectie; kies een resultaat om deze te wijzigen. De "
+#~ "geselecteerde organisatie en het organisatieonderdeel beperken de "
+#~ "afhankelijke keuzes. Pijl omlaag of Enter in een zoekveld verplaatst de "
+#~ "focus naar de resultaten."
+
+#~ msgid ""
+#~ "Choose at least one condition. Search results appear as you type. "
+#~ "Searching keeps the current selection; choose a result to change it. "
+#~ "Changing an organisation or unit clears incompatible selections."
+#~ msgstr ""
+#~ "Kies ten minste een voorwaarde. Zoekresultaten verschijnen tijdens het "
+#~ "typen. Zoeken behoudt de huidige selectie; kies een resultaat om deze te "
+#~ "wijzigen. Het wijzigen van een organisatie of organisatieonderdeel wist "
+#~ "selecties die niet meer van toepassing zijn."
+
+#~ msgid "Any organisation"
+#~ msgstr "Elke organisatie"
+
+#~ msgid "Any unit"
+#~ msgstr "Elk organisatieonderdeel"
+
+#~ msgid "Any role"
+#~ msgstr "Elke rol"
+
+#~ msgid "{count} matches. Current selection: {selection}."
+#~ msgstr "{count} resultaten. Huidige selectie: {selection}."
+
+#~ msgid ""
+#~ "Mapping rules control Scouting OIDC login and the WordPress role managed "
+#~ "by this plugin. Rules are evaluated from top to bottom; only the first "
+#~ "matching rule applies. When no rule matches, the WordPress default role "
+#~ "is used and role mapping does not block login. The General Settings "
+#~ "option for creating new users still applies."
+#~ msgstr ""
+#~ "Toewijzingsregels bepalen het inloggen via Scouting OIDC en de WordPress-"
+#~ "rol die deze plugin beheert. Regels worden van boven naar beneden "
+#~ "beoordeeld; alleen de eerste overeenkomende regel wordt toegepast. Als "
+#~ "geen regel overeenkomt, wordt de standaardrol van WordPress gebruikt en "
+#~ "blokkeert de roltoewijzing het inloggen niet. De optie voor het aanmaken "
+#~ "van nieuwe gebruikers onder Algemene Instellingen blijft van toepassing."
+
+#~ msgid ""
+#~ "All selected conditions must match the same active SOL assignment. A user "
+#~ "may have multiple SOL assignments, but matching rules do not accumulate "
+#~ "WordPress roles. Independently managed WordPress roles are retained."
+#~ msgstr ""
+#~ "Alle geselecteerde voorwaarden moeten overeenkomen met dezelfde actieve "
+#~ "SOL-functietoewijzing. Een gebruiker kan meerdere SOL-functietoewijzingen "
+#~ "hebben, maar overeenkomende regels stapelen geen WordPress-rollen op. "
+#~ "Onafhankelijk beheerde WordPress-rollen blijven behouden."
+
+#~ msgid ""
+#~ "Use Move up, Move down or Position to change rule precedence. Put more "
+#~ "specific rules before broader rules when they should take priority. A "
+#~ "later deny rule does not override an earlier matching allow rule."
+#~ msgstr ""
+#~ "Gebruik Omhoog verplaatsen, Omlaag verplaatsen of Positie om de "
+#~ "prioriteit van regels te wijzigen. Plaats specifiekere regels boven "
+#~ "algemenere regels als deze voorrang moeten krijgen. Een latere "
+#~ "weigerregel overschrijft geen eerdere overeenkomende toestemmingsregel."
+
+#~ msgid ""
+#~ "Test a User accepts an exact WordPress username or user ID. It shows "
+#~ "active stored SOL assignments, the winning saved rule, and the resulting "
+#~ "login and role decision."
+#~ msgstr ""
+#~ "Gebruiker testen accepteert een exacte WordPress-gebruikersnaam of "
+#~ "gebruikers-ID. Het toont de opgeslagen actieve SOL-functietoewijzingen, "
+#~ "de toegepaste opgeslagen regel en de resulterende beslissing over "
+#~ "inloggen en roltoewijzing."
+
+#~ msgid ""
+#~ "The preview does not include unsaved edits, refresh provider data, change "
+#~ "user roles or sign the user in. If no rule matches, it shows the "
+#~ "WordPress default role. This previews role mapping only, not other login "
+#~ "or new-user registration checks. Updated provider data is synchronized "
+#~ "during Scouting OIDC login."
+#~ msgstr ""
+#~ "Het voorbeeld bevat geen niet-opgeslagen wijzigingen, vernieuwt geen "
+#~ "providergegevens, wijzigt geen gebruikersrollen en logt de gebruiker niet "
+#~ "in. Als geen regel overeenkomt, wordt de standaardrol van WordPress "
+#~ "getoond. Dit is alleen een voorbeeld van de roltoewijzing, niet van "
+#~ "andere controles voor inloggen of het registreren van nieuwe gebruikers. "
+#~ "Bijgewerkte providergegevens worden tijdens het inloggen via Scouting "
+#~ "OIDC gesynchroniseerd."
+
+#~ msgid ""
+#~ "Rules are evaluated from top to bottom. The first matching rule wins. "
+#~ "When no rule matches, the WordPress default role is used; the General "
+#~ "Settings option for creating new users still applies."
+#~ msgstr ""
+#~ "Regels worden van boven naar beneden beoordeeld. De eerste overeenkomende "
+#~ "regel wordt toegepast. Als geen regel overeenkomt, wordt de standaardrol "
+#~ "van WordPress gebruikt; de optie voor het aanmaken van nieuwe gebruikers "
+#~ "onder Algemene Instellingen blijft van toepassing."
+
+#~ msgid ""
+#~ "The first matching rule allows or denies Scouting OIDC login. Allowed "
+#~ "users receive one plugin-managed WordPress role; other independently "
+#~ "managed roles are retained. All selected conditions must match the same "
+#~ "active SOL assignment."
+#~ msgstr ""
+#~ "De eerste overeenkomende regel staat inloggen via Scouting OIDC toe of "
+#~ "weigert dit. Toegelaten gebruikers krijgen een door de plugin beheerde "
+#~ "WordPress-rol; andere onafhankelijk beheerde rollen blijven behouden. "
+#~ "Alle geselecteerde voorwaarden moeten overeenkomen met dezelfde actieve "
+#~ "SOL-functietoewijzing."
+
+#~ msgid ""
+#~ "No matching rule: use the WordPress default role. Other login and new-"
+#~ "user registration checks still apply."
+#~ msgstr ""
+#~ "Geen overeenkomende regel: gebruik de standaardrol van WordPress. Andere "
+#~ "controles voor inloggen en het registreren van nieuwe gebruikers blijven "
+#~ "van toepassing."
+
+#, php-format
+#~ msgid "Winning rule: %d"
+#~ msgstr "Toegepaste regel: %d"
+
+#~ msgid "An issuer must be provided in the config."
+#~ msgstr "In de configuratie moet een issuer worden opgegeven."
+
+#~ msgid "Email scope is missing"
+#~ msgstr "Email scope ontbreekt"
+
 #~ msgid "Example of the shortcode with custom attributes:"
 #~ msgstr "Voorbeeld van de shortcode met aangepaste attributen:"
 
-#~ msgid "You can not customize the appearance of the link."
-#~ msgstr "Je kunt het uiterlijk van de link niet aanpassen."
+#~ msgid "Failed to retrieve tokens. Response code:"
+#~ msgstr "Het ophalen van tokens is mislukt. Responscode:"
 
-#~ msgid "openid"
-#~ msgstr "openid"
+#~ msgid "Failed to retrieve user info. Response code:"
+#~ msgstr "Kon gebruikersinformatie niet ophalen. Responscode:"
 
-#~ msgid "membership"
-#~ msgstr "membership"
-
-#~ msgid "profile"
-#~ msgstr "profile"
-
-#~ msgid "email"
-#~ msgstr "email"
-
-#~ msgid "Something went wrong while trying to update the username."
-#~ msgstr "Er is iets misgegaan bij het bijwerken van de gebruikersnaam."
-
-#~ msgid "SOL ID and Email have different user IDs"
-#~ msgstr "SOL ID en e-mail hebben verschillende gebruikers-ID's"
+#~ msgid ""
+#~ "Fill in the General Settings. If you want to store the birthdate, or "
+#~ "gender, use the scope \"profile\"."
+#~ msgstr ""
+#~ "Vul de algemene instellingen in. Als u de geboortedatum of het geslacht "
+#~ "wilt opslaan, gebruikt u de scope \"profile\"."
 
 #~ msgid ""
 #~ "Fill in the General Settings. Optional scopes: use \"profile\" for "
@@ -1643,21 +2718,39 @@ msgstr ""
 #~ "geboortedatum en geslacht, ‘phone’ voor telefoonnummer en “address” voor "
 #~ "adresgegevens."
 
-#~ msgid ""
-#~ "Fill in the General Settings. If you want to store the birthdate, or "
-#~ "gender, use the scope \"profile\"."
-#~ msgstr ""
-#~ "Vul de algemene instellingen in. Als u de geboortedatum of het geslacht "
-#~ "wilt opslaan, gebruikt u de scope \"profile\"."
-
-#~ msgid "Store Scouting ID to local profile"
-#~ msgstr "Scouting ID opslaan in lokaal profiel"
+#~ msgid "Infix"
+#~ msgstr "Tussenvoegsel"
 
 #~ msgid "Prefix for all Scouting Nederland users"
 #~ msgstr "Voorvoegsel voor alle Scouting Nederland gebruikers"
 
-#~ msgid "Username"
-#~ msgstr "Gebruikersnaam"
+#~ msgid "Response message:"
+#~ msgstr "Antwoordbericht:"
+
+#~ msgid "SOL ID and Email have different user IDs"
+#~ msgstr "SOL ID en e-mail hebben verschillende gebruikers-ID's"
+
+#~ msgid "Scope"
+#~ msgstr "Scope"
+
+#~ msgid "Scopes must be a non-empty array."
+#~ msgstr "Scopes moeten een niet-lege array zijn."
+
+#~ msgid "Something went wrong while trying to update the username."
+#~ msgstr "Er is iets misgegaan bij het bijwerken van de gebruikersnaam."
+
+#~ msgid "Store Scouting ID to local profile"
+#~ msgstr "Scouting ID opslaan in lokaal profiel"
+
+#~ msgid "The end session endpoint is not available in the well-known data."
+#~ msgstr ""
+#~ "Het eindpunt van de sessie is niet beschikbaar in de bekende gegevens."
+
+#~ msgid "The issuer URL is not valid."
+#~ msgstr "De URL van de issuer is ongeldig."
+
+#~ msgid "The userinfo endpoint is not available in the well-known data."
+#~ msgstr "Het eindpunt userinfo is niet beschikbaar in de well-known data."
 
 #~ msgid ""
 #~ "This prefix will be added to the username of all Scouting Nederland users"
@@ -1665,47 +2758,28 @@ msgstr ""
 #~ "Dit voorvoegsel wordt toegevoegd aan de gebruikersnaam van alle Scouting "
 #~ "Nederland gebruikers"
 
-#~ msgid "Scouting ID"
-#~ msgstr "Scouting ID"
+#~ msgid "Username"
+#~ msgstr "Gebruikersnaam"
 
-#~ msgid "Infix"
-#~ msgstr "Tussenvoegsel"
+#~ msgid "You can not customize the appearance of the link."
+#~ msgstr "Je kunt het uiterlijk van de link niet aanpassen."
 
-#~ msgid "Email scope is missing"
-#~ msgstr "Email scope ontbreekt"
+#~ msgid "email"
+#~ msgstr "email"
 
-#~ msgid "An issuer must be provided in the config."
-#~ msgstr "In de configuratie moet een issuer worden opgegeven."
+#~ msgid "membership"
+#~ msgstr "membership"
 
-#~ msgid "The issuer URL is not valid."
-#~ msgstr "De URL van de issuer is ongeldig."
+#~ msgid "openid"
+#~ msgstr "openid"
 
-#~ msgid "well-known data is not available."
-#~ msgstr "Er zijn geen bekende gegevens beschikbaar."
-
-#~ msgid "Failed to retrieve tokens. Response code:"
-#~ msgstr "Het ophalen van tokens is mislukt. Responscode:"
-
-#~ msgid "Response message:"
-#~ msgstr "Antwoordbericht:"
-
-#~ msgid "The userinfo endpoint is not available in the well-known data."
-#~ msgstr "Het eindpunt userinfo is niet beschikbaar in de well-known data."
-
-#~ msgid "Failed to retrieve user info. Response code:"
-#~ msgstr "Kon gebruikersinformatie niet ophalen. Responscode:"
-
-#~ msgid "The end session endpoint is not available in the well-known data."
-#~ msgstr ""
-#~ "Het eindpunt van de sessie is niet beschikbaar in de bekende gegevens."
-
-#~ msgid "Scopes must be a non-empty array."
-#~ msgstr "Scopes moeten een niet-lege array zijn."
-
-#~ msgid "Scope"
-#~ msgstr "Scope"
+#~ msgid "profile"
+#~ msgstr "profile"
 
 #, fuzzy
 #~| msgid "Settings"
 #~ msgid "settings page"
 #~ msgstr "Instellingen"
+
+#~ msgid "well-known data is not available."
+#~ msgstr "Er zijn geen bekende gegevens beschikbaar."
