@@ -342,7 +342,7 @@ class RolesSync {
 			$start_date = self::scouting_oidc_roles_sync_normalize_datetime( $raw_assignment['start_date'] ?? null );
 			$end_date   = null;
 			if ( array_key_exists( 'end_date', $raw_assignment ) && null !== $raw_assignment['end_date'] ) {
-				$end_date = self::scouting_oidc_roles_sync_normalize_datetime( $raw_assignment['end_date'] );
+				$end_date = self::scouting_oidc_roles_sync_normalize_datetime( $raw_assignment['end_date'], true );
 				if ( null === $end_date ) {
 					return new \WP_Error( 'invalid_role_assignment' );
 				}
@@ -369,32 +369,38 @@ class RolesSync {
 	}
 
 	/**
-	 * Normalizes an ISO date or RFC 3339 timestamp to a UTC database timestamp.
+	 * Normalizes a Netherlands date or RFC 3339 timestamp to a UTC database timestamp.
 	 *
-	 * @since 2.7.0 Validates role assignment timestamps.
+	 * @since 2.7.0 Interprets date-only assignment dates in the Europe/Amsterdam timezone and keeps end dates inclusive.
 	 *
 	 * @param mixed $value Raw date or date-time.
+	 * @param bool  $inclusive_end_date Whether a date-only value represents an inclusive end date.
 	 * @return string|null UTC timestamp or null.
 	 */
-	private static function scouting_oidc_roles_sync_normalize_datetime( mixed $value ): ?string {
+	private static function scouting_oidc_roles_sync_normalize_datetime( mixed $value, bool $inclusive_end_date = false ): ?string {
 		if ( ! is_string( $value ) ) {
 			return null;
 		}
 
-		if ( 1 === preg_match( '/^\d{4}-\d{2}-\d{2}$/', $value ) ) {
-			$value .= 'T00:00:00Z';
-		} elseif ( 1 !== preg_match( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$/', $value ) ) {
+		$is_date_only = 1 === preg_match( '/^\d{4}-\d{2}-\d{2}$/', $value );
+		if ( ! $is_date_only && 1 !== preg_match( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$/', $value ) ) {
 			return null;
 		}
 
 		try {
-			$date = new \DateTimeImmutable( $value );
+			$date = $is_date_only
+				? new \DateTimeImmutable( $value, new \DateTimeZone( 'Europe/Amsterdam' ) )
+				: new \DateTimeImmutable( $value );
 		} catch ( \Exception $error ) {
 			return null;
 		}
 
-		if ( $date->format( 'Y-m-d\TH:i:s' ) !== substr( $value, 0, 19 ) ) {
+		if ( ( $is_date_only && $date->format( 'Y-m-d' ) !== $value ) || ( ! $is_date_only && $date->format( 'Y-m-d\TH:i:s' ) !== substr( $value, 0, 19 ) ) ) {
 			return null;
+		}
+
+		if ( $is_date_only && $inclusive_end_date ) {
+			$date = $date->modify( '+1 day' )->modify( '-1 microsecond' );
 		}
 
 		return $date->setTimezone( new \DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s.u' );
