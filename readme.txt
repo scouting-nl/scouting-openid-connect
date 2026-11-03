@@ -26,7 +26,7 @@ Detailed administrator, deployment, privacy, data-lifecycle, troubleshooting, an
 
 == Installation ==
 
-Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scouting.nl).
+Make sure you have the role `webmaster` in [SOL 3 (mijn.scouting.nl)](https://mijn.scouting.nl).
 
 1. Go to [https://login.scouting.nl](https://login.scouting.nl), click on `Managed websites` and click on `Add OpenID Connect connection`.
 2. Add the name of your group/website.
@@ -53,9 +53,9 @@ Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scout
 13. Press `Save Settings`.
 14. Log out and try to log in with the Scouts Login button.
 
-Every scope requested in WordPress must also be enabled for this website under Managed websites at login.scouting.nl. If Scouts Online rejects a scope, enable it for that connection or remove it from WordPress if it is optional and unused. Keep openid, membership, profile, and email enabled in both places. Site Health and provider discovery cannot verify the permissions granted to your individual connection.
+Every scope requested in WordPress must also be enabled for this website under Managed websites at login.scouting.nl. If SOL 3 rejects a scope, enable it for that connection or remove it from WordPress if it is optional and unused. Keep openid, membership, profile, and email enabled in both places. Site Health and provider discovery cannot verify the permissions granted to your individual connection.
 
-To use SOL roles, enable the roles scope for your website at [Managed websites in Scouts Online](https://login.scouting.nl/managed-websites) as well as in the plugin. See the [plugin documentation](https://github.com/scouting-nl/scouting-openid-connect/wiki/) for setup guidance.
+To use SOL roles, enable the roles scope for your website at [Managed websites at login.scouting.nl](https://login.scouting.nl/managed-websites) as well as in the plugin. See the [plugin documentation](https://github.com/scouting-nl/scouting-openid-connect/wiki/) for setup guidance.
 
 == Site Health ==
 
@@ -79,7 +79,7 @@ The Info tab contains a Scouting OpenID Connect section that can be copied into 
 
 Scouting OpenID Connect account names and email addresses are refreshed during sign-in. Birth date, gender, phone number, and address are synchronized only when enabled in General Settings and the corresponding OIDC scopes are configured. These optional values are not refreshed continuously.
 
-Users should update profile information in Scouts Online. Disabling an optional field stops refreshing its SOL profile metadata but does not erase previously stored values; if WooCommerce synchronization remains enabled, stored values may still be copied to WooCommerce. For an enabled field, a blank SOL value clears the plugin's stored value at the next sign-in, but WooCommerce synchronization does not replace existing billing or shipping values with blank values.
+Users should update profile information in SOL 3 (mijn.scouting.nl). Disabling an optional field stops refreshing its SOL profile metadata but does not erase previously stored values; if WooCommerce synchronization remains enabled, stored values may still be copied to WooCommerce. For an enabled field, a blank SOL value clears the plugin's stored value at the next sign-in, but WooCommerce synchronization does not replace existing billing or shipping values with blank values.
 
 When the `roles` scope is enabled, role assignments returned by SOL are synchronized and the configured role mapping is applied during sign-in. A matching deny rule blocks that sign-in but does not end an existing WordPress session. Removing a member from SOL does not automatically delete their WordPress account or its stored data; review and remove accounts according to your site's data-retention policy.
 

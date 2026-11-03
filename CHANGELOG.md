@@ -4,10 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
-- Added direct links to Scouts Online website scope management and the plugin wiki, with explicit instructions to enable the roles scope in both places.
+- Added direct links to login.scouting.nl website scope management and the plugin wiki, with explicit instructions to enable the roles scope in both places.
 - Clarified rejected OIDC scope errors for users and administrators, including authorization callbacks without a hint and token-endpoint rejections. Added scope configuration guidance in settings, Site Health, and the readmes.
 - Fixed the SOL gender profile dropdown to allow only the synchronized value while retaining native dropdown interaction and its white background. Added an accessible profile synchronization notice and limited SOL profile fields to SOL-linked accounts.
-- Documented profile-data retention, WooCommerce synchronization, and role-access lifecycle behavior in the support page and readmes.
 
 ## [[2.7.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.7.0)] - 02/11/2026
 

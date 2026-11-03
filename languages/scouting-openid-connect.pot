@@ -20,6 +20,10 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
+#: support/class-support.php
+msgid "Documentation"
+msgstr ""
+
 #: settings/class-settings-oidc.php
 msgid "To use SOL roles, enable the roles scope for this website in Scouts Online as well as in this plugin."
 msgstr ""
@@ -1848,7 +1852,7 @@ msgid ""
 msgstr ""
 
 #: support/class-support.php:60
-msgid "The `Address`, `Phone number` scope is optional."
+msgid "The `Address`, `Phone number`, and `Roles` scopes are optional."
 msgstr ""
 
 #: support/class-support.php:61

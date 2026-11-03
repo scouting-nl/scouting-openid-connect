@@ -21,6 +21,10 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
+#: support/class-support.php
+msgid "Documentation"
+msgstr "Documentatie"
+
 #: settings/class-settings-oidc.php
 msgid "To use SOL roles, enable the roles scope for this website in Scouts Online as well as in this plugin."
 msgstr "Om SOL-rollen te gebruiken, moet je de roles-scope voor deze website zowel in Scouts Online als in deze plugin inschakelen."
@@ -2077,8 +2081,8 @@ msgstr ""
 "en `Lidmaatschap` zijn verplicht;"
 
 #: support/class-support.php:60
-msgid "The `Address`, `Phone number` scope is optional."
-msgstr "Het bereik `Adres`, `Telefoonnummer` is optioneel."
+msgid "The `Address`, `Phone number`, and `Roles` scopes are optional."
+msgstr "De scopes `Adres`, `Telefoonnummer` en `Rollen` zijn optioneel."
 
 #: support/class-support.php:61
 msgid "Currently the `Parents/guardians` scope is not supported."
