@@ -41,6 +41,7 @@ class Support {
 	 * Renders the support page content.
 	 *
 	 * @since 1.0.0
+	 * @since Unreleased Links to the plugin documentation.
 	 */
 	public function scouting_oidc_support_page_callback(): void {
 		?>
@@ -94,6 +95,7 @@ class Support {
 			<p><?php esc_html_e( 'When the roles scope is enabled, role assignments returned by SOL are synchronized and the configured role mapping is applied during sign-in. A matching deny rule blocks that sign-in but does not end an existing WordPress session. Removing a member from SOL does not automatically delete their WordPress account or its stored data; review and remove accounts according to your site’s data-retention policy.', 'scouting-openid-connect' ); ?></p>
 
 			<h2><?php esc_html_e( 'Support', 'scouting-openid-connect' ); ?></h2>
+			<p><a href="<?php echo esc_url( 'https://github.com/scouting-nl/scouting-openid-connect/wiki/' ); ?>"><?php esc_html_e( 'Read the plugin documentation', 'scouting-openid-connect' ); ?></a></p>
 			<p><?php esc_html_e( 'If you need help, please contact', 'scouting-openid-connect' ); ?>
 				<a href="mailto:cms@support.scouting.nl?cc=job.van.koeveringe@scouting.nl&subject=WordPress%20Scouting%20OIDC%20Support" target="_blank">cms@support.scouting.nl & job.van.koeveringe@scouting.nl</a>
 				<?php esc_html_e( '(developer of the plugin)', 'scouting-openid-connect' ); ?>.

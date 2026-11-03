@@ -55,6 +55,8 @@ Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scout
 
 Every scope requested in WordPress must also be enabled for this website under Managed websites at login.scouting.nl. If Scouts Online rejects a scope, enable it for that connection or remove it from WordPress if it is optional and unused. Keep openid, membership, profile, and email enabled in both places. Site Health and provider discovery cannot verify the permissions granted to your individual connection.
 
+To use SOL roles, enable the roles scope for your website at [Managed websites in Scouts Online](https://login.scouting.nl/managed-websites) as well as in the plugin. See the [plugin documentation](https://github.com/scouting-nl/scouting-openid-connect/wiki/) for setup guidance.
+
 == Site Health ==
 
 Go to Tools > Site Health in WordPress to inspect the plugin's configuration and operational status.

@@ -135,8 +135,9 @@ class Settings_Oidc {
 	 */
 	public function scouting_oidc_settings_oidc_scopes_callback(): void {
 		$value = get_option( 'scouting_oidc_scopes' );
-		echo '<input type="text" id="scouting_oidc_scopes" name="scouting_oidc_scopes" placeholder="' . esc_attr__( 'Scopes', 'scouting-openid-connect' ) . '" value="' . esc_attr( $value ) . '" size="55" aria-describedby="scouting-oidc-scopes-help" required />';
+		echo '<input type="text" id="scouting_oidc_scopes" name="scouting_oidc_scopes" placeholder="' . esc_attr__( 'Scopes', 'scouting-openid-connect' ) . '" value="' . esc_attr( $value ) . '" size="55" aria-describedby="scouting-oidc-scopes-help scouting-oidc-roles-scope-help" required />';
 		echo '<p class="description" id="scouting-oidc-scopes-help">' . esc_html__( 'Every scope requested here must also be enabled for this website under Managed websites at login.scouting.nl. Required: openid, membership, profile, email. Optional: address, phone, roles. The plugin cannot check which scopes are enabled for your connection there.', 'scouting-openid-connect' ) . '</p>';
+		echo '<p class="description" id="scouting-oidc-roles-scope-help">' . esc_html__( 'To use SOL roles, enable the roles scope for this website in Scouts Online as well as in this plugin.', 'scouting-openid-connect' ) . ' <a href="' . esc_url( 'https://login.scouting.nl/managed-websites' ) . '">' . esc_html__( 'Manage website scopes in Scouts Online', 'scouting-openid-connect' ) . '</a>. <a href="' . esc_url( 'https://github.com/scouting-nl/scouting-openid-connect/wiki/' ) . '">' . esc_html__( 'Read the plugin documentation', 'scouting-openid-connect' ) . '</a>.</p>';
 	}
 
 	/**

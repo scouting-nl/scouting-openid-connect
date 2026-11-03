@@ -21,6 +21,18 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
+#: settings/class-settings-oidc.php
+msgid "To use SOL roles, enable the roles scope for this website in Scouts Online as well as in this plugin."
+msgstr "Om SOL-rollen te gebruiken, moet je de roles-scope voor deze website zowel in Scouts Online als in deze plugin inschakelen."
+
+#: settings/class-settings-oidc.php
+msgid "Manage website scopes in Scouts Online"
+msgstr "Scopes voor de website beheren in Scouts Online"
+
+#: settings/class-settings-oidc.php support/class-support.php
+msgid "Read the plugin documentation"
+msgstr "Lees de documentatie van de plugin"
+
 #: utilities/class-errorhandler.php
 #, php-format
 msgid "Scouts Online rejected the requested \"%s\" scope. Sign-in could not be completed. Please contact the website administrator."
