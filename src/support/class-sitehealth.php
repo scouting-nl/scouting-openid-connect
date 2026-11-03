@@ -206,6 +206,7 @@ class SiteHealth {
 	 * Checks required scopes and scopes needed by enabled profile features.
 	 *
 	 * @since 2.5.0
+	 * @since Unreleased Clarifies that provider-side connection permissions cannot be verified locally.
 	 *
 	 * @return array Result data.
 	 */
@@ -256,7 +257,7 @@ class SiteHealth {
 				/* translators: %s: Space-separated list of configured OpenID Connect scopes. */
 				__( 'All required scopes are configured. Current scopes: %s.', 'scouting-openid-connect' ),
 				implode( ' ', $scopes )
-			)
+			) . ' ' . __( 'This check only verifies the WordPress configuration. Make sure every requested scope is also enabled for this website under Managed websites at login.scouting.nl; provider discovery does not confirm your connection’s permissions.', 'scouting-openid-connect' )
 		);
 	}
 

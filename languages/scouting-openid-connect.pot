@@ -20,6 +20,43 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
+#: support/class-support.php
+msgid "Documentation"
+msgstr ""
+
+#: settings/class-settings-oidc.php
+msgid "To use SOL roles, enable the roles scope for this website in Scouts Online as well as in this plugin."
+msgstr ""
+
+#: settings/class-settings-oidc.php
+msgid "Manage website scopes in Scouts Online"
+msgstr ""
+
+#: settings/class-settings-oidc.php support/class-support.php
+msgid "Read the plugin documentation"
+msgstr ""
+
+#: utilities/class-errorhandler.php
+#, php-format
+msgid "Scouts Online rejected the requested \"%s\" scope. Sign-in could not be completed. Please contact the website administrator."
+msgstr ""
+
+#: utilities/class-errorhandler.php
+msgid "Scouts Online rejected one or more requested scopes. Sign-in could not be completed. Please contact the website administrator."
+msgstr ""
+
+#: utilities/class-errorhandler.php
+msgid "For administrators: compare the plugin’s OpenID Connect Scopes setting with the scopes enabled for this website under Managed websites at login.scouting.nl. Enable the requested scopes there, or remove optional scopes you do not use from WordPress. Keep openid, membership, profile, and email enabled in both places. Then try signing in again."
+msgstr ""
+
+#: settings/class-settings-oidc.php
+msgid "Every scope requested here must also be enabled for this website under Managed websites at login.scouting.nl. Required: openid, membership, profile, email. Optional: address, phone, roles. The plugin cannot check which scopes are enabled for your connection there."
+msgstr ""
+
+#: support/class-sitehealth.php
+msgid "This check only verifies the WordPress configuration. Make sure every requested scope is also enabled for this website under Managed websites at login.scouting.nl; provider discovery does not confirm your connection’s permissions."
+msgstr ""
+
 #: auth/class-auth.php:93 auth/class-auth.php:166
 #: shortcode/class-shortcode.php:165
 msgid "Login with Scouts Online"
@@ -1576,11 +1613,11 @@ msgid ""
 "The next cleanup is scheduled for %1$s and will retain %2$d days of logs."
 msgstr ""
 
-#: support/class-sitehealth.php:471 user/class-fields.php:341
+#: support/class-sitehealth.php:471 user/class-fields.php:344
 msgid "Birthdate"
 msgstr ""
 
-#: support/class-sitehealth.php:472 user/class-fields.php:363
+#: support/class-sitehealth.php:472 user/class-fields.php:366
 msgid "Gender"
 msgstr ""
 
@@ -1775,7 +1812,7 @@ msgstr ""
 msgid "Disabled"
 msgstr ""
 
-#: support/class-support.php:48 support/class-support.php:91
+#: support/class-support.php:48 support/class-support.php:96
 msgid "Support"
 msgstr ""
 
@@ -1815,7 +1852,7 @@ msgid ""
 msgstr ""
 
 #: support/class-support.php:60
-msgid "The `Address`, `Phone number` scope is optional."
+msgid "The `Address`, `Phone number`, and `Roles` scopes are optional."
 msgstr ""
 
 #: support/class-support.php:61
@@ -1872,11 +1909,27 @@ msgstr ""
 msgid "Log out and try to log in with the Scouts Login button."
 msgstr ""
 
+#: support/class-support.php:91
+msgid "Profile and access synchronization"
+msgstr ""
+
 #: support/class-support.php:92
-msgid "If you need help, please contact"
+msgid "Scouting OpenID Connect account names and email addresses are refreshed during sign-in. Birth date, gender, phone number, and address are synchronized only when enabled in General Settings and the corresponding OIDC scopes are configured. These optional values are not refreshed continuously."
+msgstr ""
+
+#: support/class-support.php:93
+msgid "Users should update profile information in Scouts Online. Disabling an optional field stops refreshing its SOL profile metadata but does not erase previously stored values; if WooCommerce synchronization remains enabled, stored values may still be copied to WooCommerce. For an enabled field, a blank SOL value clears the plugin’s stored value at the next sign-in. WooCommerce synchronization skips blank names and phone numbers and skips an entirely blank address. If any address component remains populated, all mapped billing and shipping address fields are updated, including blank components."
 msgstr ""
 
 #: support/class-support.php:94
+msgid "When the roles scope is enabled, role assignments returned by SOL are synchronized and the configured role mapping is applied during sign-in. A matching deny rule blocks that sign-in but does not end an existing WordPress session. Removing a member from SOL does not automatically delete their WordPress account or its stored data; review and remove accounts according to your site’s data-retention policy."
+msgstr ""
+
+#: support/class-support.php:97
+msgid "If you need help, please contact"
+msgstr ""
+
+#: support/class-support.php:99
 msgid "(developer of the plugin)"
 msgstr ""
 
@@ -1932,51 +1985,51 @@ msgstr ""
 msgid "View in SOL"
 msgstr ""
 
-#: user/class-fields.php:305
+#: user/class-fields.php:308
 msgid "Scouts Online (SOL) Profile Information"
 msgstr ""
 
-#: user/class-fields.php:366
+#: user/class-fields.php:369
 msgid "Male"
 msgstr ""
 
-#: user/class-fields.php:367
+#: user/class-fields.php:370
 msgid "Female"
 msgstr ""
 
-#: user/class-fields.php:368
+#: user/class-fields.php:371
 msgid "Other"
 msgstr ""
 
-#: user/class-fields.php:369
+#: user/class-fields.php:372
 msgid "Unknown"
 msgstr ""
 
-#: user/class-fields.php:307
-msgid "Managed by Scouts Online. Update your profile information there."
+#: user/class-fields.php:309
+msgid "These values are managed in Scouts Online and refreshed when the plugin receives profile data during sign-in. Update your information there; changes are not synced continuously."
 msgstr ""
 
-#: user/class-fields.php:387
+#: user/class-fields.php:390
 msgid "Phone Number"
 msgstr ""
 
-#: user/class-fields.php:407
+#: user/class-fields.php:410
 msgid "Street"
 msgstr ""
 
-#: user/class-fields.php:426
+#: user/class-fields.php:429
 msgid "House Number"
 msgstr ""
 
-#: user/class-fields.php:445
+#: user/class-fields.php:448
 msgid "Postal Code"
 msgstr ""
 
-#: user/class-fields.php:464
+#: user/class-fields.php:467
 msgid "City"
 msgstr ""
 
-#: user/class-fields.php:483
+#: user/class-fields.php:486
 msgid "Country Code"
 msgstr ""
 

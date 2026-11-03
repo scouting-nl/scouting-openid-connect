@@ -21,6 +21,43 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
+#: support/class-support.php
+msgid "Documentation"
+msgstr "Documentatie"
+
+#: settings/class-settings-oidc.php
+msgid "To use SOL roles, enable the roles scope for this website in Scouts Online as well as in this plugin."
+msgstr "Om SOL-rollen te gebruiken, moet je de roles-scope voor deze website zowel in Scouts Online als in deze plugin inschakelen."
+
+#: settings/class-settings-oidc.php
+msgid "Manage website scopes in Scouts Online"
+msgstr "Scopes voor de website beheren in Scouts Online"
+
+#: settings/class-settings-oidc.php support/class-support.php
+msgid "Read the plugin documentation"
+msgstr "Lees de documentatie van de plugin"
+
+#: utilities/class-errorhandler.php
+#, php-format
+msgid "Scouts Online rejected the requested \"%s\" scope. Sign-in could not be completed. Please contact the website administrator."
+msgstr "Scouts Online heeft de aangevraagde scope \"%s\" geweigerd. Het inloggen kon niet worden voltooid. Neem contact op met de beheerder van de website."
+
+#: utilities/class-errorhandler.php
+msgid "Scouts Online rejected one or more requested scopes. Sign-in could not be completed. Please contact the website administrator."
+msgstr "Scouts Online heeft een of meer aangevraagde scopes geweigerd. Het inloggen kon niet worden voltooid. Neem contact op met de beheerder van de website."
+
+#: utilities/class-errorhandler.php
+msgid "For administrators: compare the plugin’s OpenID Connect Scopes setting with the scopes enabled for this website under Managed websites at login.scouting.nl. Enable the requested scopes there, or remove optional scopes you do not use from WordPress. Keep openid, membership, profile, and email enabled in both places. Then try signing in again."
+msgstr "Voor beheerders: vergelijk de instelling Scopes onder OpenID Connect in de plugin met de scopes die voor deze website zijn ingeschakeld onder Beheerde websites op login.scouting.nl. Schakel de aangevraagde scopes daar in, of verwijder ongebruikte optionele scopes uit WordPress. Laat openid, membership, profile en email op beide plaatsen ingeschakeld. Probeer daarna opnieuw in te loggen."
+
+#: settings/class-settings-oidc.php
+msgid "Every scope requested here must also be enabled for this website under Managed websites at login.scouting.nl. Required: openid, membership, profile, email. Optional: address, phone, roles. The plugin cannot check which scopes are enabled for your connection there."
+msgstr "Elke scope die je hier aanvraagt, moet ook voor deze website zijn ingeschakeld onder Beheerde websites op login.scouting.nl. Verplicht: openid, membership, profile, email. Optioneel: address, phone, roles. De plugin kan niet controleren welke scopes daar voor jouw koppeling zijn ingeschakeld."
+
+#: support/class-sitehealth.php
+msgid "This check only verifies the WordPress configuration. Make sure every requested scope is also enabled for this website under Managed websites at login.scouting.nl; provider discovery does not confirm your connection’s permissions."
+msgstr "Deze controle kijkt alleen naar de WordPress-configuratie. Zorg dat elke aangevraagde scope ook voor deze website is ingeschakeld onder Beheerde websites op login.scouting.nl; de algemene providerinformatie bevestigt niet welke rechten jouw koppeling heeft."
+
 #: auth/class-auth.php:93 auth/class-auth.php:166
 #: shortcode/class-shortcode.php:165
 msgid "Login with Scouts Online"
@@ -1798,11 +1835,11 @@ msgstr ""
 "De volgende opschoning is gepland voor %1$s en zal %2$d dagen aan logs "
 "behouden."
 
-#: support/class-sitehealth.php:471 user/class-fields.php:341
+#: support/class-sitehealth.php:471 user/class-fields.php:344
 msgid "Birthdate"
 msgstr "Geboortedatum"
 
-#: support/class-sitehealth.php:472 user/class-fields.php:363
+#: support/class-sitehealth.php:472 user/class-fields.php:366
 msgid "Gender"
 msgstr "Geslacht"
 
@@ -1999,7 +2036,7 @@ msgstr "Cache voor ondertekeningssleutels van de provider"
 msgid "Disabled"
 msgstr "Uitgeschakeld"
 
-#: support/class-support.php:48 support/class-support.php:91
+#: support/class-support.php:48 support/class-support.php:96
 msgid "Support"
 msgstr "Support"
 
@@ -2044,8 +2081,8 @@ msgstr ""
 "en `Lidmaatschap` zijn verplicht;"
 
 #: support/class-support.php:60
-msgid "The `Address`, `Phone number` scope is optional."
-msgstr "Het bereik `Adres`, `Telefoonnummer` is optioneel."
+msgid "The `Address`, `Phone number`, and `Roles` scopes are optional."
+msgstr "De scopes `Adres`, `Telefoonnummer` en `Rollen` zijn optioneel."
 
 #: support/class-support.php:61
 msgid "Currently the `Parents/guardians` scope is not supported."
@@ -2103,11 +2140,27 @@ msgstr "Druk op \"Save Settings\""
 msgid "Log out and try to log in with the Scouts Login button."
 msgstr "Log uit en probeer in te loggen met de knop Scouts Login."
 
+#: support/class-support.php:91
+msgid "Profile and access synchronization"
+msgstr "Profiel- en toegangssynchronisatie"
+
 #: support/class-support.php:92
+msgid "Scouting OpenID Connect account names and email addresses are refreshed during sign-in. Birth date, gender, phone number, and address are synchronized only when enabled in General Settings and the corresponding OIDC scopes are configured. These optional values are not refreshed continuously."
+msgstr "Namen en e-mailadressen van Scouting OpenID Connect-accounts worden tijdens het inloggen bijgewerkt. Geboortedatum, geslacht, telefoonnummer en adres worden alleen gesynchroniseerd als deze zijn ingeschakeld bij de Algemene instellingen en de bijbehorende OIDC-scopes zijn ingesteld. Deze optionele gegevens worden niet continu bijgewerkt."
+
+#: support/class-support.php:93
+msgid "Users should update profile information in Scouts Online. Disabling an optional field stops refreshing its SOL profile metadata but does not erase previously stored values; if WooCommerce synchronization remains enabled, stored values may still be copied to WooCommerce. For an enabled field, a blank SOL value clears the plugin’s stored value at the next sign-in. WooCommerce synchronization skips blank names and phone numbers and skips an entirely blank address. If any address component remains populated, all mapped billing and shipping address fields are updated, including blank components."
+msgstr "Gebruikers moeten hun profielgegevens in Scouts Online bijwerken. Als je een optioneel veld uitschakelt, worden de SOL-profielgegevens niet meer bijgewerkt, maar eerder opgeslagen waarden worden niet verwijderd; als WooCommerce-synchronisatie ingeschakeld blijft, kunnen opgeslagen waarden nog steeds naar WooCommerce worden gekopieerd. Voor een ingeschakeld veld wordt een lege SOL-waarde bij de volgende aanmelding uit de pluginopslag verwijderd. WooCommerce-synchronisatie slaat lege namen en telefoonnummers en een volledig leeg adres over. Als een adresonderdeel nog is ingevuld, worden alle gekoppelde factuur- en verzendadresvelden bijgewerkt, ook de lege onderdelen."
+
+#: support/class-support.php:94
+msgid "When the roles scope is enabled, role assignments returned by SOL are synchronized and the configured role mapping is applied during sign-in. A matching deny rule blocks that sign-in but does not end an existing WordPress session. Removing a member from SOL does not automatically delete their WordPress account or its stored data; review and remove accounts according to your site’s data-retention policy."
+msgstr "Wanneer de roles-scope is ingeschakeld, worden door SOL teruggegeven roltoewijzingen gesynchroniseerd en wordt de ingestelde roltoewijzing toegepast tijdens het inloggen. Een overeenkomende weigeringsregel blokkeert die aanmelding, maar beëindigt geen bestaande WordPress-sessie. Als je een lid uit SOL verwijdert, wordt het WordPress-account of de opgeslagen gegevens niet automatisch verwijderd; controleer en verwijder accounts volgens het gegevensbewaarbeleid van je site."
+
+#: support/class-support.php:97
 msgid "If you need help, please contact"
 msgstr "Als je hulp nodig hebt, neem dan contact op met"
 
-#: support/class-support.php:94
+#: support/class-support.php:99
 msgid "(developer of the plugin)"
 msgstr "(ontwikkelaar van de plugin)"
 
@@ -2175,51 +2228,51 @@ msgstr ""
 msgid "View in SOL"
 msgstr "Bekijken in SOL"
 
-#: user/class-fields.php:305
+#: user/class-fields.php:308
 msgid "Scouts Online (SOL) Profile Information"
 msgstr "Scouts Online (SOL) Profiel Informatie"
 
-#: user/class-fields.php:366
+#: user/class-fields.php:369
 msgid "Male"
 msgstr "Man"
 
-#: user/class-fields.php:367
+#: user/class-fields.php:370
 msgid "Female"
 msgstr "Vrouw"
 
-#: user/class-fields.php:368
+#: user/class-fields.php:371
 msgid "Other"
 msgstr "Overige"
 
-#: user/class-fields.php:369
+#: user/class-fields.php:372
 msgid "Unknown"
 msgstr "Onbekend"
 
-#: user/class-fields.php:307
-msgid "Managed by Scouts Online. Update your profile information there."
-msgstr "Beheerd door Scouts Online. Wijzig je profielgegevens daar."
+#: user/class-fields.php:309
+msgid "These values are managed in Scouts Online and refreshed when the plugin receives profile data during sign-in. Update your information there; changes are not synced continuously."
+msgstr "Deze gegevens worden beheerd in Scouts Online en bijgewerkt wanneer de plugin tijdens het inloggen profielgegevens ontvangt. Werk je gegevens daar bij; de synchronisatie vindt niet continu plaats."
 
-#: user/class-fields.php:387
+#: user/class-fields.php:390
 msgid "Phone Number"
 msgstr "Telefoonnummer"
 
-#: user/class-fields.php:407
+#: user/class-fields.php:410
 msgid "Street"
 msgstr "Straat"
 
-#: user/class-fields.php:426
+#: user/class-fields.php:429
 msgid "House Number"
 msgstr "Huisnummer"
 
-#: user/class-fields.php:445
+#: user/class-fields.php:448
 msgid "Postal Code"
 msgstr "Postcode"
 
-#: user/class-fields.php:464
+#: user/class-fields.php:467
 msgid "City"
 msgstr "Plaats"
 
-#: user/class-fields.php:483
+#: user/class-fields.php:486
 msgid "Country Code"
 msgstr "Landcode"
 
