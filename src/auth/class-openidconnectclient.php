@@ -280,6 +280,7 @@ class OpenIDConnectClient {
 	 * @since 1.0.0
 	 * @since 2.2.0 Added the `$state` parameter.
 	 * @since 2.4.0 Bound token validation to state-specific nonce and PKCE values.
+	 * @since Unreleased Explains scope rejections returned by the token endpoint.
 	 *
 	 * @param string      $code The code from the authorization server.
 	 * @param string|null $state Optional. The OIDC state value. Default null.
@@ -343,7 +344,12 @@ class OpenIDConnectClient {
 		if ( 200 !== $status_code || 'OK' !== $response_message ) {
 			$response_body = wp_remote_retrieve_body( $response );
 			$body_decoded  = json_decode( $response_body, true );
-			$error_detail  = $body_decoded['error_description'] ?? $body_decoded['error'] ?? $response_body;
+			if ( is_array( $body_decoded ) && 'invalid_scope' === ( $body_decoded['error'] ?? null ) ) {
+				$scope_hint = is_string( $body_decoded['error_description'] ?? null ) ? $body_decoded['error_description'] : '';
+				Logger::error( LogComponent::OIDC, 'Token endpoint rejected the requested scopes (invalid_scope).' );
+				ErrorHandler::redirect_to_login_error( 'invalid_scope', $scope_hint, 'get_tokens_failed', 'invalid_scope' );
+			}
+			$error_detail = $body_decoded['error_description'] ?? $body_decoded['error'] ?? $response_body;
 			// translators: 1: HTTP status code returned by the token endpoint. 2: Error detail from the token endpoint response.
 			$hint = sprintf( __( 'Token endpoint error %1$s: %2$s', 'scouting-openid-connect' ), $status_code, $error_detail );
 			Logger::error( LogComponent::OIDC, "Token endpoint retrieval failed, HTTP status '{$status_code}' and message: {$response_body}" );

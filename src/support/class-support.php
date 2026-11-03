@@ -88,6 +88,11 @@ class Support {
 				<li><?php esc_html_e( 'Log out and try to log in with the Scouts Login button.', 'scouting-openid-connect' ); ?></li>
 			</ol>
 
+			<h2><?php esc_html_e( 'Profile and access synchronization', 'scouting-openid-connect' ); ?></h2>
+			<p><?php esc_html_e( 'Scouting OpenID Connect account names and email addresses are refreshed during sign-in. Birth date, gender, phone number, and address are synchronized only when enabled in General Settings and the corresponding OIDC scopes are configured. These optional values are not refreshed continuously.', 'scouting-openid-connect' ); ?></p>
+			<p><?php esc_html_e( 'Users should update profile information in Scouts Online. Disabling an optional field stops refreshing its SOL profile metadata but does not erase previously stored values; if WooCommerce synchronization remains enabled, stored values may still be copied to WooCommerce. For an enabled field, a blank SOL value clears the plugin’s stored value at the next sign-in, but WooCommerce synchronization does not replace existing billing or shipping values with blank values.', 'scouting-openid-connect' ); ?></p>
+			<p><?php esc_html_e( 'When the roles scope is enabled, role assignments returned by SOL are synchronized and the configured role mapping is applied during sign-in. A matching deny rule blocks that sign-in but does not end an existing WordPress session. Removing a member from SOL does not automatically delete their WordPress account or its stored data; review and remove accounts according to your site’s data-retention policy.', 'scouting-openid-connect' ); ?></p>
+
 			<h2><?php esc_html_e( 'Support', 'scouting-openid-connect' ); ?></h2>
 			<p><?php esc_html_e( 'If you need help, please contact', 'scouting-openid-connect' ); ?>
 				<a href="mailto:cms@support.scouting.nl?cc=job.van.koeveringe@scouting.nl&subject=WordPress%20Scouting%20OIDC%20Support" target="_blank">cms@support.scouting.nl & job.van.koeveringe@scouting.nl</a>

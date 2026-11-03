@@ -128,13 +128,15 @@ class Settings_Oidc {
 	}
 
 	/**
-	 * Renders text field.
+	 * Renders the scopes field and explains the provider-side configuration.
 	 *
 	 * @since 1.0.0
+	 * @since Unreleased Associates scope configuration guidance with the field.
 	 */
 	public function scouting_oidc_settings_oidc_scopes_callback(): void {
 		$value = get_option( 'scouting_oidc_scopes' );
-		echo '<input type="text" id="scouting_oidc_scopes" name="scouting_oidc_scopes" placeholder="' . esc_attr__( 'Scopes', 'scouting-openid-connect' ) . '" value="' . esc_attr( $value ) . '" size="55" required>';
+		echo '<input type="text" id="scouting_oidc_scopes" name="scouting_oidc_scopes" placeholder="' . esc_attr__( 'Scopes', 'scouting-openid-connect' ) . '" value="' . esc_attr( $value ) . '" size="55" aria-describedby="scouting-oidc-scopes-help" required />';
+		echo '<p class="description" id="scouting-oidc-scopes-help">' . esc_html__( 'Every scope requested here must also be enabled for this website under Managed websites at login.scouting.nl. Required: openid, membership, profile, email. Optional: address, phone, roles. The plugin cannot check which scopes are enabled for your connection there.', 'scouting-openid-connect' ) . '</p>';
 	}
 
 	/**

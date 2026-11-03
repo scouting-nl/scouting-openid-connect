@@ -301,9 +301,12 @@ class Fields {
 	 * @param WP_User $user The user object.
 	 */
 	public function scouting_oidc_fields_user_profile( WP_User $user ): void {
+		if ( 'true' !== get_user_meta( $user->ID, 'scouting_oidc_user', true ) ) {
+			return;
+		}
 		?>
 		<h2><?php esc_html_e( 'Scouts Online (SOL) Profile Information', 'scouting-openid-connect' ); ?></h2>
-		<p class="description" id="scouting-oidc-profile-help"><?php esc_html_e( 'Managed by Scouts Online. Update your profile information there.', 'scouting-openid-connect' ); ?></p>
+		<p class="description" id="scouting-oidc-profile-help"><?php esc_html_e( 'These values are managed in Scouts Online and refreshed when the plugin receives profile data during sign-in. Update your information there; changes are not synced continuously.', 'scouting-openid-connect' ); ?></p>
 
 		<table class="form-table" role="presentation">
 			<?php

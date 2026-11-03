@@ -53,6 +53,8 @@ Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scout
 13. Press `Save Settings`.
 14. Log out and try to log in with the Scouts Login button.
 
+Every scope requested in WordPress must also be enabled for this website under Managed websites at login.scouting.nl. If Scouts Online rejects a scope, enable it for that connection or remove it from WordPress if it is optional and unused. Keep openid, membership, profile, and email enabled in both places. Site Health and provider discovery cannot verify the permissions granted to your individual connection.
+
 == Site Health ==
 
 Go to Tools > Site Health in WordPress to inspect the plugin's configuration and operational status.
@@ -70,6 +72,14 @@ The Status tab checks:
 When cleanup is overdue, Site Health identifies whether automatic WP-Cron spawning is disabled and offers administrators a Run log cleanup now action. A manual run removes expired logs, records the successful run time, and recreates the daily schedule. The underlying WordPress cron or loopback problem must still be corrected for future automatic cleanup.
 
 The Info tab contains a Scouting OpenID Connect section that can be copied into a support report. It includes useful configuration, cache, user count, WooCommerce, logging, and cron details. Client secrets, user claims, log messages, and other personal data are never included.
+
+== Profile and access synchronization ==
+
+Scouting OpenID Connect account names and email addresses are refreshed during sign-in. Birth date, gender, phone number, and address are synchronized only when enabled in General Settings and the corresponding OIDC scopes are configured. These optional values are not refreshed continuously.
+
+Users should update profile information in Scouts Online. Disabling an optional field stops refreshing its SOL profile metadata but does not erase previously stored values; if WooCommerce synchronization remains enabled, stored values may still be copied to WooCommerce. For an enabled field, a blank SOL value clears the plugin's stored value at the next sign-in, but WooCommerce synchronization does not replace existing billing or shipping values with blank values.
+
+When the `roles` scope is enabled, role assignments returned by SOL are synchronized and the configured role mapping is applied during sign-in. A matching deny rule blocks that sign-in but does not end an existing WordPress session. Removing a member from SOL does not automatically delete their WordPress account or its stored data; review and remove accounts according to your site's data-retention policy.
 
 == Frequently Asked Questions ==
 
