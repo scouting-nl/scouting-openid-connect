@@ -1918,7 +1918,7 @@ msgid "Scouting OpenID Connect account names and email addresses are refreshed d
 msgstr ""
 
 #: support/class-support.php:93
-msgid "Users should update profile information in Scouts Online. Disabling an optional field stops refreshing its SOL profile metadata but does not erase previously stored values; if WooCommerce synchronization remains enabled, stored values may still be copied to WooCommerce. For an enabled field, a blank SOL value clears the plugin’s stored value at the next sign-in, but WooCommerce synchronization does not replace existing billing or shipping values with blank values."
+msgid "Users should update profile information in Scouts Online. Disabling an optional field stops refreshing its SOL profile metadata but does not erase previously stored values; if WooCommerce synchronization remains enabled, stored values may still be copied to WooCommerce. For an enabled field, a blank SOL value clears the plugin’s stored value at the next sign-in. WooCommerce synchronization skips blank names and phone numbers and skips an entirely blank address. If any address component remains populated, all mapped billing and shipping address fields are updated, including blank components."
 msgstr ""
 
 #: support/class-support.php:94

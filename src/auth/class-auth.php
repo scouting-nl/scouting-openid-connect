@@ -250,7 +250,7 @@ class Auth {
 	 *
 	 * @since 1.0.0
 	 * @since 2.5.0 Retrieved profile claims from the UserInfo endpoint after subject binding.
-	 * @since Unreleased Handles standard OIDC errors without requiring a provider-specific hint.
+	 * @since Unreleased Handles standard OIDC errors only for a pending authorization request.
 	 */
 	public function scouting_oidc_auth_callback(): void {
 		// Check if we're on the front page.
@@ -281,6 +281,11 @@ class Auth {
 
 		// Handle error callback parameters and forward them to wp-login.
 		if ( ! empty( $param_error ) || ( filter_has_var( INPUT_GET, 'error_description' ) && filter_has_var( INPUT_GET, 'hint' ) ) ) {
+			if ( empty( $param_state ) || ! $this->oidc_client->has_state( $param_state ) ) {
+				Logger::warning( LogComponent::AUTH, 'Ignored error parameters without a matching pending OIDC authorization state.' );
+				return;
+			}
+
 			$this->oidc_client->unset_states_and_nonce();
 
 			$message = $param_message ?? ( $param_error ?? 'error' );
