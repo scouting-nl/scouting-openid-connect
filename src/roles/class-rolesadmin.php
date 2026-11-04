@@ -35,6 +35,15 @@ class RolesAdmin {
 	private ?string $mapping_page_hook = null;
 
 	/**
+	 * Actual WordPress hook for the registered explorer page.
+	 *
+	 * @since Unreleased Loads the lazy SOL role tree only on the explorer page.
+	 *
+	 * @var string|null
+	 */
+	private ?string $explorer_page_hook = null;
+
+	/**
 	 * Registers admin-post handlers before protected forms can be submitted.
 	 *
 	 * @since 2.7.0 Registers SOL mapping actions.
@@ -42,6 +51,7 @@ class RolesAdmin {
 	public function __construct() {
 		add_action( 'admin_post_scouting_oidc_roles_save_rule', array( $this, 'scouting_oidc_roles_admin_save_rule' ) );
 		add_action( 'admin_post_scouting_oidc_roles_delete_rule', array( $this, 'scouting_oidc_roles_admin_delete_rule' ) );
+		add_action( 'wp_ajax_scouting_oidc_roles_explorer_children', array( RolesExplorer::class, 'ajax_get_tree_children' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'scouting_oidc_roles_admin_enqueue_assets' ) );
 	}
 
@@ -53,12 +63,38 @@ class RolesAdmin {
 	 * @param string $hook_suffix Current admin page hook.
 	 */
 	public function scouting_oidc_roles_admin_enqueue_assets( string $hook_suffix ): void {
-		if ( $this->mapping_page_hook !== $hook_suffix ) {
+		if ( $this->mapping_page_hook === $hook_suffix ) {
+			wp_enqueue_script( 'scouting-oidc-role-mapping', plugins_url( 'role-mapping.js', __FILE__ ), array(), (string) filemtime( __DIR__ . '/role-mapping.js' ), false );
+			wp_enqueue_style( 'scouting-oidc-role-mapping', plugins_url( 'role-mapping.css', __FILE__ ), array(), (string) filemtime( __DIR__ . '/role-mapping.css' ) );
 			return;
 		}
 
-		wp_enqueue_script( 'scouting-oidc-role-mapping', plugins_url( 'role-mapping.js', __FILE__ ), array(), (string) filemtime( __DIR__ . '/role-mapping.js' ), false );
-		wp_enqueue_style( 'scouting-oidc-role-mapping', plugins_url( 'role-mapping.css', __FILE__ ), array(), (string) filemtime( __DIR__ . '/role-mapping.css' ) );
+		if ( $this->explorer_page_hook !== $hook_suffix ) {
+			return;
+		}
+
+		wp_enqueue_script( 'scouting-oidc-role-explorer', plugins_url( 'role-explorer.js', __FILE__ ), array(), (string) filemtime( __DIR__ . '/role-explorer.js' ), true );
+		wp_localize_script(
+			'scouting-oidc-role-explorer',
+			'scoutingOidcRoleExplorer',
+			array(
+				'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
+				'explorerUrl' => admin_url( 'admin.php?page=scouting-oidc-role-explorer' ),
+				'nonce'       => wp_create_nonce( 'scouting_oidc_roles_explorer_tree' ),
+				'labels'  => array(
+					'expand'        => __( 'Expand', 'scouting-openid-connect' ),
+					'collapse'      => __( 'Collapse', 'scouting-openid-connect' ),
+					'loading'       => __( 'Loading…', 'scouting-openid-connect' ),
+					'loadError'     => __( 'Could not load this item. Try again.', 'scouting-openid-connect' ),
+					'openPage'      => __( 'Open the full page to try again.', 'scouting-openid-connect' ),
+					'empty'         => __( 'No child organisations, units, or roles found.', 'scouting-openid-connect' ),
+					'organisation'  => __( 'Organisation', 'scouting-openid-connect' ),
+					'unit'          => __( 'Unit', 'scouting-openid-connect' ),
+					'role'          => __( 'Role', 'scouting-openid-connect' ),
+				),
+			)
+		);
+		wp_enqueue_style( 'scouting-oidc-role-explorer', plugins_url( 'role-explorer.css', __FILE__ ), array(), (string) filemtime( __DIR__ . '/role-explorer.css' ) );
 	}
 
 	/**
@@ -86,7 +122,7 @@ class RolesAdmin {
 			add_action( 'load-' . $this->mapping_page_hook, array( $this, 'scouting_oidc_roles_admin_register_help_tabs' ) );
 		}
 
-		add_submenu_page(
+		$explorer_page_hook = add_submenu_page(
 			'scouting-oidc-settings',
 			__( 'SOL Role Explorer', 'scouting-openid-connect' ),
 			__( 'SOL Role Explorer', 'scouting-openid-connect' ),
@@ -95,6 +131,7 @@ class RolesAdmin {
 			array( $explorer, 'render_page' ),
 			6
 		);
+		$this->explorer_page_hook = is_string( $explorer_page_hook ) ? $explorer_page_hook : null;
 	}
 
 	/**
@@ -310,7 +347,7 @@ class RolesAdmin {
 								<?php
 								foreach ( $organisation_units as $unit ) :
 									?>
-									<option value="<?php echo esc_attr( (string) $unit['organisation_unit_id'] ); ?>" data-organisations="<?php echo esc_attr( implode( ' ', $organisation_paths[ $unit['organisation_id'] ] ?? array( $unit['organisation_id'] ) ) ); ?>" <?php selected( in_array( (int) $unit['organisation_unit_id'], $editing['organisation_unit_ids'] ?? array(), true ) ); ?>><?php echo esc_html( $unit['organisation_name'] . ' / ' . $unit['name'] . ' (' . $unit['organisation_unit_id'] . ')' ); ?></option><?php endforeach; ?></select></td>
+									<option value="<?php echo esc_attr( (string) $unit['organisation_unit_id'] ); ?>" data-organisations="<?php echo esc_attr( implode( ' ', $organisation_paths[ $unit['organisation_id'] ] ?? array( $unit['organisation_id'] ) ) ); ?>" <?php selected( in_array( (int) $unit['organisation_unit_id'], $editing['organisation_unit_ids'] ?? array(), true ) ); ?>><?php echo esc_html( $unit['organisation_name'] . ' / ' . $this->scouting_oidc_roles_admin_format_unit_name( $unit ) ); ?></option><?php endforeach; ?></select></td>
 							</tr>
 							<tr>
 								<th scope="row"><label for="sol-role"><?php esc_html_e( 'SOL Role', 'scouting-openid-connect' ); ?></label></th>
@@ -321,7 +358,7 @@ class RolesAdmin {
 								<?php
 								foreach ( $roles as $role ) :
 									?>
-									<option value="<?php echo esc_attr( (string) $role['role_id'] ); ?>" data-organisations="<?php echo esc_attr( implode( ' ', $organisation_paths[ $role['organisation_id'] ] ?? array( $role['organisation_id'] ) ) ); ?>" data-unit="<?php echo esc_attr( (string) $role['organisation_unit_id'] ); ?>" <?php selected( in_array( (int) $role['role_id'], $editing['role_ids'] ?? array(), true ) ); ?>><?php echo esc_html( $role['role_name'] . ' / ' . $role['unit_name'] . ' (' . $role['role_id'] . ')' ); ?></option><?php endforeach; ?></select></td>
+									<option value="<?php echo esc_attr( (string) $role['role_id'] ); ?>" data-organisations="<?php echo esc_attr( implode( ' ', $organisation_paths[ $role['organisation_id'] ] ?? array( $role['organisation_id'] ) ) ); ?>" data-unit="<?php echo esc_attr( (string) $role['organisation_unit_id'] ); ?>" <?php selected( in_array( (int) $role['role_id'], $editing['role_ids'] ?? array(), true ) ); ?>><?php echo esc_html( $role['role_name'] . ' / ' . $this->scouting_oidc_roles_admin_format_unit_name( $role ) . ' (' . $role['role_id'] . ')' ); ?></option><?php endforeach; ?></select></td>
 							</tr>
 						</tbody>
 					</table>
@@ -785,7 +822,7 @@ class RolesAdmin {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT unit.organisation_unit_id, unit.organisation_id, unit.name, organisation.name AS organisation_name FROM %i AS unit LEFT JOIN %i AS organisation ON organisation.organisation_id = unit.organisation_id ORDER BY organisation.name, unit.name, unit.organisation_unit_id',
+				'SELECT unit.organisation_unit_id, unit.organisation_id, unit.name, unit.category, unit.nature, organisation.name AS organisation_name FROM %i AS unit LEFT JOIN %i AS organisation ON organisation.organisation_id = unit.organisation_id ORDER BY organisation.name, unit.name, unit.organisation_unit_id',
 				$units_table,
 				$organisations_table
 			),
@@ -814,7 +851,7 @@ class RolesAdmin {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT role.role_id, role.organisation_unit_id, role.role_name, role.role_type, unit.organisation_id, unit.name AS unit_name FROM %i AS role LEFT JOIN %i AS unit ON unit.organisation_unit_id = role.organisation_unit_id ORDER BY role.role_name, role.role_id',
+				'SELECT role.role_id, role.organisation_unit_id, role.role_name, role.role_type, unit.organisation_id, unit.name AS unit_name, unit.category AS unit_category, unit.nature AS unit_nature FROM %i AS role LEFT JOIN %i AS unit ON unit.organisation_unit_id = role.organisation_unit_id ORDER BY role.role_name, role.role_id',
 				$roles_table,
 				$units_table
 			),
@@ -827,6 +864,29 @@ class RolesAdmin {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Formats an organisation unit name with any available category and nature.
+	 *
+	 * @since Unreleased Includes organisation unit metadata in mapping choices.
+	 *
+	 * @param array $unit Organisation unit or role row containing unit metadata.
+	 * @return string Formatted unit name.
+	 */
+	private function scouting_oidc_roles_admin_format_unit_name( array $unit ): string {
+		$name     = $unit['name'] ?? $unit['unit_name'] ?? '';
+		$category = $unit['category'] ?? $unit['unit_category'] ?? null;
+		$nature   = $unit['nature'] ?? $unit['unit_nature'] ?? null;
+		$metadata = array();
+		if ( is_string( $category ) && '' !== $category ) {
+			$metadata[] = $category;
+		}
+		if ( is_string( $nature ) && '' !== $nature ) {
+			$metadata[] = $nature;
+		}
+
+		return $name . ( empty( $metadata ) ? '' : ' [' . implode( ' / ', $metadata ) . ']' );
 	}
 
 	/**

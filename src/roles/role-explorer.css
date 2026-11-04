@@ -1,0 +1,145 @@
+/**
+ * SOL role explorer tree layout and controls.
+ *
+ * @since Unreleased Styles the lazy organisation tree and assignment results.
+ */
+
+.scouting-oidc-explorer-layout {
+	display: grid;
+	grid-template-columns: minmax( 280px, 1fr ) minmax( 0, 2fr );
+	gap: 24px;
+	margin-top: 20px;
+}
+
+.scouting-oidc-explorer-layout h2 {
+	margin-top: 0;
+}
+
+.scouting-oidc-explorer-tree-panel,
+.scouting-oidc-explorer-results {
+	min-width: 0;
+}
+
+.scouting-oidc-explorer-panel-meta {
+	min-height: 1.5em;
+	margin: 0 0 1em;
+}
+
+.scouting-oidc-explorer-tree {
+	max-height: 70vh;
+	overflow: auto;
+	margin: 0;
+	padding: 16px;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.scouting-oidc-explorer-tree ul {
+	margin: 6px 0 4px 16px;
+	padding: 0 0 0 20px;
+	border-left: 2px solid #dcdcde;
+}
+
+.scouting-oidc-explorer-node {
+	display: grid;
+	grid-template-columns: 34px minmax( 0, 1fr );
+	align-items: start;
+	column-gap: 8px;
+	position: relative;
+	margin: 4px 0;
+	list-style: none;
+}
+
+.scouting-oidc-explorer-tree ul > .scouting-oidc-explorer-node::before {
+	position: absolute;
+	top: 20px;
+	left: -20px;
+	width: 14px;
+	border-top: 2px solid #dcdcde;
+	content: '';
+}
+
+.scouting-oidc-explorer-tree > .scouting-oidc-explorer-node::before {
+	display: none;
+}
+
+.scouting-oidc-explorer-node > a {
+	grid-column: 2;
+	padding: 7px 9px;
+	border-radius: 3px;
+	vertical-align: middle;
+	overflow-wrap: anywhere;
+}
+
+.scouting-oidc-explorer-node > ul {
+	grid-column: 1 / -1;
+}
+
+.scouting-oidc-explorer-role {
+	grid-template-columns: minmax( 0, 1fr );
+}
+
+.scouting-oidc-explorer-role > a {
+	grid-column: 1;
+}
+
+.scouting-oidc-explorer-tree [hidden] {
+	display: none;
+}
+
+.scouting-oidc-explorer-node > a[aria-current="page"] {
+	border-left: 3px solid #2271b1;
+	background: #f0f6fc;
+	color: #1d2327;
+	font-weight: 600;
+}
+
+.scouting-oidc-explorer-toggle {
+	width: 34px;
+	min-height: 34px;
+	padding: 0;
+	border: 1px solid #8c8f94;
+	border-radius: 50%;
+	background: #f6f7f7;
+	color: #1d2327;
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 1;
+	cursor: pointer;
+	vertical-align: middle;
+	transition: background-color 100ms ease-in-out, border-color 100ms ease-in-out;
+}
+
+.scouting-oidc-explorer-toggle:hover,
+.scouting-oidc-explorer-toggle[aria-expanded="true"] {
+	border-color: #2271b1;
+	background: #e5f1fb;
+}
+
+.scouting-oidc-explorer-tree :focus-visible {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+}
+
+.scouting-oidc-explorer-status:empty {
+	margin: 0;
+}
+
+.scouting-oidc-explorer-results {
+	overflow-x: auto;
+}
+
+.scouting-oidc-explorer-results table {
+	min-width: 640px;
+}
+
+@media screen and ( max-width: 782px ) {
+	.scouting-oidc-explorer-layout {
+		grid-template-columns: minmax( 0, 1fr );
+	}
+
+	.scouting-oidc-explorer-tree {
+		max-height: 50vh;
+	}
+}
