@@ -45,15 +45,15 @@ class RolesExplorer {
 			'organisation_unit_id' => isset( $_GET['organisation_unit_id'] ) ? absint( $_GET['organisation_unit_id'] ) : 0,
 			'role_id'              => isset( $_GET['role_id'] ) ? absint( $_GET['role_id'] ) : 0,
 		);
-		$page             = isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
+		$page    = isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
-		$data             = '' === $filters['organisation_id'] ? array(
+		$data            = '' === $filters['organisation_id'] ? array(
 			'rows'  => array(),
 			'total' => 0,
 		) : $this->get_assignments( $filters, $page );
-		$assignment_rows  = is_wp_error( $data ) ? array() : $data['rows'];
-		$organisations    = $this->get_root_organisations();
-		$expanded_nodes   = $this->get_selected_tree_branches( $filters );
+		$assignment_rows = is_wp_error( $data ) ? array() : $data['rows'];
+		$organisations   = $this->get_root_organisations();
+		$expanded_nodes  = $this->get_selected_tree_branches( $filters );
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'SOL Role Explorer', 'scouting-openid-connect' ); ?></h1>
@@ -197,11 +197,10 @@ class RolesExplorer {
 		$branches = array( 'organisation:' . $filters['organisation_id'] );
 
 		while ( ! empty( $frontier ) ) {
-			$placeholders = implode( ', ', array_fill( 0, count( $frontier ), '%s' ) );
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$parents = $wpdb->get_col(
 				$wpdb->prepare(
-					'SELECT DISTINCT parent_organisation_id FROM %i WHERE child_organisation_id IN (' . $placeholders . ')',
+					'SELECT DISTINCT parent_organisation_id FROM %i WHERE child_organisation_id IN (' . implode( ', ', array_fill( 0, count( $frontier ), '%s' ) ) . ')',
 					array_merge( array( $table ), $frontier )
 				)
 			);
@@ -216,8 +215,8 @@ class RolesExplorer {
 					continue;
 				}
 				$known[ $parent_id ] = true;
-				$frontier[]         = $parent_id;
-				$branches[]         = 'organisation:' . $parent_id;
+				$frontier[]          = $parent_id;
+				$branches[]          = 'organisation:' . $parent_id;
 			}
 		}
 
@@ -375,14 +374,16 @@ class RolesExplorer {
 		$is_selected     = $filters['organisation_id'] === $organisation_id && 0 === $filters['organisation_unit_id'] && 0 === $filters['role_id'];
 		$url             = add_query_arg(
 			array(
-				'page'             => 'scouting-oidc-role-explorer',
-				'organisation_id'  => $organisation_id,
+				'page'            => 'scouting-oidc-role-explorer',
+				'organisation_id' => $organisation_id,
 			),
 			admin_url( 'admin.php' )
 		);
+		/* translators: %s: organisation name. */
+		$expand_label = sprintf( __( 'Expand %s', 'scouting-openid-connect' ), $organisation['name'] );
 		?>
 		<li class="scouting-oidc-explorer-node scouting-oidc-explorer-organisation">
-			<button class="scouting-oidc-explorer-toggle" type="button" data-node-type="organisation" data-node-id="<?php echo esc_attr( $organisation_id ); ?>" data-organisation-id="<?php echo esc_attr( $organisation_id ); ?>" aria-expanded="false" aria-controls="<?php echo esc_attr( $children_id ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'Expand %s', 'scouting-openid-connect' ), $organisation['name'] ) ); ?>">+</button>
+			<button class="scouting-oidc-explorer-toggle" type="button" data-node-type="organisation" data-node-id="<?php echo esc_attr( $organisation_id ); ?>" data-organisation-id="<?php echo esc_attr( $organisation_id ); ?>" aria-expanded="false" aria-controls="<?php echo esc_attr( $children_id ); ?>" aria-label="<?php echo esc_attr( $expand_label ); ?>">+</button>
 			<a href="<?php echo esc_url( $url ); ?>" <?php echo $is_selected ? 'aria-current="page"' : ''; ?>><?php echo esc_html__( 'Organisation: ', 'scouting-openid-connect' ) . esc_html( $organisation['name'] . ' (' . $organisation_id . ')' ); ?></a>
 			<ul id="<?php echo esc_attr( $children_id ); ?>" hidden></ul>
 		</li>
@@ -411,14 +412,24 @@ class RolesExplorer {
 			return $organisation_ids;
 		}
 
-		$limit                = self::PAGE_SIZE;
-		$offset               = ( $page - 1 ) * $limit;
-		$organisation_filter = 'unit.organisation_id IN (' . implode( ', ', array_fill( 0, count( $organisation_ids ), '%s' ) ) . ')';
-		$filter_parameters   = array(
+		$limit             = self::PAGE_SIZE;
+		$offset            = ( $page - 1 ) * $limit;
+		$filter_parameters = array(
 			$filters['organisation_unit_id'],
 			$filters['organisation_unit_id'],
 			$filters['role_id'],
 			$filters['role_id'],
+		);
+		$count_parameters  = array_merge(
+			array( $assignment_table, $roles_table, $units_table ),
+			$organisation_ids,
+			$filter_parameters
+		);
+		$row_parameters    = array_merge(
+			array( $assignment_table, $roles_table, $units_table, $organisations_table, $wpdb->users ),
+			$organisation_ids,
+			$filter_parameters,
+			array( $limit, $offset )
 		);
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
@@ -427,14 +438,10 @@ class RolesExplorer {
 				'SELECT COUNT(*) FROM %i AS assignment ' .
 				'INNER JOIN %i AS role ON role.role_id = assignment.role_id ' .
 				'INNER JOIN %i AS unit ON unit.organisation_unit_id = role.organisation_unit_id ' .
-				'WHERE ' . $organisation_filter . ' ' .
+				'WHERE unit.organisation_id IN (' . implode( ', ', array_fill( 0, count( $organisation_ids ), '%s' ) ) . ') ' .
 				'AND ( %d = 0 OR unit.organisation_unit_id = %d ) ' .
 				'AND ( %d = 0 OR role.role_id = %d )',
-				array_merge(
-					array( $assignment_table, $roles_table, $units_table ),
-					$organisation_ids,
-					$filter_parameters
-				)
+				$count_parameters
 			)
 		);
 		if ( '' !== $wpdb->last_error ) {
@@ -454,17 +461,12 @@ class RolesExplorer {
 				'INNER JOIN %i AS unit ON unit.organisation_unit_id = role.organisation_unit_id ' .
 				'INNER JOIN %i AS organisation ON organisation.organisation_id = unit.organisation_id ' .
 				'INNER JOIN %i AS user ON user.ID = assignment.user_id ' .
-				'WHERE ' . $organisation_filter . ' ' .
+				'WHERE unit.organisation_id IN (' . implode( ', ', array_fill( 0, count( $organisation_ids ), '%s' ) ) . ') ' .
 				'AND ( %d = 0 OR unit.organisation_unit_id = %d ) ' .
 				'AND ( %d = 0 OR role.role_id = %d ) ' .
 				'ORDER BY organisation.name, unit.name, role.role_name, user.display_name, assignment.start_date DESC ' .
 				'LIMIT %d OFFSET %d',
-				array_merge(
-					array( $assignment_table, $roles_table, $units_table, $organisations_table, $wpdb->users ),
-					$organisation_ids,
-					$filter_parameters,
-					array( $limit, $offset )
-				)
+				$row_parameters
 			),
 			ARRAY_A
 		);
@@ -496,13 +498,12 @@ class RolesExplorer {
 		$frontier         = array( $organisation_id );
 
 		while ( ! empty( $frontier ) ) {
-			$placeholders = implode( ', ', array_fill( 0, count( $frontier ), '%s' ) );
-			$parameters   = array_merge( array( $parents_table ), $frontier );
+			$parameters = array_merge( array( $parents_table ), $frontier );
 
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$children = $wpdb->get_col(
 				$wpdb->prepare(
-					'SELECT DISTINCT child_organisation_id FROM %i WHERE parent_organisation_id IN (' . $placeholders . ')',
+					'SELECT DISTINCT child_organisation_id FROM %i WHERE parent_organisation_id IN (' . implode( ', ', array_fill( 0, count( $frontier ), '%s' ) ) . ')',
 					$parameters
 				)
 			);

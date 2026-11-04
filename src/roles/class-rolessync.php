@@ -247,7 +247,7 @@ class RolesSync {
 				$game_section_type = self::scouting_oidc_roles_sync_normalize_text( $raw_organisation_unit['game_section_type'], 255 );
 			}
 			$has_invalid_game_section_type = array_key_exists( 'game_section_type', $raw_organisation_unit ) && null !== $raw_organisation_unit['game_section_type'] && null === $game_section_type;
-			$category             = null;
+			$category                      = null;
 			if ( array_key_exists( 'category', $raw_organisation_unit ) && null !== $raw_organisation_unit['category'] ) {
 				$category = self::scouting_oidc_roles_sync_normalize_text( $raw_organisation_unit['category'], 255 );
 			}
@@ -605,10 +605,10 @@ class RolesSync {
 	 * @since 2.7.0 Saves synchronized organisation units.
 	 * @since Unreleased Saves organisation unit category and nature.
 	 *
-	 * @param string                                                                                          $organisation_units_table Full organisation units table name.
-	 * @param int                                                                                             $organisation_unit_id Organisation unit ID.
+	 * @param string                                                                                                                                      $organisation_units_table Full organisation units table name.
+	 * @param int                                                                                                                                         $organisation_unit_id Organisation unit ID.
 	 * @param array{organisation_id: string, name: string, unit_type: string, game_section_type: string|null, category: string|null, nature: string|null} $organisation_unit Normalized organisation unit.
-	 * @param string                                                                                          $current_time UTC timestamp.
+	 * @param string                                                                                                                                      $current_time UTC timestamp.
 	 * @return bool Whether the organisation unit was saved.
 	 */
 	private static function scouting_oidc_roles_sync_upsert_organisation_unit( string $organisation_units_table, int $organisation_unit_id, array $organisation_unit, string $current_time ): bool {

@@ -81,16 +81,16 @@ class RolesAdmin {
 				'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
 				'explorerUrl' => admin_url( 'admin.php?page=scouting-oidc-role-explorer' ),
 				'nonce'       => wp_create_nonce( 'scouting_oidc_roles_explorer_tree' ),
-				'labels'  => array(
-					'expand'        => __( 'Expand', 'scouting-openid-connect' ),
-					'collapse'      => __( 'Collapse', 'scouting-openid-connect' ),
-					'loading'       => __( 'Loading…', 'scouting-openid-connect' ),
-					'loadError'     => __( 'Could not load this item. Try again.', 'scouting-openid-connect' ),
-					'openPage'      => __( 'Open the full page to try again.', 'scouting-openid-connect' ),
-					'empty'         => __( 'No child organisations, units, or roles found.', 'scouting-openid-connect' ),
-					'organisation'  => __( 'Organisation', 'scouting-openid-connect' ),
-					'unit'          => __( 'Unit', 'scouting-openid-connect' ),
-					'role'          => __( 'Role', 'scouting-openid-connect' ),
+				'labels'      => array(
+					'expand'       => __( 'Expand', 'scouting-openid-connect' ),
+					'collapse'     => __( 'Collapse', 'scouting-openid-connect' ),
+					'loading'      => __( 'Loading…', 'scouting-openid-connect' ),
+					'loadError'    => __( 'Could not load this item. Try again.', 'scouting-openid-connect' ),
+					'openPage'     => __( 'Open the full page to try again.', 'scouting-openid-connect' ),
+					'empty'        => __( 'No child organisations, units, or roles found.', 'scouting-openid-connect' ),
+					'organisation' => __( 'Organisation', 'scouting-openid-connect' ),
+					'unit'         => __( 'Unit', 'scouting-openid-connect' ),
+					'role'         => __( 'Role', 'scouting-openid-connect' ),
 				),
 			)
 		);
@@ -122,7 +122,7 @@ class RolesAdmin {
 			add_action( 'load-' . $this->mapping_page_hook, array( $this, 'scouting_oidc_roles_admin_register_help_tabs' ) );
 		}
 
-		$explorer_page_hook = add_submenu_page(
+		$explorer_page_hook       = add_submenu_page(
 			'scouting-oidc-settings',
 			__( 'SOL Role Explorer', 'scouting-openid-connect' ),
 			__( 'SOL Role Explorer', 'scouting-openid-connect' ),
