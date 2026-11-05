@@ -84,6 +84,50 @@ jobs:
       - name: Enforce WordPress JavaScript Coding Standards
         run: node "${ESLINT_MODULE_ROOT}/eslint/bin/eslint.js" src
 
+  css-coding-standards:
+    name: WordPress CSS Coding Standards
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+
+      - name: Install Stylelint and WordPress Stylelint configuration
+        shell: bash
+        env:
+          STYLELINT_VERSION: '17.14.1'
+          WORDPRESS_STYLELINT_CONFIG_VERSION: '27.0.0'
+          STYLELINT_SCSS_VERSION: '7.2.0'
+        run: | # zizmor: ignore[adhoc-packages] One-config policy forbids a lockfile.
+          set -euo pipefail
+
+          tools_dir="${RUNNER_TEMP}/stylelint-tools"
+          npm install \
+            --prefix "${tools_dir}" \
+            --no-save \
+            --no-package-lock \
+            --ignore-scripts \
+            --omit=peer \
+            --no-audit \
+            --no-fund \
+            "stylelint@${STYLELINT_VERSION}" \
+            "@wordpress/stylelint-config@${WORDPRESS_STYLELINT_CONFIG_VERSION}" \
+            "stylelint-scss@${STYLELINT_SCSS_VERSION}"
+
+          echo "STYLELINT_MODULE_ROOT=${tools_dir}/node_modules" >> "${GITHUB_ENV}"
+
+      - name: Enforce WordPress CSS Coding Standards
+        run: node "${STYLELINT_MODULE_ROOT}/stylelint/bin/stylelint.mjs" "src/**/*.css"
+
   php-lint:
     name: PHP syntax
     runs-on: ubuntu-latest

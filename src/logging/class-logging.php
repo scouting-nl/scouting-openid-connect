@@ -243,11 +243,11 @@ class Logging {
 			 */
 			public function get_columns(): array {
 				return array(
-					'created_at' => __( 'Date/Time', 'scouting-openid-connect' ),
+					'created-at' => __( 'Date/Time', 'scouting-openid-connect' ),
 					'level'      => __( 'Level', 'scouting-openid-connect' ),
 					'component'  => __( 'Component', 'scouting-openid-connect' ),
-					'user_id'    => __( 'User ID', 'scouting-openid-connect' ),
-					'sol_id'     => __( 'SOL ID', 'scouting-openid-connect' ),
+					'user-id'    => __( 'User ID', 'scouting-openid-connect' ),
+					'sol-id'     => __( 'SOL ID', 'scouting-openid-connect' ),
 					'message'    => __( 'Message', 'scouting-openid-connect' ),
 				);
 			}
@@ -261,7 +261,7 @@ class Logging {
 			 */
 			protected function get_sortable_columns(): array {
 				return array(
-					'created_at' => array( 'id', false ),
+					'created-at' => array( 'id', false ),
 				);
 			}
 
@@ -354,9 +354,17 @@ class Logging {
 			 */
 			public function column_default( $item, $column_name ): string {
 				// Custom rendering for specific columns.
-				if ( 'created_at' === $column_name ) {
+				if ( 'created-at' === $column_name ) {
 					// Display the stored UTC timestamp in the current site timezone.
 					return esc_html( Logger::scouting_oidc_format_utc_datetime_for_site( (string) ( $item['created_at'] ?? '' ) ) );
+				}
+
+				if ( 'user-id' === $column_name ) {
+					return $this->column_user_id( $item );
+				}
+
+				if ( 'sol-id' === $column_name ) {
+					return $this->column_sol_id( $item );
 				}
 
 				if ( 'component' === $column_name || 'level' === $column_name ) {

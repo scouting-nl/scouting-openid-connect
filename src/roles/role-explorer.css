@@ -6,7 +6,7 @@
 
 .scouting-oidc-explorer-layout {
 	display: grid;
-	grid-template-columns: minmax( 280px, 1fr ) minmax( 0, 2fr );
+	grid-template-columns: minmax(280px, 1fr) minmax(0, 2fr);
 	gap: 24px;
 	margin-top: 20px;
 }
@@ -43,12 +43,16 @@
 
 .scouting-oidc-explorer-node {
 	display: grid;
-	grid-template-columns: 34px minmax( 0, 1fr );
+	grid-template-columns: 34px minmax(0, 1fr);
 	align-items: start;
 	column-gap: 8px;
 	position: relative;
 	margin: 4px 0;
 	list-style: none;
+}
+
+.scouting-oidc-explorer-tree > .scouting-oidc-explorer-node::before {
+	display: none;
 }
 
 .scouting-oidc-explorer-tree ul > .scouting-oidc-explorer-node::before {
@@ -57,11 +61,7 @@
 	left: -20px;
 	width: 14px;
 	border-top: 2px solid #dcdcde;
-	content: '';
-}
-
-.scouting-oidc-explorer-tree > .scouting-oidc-explorer-node::before {
-	display: none;
+	content: "";
 }
 
 .scouting-oidc-explorer-node > a {
@@ -77,7 +77,7 @@
 }
 
 .scouting-oidc-explorer-role {
-	grid-template-columns: minmax( 0, 1fr );
+	grid-template-columns: minmax(0, 1fr);
 }
 
 .scouting-oidc-explorer-role > a {
@@ -135,8 +135,9 @@
 }
 
 @media screen and ( max-width: 782px ) {
+
 	.scouting-oidc-explorer-layout {
-		grid-template-columns: minmax( 0, 1fr );
+		grid-template-columns: minmax(0, 1fr);
 	}
 
 	.scouting-oidc-explorer-tree {

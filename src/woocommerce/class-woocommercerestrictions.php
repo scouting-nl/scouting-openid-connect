@@ -167,8 +167,8 @@ class WooCommerceRestrictions {
 	public function scouting_oidc_woocommerce_restrictions_add_product_data_tab( array $tabs ): array {
 		$tabs['scouting_oidc'] = array(
 			'label'    => __( 'SOL Access', 'scouting-openid-connect' ),
-			'target'   => 'scouting_oidc_product_data',
-			'class'    => array( 'scouting_oidc_tab' ),
+			'target'   => 'scouting-oidc-product-data',
+			'class'    => array( 'scouting-oidc-tab' ),
 			'priority' => 80,
 		);
 
@@ -219,7 +219,7 @@ class WooCommerceRestrictions {
 		$organisation_ids         = array_column( $organisations, 'organisation_id' );
 		$role_ids                 = array_map( 'intval', array_column( $roles, 'role_id' ) );
 		?>
-		<div id="scouting_oidc_product_data" class="panel woocommerce_options_panel hidden">
+		<div id="scouting-oidc-product-data" class="panel woocommerce_options_panel hidden">
 			<div class="options_group">
 				<p id="scouting-oidc-login-help" class="scouting-oidc-access-description"><?php esc_html_e( 'Off by default. Require a signed-in SOL account to order this product, even when no organisation or role is selected. Guests and non-SOL accounts are blocked, including after logout with items already in the cart. Organisation and role rules apply only when the roles scope is enabled. The global setting under WooCommerce > Settings > Products can require SOL sign-in for all products and cannot be overridden here.', 'scouting-openid-connect' ); ?></p>
 				<?php $this->scouting_oidc_woocommerce_restrictions_render_checkbox( 'scouting_oidc_require_sol_login', 'scouting-oidc-login-help', __( 'Require SOL sign-in', 'scouting-openid-connect' ), 'yes' === get_post_meta( $product_id, self::REQUIRE_SOL_LOGIN_META_KEY, true ) ); ?>
