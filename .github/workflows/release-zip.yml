@@ -36,6 +36,7 @@ jobs:
             --exclude ".distignore" \
             --exclude ".editorconfig" \
             --exclude ".gitattributes" \
+            --exclude ".gitignore" \
             --exclude "CHANGELOG.md" \
             --exclude "eslint.config.mjs" \
             --exclude "phpcs.xml.dist" \

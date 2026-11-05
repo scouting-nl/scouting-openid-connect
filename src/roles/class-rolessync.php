@@ -224,10 +224,11 @@ class RolesSync {
 	 * Normalizes organisation units from UserInfo.
 	 *
 	 * @since 2.7.0 Normalizes UserInfo organisation units.
+	 * @since Unreleased Normalizes organisation unit category and nature.
 	 *
 	 * @param array                                                                                                              $raw_organisation_units Raw UserInfo organisation units claim.
 	 * @param array<string, array{organisation_id: string, name: string, parent_ids: array<int, string>, has_parent_data: bool}> $organisations Normalized organisations.
-	 * @return array<int, array{organisation_id: string, name: string, unit_type: string, game_section_type: string|null}>|\WP_Error Normalized organisation units, or an error.
+	 * @return array<int, array{organisation_id: string, name: string, unit_type: string, game_section_type: string|null, category: string|null, nature: string|null}>|\WP_Error Normalized organisation units, or an error.
 	 */
 	private static function scouting_oidc_roles_sync_normalize_organisation_units( array $raw_organisation_units, array $organisations ): array|\WP_Error {
 		$organisation_units = array();
@@ -246,8 +247,18 @@ class RolesSync {
 				$game_section_type = self::scouting_oidc_roles_sync_normalize_text( $raw_organisation_unit['game_section_type'], 255 );
 			}
 			$has_invalid_game_section_type = array_key_exists( 'game_section_type', $raw_organisation_unit ) && null !== $raw_organisation_unit['game_section_type'] && null === $game_section_type;
+			$category                      = null;
+			if ( array_key_exists( 'category', $raw_organisation_unit ) && null !== $raw_organisation_unit['category'] ) {
+				$category = self::scouting_oidc_roles_sync_normalize_text( $raw_organisation_unit['category'], 255 );
+			}
+			$has_invalid_category = array_key_exists( 'category', $raw_organisation_unit ) && null !== $raw_organisation_unit['category'] && null === $category;
+			$nature               = null;
+			if ( array_key_exists( 'nature', $raw_organisation_unit ) && null !== $raw_organisation_unit['nature'] ) {
+				$nature = self::scouting_oidc_roles_sync_normalize_text( $raw_organisation_unit['nature'], 255 );
+			}
+			$has_invalid_nature = array_key_exists( 'nature', $raw_organisation_unit ) && null !== $raw_organisation_unit['nature'] && null === $nature;
 
-			if ( null === $organisation_unit_id || null === $organisation_id || null === $name || null === $unit_type || $has_invalid_game_section_type || ! isset( $organisations[ $organisation_id ] ) ) {
+			if ( null === $organisation_unit_id || null === $organisation_id || null === $name || null === $unit_type || $has_invalid_game_section_type || $has_invalid_category || $has_invalid_nature || ! isset( $organisations[ $organisation_id ] ) ) {
 				return new \WP_Error( 'invalid_organisation_unit' );
 			}
 
@@ -260,6 +271,8 @@ class RolesSync {
 				'name'              => $name,
 				'unit_type'         => $unit_type,
 				'game_section_type' => $game_section_type,
+				'category'          => $category,
+				'nature'            => $nature,
 			);
 		}
 
@@ -590,32 +603,39 @@ class RolesSync {
 	 * Upserts a synchronized organisation unit.
 	 *
 	 * @since 2.7.0 Saves synchronized organisation units.
+	 * @since Unreleased Saves organisation unit category and nature.
 	 *
-	 * @param string                                                                                          $organisation_units_table Full organisation units table name.
-	 * @param int                                                                                             $organisation_unit_id Organisation unit ID.
-	 * @param array{organisation_id: string, name: string, unit_type: string, game_section_type: string|null} $organisation_unit Normalized organisation unit.
-	 * @param string                                                                                          $current_time UTC timestamp.
+	 * @param string                                                                                                                                      $organisation_units_table Full organisation units table name.
+	 * @param int                                                                                                                                         $organisation_unit_id Organisation unit ID.
+	 * @param array{organisation_id: string, name: string, unit_type: string, game_section_type: string|null, category: string|null, nature: string|null} $organisation_unit Normalized organisation unit.
+	 * @param string                                                                                                                                      $current_time UTC timestamp.
 	 * @return bool Whether the organisation unit was saved.
 	 */
 	private static function scouting_oidc_roles_sync_upsert_organisation_unit( string $organisation_units_table, int $organisation_unit_id, array $organisation_unit, string $current_time ): bool {
 		global $wpdb;
 		$game_section_type = $organisation_unit['game_section_type'] ?? '';
+		$category          = $organisation_unit['category'] ?? '';
+		$nature            = $organisation_unit['nature'] ?? '';
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$result = $wpdb->query(
 			$wpdb->prepare(
-				'INSERT INTO %i (organisation_unit_id, organisation_id, name, unit_type, game_section_type, last_seen_at) VALUES (%d, %s, %s, %s, NULLIF(%s, \'\'), %s) ON DUPLICATE KEY UPDATE organisation_id = %s, name = %s, unit_type = %s, game_section_type = NULLIF(%s, \'\'), last_seen_at = %s',
+				'INSERT INTO %i (organisation_unit_id, organisation_id, name, unit_type, game_section_type, category, nature, last_seen_at) VALUES (%d, %s, %s, %s, NULLIF(%s, \'\'), NULLIF(%s, \'\'), NULLIF(%s, \'\'), %s) ON DUPLICATE KEY UPDATE organisation_id = %s, name = %s, unit_type = %s, game_section_type = NULLIF(%s, \'\'), category = NULLIF(%s, \'\'), nature = NULLIF(%s, \'\'), last_seen_at = %s',
 				$organisation_units_table,
 				$organisation_unit_id,
 				$organisation_unit['organisation_id'],
 				$organisation_unit['name'],
 				$organisation_unit['unit_type'],
 				$game_section_type,
+				$category,
+				$nature,
 				$current_time,
 				$organisation_unit['organisation_id'],
 				$organisation_unit['name'],
 				$organisation_unit['unit_type'],
 				$game_section_type,
+				$category,
+				$nature,
 				$current_time
 			)
 		);
