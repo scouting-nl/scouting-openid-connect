@@ -4,13 +4,21 @@ on:
   push:
     branches:
       - '**'
+  pull_request:
 
 permissions: {}
 
 jobs:
   package:
     name: Plugin ZIP
-    needs: translations
+    needs:
+      - translations
+      - workflow-checks
+      - javascript-coding-standards
+      - css-coding-standards
+      - php-lint
+      - wordpress-coding-standards
+      - plugin-check
     permissions:
       contents: read
     uses: ./.github/workflows/package-plugin.yml
@@ -235,7 +243,7 @@ jobs:
           echo "PHPCS_PHAR=${tools_dir}/phpcs.phar" >> "${GITHUB_ENV}"
 
       - name: Enforce complete WordPress Coding Standards
-        run: php "${PHPCS_PHAR}" --standard=WordPress --extensions=php --report=summary .
+        run: php "${PHPCS_PHAR}" --no-cache --standard=WordPress --extensions=php --report=summary .
 
   plugin-check:
     runs-on: ubuntu-latest

@@ -108,6 +108,8 @@ jobs:
           name: ${{ steps.version.outputs.zip-name }}
           path: ${{ steps.archive.outputs.zip-path }}
           if-no-files-found: error
+          # Release assets are attached separately and do not expire with this CI artifact.
+          retention-days: 14
 
       # Remove only this invocation's staging directory, even when copying or archiving fails.
       - name: Clean staging files
