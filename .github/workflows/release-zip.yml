@@ -9,63 +9,37 @@ permissions: {}
 
 jobs:
   package:
-    name: Build plugin zip
+    name: Plugin ZIP
+    permissions:
+      contents: read
+    uses: ./.github/workflows/package-plugin.yml
+    with:
+      version: ${{ github.ref_name }}
+
+  release:
+    name: Publish plugin release
+    needs: package
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Download plugin ZIP
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Build zip archive
-        run: |
-          set -euo pipefail
-          PLUGIN_SLUG="scouting-openid-connect"
-          VERSION="${GITHUB_REF_NAME#v}"
-          BUILD_ROOT="${RUNNER_TEMP}/build"
-          STAGING="${BUILD_ROOT}/${PLUGIN_SLUG}"
-
-          mkdir -p "${STAGING}"
-          rsync -av . "${STAGING}" \
-            --exclude ".git" \
-            --exclude ".github" \
-            --exclude ".vscode" \
-            --exclude ".distignore" \
-            --exclude ".editorconfig" \
-            --exclude ".gitattributes" \
-            --exclude ".gitignore" \
-            --exclude "CHANGELOG.md" \
-            --exclude "eslint.config.mjs" \
-            --exclude "phpcs.xml.dist" \
-            --exclude "README.md" \
-            --include "assets/" \
-            --include "assets/icon.svg" \
-            --exclude "assets/*"
-
-          cd "${BUILD_ROOT}"
-          ZIP_NAME="${PLUGIN_SLUG}.${VERSION}.zip"
-          zip -r "${ZIP_NAME}" "${PLUGIN_SLUG}"
-          echo "ZIP_PATH=${BUILD_ROOT}/${ZIP_NAME}" >> "${GITHUB_ENV}"
-          echo "ZIP_NAME=${ZIP_NAME}" >> "${GITHUB_ENV}"
-
-      - name: Upload zip as artifact
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: ${{ env.ZIP_NAME }}
-          path: ${{ env.ZIP_PATH }}
-          if-no-files-found: error
+          name: ${{ needs.package.outputs.artifact-name }}
+          path: ${{ runner.temp }}/plugin-artifact
 
       - name: Attach zip to release
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          ZIP_PATH: ${{ runner.temp }}/plugin-artifact/${{ needs.package.outputs.zip-name }}
         run: |
           set -euo pipefail
 
-          if gh release view "${GITHUB_REF_NAME}" --json id >/dev/null 2>&1; then
-            gh release upload "${GITHUB_REF_NAME}" "${ZIP_PATH}" --clobber
+          if gh release view "${RELEASE_TAG}" --json id >/dev/null 2>&1; then
+            gh release upload "${RELEASE_TAG}" "${ZIP_PATH}" --clobber
           else
-            gh release create "${GITHUB_REF_NAME}" "${ZIP_PATH}" --generate-notes --verify-tag
+            gh release create "${RELEASE_TAG}" "${ZIP_PATH}" --generate-notes --verify-tag
           fi

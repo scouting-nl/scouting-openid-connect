@@ -1,0 +1,208 @@
+name: Translations
+
+on:
+  # Build/test calls this workflow in read-only check mode.
+  workflow_call:
+
+  # Updates are opt-in and downloaded for review, never committed automatically.
+  workflow_dispatch:
+    inputs:
+      update:
+        description: Regenerate catalogs and upload them for review instead of checking freshness.
+        required: false
+        default: false
+        type: boolean
+
+permissions: {}
+
+jobs:
+  translations:
+    name: Translation catalogs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set temporary catalog paths
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "WP_CLI_PHAR=${RUNNER_TEMP}/wp-cli.phar" >> "${GITHUB_ENV}"
+          echo "TRANSLATION_WORK_DIR=${RUNNER_TEMP}/translations" >> "${GITHUB_ENV}"
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.2'
+          coverage: none
+          extensions: curl, mbstring
+
+      - name: Install gettext and verified WP-CLI
+        shell: bash
+        env:
+          WP_CLI_VERSION: '2.12.0'
+          WP_CLI_SHA256: 'ce34ddd838f7351d6759068d09793f26755463b4a4610a5a5c0a97b68220d85c'
+        run: |
+          set -euo pipefail
+
+          sudo apt-get update -qq
+          sudo apt-get install --no-install-recommends --yes gettext
+
+          curl --fail-with-body --location --retry 3 \
+            --output "${WP_CLI_PHAR}" \
+            "https://github.com/wp-cli/wp-cli/releases/download/v${WP_CLI_VERSION}/wp-cli-${WP_CLI_VERSION}.phar"
+          echo "${WP_CLI_SHA256}  ${WP_CLI_PHAR}" | sha256sum --check
+
+      - name: Validate existing PO syntax and placeholders
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+
+          catalogs=(languages/*.po)
+          if (( ${#catalogs[@]} == 0 )); then
+            echo 'No PO translation catalogs found.' >&2
+            exit 1
+          fi
+          for po in "${catalogs[@]}"; do
+            msgfmt --check --output-file=/dev/null "${po}"
+          done
+
+      # Extract into runner storage so normal CI never rewrites committed catalogs.
+      - name: Extract current source messages
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p "${TRANSLATION_WORK_DIR}"
+          php "${WP_CLI_PHAR}" i18n make-pot . "${TRANSLATION_WORK_DIR}/messages.pot" \
+            --slug=scouting-openid-connect \
+            --domain=scouting-openid-connect \
+            --file-comment="$(printf 'Copyright (C) %s Scouting Nederland\nThis file is distributed under the same license as the Scouting OpenID Connect plugin.' "$(date -u +%Y)")" \
+            --headers='{"Report-Msgid-Bugs-To":"https://github.com/scouting-nl/scouting-openid-connect/issues"}' \
+            --include=scouting-openid-connect.php,uninstall.php,src
+
+      # Compare message identities and meaningful headers, not timestamps or line numbers.
+      - name: Check committed POT and PO freshness
+        if: ${{ ! inputs.update }}
+        shell: php {0}
+        run: |
+          <?php
+          /**
+           * Verify committed translation catalogs against current source messages.
+           *
+           * @package Scouting_OIDC
+           * @since Unreleased Adds workflow-based translation checks.
+           */
+
+          require 'phar://' . getenv( 'WP_CLI_PHAR' ) . '/vendor/autoload.php';
+
+          $source = Gettext\Translations::fromPoFile( getenv( 'TRANSLATION_WORK_DIR' ) . '/messages.pot' );
+          $files  = array_merge( array( 'languages/scouting-openid-connect.pot' ), glob( 'languages/*.po' ) );
+          foreach ( $files as $file ) {
+              $catalog = Gettext\Translations::fromPoFile( $file );
+              if ( count( $catalog ) !== count( $source ) ) {
+                  throw new RuntimeException( $file . ' has missing or obsolete messages. Run the Translations workflow with updates enabled.' );
+              }
+              foreach ( $source as $message ) {
+                  $current = $catalog->find( $message->getContext(), $message->getOriginal() );
+                  if ( ! $current || $current->getPlural() !== $message->getPlural() ) {
+                      throw new RuntimeException( $file . ' is out of date: ' . $message->getOriginal() );
+                  }
+              }
+              foreach ( array( 'Project-Id-Version', 'Report-Msgid-Bugs-To' ) as $header ) {
+                  if ( $catalog->getHeader( $header ) !== $source->getHeader( $header ) ) {
+                      throw new RuntimeException( $file . ' has an outdated ' . $header . ' header.' );
+                  }
+              }
+          }
+
+      - name: Check translation completeness and compiled MO freshness
+        if: ${{ ! inputs.update }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for po in languages/*.po; do
+            msgfmt --check --statistics --output-file=/dev/null "${po}"
+            msgcmp --no-fuzzy-matching "${po}" "${TRANSLATION_WORK_DIR}/messages.pot"
+          done
+
+          mkdir "${TRANSLATION_WORK_DIR}/compiled"
+          php "${WP_CLI_PHAR}" i18n make-mo languages "${TRANSLATION_WORK_DIR}/compiled"
+          for po in languages/*.po; do
+            mo="$(basename "${po}" .po).mo"
+            if ! cmp "languages/${mo}" "${TRANSLATION_WORK_DIR}/compiled/${mo}"; then
+              echo "Outdated MO catalog: languages/${mo}. Run the Translations workflow with updates enabled." >&2
+              exit 1
+            fi
+          done
+
+      # Manual updates preserve existing translations; new messages still need human translation.
+      - name: Update POT and merge existing PO translations
+        if: ${{ inputs.update }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cp "${TRANSLATION_WORK_DIR}/messages.pot" languages/scouting-openid-connect.pot
+          php "${WP_CLI_PHAR}" i18n update-po languages/scouting-openid-connect.pot
+
+      - name: Preserve issue-reporting metadata
+        if: ${{ inputs.update }}
+        shell: php {0}
+        run: |
+          <?php
+          require 'phar://' . getenv( 'WP_CLI_PHAR' ) . '/vendor/autoload.php';
+
+          $template = Gettext\Translations::fromPoFile( 'languages/scouting-openid-connect.pot' );
+          foreach ( glob( 'languages/*.po' ) as $file ) {
+              $catalog = Gettext\Translations::fromPoFile( $file );
+              $catalog->setHeader( 'Report-Msgid-Bugs-To', $template->getHeader( 'Report-Msgid-Bugs-To' ) );
+              $catalog->toPoFile( $file );
+          }
+
+      - name: Restore notices and compile reviewed translations
+        if: ${{ inputs.update }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir "${TRANSLATION_WORK_DIR}/compile"
+          for po in languages/*.po; do
+            # WP-CLI merges drop file comments, so restore copyright and license notices.
+            {
+              sed -n '/^#/p; /^msgid /q' languages/scouting-openid-connect.pot
+              cat "${po}"
+            } > "${TRANSLATION_WORK_DIR}/catalog.po"
+            mv "${TRANSLATION_WORK_DIR}/catalog.po" "${po}"
+
+            msgfmt --check --statistics --output-file=/dev/null "${po}"
+            msgcmp --use-untranslated --use-fuzzy "${po}" languages/scouting-openid-connect.pot
+
+            msgattrib --untranslated --no-obsolete "${po}" > "${TRANSLATION_WORK_DIR}/untranslated.po"
+            msgattrib --only-fuzzy --no-obsolete "${po}" > "${TRANSLATION_WORK_DIR}/fuzzy.po"
+            if grep -q '^msgid ' "${TRANSLATION_WORK_DIR}/untranslated.po"; then
+              echo "::warning file=${po}::Untranslated messages require human translation."
+            fi
+            if grep -q '^msgid ' "${TRANSLATION_WORK_DIR}/fuzzy.po"; then
+              echo "::warning file=${po}::Fuzzy translations require human review."
+            fi
+
+            # WP-CLI compiles fuzzy entries unless they are filtered out first.
+            msgattrib --no-fuzzy "${po}" > "${TRANSLATION_WORK_DIR}/compile/$(basename "${po}")"
+          done
+          php "${WP_CLI_PHAR}" i18n make-mo "${TRANSLATION_WORK_DIR}/compile" languages
+
+      - name: Upload updated catalogs for review
+        if: ${{ inputs.update }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: translation-catalogs
+          path: languages/
+          if-no-files-found: error
