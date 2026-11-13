@@ -8,6 +8,19 @@ on:
 permissions: {}
 
 jobs:
+  package:
+    name: Plugin ZIP
+    needs: translations
+    permissions:
+      contents: read
+    uses: ./.github/workflows/package-plugin.yml
+
+  translations:
+    name: Translation freshness
+    permissions:
+      contents: read
+    uses: ./.github/workflows/translations.yml
+
   workflow-checks:
     name: GitHub Actions workflows
     runs-on: ubuntu-latest

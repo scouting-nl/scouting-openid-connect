@@ -1,0 +1,123 @@
+name: Package plugin
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: Release tag; branch builds use the plugin version and commit count.
+        required: false
+        default: ''
+        type: string
+    outputs:
+      artifact-name:
+        description: Name of the uploaded plugin ZIP artifact
+        value: ${{ jobs.package.outputs.artifact-name }}
+      zip-name:
+        description: Filename of the packaged plugin ZIP
+        value: ${{ jobs.package.outputs.zip-name }}
+
+permissions: {}
+
+jobs:
+  package:
+    name: Build plugin ZIP
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      artifact-name: ${{ steps.version.outputs.zip-name }}
+      zip-name: ${{ steps.version.outputs.zip-name }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Branch artifact names include the commit count from the full history.
+          fetch-depth: 0
+          persist-credentials: false
+
+      # Tags control the archive filename only; source version headers stay unchanged.
+      - name: Determine ZIP filename
+        id: version
+        shell: pwsh
+        env:
+          PACKAGE_VERSION: ${{ inputs.version }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          $version = $env:PACKAGE_VERSION -creplace '^v', ''
+          if (-not $version) {
+            $header = Get-Content -LiteralPath 'scouting-openid-connect.php' -Raw
+            if ($header -notmatch '(?m)^\s*\*\s*Version:\s*(\S+)\s*$') {
+              throw 'Could not determine the plugin version.'
+            }
+            $version = $Matches[1]
+
+            $commitCount = git rev-list --count HEAD
+            if ($LASTEXITCODE -ne 0 -or $commitCount -notmatch '^\d+$') {
+              throw 'Could not determine the Git commit count.'
+            }
+            $version = "$version.$commitCount"
+          }
+          if ($version -notmatch '^[0-9]+\.[0-9]+\.[0-9]+([.-][A-Za-z0-9.-]+)?$') {
+            throw "Invalid package version: $version"
+          }
+
+          Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value "zip-name=scouting-openid-connect.$version.zip"
+
+      # An allowlist keeps development files and marketing images out of the plugin.
+      # Catalogs are copied as committed; translation checks belong to build/test.
+      - name: Stage plugin runtime files
+        id: staging
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          $buildRoot = Join-Path $env:RUNNER_TEMP ([guid]::NewGuid().ToString())
+          $staging = Join-Path $buildRoot 'scouting-openid-connect'
+          Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value "build-root=$buildRoot"
+          New-Item -ItemType Directory -Path $staging | Out-Null
+
+          foreach ($file in @('scouting-openid-connect.php', 'uninstall.php', 'readme.txt', 'LICENSE')) {
+            Copy-Item -LiteralPath $file -Destination $staging
+          }
+          foreach ($directory in @('src', 'languages')) {
+            Copy-Item -LiteralPath $directory -Destination $staging -Recurse
+          }
+          $assets = New-Item -ItemType Directory -Path (Join-Path $staging 'assets')
+          Copy-Item -LiteralPath 'assets/icon.svg' -Destination $assets.FullName
+
+      # Archive the staging parent to retain the single plugin-slug root WordPress expects.
+      - name: Create installable ZIP
+        id: archive
+        shell: pwsh
+        env:
+          BUILD_ROOT: ${{ steps.staging.outputs.build-root }}
+          ZIP_NAME: ${{ steps.version.outputs.zip-name }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          $zipPath = Join-Path $env:RUNNER_TEMP $env:ZIP_NAME
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          [System.IO.Compression.ZipFile]::CreateFromDirectory($env:BUILD_ROOT, $zipPath)
+          Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value "zip-path=$zipPath"
+
+      - name: Upload plugin ZIP
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ${{ steps.version.outputs.zip-name }}
+          path: ${{ steps.archive.outputs.zip-path }}
+          if-no-files-found: error
+
+      # Remove only this invocation's staging directory, even when copying or archiving fails.
+      - name: Clean staging files
+        if: ${{ always() && steps.staging.outputs.build-root != '' }}
+        shell: pwsh
+        env:
+          BUILD_ROOT: ${{ steps.staging.outputs.build-root }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          if (Test-Path -LiteralPath $env:BUILD_ROOT) {
+            Remove-Item -LiteralPath $env:BUILD_ROOT -Recurse -Force
+          }

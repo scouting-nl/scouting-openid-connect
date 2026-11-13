@@ -1,2207 +1,2204 @@
-# Copyright (C) 2025 Scouting Nederland
+# Copyright (C) 2026 Scouting Nederland
 # This file is distributed under the same license as the Scouting OpenID Connect plugin.
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Scouting OpenID Connect 2.7.0\n"
-"Report-Msgid-Bugs-To: https://github.com/scouting-nl/scouting-openid-connect/"
-"issues\n"
-"POT-Creation-Date: 2026-11-02 22:10+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Report-Msgid-Bugs-To: https://github.com/scouting-nl/scouting-openid-connect/issues\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Job van Koeveringe <job.van.koeveringe@scouting.nl>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.10\n"
-"X-Poedit-KeywordsList: "
-"__;esc_html__;_e;esc_html_e;esc_attr__;esc_attr_e;_n:1,2\n"
-"X-Poedit-Basepath: ../src\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-SearchPath-0: .\n"
+"POT-Creation-Date: 2026-11-11T21:28:01+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: scouting-openid-connect\n"
 
-#: support/class-support.php
-msgid "Documentation"
+#. Plugin Name of the plugin
+#: scouting-openid-connect.php
+#: src/support/class-providerhealth.php:421
+#: src/support/class-sitehealth.php:493
+#: src/support/class-sitehealth.php:596
+msgid "Scouting OpenID Connect"
 msgstr ""
 
-#: settings/class-settings-oidc.php
-msgid "To use SOL roles, enable the roles scope for this website in Scouts Online as well as in this plugin."
+#. Plugin URI of the plugin
+#: scouting-openid-connect.php
+msgid "https://github.com/Scouting-nl/scouting-openid-connect"
 msgstr ""
 
-#: settings/class-settings-oidc.php
-msgid "Manage website scopes in Scouts Online"
+#. Description of the plugin
+#: scouting-openid-connect.php
+#: src/plugin/class-description.php:32
+msgid "WordPress plugin for logging in with Scouting Nederland OpenID Connect Server."
 msgstr ""
 
-#: settings/class-settings-oidc.php support/class-support.php
-msgid "Read the plugin documentation"
+#. Author of the plugin
+#: scouting-openid-connect.php
+msgid "Job van Koeveringe"
 msgstr ""
 
-#: utilities/class-errorhandler.php
-#, php-format
-msgid "Scouts Online rejected the requested \"%s\" scope. Sign-in could not be completed. Please contact the website administrator."
+#. Author URI of the plugin
+#: scouting-openid-connect.php
+msgid "https://jobvankoeveringe.com?utm_source=wordpress&utm_medium=plugin&utm_campaign=scouting_oidc"
 msgstr ""
 
-#: utilities/class-errorhandler.php
-msgid "Scouts Online rejected one or more requested scopes. Sign-in could not be completed. Please contact the website administrator."
-msgstr ""
-
-#: utilities/class-errorhandler.php
-msgid "For administrators: compare the plugin’s OpenID Connect Scopes setting with the scopes enabled for this website under Managed websites at login.scouting.nl. Enable the requested scopes there, or remove optional scopes you do not use from WordPress. Keep openid, membership, profile, and email enabled in both places. Then try signing in again."
-msgstr ""
-
-#: settings/class-settings-oidc.php
-msgid "Every scope requested here must also be enabled for this website under Managed websites at login.scouting.nl. Required: openid, membership, profile, email. Optional: address, phone, roles. The plugin cannot check which scopes are enabled for your connection there."
-msgstr ""
-
-#: support/class-sitehealth.php
-msgid "This check only verifies the WordPress configuration. Make sure every requested scope is also enabled for this website under Managed websites at login.scouting.nl; provider discovery does not confirm your connection’s permissions."
-msgstr ""
-
-#: auth/class-auth.php:93 auth/class-auth.php:166
-#: shortcode/class-shortcode.php:165
+#: src/auth/class-auth.php:93
+#: src/auth/class-auth.php:166
+#: src/shortcode/class-shortcode.php:165
 msgid "Login with Scouts Online"
 msgstr ""
 
-#: auth/class-auth.php:148 shortcode/class-shortcode.php:166
+#: src/auth/class-auth.php:148
+#: src/shortcode/class-shortcode.php:166
 msgid "Logout"
 msgstr ""
 
-#: auth/class-auth.php:214
+#: src/auth/class-auth.php:214
 msgid "Client ID or Client Secret are missing in the configuration"
 msgstr ""
 
-#: auth/class-auth.php:237
+#: src/auth/class-auth.php:237
 msgid "Client ID or Client Secret are missing in the configuration."
 msgstr ""
 
-#: auth/class-auth.php:301
+#: src/auth/class-auth.php:307
 msgid "State is invalid"
 msgstr ""
 
-#: auth/class-auth.php:307 auth/class-auth.php:314
+#: src/auth/class-auth.php:313
+#: src/auth/class-auth.php:320
 msgid "Code is missing"
 msgstr ""
 
-#: auth/class-auth.php:351
+#: src/auth/class-auth.php:357
 msgid "Webmaster disabled creation of new accounts"
 msgstr ""
 
-#: auth/class-auth.php:377 auth/class-auth.php:398
-#: roles/class-rolesauthorization.php:135
-#: roles/class-rolesauthorization.php:181
-#: roles/class-rolesauthorization.php:263 user/class-fields.php:245
-#: user/class-fields.php:260
-msgid ""
-"Your access level could not be updated. Please contact the site "
-"administrator."
+#: src/auth/class-auth.php:383
+#: src/auth/class-auth.php:404
+#: src/roles/class-rolesauthorization.php:135
+#: src/roles/class-rolesauthorization.php:181
+#: src/roles/class-rolesauthorization.php:263
+#: src/user/class-fields.php:245
+#: src/user/class-fields.php:260
+#: uninstall.php:28
+#: uninstall.php:37
+#: uninstall.php:41
+#: uninstall.php:46
+msgid "Your access level could not be updated. Please contact the site administrator."
 msgstr ""
 
-#: auth/class-auth.php:378 auth/class-auth.php:399
+#: src/auth/class-auth.php:384
+#: src/auth/class-auth.php:405
 msgid "We could not complete your sign-in."
 msgstr ""
 
-#: auth/class-auth.php:388
+#: src/auth/class-auth.php:394
 msgid "Your Scouts Online role is not permitted to access this site."
 msgstr ""
 
-#: auth/class-auth.php:389
+#: src/auth/class-auth.php:395
 msgid "You are not allowed to sign in to this site."
 msgstr ""
 
-#: auth/class-auth.php:437
+#: src/auth/class-auth.php:443
 msgid "The user denied the request"
 msgstr ""
 
-#: auth/class-auth.php:441 auth/class-openidconnectclient.php:796
-#: auth/class-openidconnectclient.php:833
-#: auth/class-openidconnectclient.php:855
+#: src/auth/class-auth.php:447
+#: src/auth/class-openidconnectclient.php:802
+#: src/auth/class-openidconnectclient.php:839
+#: src/auth/class-openidconnectclient.php:861
 msgid "Details:"
 msgstr ""
 
-#: auth/class-openidconnectclient.php:168
+#: src/auth/class-openidconnectclient.php:168
 msgid "The authorization endpoint is not a valid HTTPS URL."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:179
+#: src/auth/class-openidconnectclient.php:179
 msgid "The authorization endpoint could not be used for a secure redirect."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:205
-#: auth/class-openidconnectclient.php:1123
-msgid ""
-"A secure login session could not be started. Please use HTTPS and try again."
+#: src/auth/class-openidconnectclient.php:205
+#: src/auth/class-openidconnectclient.php:1129
+msgid "A secure login session could not be started. Please use HTTPS and try again."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:217
-msgid ""
-"The identity provider does not support the required S256 code challenge "
-"method for PKCE."
+#: src/auth/class-openidconnectclient.php:217
+msgid "The identity provider does not support the required S256 code challenge method for PKCE."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:223
+#: src/auth/class-openidconnectclient.php:223
 msgid "The authorization_endpoint is not available in the well-known data."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:237
+#: src/auth/class-openidconnectclient.php:237
 msgid "The following scopes are not supported:"
 msgstr ""
 
-#: auth/class-openidconnectclient.php:237
+#: src/auth/class-openidconnectclient.php:237
 msgid "The supported scopes are:"
 msgstr ""
 
-#: auth/class-openidconnectclient.php:301
+#: src/auth/class-openidconnectclient.php:302
 msgid "The token_endpoint is not available in the well-known data."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:311
+#: src/auth/class-openidconnectclient.php:312
 msgid "The code_verifier for PKCE is missing from the session."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:348
+#. translators: 1: HTTP status code returned by the token endpoint. 2: Error detail from the token endpoint response.
+#: src/auth/class-openidconnectclient.php:354
 #, php-format
 msgid "Token endpoint error %1$s: %2$s"
 msgstr ""
 
-#: auth/class-openidconnectclient.php:405
+#: src/auth/class-openidconnectclient.php:411
 msgid "The ID token is not available in the tokens."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:411
+#: src/auth/class-openidconnectclient.php:417
 msgid "The JSON Web Key Set (JWKS) is not available."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:418
+#: src/auth/class-openidconnectclient.php:424
 msgid "The ID token has an invalid structure."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:432
+#: src/auth/class-openidconnectclient.php:438
 msgid "The ID token uses an unexpected signing algorithm."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:447
-msgid ""
-"The certificate chain (x5c) for the key ID (kid) specified in the header was "
-"not found."
+#: src/auth/class-openidconnectclient.php:453
+msgid "The certificate chain (x5c) for the key ID (kid) specified in the header was not found."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:462
-msgid ""
-"The signing certificate used to validate the ID token is invalid or "
-"unsupported."
+#: src/auth/class-openidconnectclient.php:468
+msgid "The signing certificate used to validate the ID token is invalid or unsupported."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:469
+#: src/auth/class-openidconnectclient.php:475
 msgid "The signature in the ID token is not valid."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:475
+#: src/auth/class-openidconnectclient.php:481
 msgid "The ID token payload could not be decoded."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:481
+#: src/auth/class-openidconnectclient.php:487
 msgid "The ID token was issued by an unexpected issuer."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:488
+#: src/auth/class-openidconnectclient.php:494
 msgid "The ID token was not issued for this client."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:494
+#: src/auth/class-openidconnectclient.php:500
 msgid "The ID token has expired."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:500
+#: src/auth/class-openidconnectclient.php:506
 msgid "The ID token has an invalid issued-at timestamp."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:506
+#: src/auth/class-openidconnectclient.php:512
 msgid "The ID token is missing the required sub claim."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:512
+#: src/auth/class-openidconnectclient.php:518
 msgid "The login session is invalid or has expired."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:518
+#: src/auth/class-openidconnectclient.php:524
 msgid "The ID token is missing the required nonce claim."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:523
+#: src/auth/class-openidconnectclient.php:529
 msgid "The ID token nonce is invalid."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:547
+#: src/auth/class-openidconnectclient.php:553
 msgid "The userinfo_endpoint is not available in the well-known data."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:559
+#: src/auth/class-openidconnectclient.php:565
 msgid "The access token is not available in the tokens."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:588
+#: src/auth/class-openidconnectclient.php:594
 msgid "The UserInfo endpoint returned an unexpected response."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:598
+#: src/auth/class-openidconnectclient.php:604
 msgid "The UserInfo endpoint returned invalid user data."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:608
+#: src/auth/class-openidconnectclient.php:614
 msgid "The UserInfo response is missing the required sub claim."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:617
+#: src/auth/class-openidconnectclient.php:623
 msgid "The UserInfo response belongs to a different subject."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:795
-#: auth/class-openidconnectclient.php:854
+#: src/auth/class-openidconnectclient.php:801
+#: src/auth/class-openidconnectclient.php:860
 msgid "No additional details provided."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:796
+#: src/auth/class-openidconnectclient.php:802
 msgid "When retrieving well-known data, the status code was:"
 msgstr ""
 
-#: auth/class-openidconnectclient.php:827
+#: src/auth/class-openidconnectclient.php:833
 msgid "The jwks_uri is not available in the well-known data."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:833
+#: src/auth/class-openidconnectclient.php:839
 msgid "The jwks_uri is not a valid URL."
 msgstr ""
 
-#: auth/class-openidconnectclient.php:833
+#: src/auth/class-openidconnectclient.php:839
 msgid "The jwks_uri is not valid:"
 msgstr ""
 
-#: auth/class-openidconnectclient.php:855
+#: src/auth/class-openidconnectclient.php:861
 msgid "When retrieving JWKS data, the status code was:"
 msgstr ""
 
-#: auth/class-openidconnectclient.php:907
+#: src/auth/class-openidconnectclient.php:913
 msgid "Authentication is temporarily unavailable. Please try again later."
 msgstr ""
 
-#: logging/class-logging.php:90 logging/class-loggingdownload.php:32
+#: src/logging/class-logging.php:90
+#: src/logging/class-loggingdownload.php:32
 msgid "You do not have sufficient permissions to export logs."
 msgstr ""
 
-#: logging/class-logging.php:246 logging/class-loggingsettings.php:90
+#: src/logging/class-logging.php:246
+#: src/logging/class-loggingsettings.php:90
 msgid "Date/Time"
 msgstr ""
 
-#: logging/class-logging.php:247 logging/class-loggingsettings.php:91
+#: src/logging/class-logging.php:247
+#: src/logging/class-loggingsettings.php:91
 msgid "Level"
 msgstr ""
 
-#: logging/class-logging.php:248 logging/class-loggingsettings.php:92
+#: src/logging/class-logging.php:248
+#: src/logging/class-loggingsettings.php:92
 msgid "Component"
 msgstr ""
 
-#: logging/class-logging.php:249 logging/class-logging.php:332
-#: logging/class-loggingsettings.php:93
+#: src/logging/class-logging.php:249
+#: src/logging/class-logging.php:332
+#: src/logging/class-loggingsettings.php:93
 msgid "User ID"
 msgstr ""
 
-#: logging/class-logging.php:250 logging/class-logging.php:335
-#: logging/class-loggingsettings.php:94
+#: src/logging/class-logging.php:250
+#: src/logging/class-logging.php:335
+#: src/logging/class-loggingsettings.php:94
 msgid "SOL ID"
 msgstr ""
 
-#: logging/class-logging.php:251 logging/class-loggingsettings.php:95
+#: src/logging/class-logging.php:251
+#: src/logging/class-loggingsettings.php:95
 msgid "Message"
 msgstr ""
 
-#: logging/class-logging.php:307
+#: src/logging/class-logging.php:307
 msgid "Date/time from"
 msgstr ""
 
-#: logging/class-logging.php:310
+#: src/logging/class-logging.php:310
 msgid "Date/time to"
 msgstr ""
 
-#: logging/class-logging.php:313
+#: src/logging/class-logging.php:313
 msgid "Filter by level"
 msgstr ""
 
-#: logging/class-logging.php:322
+#: src/logging/class-logging.php:322
 msgid "Filter by component"
 msgstr ""
 
-#: logging/class-logging.php:331
+#: src/logging/class-logging.php:331
 msgid "Filter by user ID"
 msgstr ""
 
-#: logging/class-logging.php:334
+#: src/logging/class-logging.php:334
 msgid "Filter by SOL ID"
 msgstr ""
 
-#: logging/class-logging.php:337 roles/class-rolesexplorer.php:84
+#: src/logging/class-logging.php:337
 msgid "Filter"
 msgstr ""
 
-#: logging/class-logging.php:339
+#: src/logging/class-logging.php:339
 msgid "Download .log"
 msgstr ""
 
-#: logging/class-logging.php:341 roles/class-rolesexplorer.php:85
+#: src/logging/class-logging.php:341
 msgid "Reset"
 msgstr ""
 
-#: logging/class-logging.php:439
+#: src/logging/class-logging.php:447
 msgid "No log entries found for the selected filters."
 msgstr ""
 
-#: logging/class-logging.php:447
+#: src/logging/class-logging.php:455
 msgid "Logging"
 msgstr ""
 
-#: logging/class-logging.php:455
+#: src/logging/class-logging.php:463
 msgid "Search Logs"
 msgstr ""
 
-#: logging/class-logginghelp.php:36 roles/class-rolesadmin.php:114
+#: src/logging/class-logginghelp.php:36
+#: src/roles/class-rolesadmin.php:151
 msgid "Overview"
 msgstr ""
 
-#: logging/class-logginghelp.php:38
-msgid ""
-"This screen shows the plugin logs stored in the database table "
-"scouting_oidc_logs."
+#: src/logging/class-logginghelp.php:38
+msgid "This screen shows the plugin logs stored in the database table scouting_oidc_logs."
 msgstr ""
 
-#: logging/class-logginghelp.php:39
-msgid ""
-"Each row contains a timestamp, severity level, component, optional user "
-"details, and the log message."
+#: src/logging/class-logginghelp.php:39
+msgid "Each row contains a timestamp, severity level, component, optional user details, and the log message."
 msgstr ""
 
-#: logging/class-logginghelp.php:40
-msgid ""
-"Log timestamps are stored in UTC in the database and displayed using the "
-"WordPress site timezone."
+#: src/logging/class-logginghelp.php:40
+msgid "Log timestamps are stored in UTC in the database and displayed using the WordPress site timezone."
 msgstr ""
 
-#: logging/class-logginghelp.php:47
+#: src/logging/class-logginghelp.php:47
 msgid "Filtering and Search"
 msgstr ""
 
-#: logging/class-logginghelp.php:49
-msgid ""
-"Use the filter controls to narrow results by date/time range, level, "
-"component, user ID or SOL ID."
+#: src/logging/class-logginghelp.php:49
+msgid "Use the filter controls to narrow results by date/time range, level, component, user ID or SOL ID."
 msgstr ""
 
-#: logging/class-logginghelp.php:50
+#: src/logging/class-logginghelp.php:50
 msgid "Use the search box to find text in the message field."
 msgstr ""
 
-#: logging/class-logginghelp.php:51
+#: src/logging/class-logginghelp.php:51
 msgid "The Reset button clears filters and returns to the latest entries."
 msgstr ""
 
-#: logging/class-logginghelp.php:58
+#: src/logging/class-logginghelp.php:58
 msgid "Export and Retention"
 msgstr ""
 
-#: logging/class-logginghelp.php:60
+#: src/logging/class-logginghelp.php:60
 msgid "Use the Download .log button to export the currently filtered logs."
 msgstr ""
 
-#: logging/class-logginghelp.php:64
+#. translators: %d: Number of days log entries are kept before cleanup.
+#: src/logging/class-logginghelp.php:64
 #, php-format
 msgid "A daily cleanup task removes log entries older than %d day(s)."
 msgstr ""
 
-#: logging/class-logginghelp.php:74
+#: src/logging/class-logginghelp.php:74
 msgid "Debug Logging"
 msgstr ""
 
-#: logging/class-logginghelp.php:76
-msgid ""
-"Debug-level entries are stored only when Enable debug logs is checked in "
-"General Settings."
+#: src/logging/class-logginghelp.php:76
+msgid "Debug-level entries are stored only when Enable debug logs is checked in General Settings."
 msgstr ""
 
-#: logging/class-logginghelp.php:77
-msgid ""
-"When WP_DEBUG is enabled, plugin log messages are also mirrored to the "
-"WordPress/PHP error log."
+#: src/logging/class-logginghelp.php:77
+msgid "When WP_DEBUG is enabled, plugin log messages are also mirrored to the WordPress/PHP error log."
 msgstr ""
 
-#: logging/class-logginghelp.php:82 roles/class-rolesadmin.php:153
+#: src/logging/class-logginghelp.php:82
+#: src/roles/class-rolesadmin.php:190
 msgid "Need more help?"
 msgstr ""
 
-#: logging/class-logginghelp.php:83 roles/class-rolesadmin.php:155
+#: src/logging/class-logginghelp.php:83
+#: src/roles/class-rolesadmin.php:192
 msgid "Open the Support page"
 msgstr ""
 
-#: logging/class-loggingsettings.php:71
+#: src/logging/class-loggingsettings.php:71
 msgid "Logs per page"
 msgstr ""
 
-#: plugin/class-actions.php:32 settings/class-settings.php:54
+#: src/plugin/class-actions.php:32
+#: src/settings/class-settings.php:54
 msgid "Settings"
 msgstr ""
 
-#: plugin/class-description.php:32
-msgid ""
-"WordPress plugin for logging in with Scouting Nederland OpenID Connect "
-"Server."
+#: src/roles/class-rolesadmin.php:85
+msgid "Expand"
 msgstr ""
 
-#: roles/class-rolesadmin.php:77 roles/class-rolesadmin.php:78
-#: roles/class-rolesadmin.php:204
+#: src/roles/class-rolesadmin.php:86
+msgid "Collapse"
+msgstr ""
+
+#: src/roles/class-rolesadmin.php:87
+msgid "Loading…"
+msgstr ""
+
+#: src/roles/class-rolesadmin.php:88
+msgid "Could not load this item. Try again."
+msgstr ""
+
+#: src/roles/class-rolesadmin.php:89
+msgid "Open the full page to try again."
+msgstr ""
+
+#: src/roles/class-rolesadmin.php:90
+msgid "No child organisations, units, or roles found."
+msgstr ""
+
+#: src/roles/class-rolesadmin.php:91
+#: src/roles/class-rolesadmin.php:331
+#: src/roles/class-rolesadmin.php:705
+#: src/roles/class-rolesadmin.php:927
+#: src/roles/class-rolesexplorer.php:117
+msgid "Organisation"
+msgstr ""
+
+#: src/roles/class-rolesadmin.php:92
+msgid "Unit"
+msgstr ""
+
+#: src/roles/class-rolesadmin.php:93
+msgid "Role"
+msgstr ""
+
+#: src/roles/class-rolesadmin.php:113
+#: src/roles/class-rolesadmin.php:114
+#: src/roles/class-rolesadmin.php:241
 msgid "SOL Role Mapping"
 msgstr ""
 
-#: roles/class-rolesadmin.php:91 roles/class-rolesadmin.php:92
-#: roles/class-rolesexplorer.php:58
+#: src/roles/class-rolesadmin.php:127
+#: src/roles/class-rolesadmin.php:128
+#: src/roles/class-rolesexplorer.php:59
 msgid "SOL Role Explorer"
 msgstr ""
 
-#: roles/class-rolesadmin.php:116 roles/class-rolesadmin.php:212
-msgid ""
-"Every matching allow rule contributes its WordPress role. Duplicate roles "
-"are assigned once. Any matching deny rule blocks login, regardless of rule "
-"order. New unmatched users receive the WordPress default role. The plugin "
-"Settings page can also enable the default role alongside mapped roles."
+#: src/roles/class-rolesadmin.php:153
+#: src/roles/class-rolesadmin.php:249
+msgid "Every matching allow rule contributes its WordPress role. Duplicate roles are assigned once. Any matching deny rule blocks login, regardless of rule order. New unmatched users receive the WordPress default role. The plugin Settings page can also enable the default role alongside mapped roles."
 msgstr ""
 
-#: roles/class-rolesadmin.php:117 roles/class-rolesadmin.php:213
-msgid ""
-"All selected conditions in a rule must match the same active SOL assignment. "
-"At each successful OIDC login, obsolete plugin-granted roles are removed. "
-"Independently managed WordPress roles are retained."
+#: src/roles/class-rolesadmin.php:154
+#: src/roles/class-rolesadmin.php:250
+msgid "All selected conditions in a rule must match the same active SOL assignment. At each successful OIDC login, obsolete plugin-granted roles are removed. Independently managed WordPress roles are retained."
 msgstr ""
 
-#: roles/class-rolesadmin.php:118
-msgid ""
-"When Scouts Online supplies parent organisations, an organisation condition "
-"also matches active assignments in descendant organisations."
+#: src/roles/class-rolesadmin.php:155
+msgid "When Scouts Online supplies parent organisations, an organisation condition also matches active assignments in descendant organisations."
 msgstr ""
 
-#: roles/class-rolesadmin.php:125
+#: src/roles/class-rolesadmin.php:162
 msgid "Adding and Editing Rules"
 msgstr ""
 
-#: roles/class-rolesadmin.php:127
-msgid ""
-"Use Add Mapping Rule beside Test a User, or Edit on an existing rule, to "
-"open the When / Then editor. Choose at least one organisation, unit or SOL "
-"role condition, then allow or deny login. Allowed users receive the selected "
-"WordPress role."
+#: src/roles/class-rolesadmin.php:164
+msgid "Use Add Mapping Rule beside Test a User, or Edit on an existing rule, to open the When / Then editor. Choose at least one organisation, unit or SOL role condition, then allow or deny login. Allowed users receive the selected WordPress role."
 msgstr ""
 
-#: roles/class-rolesadmin.php:128
-msgid ""
-"Search results update while typing and retain all selected values. "
-"Organisation and unit conditions narrow dependent choices without removing "
-"selections. Is one of accepts any selected value; Is not one of excludes "
-"those values on the same assignment, not across the whole user. Empty "
-"conditions are ignored. Arrow Down or Enter in a search field focuses its "
-"results."
+#: src/roles/class-rolesadmin.php:165
+msgid "Search results update while typing and retain all selected values. Organisation and unit conditions narrow dependent choices without removing selections. Is one of accepts any selected value; Is not one of excludes those values on the same assignment, not across the whole user. Empty conditions are ignored. Arrow Down or Enter in a search field focuses its results."
 msgstr ""
 
-#: roles/class-rolesadmin.php:129
-msgid ""
-"Save or add the rule with the primary button. The close icon, Cancel and "
-"Escape close the modal without saving. Without JavaScript or native dialog "
-"support, the editor remains inline."
+#: src/roles/class-rolesadmin.php:166
+msgid "Save or add the rule with the primary button. The close icon, Cancel and Escape close the modal without saving. Without JavaScript or native dialog support, the editor remains inline."
 msgstr ""
 
-#: roles/class-rolesadmin.php:136
+#: src/roles/class-rolesadmin.php:173
 msgid "Managing Rules"
 msgstr ""
 
-#: roles/class-rolesadmin.php:138
-msgid ""
-"Rule order does not affect authorization. Duplicate opens an unsaved copy; "
-"change its conditions or outcome before saving. Identical rules cannot be "
-"saved twice. Delete removes a rule."
+#: src/roles/class-rolesadmin.php:175
+msgid "Rule order does not affect authorization. Duplicate opens an unsaved copy; change its conditions or outcome before saving. Identical rules cannot be saved twice. Delete removes a rule."
 msgstr ""
 
-#: roles/class-rolesadmin.php:145
+#: src/roles/class-rolesadmin.php:182
 msgid "Testing a User"
 msgstr ""
 
-#: roles/class-rolesadmin.php:147
-msgid ""
-"Test a User accepts an exact WordPress username or user ID. It shows active "
-"stored SOL assignments, every matching rule, and the combined login and role "
-"decision for an existing user."
+#: src/roles/class-rolesadmin.php:184
+msgid "Test a User accepts an exact WordPress username or user ID. It shows active stored SOL assignments, every matching rule, and the combined login and role decision for an existing user."
 msgstr ""
 
-#: roles/class-rolesadmin.php:148
-msgid ""
-"The preview does not include unsaved edits, refresh provider data, change "
-"user roles or sign the user in. It includes the optional default role "
-"alongside matched roles, but does not apply the new-user fallback. New-user "
-"registration and other login checks still apply."
+#: src/roles/class-rolesadmin.php:185
+msgid "The preview does not include unsaved edits, refresh provider data, change user roles or sign the user in. It includes the optional default role alongside matched roles, but does not apply the new-user fallback. New-user registration and other login checks still apply."
 msgstr ""
 
-#: roles/class-rolesadmin.php:154
+#: src/roles/class-rolesadmin.php:191
 msgid "Open the SOL Role Explorer"
 msgstr ""
 
-#: roles/class-rolesadmin.php:166 roles/class-rolesadmin.php:428
-#: roles/class-rolesadmin.php:505
+#: src/roles/class-rolesadmin.php:203
+#: src/roles/class-rolesadmin.php:465
+#: src/roles/class-rolesadmin.php:542
 msgid "You do not have permission to manage SOL role mappings."
 msgstr ""
 
-#: roles/class-rolesadmin.php:200 roles/class-rolesadmin.php:634
-msgid ""
-"The preview could not read SOL assignments. Check the database before "
-"relying on a login decision."
+#: src/roles/class-rolesadmin.php:237
+#: src/roles/class-rolesadmin.php:671
+msgid "The preview could not read SOL assignments. Check the database before relying on a login decision."
 msgstr ""
 
-#: roles/class-rolesadmin.php:209 roles/class-rolesadmin.php:274
+#: src/roles/class-rolesadmin.php:246
+#: src/roles/class-rolesadmin.php:311
 msgid "Add Mapping Rule"
 msgstr ""
 
-#: roles/class-rolesadmin.php:210 roles/class-rolesadmin.php:608
+#: src/roles/class-rolesadmin.php:247
+#: src/roles/class-rolesadmin.php:645
 msgid "Test a User"
 msgstr ""
 
-#: roles/class-rolesadmin.php:214
-msgid ""
-"When Scouts Online supplies parent organisations, an organisation condition "
-"also matches assignments in its descendant organisations."
+#: src/roles/class-rolesadmin.php:251
+msgid "When Scouts Online supplies parent organisations, an organisation condition also matches assignments in its descendant organisations."
 msgstr ""
 
-#: roles/class-rolesadmin.php:217
+#: src/roles/class-rolesadmin.php:254
 msgid "Saved mapping rules"
 msgstr ""
 
-#: roles/class-rolesadmin.php:220
+#: src/roles/class-rolesadmin.php:257
 msgid "When"
 msgstr ""
 
-#: roles/class-rolesadmin.php:221 roles/class-rolesadmin.php:331
+#: src/roles/class-rolesadmin.php:258
+#: src/roles/class-rolesadmin.php:368
 msgid "Then"
 msgstr ""
 
-#: roles/class-rolesadmin.php:222
+#: src/roles/class-rolesadmin.php:259
 msgid "Actions"
 msgstr ""
 
-#: roles/class-rolesadmin.php:227
+#: src/roles/class-rolesadmin.php:264
 msgid "No mapping rules yet."
 msgstr ""
 
-#: roles/class-rolesadmin.php:254
+#. translators: 1: rule conditions, 2: rule outcome.
+#: src/roles/class-rolesadmin.php:291
 #, php-format
 msgid "Actions for rule: %1$s; %2$s"
 msgstr ""
 
-#: roles/class-rolesadmin.php:261
+#: src/roles/class-rolesadmin.php:298
 msgid "Edit"
 msgstr ""
 
-#: roles/class-rolesadmin.php:262
+#: src/roles/class-rolesadmin.php:299
 msgid "Duplicate"
 msgstr ""
 
-#: roles/class-rolesadmin.php:263
+#: src/roles/class-rolesadmin.php:300
 msgid "Delete"
 msgstr ""
 
-#: roles/class-rolesadmin.php:274
+#: src/roles/class-rolesadmin.php:311
 msgid "Edit Mapping Rule"
 msgstr ""
 
-#: roles/class-rolesadmin.php:275 roles/class-rolesadmin.php:609
+#: src/roles/class-rolesadmin.php:312
+#: src/roles/class-rolesadmin.php:646
 msgid "Close"
 msgstr ""
 
-#: roles/class-rolesadmin.php:285
+#: src/roles/class-rolesadmin.php:322
 msgid "When an active SOL assignment matches"
 msgstr ""
 
-#: roles/class-rolesadmin.php:287
+#: src/roles/class-rolesadmin.php:324
 msgid "Selection and matching help"
 msgstr ""
 
-#: roles/class-rolesadmin.php:288
-msgid ""
-"Select one or more values per condition using the checkboxes. Values within "
-"a condition mean any of those values; all populated conditions must match "
-"the same active assignment. Empty conditions impose no restriction. Without "
-"JavaScript, use the selection lists and hold Ctrl (Command on Mac) to select "
-"multiple values, or use Shift with the arrow keys."
+#: src/roles/class-rolesadmin.php:325
+msgid "Select one or more values per condition using the checkboxes. Values within a condition mean any of those values; all populated conditions must match the same active assignment. Empty conditions impose no restriction. Without JavaScript, use the selection lists and hold Ctrl (Command on Mac) to select multiple values, or use Shift with the arrow keys."
 msgstr ""
 
-#: roles/class-rolesadmin.php:289
-msgid ""
-"Is not one of excludes values on the assignment being checked. It does not "
-"mean the user has no such assignments elsewhere. A user without active "
-"assignments never matches, including exclusions."
+#: src/roles/class-rolesadmin.php:326
+msgid "Is not one of excludes values on the assignment being checked. It does not mean the user has no such assignments elsewhere. A user without active assignments never matches, including exclusions."
 msgstr ""
 
-#: roles/class-rolesadmin.php:294 roles/class-rolesadmin.php:668
-#: roles/class-rolesadmin.php:867 roles/class-rolesexplorer.php:63
-#: roles/class-rolesexplorer.php:98
-msgid "Organisation"
-msgstr ""
-
-#: roles/class-rolesadmin.php:296
+#: src/roles/class-rolesadmin.php:333
 msgid "Organisation condition"
 msgstr ""
 
-#: roles/class-rolesadmin.php:297
+#: src/roles/class-rolesadmin.php:334
 msgid "Search organisations"
 msgstr ""
 
-#: roles/class-rolesadmin.php:305 roles/class-rolesadmin.php:669
-#: roles/class-rolesadmin.php:868 roles/class-rolesexplorer.php:70
-#: roles/class-rolesexplorer.php:99
+#: src/roles/class-rolesadmin.php:342
+#: src/roles/class-rolesadmin.php:706
+#: src/roles/class-rolesadmin.php:928
+#: src/roles/class-rolesexplorer.php:118
 msgid "Organisation Unit"
 msgstr ""
 
-#: roles/class-rolesadmin.php:307
+#: src/roles/class-rolesadmin.php:344
 msgid "Unit condition"
 msgstr ""
 
-#: roles/class-rolesadmin.php:308
+#: src/roles/class-rolesadmin.php:345
 msgid "Search units"
 msgstr ""
 
-#: roles/class-rolesadmin.php:316 roles/class-rolesadmin.php:670
-#: roles/class-rolesadmin.php:869 roles/class-rolesexplorer.php:77
-#: roles/class-rolesexplorer.php:100
+#: src/roles/class-rolesadmin.php:353
+#: src/roles/class-rolesadmin.php:707
+#: src/roles/class-rolesadmin.php:929
+#: src/roles/class-rolesexplorer.php:119
 msgid "SOL Role"
 msgstr ""
 
-#: roles/class-rolesadmin.php:318
+#: src/roles/class-rolesadmin.php:355
 msgid "SOL role condition"
 msgstr ""
 
-#: roles/class-rolesadmin.php:319
+#: src/roles/class-rolesadmin.php:356
 msgid "Search SOL roles"
 msgstr ""
 
-#: roles/class-rolesadmin.php:329
-msgid ""
-"Search matches: organisations {organisations}, units {units}, SOL roles "
-"{roles}."
+#: src/roles/class-rolesadmin.php:366
+msgid "Search matches: organisations {organisations}, units {units}, SOL roles {roles}."
 msgstr ""
 
-#: roles/class-rolesadmin.php:330
+#: src/roles/class-rolesadmin.php:367
 msgid "{count} matches. Selected values: {selection}."
 msgstr ""
 
-#: roles/class-rolesadmin.php:335
+#: src/roles/class-rolesadmin.php:372
 msgid "Scouting OIDC login"
 msgstr ""
 
-#: roles/class-rolesadmin.php:336
+#: src/roles/class-rolesadmin.php:373
 msgid "Allow login"
 msgstr ""
 
-#: roles/class-rolesadmin.php:336 roles/class-rolesadmin.php:569
+#: src/roles/class-rolesadmin.php:373
+#: src/roles/class-rolesadmin.php:606
 msgid "Deny login"
 msgstr ""
 
-#: roles/class-rolesadmin.php:339
+#: src/roles/class-rolesadmin.php:376
 msgid "WordPress Role"
 msgstr ""
 
-#: roles/class-rolesadmin.php:349
+#: src/roles/class-rolesadmin.php:386
 msgid "Save Rule"
 msgstr ""
 
-#: roles/class-rolesadmin.php:349
+#: src/roles/class-rolesadmin.php:386
 msgid "Add Rule"
 msgstr ""
 
-#: roles/class-rolesadmin.php:350 roles/class-rolesadmin.php:354
-#: roles/class-rolesadmin.php:623
+#: src/roles/class-rolesadmin.php:387
+#: src/roles/class-rolesadmin.php:391
+#: src/roles/class-rolesadmin.php:660
 msgid "Cancel"
 msgstr ""
 
-#: roles/class-rolesadmin.php:379 roles/class-rolesadmin.php:878
+#. translators: 1: condition label, 2: inclusion/exclusion operator, 3: selected values.
+#: src/roles/class-rolesadmin.php:416
+#: src/roles/class-rolesadmin.php:938
 msgid "Is one of"
 msgstr ""
 
-#: roles/class-rolesadmin.php:380 roles/class-rolesadmin.php:878
+#. translators: 1: condition label, 2: inclusion/exclusion operator, 3: selected values.
+#: src/roles/class-rolesadmin.php:417
+#: src/roles/class-rolesadmin.php:938
 msgid "Is not one of"
 msgstr ""
 
-#: roles/class-rolesadmin.php:398
+#: src/roles/class-rolesadmin.php:435
 msgid "Clear selection"
 msgstr ""
 
-#: roles/class-rolesadmin.php:415
-msgid ""
-"The roles scope is not enabled. SOL role pages and role-dependent settings "
-"are hidden. Saved mapping and product organisation/role rules are paused, "
-"not deleted. Existing WordPress roles are unchanged; new users receive the "
-"WordPress default role. WooCommerce SOL sign-in requirements remain active."
+#: src/roles/class-rolesadmin.php:452
+msgid "The roles scope is not enabled. SOL role pages and role-dependent settings are hidden. Saved mapping and product organisation/role rules are paused, not deleted. Existing WordPress roles are unchanged; new users receive the WordPress default role. WooCommerce SOL sign-in requirements remain active."
 msgstr ""
 
-#: roles/class-rolesadmin.php:416
+#: src/roles/class-rolesadmin.php:453
 msgid "Open plugin Settings to enable the roles scope"
 msgstr ""
 
-#: roles/class-rolesadmin.php:573
+#: src/roles/class-rolesadmin.php:610
 msgid "Allow login; remove obsolete plugin-granted roles without adding a role"
 msgstr ""
 
-#: roles/class-rolesadmin.php:577
+#. translators: %s: comma-separated WordPress role names.
+#: src/roles/class-rolesadmin.php:614
 #, php-format
 msgid "Allow login; assign %s"
 msgstr ""
 
-#: roles/class-rolesadmin.php:602
+#: src/roles/class-rolesadmin.php:639
 msgid "No WordPress user was found. Enter an exact username or user ID."
 msgstr ""
 
-#: roles/class-rolesadmin.php:616
-msgid ""
-"Preview saved rules using currently stored active SOL assignments. Unsaved "
-"edits are not included. This does not sign the user in, refresh SOL data, or "
-"change their roles."
+#: src/roles/class-rolesadmin.php:653
+msgid "Preview saved rules using currently stored active SOL assignments. Unsaved edits are not included. This does not sign the user in, refresh SOL data, or change their roles."
 msgstr ""
 
-#: roles/class-rolesadmin.php:619
+#: src/roles/class-rolesadmin.php:656
 msgid "Username or user ID"
 msgstr ""
 
-#: roles/class-rolesadmin.php:622
+#: src/roles/class-rolesadmin.php:659
 msgid "Test User"
 msgstr ""
 
-#: roles/class-rolesadmin.php:642
-msgid ""
-"No matching rules: remove obsolete plugin-granted roles without adding a "
-"role for this existing user."
+#: src/roles/class-rolesadmin.php:679
+msgid "No matching rules: remove obsolete plugin-granted roles without adding a role for this existing user."
 msgstr ""
 
-#: roles/class-rolesadmin.php:649
+#: src/roles/class-rolesadmin.php:686
 msgid "Matching rules"
 msgstr ""
 
-#: roles/class-rolesadmin.php:660 roles/class-rolesadmin.php:665
+#: src/roles/class-rolesadmin.php:697
+#: src/roles/class-rolesadmin.php:702
 msgid "Active SOL assignments"
 msgstr ""
 
-#: roles/class-rolesadmin.php:661
+#: src/roles/class-rolesadmin.php:698
 msgid "No stored active SOL assignments."
 msgstr ""
 
-#: roles/class-rolesadmin.php:878
+#. translators: 1: condition label, 2: inclusion/exclusion operator, 3: selected values.
+#: src/roles/class-rolesadmin.php:938
 #, php-format
 msgid "%1$s: %2$s [%3$s]"
 msgstr ""
 
-#: roles/class-rolesadmin.php:885
+#. translators: 1: organisation name, 2: organisation ID.
+#: src/roles/class-rolesadmin.php:945
 #, php-format
 msgid "Organisation is %1$s (%2$s)"
 msgstr ""
 
-#: roles/class-rolesadmin.php:890
+#. translators: 1: organisation unit name, 2: organisation unit ID.
+#: src/roles/class-rolesadmin.php:950
 #, php-format
 msgid "Unit is %1$s (%2$d)"
 msgstr ""
 
-#: roles/class-rolesadmin.php:895
+#. translators: 1: SOL role name, 2: SOL role ID.
+#: src/roles/class-rolesadmin.php:955
 #, php-format
 msgid "SOL role is %1$s (%2$d)"
 msgstr ""
 
-#: roles/class-rolesadmin.php:910
-msgid ""
-"The role mapping could not be saved. Please try again or check the database."
+#: src/roles/class-rolesadmin.php:970
+msgid "The role mapping could not be saved. Please try again or check the database."
 msgstr ""
 
-#: roles/class-rolesadmin.php:911
+#: src/roles/class-rolesadmin.php:971
 msgid "An identical mapping rule already exists. No duplicate was saved."
 msgstr ""
 
-#: roles/class-rolesadmin.php:912
+#: src/roles/class-rolesadmin.php:972
 msgid "Role mapping saved."
 msgstr ""
 
-#: roles/class-rolesadmin.php:913
+#: src/roles/class-rolesadmin.php:973
 msgid "Role mapping deleted."
 msgstr ""
 
-#: roles/class-rolesadmin.php:914
+#: src/roles/class-rolesadmin.php:974
 msgid "The rule was invalid or referenced data that is no longer synchronized."
 msgstr ""
 
-#: roles/class-rolesexplorer.php:35
+#: src/roles/class-rolesexplorer.php:35
 msgid "You do not have permission to view SOL assignments."
 msgstr ""
 
-#: roles/class-rolesexplorer.php:60
-msgid ""
-"Browse organisations, units and roles, then inspect synchronized user "
-"assignments and their dates."
+#: src/roles/class-rolesexplorer.php:61
+msgid "Expand an organisation to load its child organisations and units. Expand a unit to load its roles. Selecting an organisation includes assignments from its child organisations. Select any item to filter assignments."
 msgstr ""
 
-#: roles/class-rolesexplorer.php:65
-msgid "Select an organisation"
+#: src/roles/class-rolesexplorer.php:64
+msgid "Organisations, units and roles"
 msgstr ""
 
-#: roles/class-rolesexplorer.php:72
-msgid "Choose an organisation first"
+#: src/roles/class-rolesexplorer.php:67
+msgid "Current filter:"
 msgstr ""
 
-#: roles/class-rolesexplorer.php:72 roles/class-rolesexplorer.php:79
-msgid "All"
+#. translators: %s: six-digit Scouts Online organisation ID.
+#: src/roles/class-rolesexplorer.php:71
+#, php-format
+msgid "Organisation %s"
 msgstr ""
 
-#: roles/class-rolesexplorer.php:79
-msgid "Choose an organisation unit first"
+#. translators: %s: Scouts Online organisation unit ID.
+#: src/roles/class-rolesexplorer.php:77
+#, php-format
+msgid " / Unit %s"
 msgstr ""
 
-#: roles/class-rolesexplorer.php:91
+#. translators: %s: Scouts Online role ID.
+#: src/roles/class-rolesexplorer.php:84
+#, php-format
+msgid " / Role %s"
+msgstr ""
+
+#: src/roles/class-rolesexplorer.php:92
+msgid "The organisation tree could not be loaded. Check the database and try again."
+msgstr ""
+
+#: src/roles/class-rolesexplorer.php:94
+msgid "No organisations have been synchronized yet."
+msgstr ""
+
+#: src/roles/class-rolesexplorer.php:96
+msgid "Organisation hierarchy"
+msgstr ""
+
+#: src/roles/class-rolesexplorer.php:105
+msgid "Role assignments"
+msgstr ""
+
+#. translators: %s: number of matching SOL role assignments.
+#: src/roles/class-rolesexplorer.php:110
 #, php-format
 msgid "%s assignment found."
 msgid_plural "%s assignments found."
 msgstr[0] ""
 msgstr[1] ""
 
-#: roles/class-rolesexplorer.php:101
+#: src/roles/class-rolesexplorer.php:120
 msgid "User"
 msgstr ""
 
-#: roles/class-rolesexplorer.php:102
+#: src/roles/class-rolesexplorer.php:121
 msgid "Starts"
 msgstr ""
 
-#: roles/class-rolesexplorer.php:103
+#: src/roles/class-rolesexplorer.php:122
 msgid "Ends"
 msgstr ""
 
-#: roles/class-rolesexplorer.php:108
-msgid "Select an organisation to view role assignments."
+#: src/roles/class-rolesexplorer.php:127
+msgid "Select a parent organisation, organisation, unit or role to view assignments."
 msgstr ""
 
-#: roles/class-rolesexplorer.php:110
-msgid "No role assignments match these filters."
+#: src/roles/class-rolesexplorer.php:129
+msgid "The assignments could not be loaded. Check the database and try again."
 msgstr ""
 
-#: roles/class-rolesexplorer.php:119
+#: src/roles/class-rolesexplorer.php:131
+msgid "No role assignments match this filter."
+msgstr ""
+
+#: src/roles/class-rolesexplorer.php:140
 msgid "No end date"
 msgstr ""
 
-#: settings/class-settings-general.php:32
+#: src/roles/class-rolesexplorer.php:162
+msgid "You do not have permission to browse SOL assignments."
+msgstr ""
+
+#: src/roles/class-rolesexplorer.php:165
+msgid "The SOL roles scope is not enabled."
+msgstr ""
+
+#: src/roles/class-rolesexplorer.php:173
+msgid "The selected tree item could not be loaded. Check the database and try again."
+msgstr ""
+
+#. translators: %s: organisation name.
+#: src/roles/class-rolesexplorer.php:383
+#, php-format
+msgid "Expand %s"
+msgstr ""
+
+#: src/roles/class-rolesexplorer.php:387
+msgid "Organisation: "
+msgstr ""
+
+#: src/settings/class-settings-general.php:32
 msgid "General Settings"
 msgstr ""
 
-#: settings/class-settings-general.php:40
+#: src/settings/class-settings-general.php:40
 msgid "Set display name"
 msgstr ""
 
-#: settings/class-settings-general.php:49
+#: src/settings/class-settings-general.php:49
 msgid "Store birthdate to local profile"
 msgstr ""
 
-#: settings/class-settings-general.php:58
+#: src/settings/class-settings-general.php:58
 msgid "Store gender to local profile"
 msgstr ""
 
-#: settings/class-settings-general.php:67
+#: src/settings/class-settings-general.php:67
 msgid "Store phone number to local profile"
 msgstr ""
 
-#: settings/class-settings-general.php:76
+#: src/settings/class-settings-general.php:76
 msgid "Store address to local profile"
 msgstr ""
 
-#: settings/class-settings-general.php:86
+#: src/settings/class-settings-general.php:86
 msgid "Use WooCommerce phone number and address fields"
 msgstr ""
 
-#: settings/class-settings-general.php:99
+#: src/settings/class-settings-general.php:99
 msgid "Allow new user accounts"
 msgstr ""
 
-#: settings/class-settings-general.php:108
+#: src/settings/class-settings-general.php:108
 msgid "Default role alongside mapped roles"
 msgstr ""
 
-#: settings/class-settings-general.php:127
+#: src/settings/class-settings-general.php:127
 msgid "When an email already exists"
 msgstr ""
 
-#: settings/class-settings-general.php:136
+#: src/settings/class-settings-general.php:136
 msgid "Redirect only SOL users"
 msgstr ""
 
-#: settings/class-settings-general.php:145
+#: src/settings/class-settings-general.php:145
 msgid "After a successful login redirect user to"
 msgstr ""
 
-#: settings/class-settings-general.php:154
+#: src/settings/class-settings-general.php:154
 msgid "Url to custom redirect after a successful login"
 msgstr ""
 
-#: settings/class-settings-general.php:166
+#: src/settings/class-settings-general.php:166
 msgid "Enable debug logs"
 msgstr ""
 
-#: settings/class-settings-general.php:175
+#: src/settings/class-settings-general.php:175
 msgid "Log retention (days)"
 msgstr ""
 
-#: settings/class-settings-general.php:394
+#: src/settings/class-settings-general.php:394
 msgid "Also assign the WordPress default role when a mapping grants roles"
 msgstr ""
 
-#: settings/class-settings-general.php:396
-msgid ""
-"Disabled by default. Applies to new and existing users at successful OIDC "
-"login. Unmatched new users always receive the default role; unmatched "
-"existing users receive no replacement role. Manual roles are preserved. Set "
-"the default role under Settings > General."
+#: src/settings/class-settings-general.php:396
+msgid "Disabled by default. Applies to new and existing users at successful OIDC login. Unmatched new users always receive the default role; unmatched existing users receive no replacement role. Manual roles are preserved. Set the default role under Settings > General."
 msgstr ""
 
-#: settings/class-settings-general.php:505
+#: src/settings/class-settings-general.php:505
 msgid "Full name"
 msgstr ""
 
-#: settings/class-settings-general.php:506
+#: src/settings/class-settings-general.php:506
 msgid "First name"
 msgstr ""
 
-#: settings/class-settings-general.php:507
+#: src/settings/class-settings-general.php:507
 msgid "Last name"
 msgstr ""
 
-#: settings/class-settings-general.php:607
+#: src/settings/class-settings-general.php:607
 msgid "Add plus addressing to email"
 msgstr ""
 
-#: settings/class-settings-general.php:608
+#: src/settings/class-settings-general.php:608
 msgid "Stop creation of user with an error"
 msgstr ""
 
-#: settings/class-settings-general.php:621
-msgid ""
-"When a user tries to log in with an email that already exists in the system, "
-"this setting determines how to handle it. The default option is to add plus "
-"addressing."
+#: src/settings/class-settings-general.php:621
+msgid "When a user tries to log in with an email that already exists in the system, this setting determines how to handle it. The default option is to add plus addressing."
 msgstr ""
 
-#: settings/class-settings-general.php:644
+#: src/settings/class-settings-general.php:644
 msgid "Default (no action)"
 msgstr ""
 
-#: settings/class-settings-general.php:645
+#: src/settings/class-settings-general.php:645
 msgid "Frontpage"
 msgstr ""
 
-#: settings/class-settings-general.php:646
+#: src/settings/class-settings-general.php:646
 msgid "Dashboard"
 msgstr ""
 
-#: settings/class-settings-general.php:647
+#: src/settings/class-settings-general.php:647
 msgid "Custom URL"
 msgstr ""
 
-#: settings/class-settings-general.php:679
+#: src/settings/class-settings-general.php:679
 msgid "custom-page"
 msgstr ""
 
-#: settings/class-settings-general.php:680
-msgid ""
-"Enter the slug to append to the base URL where users should be redirected "
-"after login."
+#: src/settings/class-settings-general.php:680
+msgid "Enter the slug to append to the base URL where users should be redirected after login."
 msgstr ""
 
-#: settings/class-settings-general.php:695
-msgid ""
-"Logs may contain personal data such as user IDs and SOL IDs. Set how many "
-"days logs are retained before daily cleanup removes older entries."
+#: src/settings/class-settings-general.php:695
+msgid "Logs may contain personal data such as user IDs and SOL IDs. Set how many days logs are retained before daily cleanup removes older entries."
 msgstr ""
 
-#: settings/class-settings-general.php:710
-msgid ""
-"Debug logs are stored in the plugin logs table only when enabled. If "
-"WP_DEBUG is enabled, plugin logs are also mirrored to the WordPress/PHP "
-"error log."
+#: src/settings/class-settings-general.php:710
+msgid "Debug logs are stored in the plugin logs table only when enabled. If WP_DEBUG is enabled, plugin logs are also mirrored to the WordPress/PHP error log."
 msgstr ""
 
-#: settings/class-settings-oidc.php:32
+#: src/settings/class-settings-oidc.php:32
 msgid "OpenID Connect Settings"
 msgstr ""
 
-#: settings/class-settings-oidc.php:40 settings/class-settings-oidc.php:106
-#: support/class-sitehealth.php:176 support/class-sitehealth.php:505
+#: src/settings/class-settings-oidc.php:40
+#: src/settings/class-settings-oidc.php:106
+#: src/support/class-sitehealth.php:176
+#: src/support/class-sitehealth.php:506
 msgid "Client ID"
 msgstr ""
 
-#: settings/class-settings-oidc.php:49 support/class-sitehealth.php:180
-#: support/class-sitehealth.php:511
+#: src/settings/class-settings-oidc.php:49
+#: src/support/class-sitehealth.php:180
+#: src/support/class-sitehealth.php:512
 msgid "Client Secret"
 msgstr ""
 
-#: settings/class-settings-oidc.php:58 settings/class-settings-oidc.php:137
+#: src/settings/class-settings-oidc.php:58
+#: src/settings/class-settings-oidc.php:138
 msgid "Scopes"
 msgstr ""
 
-#: settings/class-settings-oidc.php:118
+#: src/settings/class-settings-oidc.php:118
 msgid "Show"
 msgstr ""
 
-#: settings/class-settings-oidc.php:119
+#: src/settings/class-settings-oidc.php:119
 msgid "Hide"
 msgstr ""
 
-#: settings/class-settings-oidc.php:121
+#: src/settings/class-settings-oidc.php:121
 msgid "Enter new client secret"
 msgstr ""
 
-#: settings/class-settings-oidc.php:124
-msgid ""
-"A client secret is already stored. Leave this field empty to keep the "
-"current secret. For security reasons, the stored value cannot be shown here."
+#: src/settings/class-settings-oidc.php:124
+msgid "A client secret is already stored. Leave this field empty to keep the current secret. For security reasons, the stored value cannot be shown here."
 msgstr ""
 
-#: settings/class-settings-oidc.php:126
+#: src/settings/class-settings-oidc.php:126
 msgid "No client secret stored yet."
 msgstr ""
 
-#: settings/class-settings-oidc.php:158
+#: src/settings/class-settings-oidc.php:139
+msgid "Every scope requested here must also be enabled for this website under Managed websites at login.scouting.nl. Required: openid, membership, profile, email. Optional: address, phone, roles. The plugin cannot check which scopes are enabled for your connection there."
+msgstr ""
+
+#: src/settings/class-settings-oidc.php:140
+msgid "To use SOL roles, enable the roles scope for this website in Scouts Online as well as in this plugin."
+msgstr ""
+
+#: src/settings/class-settings-oidc.php:140
+msgid "Manage website scopes in Scouts Online"
+msgstr ""
+
+#: src/settings/class-settings-oidc.php:140
+#: src/support/class-support.php:51
+msgid "Read the plugin documentation"
+msgstr ""
+
+#: src/settings/class-settings-oidc.php:161
 msgid "Client secret is required."
 msgstr ""
 
-#: settings/class-settings-oidc.php:193
-msgid ""
-"Scopes should be separated by spaces. Commas and semicolons were converted "
-"automatically."
+#: src/settings/class-settings-oidc.php:196
+msgid "Scopes should be separated by spaces. Commas and semicolons were converted automatically."
 msgstr ""
 
-#: settings/class-settings-oidc.php:212
+#: src/settings/class-settings-oidc.php:215
 msgid "Unsupported scopes were removed:"
 msgstr ""
 
-#: settings/class-settings-oidc.php:212
+#: src/settings/class-settings-oidc.php:215
 msgid "Supported scopes are:"
 msgstr ""
 
-#: settings/class-settings.php:56
+#: src/settings/class-settings.php:56
 msgid "Need help with setting up?"
 msgstr ""
 
-#: settings/class-settings.php:57
+#: src/settings/class-settings.php:57
 msgid "Go to the support page"
 msgstr ""
 
-#: shortcode/class-shortcode.php:48
+#: src/shortcode/class-shortcode.php:48
 msgid "Shortcode"
 msgstr ""
 
-#: shortcode/class-shortcode.php:51
-msgid ""
-"Shortcodes are small pieces of code that allow you to easily add dynamic "
-"content to your WordPress site, enabling you to embed files or create "
-"objects with just one line of code."
+#: src/shortcode/class-shortcode.php:51
+msgid "Shortcodes are small pieces of code that allow you to easily add dynamic content to your WordPress site, enabling you to embed files or create objects with just one line of code."
 msgstr ""
 
-#: shortcode/class-shortcode.php:53
-msgid ""
-"They can be used for various purposes, such as adding galleries, embedding "
-"videos, or displaying specific content types."
+#: src/shortcode/class-shortcode.php:53
+msgid "They can be used for various purposes, such as adding galleries, embedding videos, or displaying specific content types."
 msgstr ""
 
-#: shortcode/class-shortcode.php:55
-msgid ""
-"To use a shortcode, simply insert it into the content area of your post or "
-"page, and WordPress will parse it, replacing it with the corresponding "
-"content when viewed."
+#: src/shortcode/class-shortcode.php:55
+msgid "To use a shortcode, simply insert it into the content area of your post or page, and WordPress will parse it, replacing it with the corresponding content when viewed."
 msgstr ""
 
-#: shortcode/class-shortcode.php:57
-msgid ""
-"For more information on how to use shortcodes and their benefits, visit the "
-"following link: "
+#: src/shortcode/class-shortcode.php:57
+msgid "For more information on how to use shortcodes and their benefits, visit the following link: "
 msgstr ""
 
-#: shortcode/class-shortcode.php:58
+#: src/shortcode/class-shortcode.php:58
 msgid "WordPress Shortcode Block Support"
 msgstr ""
 
-#: shortcode/class-shortcode.php:61
+#: src/shortcode/class-shortcode.php:61
 msgid "Shortcodes for OpenID Connect"
 msgstr ""
 
-#: shortcode/class-shortcode.php:63
+#: src/shortcode/class-shortcode.php:63
 msgid "OpenID Connect Button"
 msgstr ""
 
-#: shortcode/class-shortcode.php:66
+#: src/shortcode/class-shortcode.php:66
 msgid "Button Example"
 msgstr ""
 
-#: shortcode/class-shortcode.php:68
-msgid ""
-"The OpenID Connect button shortcode allows you to add a button to your "
-"WordPress site that users can click to log in using their Scouts Online "
-"account."
+#: src/shortcode/class-shortcode.php:68
+msgid "The OpenID Connect button shortcode allows you to add a button to your WordPress site that users can click to log in using their Scouts Online account."
 msgstr ""
 
-#: shortcode/class-shortcode.php:70
-msgid ""
-"To add the OpenID Connect button to your site, use the following shortcode:"
+#: src/shortcode/class-shortcode.php:70
+msgid "To add the OpenID Connect button to your site, use the following shortcode:"
 msgstr ""
 
-#: shortcode/class-shortcode.php:73
-msgid ""
-"You can customize the appearance of the button by adding attributes to the "
-"shortcode. The following attributes are available:"
+#: src/shortcode/class-shortcode.php:73
+msgid "You can customize the appearance of the button by adding attributes to the shortcode. The following attributes are available:"
 msgstr ""
 
-#: shortcode/class-shortcode.php:75
+#: src/shortcode/class-shortcode.php:75
 msgid "The width of the button in pixels."
 msgstr ""
 
-#: shortcode/class-shortcode.php:76
+#: src/shortcode/class-shortcode.php:76
 msgid "The height of the button in pixels."
 msgstr ""
 
-#: shortcode/class-shortcode.php:77
+#: src/shortcode/class-shortcode.php:77
 msgid "The background color of the button."
 msgstr ""
 
-#: shortcode/class-shortcode.php:78
+#: src/shortcode/class-shortcode.php:78
 msgid "The text color of the button."
 msgstr ""
 
-#: shortcode/class-shortcode.php:79
+#: src/shortcode/class-shortcode.php:79
 msgid "Set to true to hide the logo."
 msgstr ""
 
-#: shortcode/class-shortcode.php:80
-msgid ""
-"Set to true to return the user to the page with the button after login. This "
-"overrides login redirection settings."
+#: src/shortcode/class-shortcode.php:80
+msgid "Set to true to return the user to the page with the button after login. This overrides login redirection settings."
 msgstr ""
 
-#: shortcode/class-shortcode.php:84
+#: src/shortcode/class-shortcode.php:84
 msgid "Live Shortcode Editor"
 msgstr ""
 
-#: shortcode/class-shortcode.php:88
-msgid ""
-"Default is 250px, minimum is 120px. If the width is smaller than 225px, the "
-"logo will be removed."
+#: src/shortcode/class-shortcode.php:88
+msgid "Default is 250px, minimum is 120px. If the width is smaller than 225px, the logo will be removed."
 msgstr ""
 
-#: shortcode/class-shortcode.php:92
+#: src/shortcode/class-shortcode.php:92
 msgid "Default is 40px, minimum is 40px."
 msgstr ""
 
-#: shortcode/class-shortcode.php:96
+#: src/shortcode/class-shortcode.php:96
 msgid "The default color is #4caf50."
 msgstr ""
 
-#: shortcode/class-shortcode.php:100
+#: src/shortcode/class-shortcode.php:100
 msgid "The default color is #ffffff."
 msgstr ""
 
-#: shortcode/class-shortcode.php:104
+#: src/shortcode/class-shortcode.php:104
 msgid "Check this box to hide the logo on the button."
 msgstr ""
 
-#: shortcode/class-shortcode.php:108
-msgid ""
-"Check this box to add redirect_back=\"true\" to the generated shortcodes."
+#: src/shortcode/class-shortcode.php:108
+msgid "Check this box to add redirect_back=\"true\" to the generated shortcodes."
 msgstr ""
 
-#: shortcode/class-shortcode.php:112
-msgid ""
-"For demo purposes only: check this box to preview the logout button text."
+#: src/shortcode/class-shortcode.php:112
+msgid "For demo purposes only: check this box to preview the logout button text."
 msgstr ""
 
-#: shortcode/class-shortcode.php:118
+#: src/shortcode/class-shortcode.php:118
 msgid "Generated shortcode (default attributes shown below until edited):"
 msgstr ""
 
-#: shortcode/class-shortcode.php:120
+#: src/shortcode/class-shortcode.php:120
 msgid "Example of the shortcode above:"
 msgstr ""
 
-#: shortcode/class-shortcode.php:124
+#: src/shortcode/class-shortcode.php:124
 msgid "Note: The button is not interactive in this preview."
 msgstr ""
 
-#: shortcode/class-shortcode.php:129
+#: src/shortcode/class-shortcode.php:129
 msgid "OpenID Connect Link"
 msgstr ""
 
-#: shortcode/class-shortcode.php:131
-msgid ""
-"The OpenID Connect link shortcode allows you to add a text link to your "
-"WordPress site that users can click to log in using their Scouts Online "
-"account."
+#: src/shortcode/class-shortcode.php:131
+msgid "The OpenID Connect link shortcode allows you to add a text link to your WordPress site that users can click to log in using their Scouts Online account."
 msgstr ""
 
-#: shortcode/class-shortcode.php:133
-msgid ""
-"To add the OpenID Connect link to your site, use the following shortcode:"
+#: src/shortcode/class-shortcode.php:133
+msgid "To add the OpenID Connect link to your site, use the following shortcode:"
 msgstr ""
 
-#: shortcode/class-shortcode.php:136
-msgid ""
-"You cannot customize the appearance of the link, but you can add "
-"redirect_back=\"true\" to return the user to the current page after login."
+#: src/shortcode/class-shortcode.php:136
+msgid "You cannot customize the appearance of the link, but you can add redirect_back=\"true\" to return the user to the current page after login."
 msgstr ""
 
-#: shortcode/class-shortcode.php:137
+#: src/shortcode/class-shortcode.php:137
 msgid "Example of the link shortcode:"
 msgstr ""
 
-#: shortcode/class-shortcode.php:138
-msgid ""
-"Note: Do not copy this link, it will not work. This is just an example of "
-"how the link will look like."
+#: src/shortcode/class-shortcode.php:138
+msgid "Note: Do not copy this link, it will not work. This is just an example of how the link will look like."
 msgstr ""
 
-#: support/class-providerhealth.php:87
+#: src/support/class-providerhealth.php:87
 msgid "The Scouts Online OpenID Connect provider could not be reached"
 msgstr ""
 
-#: support/class-providerhealth.php:91
+#. translators: %s: Error message returned while requesting provider discovery.
+#: src/support/class-providerhealth.php:91
 #, php-format
 msgid "Provider discovery failed: %s"
 msgstr ""
 
-#: support/class-providerhealth.php:97
+#: src/support/class-providerhealth.php:97
 msgid "The Scouts Online provider returned an unexpected response"
 msgstr ""
 
-#: support/class-providerhealth.php:101
+#. translators: %d: HTTP status code returned by provider discovery.
+#: src/support/class-providerhealth.php:101
 #, php-format
 msgid "Provider discovery returned HTTP status %d instead of 200."
 msgstr ""
 
-#: support/class-providerhealth.php:110
+#: src/support/class-providerhealth.php:110
 msgid "The Scouts Online provider returned invalid discovery data"
 msgstr ""
 
-#: support/class-providerhealth.php:112
+#: src/support/class-providerhealth.php:112
 msgid "The provider response was not a valid JSON object."
 msgstr ""
 
-#: support/class-providerhealth.php:141
+#: src/support/class-providerhealth.php:141
 msgid "The provider does not advertise a logout endpoint"
 msgstr ""
 
-#: support/class-providerhealth.php:143
-msgid ""
-"Login is available, but provider logout will fall back to the site home page."
+#: src/support/class-providerhealth.php:143
+msgid "Login is available, but provider logout will fall back to the site home page."
 msgstr ""
 
-#: support/class-providerhealth.php:167
+#: src/support/class-providerhealth.php:167
 msgid "The provider discovery issuer does not match"
 msgstr ""
 
-#: support/class-providerhealth.php:169
-msgid ""
-"The discovered issuer does not match the issuer expected by Scouting OpenID "
-"Connect."
+#: src/support/class-providerhealth.php:169
+msgid "The discovered issuer does not match the issuer expected by Scouting OpenID Connect."
 msgstr ""
 
-#: support/class-providerhealth.php:202
+#: src/support/class-providerhealth.php:202
 msgid "The provider discovery data is incomplete"
 msgstr ""
 
-#: support/class-providerhealth.php:206
+#. translators: %s: Comma-separated list of missing or invalid provider endpoints.
+#: src/support/class-providerhealth.php:206
 #, php-format
 msgid "These required endpoints are missing or invalid: %s."
 msgstr ""
 
-#: support/class-providerhealth.php:223
+#: src/support/class-providerhealth.php:223
 msgid "The provider does not advertise the required PKCE method"
 msgstr ""
 
-#: support/class-providerhealth.php:225
+#: src/support/class-providerhealth.php:225
 msgid "Scouting OpenID Connect requires the S256 code challenge method."
 msgstr ""
 
-#: support/class-providerhealth.php:248
+#: src/support/class-providerhealth.php:248
 msgid "The provider is missing required OpenID Connect capabilities"
 msgstr ""
 
-#: support/class-providerhealth.php:252
+#. translators: %s: Comma-separated list of missing OpenID Connect capabilities.
+#: src/support/class-providerhealth.php:252
 #, php-format
 msgid "These capabilities are not advertised: %s."
 msgstr ""
 
-#: support/class-providerhealth.php:277
+#: src/support/class-providerhealth.php:277
 msgid "Configured scopes are not advertised by the provider"
 msgstr ""
 
-#: support/class-providerhealth.php:281
+#. translators: %s: Comma-separated list of scopes not advertised by the provider.
+#: src/support/class-providerhealth.php:281
 #, php-format
 msgid "Review these scopes: %s."
 msgstr ""
 
-#: support/class-providerhealth.php:322
+#: src/support/class-providerhealth.php:322
 msgid "The provider signing keys could not be reached"
 msgstr ""
 
-#: support/class-providerhealth.php:326
+#. translators: %s: Error message returned while requesting provider signing keys.
+#: src/support/class-providerhealth.php:326
 #, php-format
 msgid "Signing-key retrieval failed: %s"
 msgstr ""
 
-#: support/class-providerhealth.php:332
+#: src/support/class-providerhealth.php:332
 msgid "The provider signing keys returned an unexpected response"
 msgstr ""
 
-#: support/class-providerhealth.php:336
+#. translators: %d: HTTP status code returned by the signing-key endpoint.
+#: src/support/class-providerhealth.php:336
 #, php-format
 msgid "Signing-key retrieval returned HTTP status %d instead of 200."
 msgstr ""
 
-#: support/class-providerhealth.php:345
+#: src/support/class-providerhealth.php:345
 msgid "The Scouts Online OpenID Connect provider is available"
 msgstr ""
 
-#: support/class-providerhealth.php:347
-msgid ""
-"Discovery, required protocol capabilities, endpoints, and signing keys are "
-"available."
+#: src/support/class-providerhealth.php:347
+msgid "Discovery, required protocol capabilities, endpoints, and signing keys are available."
 msgstr ""
 
-#: support/class-providerhealth.php:350
+#: src/support/class-providerhealth.php:350
 msgid "The provider signing-key set is empty or invalid"
 msgstr ""
 
-#: support/class-providerhealth.php:352
-msgid ""
-"The provider did not return an RSA/RS256 signing key with the certificate "
-"chain required to validate ID tokens."
+#: src/support/class-providerhealth.php:352
+msgid "The provider did not return an RSA/RS256 signing key with the certificate chain required to validate ID tokens."
 msgstr ""
 
-#: support/class-providerhealth.php:421 support/class-sitehealth.php:492
-#: support/class-sitehealth.php:595
-msgid "Scouting OpenID Connect"
-msgstr ""
-
-#: support/class-providerhealth.php:441 support/class-sitehealth.php:615
+#: src/support/class-providerhealth.php:441
+#: src/support/class-sitehealth.php:616
 msgid "Review Scouting OpenID Connect settings"
 msgstr ""
 
-#: support/class-sitehealth.php:89
+#: src/support/class-sitehealth.php:89
 msgid "Scouting OpenID Connect runtime"
 msgstr ""
 
-#: support/class-sitehealth.php:93
+#: src/support/class-sitehealth.php:93
 msgid "Scouting OpenID Connect configuration"
 msgstr ""
 
-#: support/class-sitehealth.php:97
+#: src/support/class-sitehealth.php:97
 msgid "Scouting OpenID Connect scopes"
 msgstr ""
 
-#: support/class-sitehealth.php:101
+#: src/support/class-sitehealth.php:101
 msgid "Scouting OpenID Connect provider"
 msgstr ""
 
-#: support/class-sitehealth.php:107
+#: src/support/class-sitehealth.php:107
 msgid "Scouting OpenID Connect login redirect"
 msgstr ""
 
-#: support/class-sitehealth.php:111
+#: src/support/class-sitehealth.php:111
 msgid "Scouting OpenID Connect log storage"
 msgstr ""
 
-#: support/class-sitehealth.php:115
+#: src/support/class-sitehealth.php:115
 msgid "Scouting OpenID Connect log cleanup"
 msgstr ""
 
-#: support/class-sitehealth.php:138
+#: src/support/class-sitehealth.php:138
 msgid "The server is missing functions required for Scouts Online login"
 msgstr ""
 
-#: support/class-sitehealth.php:142
+#. translators: %s: Comma-separated list of missing PHP functions.
+#: src/support/class-sitehealth.php:142
 #, php-format
-msgid ""
-"Ask the hosting provider to enable the PHP functions or extensions that "
-"provide: %s."
+msgid "Ask the hosting provider to enable the PHP functions or extensions that provide: %s."
 msgstr ""
 
-#: support/class-sitehealth.php:151
+#: src/support/class-sitehealth.php:151
 msgid "Scouting OpenID Connect requires the site to use HTTPS"
 msgstr ""
 
-#: support/class-sitehealth.php:153
-msgid ""
-"The login flow needs HTTPS to create its secure session cookie. Update both "
-"WordPress URLs to use HTTPS."
+#: src/support/class-sitehealth.php:153
+msgid "The login flow needs HTTPS to create its secure session cookie. Update both WordPress URLs to use HTTPS."
 msgstr ""
 
-#: support/class-sitehealth.php:159
+#: src/support/class-sitehealth.php:159
 msgid "The server meets the Scouting OpenID Connect runtime requirements"
 msgstr ""
 
-#: support/class-sitehealth.php:161
-msgid ""
-"HTTPS and the PHP functions required for sessions and ID token validation "
-"are available."
+#: src/support/class-sitehealth.php:161
+msgid "HTTPS and the PHP functions required for sessions and ID token validation are available."
 msgstr ""
 
-#: support/class-sitehealth.php:186
+#: src/support/class-sitehealth.php:186
 msgid "Scouting OpenID Connect is not fully configured"
 msgstr ""
 
-#: support/class-sitehealth.php:190
+#. translators: %s: Comma-separated list of missing configuration values.
+#: src/support/class-sitehealth.php:190
 #, php-format
-msgid ""
-"Add the following value(s) before users can log in with Scouts Online: %s."
+msgid "Add the following value(s) before users can log in with Scouts Online: %s."
 msgstr ""
 
-#: support/class-sitehealth.php:199
+#: src/support/class-sitehealth.php:199
 msgid "Scouting OpenID Connect credentials are configured"
 msgstr ""
 
-#: support/class-sitehealth.php:201
-msgid ""
-"A Client ID and Client Secret are stored. Site Health never displays the "
-"Client Secret."
+#: src/support/class-sitehealth.php:201
+msgid "A Client ID and Client Secret are stored. Site Health never displays the Client Secret."
 msgstr ""
 
-#: support/class-sitehealth.php:219
+#: src/support/class-sitehealth.php:220
 msgid "Required OpenID Connect scopes are missing"
 msgstr ""
 
-#: support/class-sitehealth.php:223
+#. translators: %s: Comma-separated list of missing OpenID Connect scopes.
+#: src/support/class-sitehealth.php:224
 #, php-format
-msgid ""
-"Add these required scopes to the plugin and the connection in Scouts Online: "
-"%s."
+msgid "Add these required scopes to the plugin and the connection in Scouts Online: %s."
 msgstr ""
 
-#: support/class-sitehealth.php:232
+#: src/support/class-sitehealth.php:233
 msgid "Phone storage is enabled without the phone scope."
 msgstr ""
 
-#: support/class-sitehealth.php:235
+#: src/support/class-sitehealth.php:236
 msgid "Address storage is enabled without the address scope."
 msgstr ""
 
-#: support/class-sitehealth.php:238
-msgid ""
-"WooCommerce synchronization is enabled while WooCommerce is not available."
+#: src/support/class-sitehealth.php:239
+msgid "WooCommerce synchronization is enabled while WooCommerce is not available."
 msgstr ""
 
-#: support/class-sitehealth.php:244
+#: src/support/class-sitehealth.php:245
 msgid "Enabled profile features do not match the configured scopes"
 msgstr ""
 
-#: support/class-sitehealth.php:253
+#: src/support/class-sitehealth.php:254
 msgid "OpenID Connect scopes match the enabled features"
 msgstr ""
 
-#: support/class-sitehealth.php:257
+#. translators: %s: Space-separated list of configured OpenID Connect scopes.
+#: src/support/class-sitehealth.php:258
 #, php-format
 msgid "All required scopes are configured. Current scopes: %s."
 msgstr ""
 
-#: support/class-sitehealth.php:277
+#: src/support/class-sitehealth.php:260
+msgid "This check only verifies the WordPress configuration. Make sure every requested scope is also enabled for this website under Managed websites at login.scouting.nl; provider discovery does not confirm your connection’s permissions."
+msgstr ""
+
+#: src/support/class-sitehealth.php:278
 msgid "The login redirect mode is invalid"
 msgstr ""
 
-#: support/class-sitehealth.php:281
+#. translators: %s: Stored post-login redirect mode.
+#: src/support/class-sitehealth.php:282
 #, php-format
 msgid "The stored redirect mode \"%s\" is not recognized."
 msgstr ""
 
-#: support/class-sitehealth.php:292
+#: src/support/class-sitehealth.php:293
 msgid "The custom login redirect is not configured correctly"
 msgstr ""
 
-#: support/class-sitehealth.php:294
+#: src/support/class-sitehealth.php:295
 msgid "Choose a valid page on this site or select another login redirect mode."
 msgstr ""
 
-#: support/class-sitehealth.php:301
+#: src/support/class-sitehealth.php:302
 msgid "The login redirect is configured"
 msgstr ""
 
-#: support/class-sitehealth.php:305
+#. translators: %s: Current post-login redirect mode.
+#: src/support/class-sitehealth.php:306
 #, php-format
 msgid "The current post-login redirect mode is %s."
 msgstr ""
 
-#: support/class-sitehealth.php:322
+#: src/support/class-sitehealth.php:323
 msgid "The Scouting OpenID Connect log table is missing"
 msgstr ""
 
-#: support/class-sitehealth.php:324
+#: src/support/class-sitehealth.php:325
 msgid "Deactivate and reactivate the plugin to recreate its log storage."
 msgstr ""
 
-#: support/class-sitehealth.php:336
+#. translators: %s: Comma-separated list of missing database column names.
+#: src/support/class-sitehealth.php:337
 #, php-format
 msgid "Missing database columns: %s."
 msgstr ""
 
-#: support/class-sitehealth.php:343
+#. translators: 1: Installed log schema version. 2: Expected log schema version.
+#: src/support/class-sitehealth.php:344
 #, php-format
 msgid "Installed schema version is %1$s; expected %2$s."
 msgstr ""
 
-#: support/class-sitehealth.php:344
+#: src/support/class-sitehealth.php:345
 msgid "not recorded"
 msgstr ""
 
-#: support/class-sitehealth.php:352
+#: src/support/class-sitehealth.php:353
 msgid "The Scouting OpenID Connect log storage needs attention"
 msgstr ""
 
-#: support/class-sitehealth.php:360
+#: src/support/class-sitehealth.php:361
 msgid "The Scouting OpenID Connect log storage is ready"
 msgstr ""
 
-#: support/class-sitehealth.php:362
+#: src/support/class-sitehealth.php:363
 msgid "The log table exists with the expected schema and columns."
 msgstr ""
 
-#: support/class-sitehealth.php:385
+#: src/support/class-sitehealth.php:386
 msgid "Run log cleanup now"
 msgstr ""
 
-#: support/class-sitehealth.php:392
+#: src/support/class-sitehealth.php:393
 msgid "Scouting OpenID Connect log cleanup is not scheduled"
 msgstr ""
 
-#: support/class-sitehealth.php:394
-msgid ""
-"The plugin could not find its daily cleanup event. Run cleanup now to "
-"recreate the schedule."
+#: src/support/class-sitehealth.php:395
+msgid "The plugin could not find its daily cleanup event. Run cleanup now to recreate the schedule."
 msgstr ""
 
-#: support/class-sitehealth.php:402
+#: src/support/class-sitehealth.php:403
 msgid "The cleanup event is not using the daily schedule."
 msgstr ""
 
-#: support/class-sitehealth.php:409
+#. translators: %s: Date and time of the overdue log cleanup event.
+#: src/support/class-sitehealth.php:410
 #, php-format
-msgid ""
-"Automatic WP-Cron spawning is disabled, and the external cron runner has not "
-"processed the cleanup scheduled for %s."
+msgid "Automatic WP-Cron spawning is disabled, and the external cron runner has not processed the cleanup scheduled for %s."
 msgstr ""
 
-#: support/class-sitehealth.php:415
+#. translators: %s: Date and time of the overdue log cleanup event.
+#: src/support/class-sitehealth.php:416
 #, php-format
-msgid ""
-"WordPress has not dispatched the cleanup scheduled for %s. Check the core "
-"scheduled-events and loopback-request Site Health tests."
+msgid "WordPress has not dispatched the cleanup scheduled for %s. Check the core scheduled-events and loopback-request Site Health tests."
 msgstr ""
 
-#: support/class-sitehealth.php:424
+#: src/support/class-sitehealth.php:425
 msgid "Scouting OpenID Connect log cleanup needs attention"
 msgstr ""
 
-#: support/class-sitehealth.php:433
+#: src/support/class-sitehealth.php:434
 msgid "Scouting OpenID Connect log cleanup is scheduled"
 msgstr ""
 
-#: support/class-sitehealth.php:437
+#. translators: 1: Date and time of the next log cleanup. 2: Number of days logs are retained.
+#: src/support/class-sitehealth.php:438
 #, php-format
-msgid ""
-"The next cleanup is scheduled for %1$s and will retain %2$d days of logs."
+msgid "The next cleanup is scheduled for %1$s and will retain %2$d days of logs."
 msgstr ""
 
-#: support/class-sitehealth.php:471 user/class-fields.php:344
+#: src/support/class-sitehealth.php:472
+#: src/user/class-fields.php:345
 msgid "Birthdate"
 msgstr ""
 
-#: support/class-sitehealth.php:472 user/class-fields.php:366
+#: src/support/class-sitehealth.php:473
+#: src/user/class-fields.php:368
 msgid "Gender"
 msgstr ""
 
-#: support/class-sitehealth.php:473
+#: src/support/class-sitehealth.php:474
 msgid "Phone"
 msgstr ""
 
-#: support/class-sitehealth.php:474
+#: src/support/class-sitehealth.php:475
 msgid "Address"
 msgstr ""
 
-#: support/class-sitehealth.php:484
+#: src/support/class-sitehealth.php:485
 msgid "Not scheduled"
 msgstr ""
 
-#: support/class-sitehealth.php:488
+#: src/support/class-sitehealth.php:489
 msgid "Never recorded"
 msgstr ""
 
-#: support/class-sitehealth.php:493
-msgid ""
-"Configuration and operational details. Client secrets and personal user "
-"claims are never included."
+#: src/support/class-sitehealth.php:494
+msgid "Configuration and operational details. Client secrets and personal user claims are never included."
 msgstr ""
 
-#: support/class-sitehealth.php:496
+#: src/support/class-sitehealth.php:497
 msgid "Plugin version"
 msgstr ""
 
-#: support/class-sitehealth.php:497
+#: src/support/class-sitehealth.php:498
 msgid "Issuer"
 msgstr ""
 
-#: support/class-sitehealth.php:498
+#: src/support/class-sitehealth.php:499
 msgid "Redirect URI"
 msgstr ""
 
-#: support/class-sitehealth.php:499
+#: src/support/class-sitehealth.php:500
 msgid "Site uses HTTPS"
 msgstr ""
 
-#: support/class-sitehealth.php:501
+#: src/support/class-sitehealth.php:502
 msgid "PHP OpenSSL library"
 msgstr ""
 
-#: support/class-sitehealth.php:502 support/class-sitehealth.php:700
-#: support/class-sitehealth.php:784
+#: src/support/class-sitehealth.php:503
+#: src/support/class-sitehealth.php:701
+#: src/support/class-sitehealth.php:785
 msgid "Not available"
 msgstr ""
 
-#: support/class-sitehealth.php:507 support/class-sitehealth.php:513
+#: src/support/class-sitehealth.php:508
+#: src/support/class-sitehealth.php:514
 msgid "Not configured"
 msgstr ""
 
-#: support/class-sitehealth.php:508 support/class-sitehealth.php:514
+#: src/support/class-sitehealth.php:509
+#: src/support/class-sitehealth.php:515
 msgid "Configured"
 msgstr ""
 
-#: support/class-sitehealth.php:516
+#: src/support/class-sitehealth.php:517
 msgid "Configured scopes"
 msgstr ""
 
-#: support/class-sitehealth.php:518
+#: src/support/class-sitehealth.php:519
 msgid "Required scopes"
 msgstr ""
 
-#: support/class-sitehealth.php:520
+#: src/support/class-sitehealth.php:521
 msgid "All present"
 msgstr ""
 
-#: support/class-sitehealth.php:523
+#. translators: %s: Comma-separated list of missing OpenID Connect scopes.
+#: src/support/class-sitehealth.php:524
 #, php-format
 msgid "Missing: %s"
 msgstr ""
 
-#: support/class-sitehealth.php:528
+#: src/support/class-sitehealth.php:529
 msgid "Stored profile fields"
 msgstr ""
 
-#: support/class-sitehealth.php:529 support/class-sitehealth.php:728
-#: user/class-fields.php:62 user/class-fields.php:74 user/class-fields.php:118
-#: user/class-fields.php:145
+#: src/support/class-sitehealth.php:530
+#: src/support/class-sitehealth.php:729
+#: src/user/class-fields.php:62
+#: src/user/class-fields.php:74
+#: src/user/class-fields.php:118
+#: src/user/class-fields.php:145
 msgid "None"
 msgstr ""
 
-#: support/class-sitehealth.php:531
+#: src/support/class-sitehealth.php:532
 msgid "Automatic account creation"
 msgstr ""
 
-#: support/class-sitehealth.php:532
+#: src/support/class-sitehealth.php:533
 msgid "Duplicate email handling"
 msgstr ""
 
-#: support/class-sitehealth.php:533
+#: src/support/class-sitehealth.php:534
 msgid "Login redirect mode"
 msgstr ""
 
-#: support/class-sitehealth.php:534
+#: src/support/class-sitehealth.php:535
 msgid "Custom login redirect"
 msgstr ""
 
-#: support/class-sitehealth.php:535
+#: src/support/class-sitehealth.php:536
 msgid "Scouting OpenID Connect users"
 msgstr ""
 
-#: support/class-sitehealth.php:536
+#: src/support/class-sitehealth.php:537
 msgid "WooCommerce available"
 msgstr ""
 
-#: support/class-sitehealth.php:537
+#: src/support/class-sitehealth.php:538
 msgid "WooCommerce synchronization"
 msgstr ""
 
-#: support/class-sitehealth.php:538
+#: src/support/class-sitehealth.php:539
 msgid "Debug logging"
 msgstr ""
 
-#: support/class-sitehealth.php:540
+#: src/support/class-sitehealth.php:541
 msgid "Log retention"
 msgstr ""
 
-#: support/class-sitehealth.php:543
+#. translators: %d: Number of days logs are retained.
+#: src/support/class-sitehealth.php:544
 #, php-format
 msgid "%d days"
 msgstr ""
 
-#: support/class-sitehealth.php:547
+#: src/support/class-sitehealth.php:548
 msgid "Log table"
 msgstr ""
 
-#: support/class-sitehealth.php:547
+#: src/support/class-sitehealth.php:548
 msgid "Available"
 msgstr ""
 
-#: support/class-sitehealth.php:547
+#: src/support/class-sitehealth.php:548
 msgid "Missing"
 msgstr ""
 
-#: support/class-sitehealth.php:548
+#: src/support/class-sitehealth.php:549
 msgid "Log database schema"
 msgstr ""
 
-#: support/class-sitehealth.php:549
+#: src/support/class-sitehealth.php:550
 msgid "Log entries"
 msgstr ""
 
-#: support/class-sitehealth.php:550
+#: src/support/class-sitehealth.php:551
 msgid "Errors in the last 24 hours"
 msgstr ""
 
-#: support/class-sitehealth.php:551
+#: src/support/class-sitehealth.php:552
 msgid "Latest log entry"
 msgstr ""
 
-#: support/class-sitehealth.php:552
+#: src/support/class-sitehealth.php:553
 msgid "Last successful log cleanup"
 msgstr ""
 
-#: support/class-sitehealth.php:553
+#: src/support/class-sitehealth.php:554
 msgid "Next log cleanup"
 msgstr ""
 
-#: support/class-sitehealth.php:555
+#: src/support/class-sitehealth.php:556
 msgid "WordPress cron spawning"
 msgstr ""
 
-#: support/class-sitehealth.php:557
+#: src/support/class-sitehealth.php:558
 msgid "Disabled by configuration"
 msgstr ""
 
-#: support/class-sitehealth.php:558 support/class-sitehealth.php:768
+#: src/support/class-sitehealth.php:559
+#: src/support/class-sitehealth.php:769
 msgid "Enabled"
 msgstr ""
 
-#: support/class-sitehealth.php:561
+#: src/support/class-sitehealth.php:562
 msgid "Provider discovery cache"
 msgstr ""
 
-#: support/class-sitehealth.php:563 support/class-sitehealth.php:569
+#: src/support/class-sitehealth.php:564
+#: src/support/class-sitehealth.php:570
 msgid "Empty"
 msgstr ""
 
-#: support/class-sitehealth.php:564 support/class-sitehealth.php:570
+#: src/support/class-sitehealth.php:565
+#: src/support/class-sitehealth.php:571
 msgid "Populated"
 msgstr ""
 
-#: support/class-sitehealth.php:567
+#: src/support/class-sitehealth.php:568
 msgid "Provider signing-key cache"
 msgstr ""
 
-#: support/class-sitehealth.php:769
+#: src/support/class-sitehealth.php:770
 msgid "Disabled"
 msgstr ""
 
-#: support/class-support.php:48 support/class-support.php:96
+#: src/support/class-support.php:49
+#: src/support/class-support.php:100
 msgid "Support"
 msgstr ""
 
-#: support/class-support.php:49
-msgid "Before you start make sure you have the role \"webmaster\" in"
+#: src/support/class-support.php:50
+msgid "Documentation"
 msgstr ""
 
-#: support/class-support.php:53
+#: src/support/class-support.php:53
 msgid "Setting up OpenID Connect"
 msgstr ""
 
-#: support/class-support.php:55
+#: src/support/class-support.php:54
+msgid "Before you start make sure you have the role \"webmaster\" in"
+msgstr ""
+
+#: src/support/class-support.php:59
 msgid "Go to"
 msgstr ""
 
-#: support/class-support.php:55
-msgid ""
-"click on \"Managed websites\" and click on \"Add OpenID Connect connection\"."
+#: src/support/class-support.php:59
+msgid "click on \"Managed websites\" and click on \"Add OpenID Connect connection\"."
 msgstr ""
 
-#: support/class-support.php:56
+#: src/support/class-support.php:60
 msgid "Add the name of your group/website."
 msgstr ""
 
-#: support/class-support.php:57
+#: src/support/class-support.php:61
 msgid "Add the Redirect URI:"
 msgstr ""
 
-#: support/class-support.php:58
+#: src/support/class-support.php:62
 msgid "Add the Post Logout Redirect URI:"
 msgstr ""
 
-#: support/class-support.php:59
-msgid ""
-"Select the scopes you want to use. The `Email`, `Personal` and `Membership` "
-"scopes are required;"
+#: src/support/class-support.php:63
+msgid "Select the scopes you want to use. The `Email`, `Personal` and `Membership` scopes are required;"
 msgstr ""
 
-#: support/class-support.php:60
+#: src/support/class-support.php:64
 msgid "The `Address`, `Phone number`, and `Roles` scopes are optional."
 msgstr ""
 
-#: support/class-support.php:61
+#: src/support/class-support.php:65
 msgid "Currently the `Parents/guardians` scope is not supported."
 msgstr ""
 
-#: support/class-support.php:62
+#: src/support/class-support.php:66
 msgid "Select the organizations that can log in."
 msgstr ""
 
-#: support/class-support.php:63
-msgid ""
-"If your organization has sub-organizations, you can also select \"Allow "
-"suborganizations\"."
+#: src/support/class-support.php:67
+msgid "If your organization has sub-organizations, you can also select \"Allow suborganizations\"."
 msgstr ""
 
-#: support/class-support.php:64
+#: src/support/class-support.php:68
 msgid "Select to use the PKCE (code challenge)."
 msgstr ""
 
-#: support/class-support.php:65
+#: src/support/class-support.php:69
 msgid "Press \"Add Website\"."
 msgstr ""
 
-#: support/class-support.php:66
+#: src/support/class-support.php:70
 msgid "Find the website you just created and click on ⓘ."
 msgstr ""
 
-#: support/class-support.php:67
+#: src/support/class-support.php:71
 msgid "Copy the \"Client ID\", \"Client Secret\", and the \"Scopes\" to the"
 msgstr ""
 
-#: support/class-support.php:71
+#: src/support/class-support.php:75
 msgid "Fill in the OpenID Connect Settings with the copied data."
 msgstr ""
 
-#: support/class-support.php:72
+#: src/support/class-support.php:76
 msgid "Required scopes:"
 msgstr ""
 
-#: support/class-support.php:79
+#: src/support/class-support.php:83
 msgid "Optional scopes:"
 msgstr ""
 
-#: support/class-support.php:86
+#: src/support/class-support.php:90
 msgid "Fill in the General Settings."
 msgstr ""
 
-#: support/class-support.php:87
+#: src/support/class-support.php:91
 msgid "Press \"Save Settings\""
 msgstr ""
 
-#: support/class-support.php:88
+#: src/support/class-support.php:92
 msgid "Log out and try to log in with the Scouts Login button."
 msgstr ""
 
-#: support/class-support.php:91
+#: src/support/class-support.php:95
 msgid "Profile and access synchronization"
 msgstr ""
 
-#: support/class-support.php:92
+#: src/support/class-support.php:96
 msgid "Scouting OpenID Connect account names and email addresses are refreshed during sign-in. Birth date, gender, phone number, and address are synchronized only when enabled in General Settings and the corresponding OIDC scopes are configured. These optional values are not refreshed continuously."
 msgstr ""
 
-#: support/class-support.php:93
+#: src/support/class-support.php:97
 msgid "Users should update profile information in Scouts Online. Disabling an optional field stops refreshing its SOL profile metadata but does not erase previously stored values; if WooCommerce synchronization remains enabled, stored values may still be copied to WooCommerce. For an enabled field, a blank SOL value clears the plugin’s stored value at the next sign-in. WooCommerce synchronization skips blank names and phone numbers and skips an entirely blank address. If any address component remains populated, all mapped billing and shipping address fields are updated, including blank components."
 msgstr ""
 
-#: support/class-support.php:94
+#: src/support/class-support.php:98
 msgid "When the roles scope is enabled, role assignments returned by SOL are synchronized and the configured role mapping is applied during sign-in. A matching deny rule blocks that sign-in but does not end an existing WordPress session. Removing a member from SOL does not automatically delete their WordPress account or its stored data; review and remove accounts according to your site’s data-retention policy."
 msgstr ""
 
-#: support/class-support.php:97
+#: src/support/class-support.php:101
 msgid "If you need help, please contact"
 msgstr ""
 
-#: support/class-support.php:99
+#: src/support/class-support.php:103
 msgid "(developer of the plugin)"
 msgstr ""
 
-#: user/class-fields.php:43 user/class-fields.php:123
+#: src/user/class-fields.php:43
+#: src/user/class-fields.php:123
 msgid "SOL-managed WordPress roles"
 msgstr ""
 
-#: user/class-fields.php:110
+#: src/user/class-fields.php:110
 msgid "WordPress roles"
 msgstr ""
 
-#: user/class-fields.php:113
-msgid ""
-"Role ownership data is invalid. Assigned roles are shown below, but role "
-"editing is disabled to protect existing access."
+#: src/user/class-fields.php:113
+msgid "Role ownership data is invalid. Assigned roles are shown below, but role editing is disabled to protect existing access."
 msgstr ""
 
-#: user/class-fields.php:114
+#: src/user/class-fields.php:114
 msgid "Currently assigned WordPress roles"
 msgstr ""
 
-#: user/class-fields.php:122
-msgid ""
-"SOL-managed roles are read-only here. Every matching allow rule contributes "
-"a role; obsolete plugin-granted roles are removed at the next successful "
-"OIDC login. Manual roles are preserved."
+#: src/user/class-fields.php:122
+msgid "SOL-managed roles are read-only here. Every matching allow rule contributes a role; obsolete plugin-granted roles are removed at the next successful OIDC login. Manual roles are preserved."
 msgstr ""
 
-#: user/class-fields.php:132 user/class-fields.php:141
+#: src/user/class-fields.php:132
+#: src/user/class-fields.php:141
 msgid "Independently assigned WordPress roles"
 msgstr ""
 
-#: user/class-fields.php:133
-msgid ""
-"Select any additional roles to manage manually. These roles are not removed "
-"by SOL synchronization. Unchecking a role removes only that manual "
-"assignment."
+#: src/user/class-fields.php:133
+msgid "Select any additional roles to manage manually. These roles are not removed by SOL synchronization. Unchecking a role removes only that manual assignment."
 msgstr ""
 
-#: user/class-fields.php:188 user/class-fields.php:239
+#: src/user/class-fields.php:188
+#: src/user/class-fields.php:239
 msgid "You do not have permission to change these WordPress roles."
 msgstr ""
 
-#: user/class-fields.php:198 user/class-fields.php:204
+#: src/user/class-fields.php:198
+#: src/user/class-fields.php:204
 msgid "Select valid WordPress roles."
 msgstr ""
 
-#: user/class-fields.php:220
+#: src/user/class-fields.php:220
 msgid "You cannot remove your own ability to manage user roles."
 msgstr ""
 
-#: user/class-fields.php:279
+#: src/user/class-fields.php:279
 msgid "View in SOL"
 msgstr ""
 
-#: user/class-fields.php:308
+#: src/user/class-fields.php:308
 msgid "Scouts Online (SOL) Profile Information"
 msgstr ""
 
-#: user/class-fields.php:369
-msgid "Male"
-msgstr ""
-
-#: user/class-fields.php:370
-msgid "Female"
-msgstr ""
-
-#: user/class-fields.php:371
-msgid "Other"
-msgstr ""
-
-#: user/class-fields.php:372
-msgid "Unknown"
-msgstr ""
-
-#: user/class-fields.php:309
+#: src/user/class-fields.php:309
 msgid "These values are managed in Scouts Online and refreshed when the plugin receives profile data during sign-in. Update your information there; changes are not synced continuously."
 msgstr ""
 
-#: user/class-fields.php:390
+#: src/user/class-fields.php:371
+msgid "Male"
+msgstr ""
+
+#: src/user/class-fields.php:372
+msgid "Female"
+msgstr ""
+
+#: src/user/class-fields.php:373
+msgid "Other"
+msgstr ""
+
+#: src/user/class-fields.php:374
+msgid "Unknown"
+msgstr ""
+
+#: src/user/class-fields.php:395
 msgid "Phone Number"
 msgstr ""
 
-#: user/class-fields.php:410
+#: src/user/class-fields.php:415
 msgid "Street"
 msgstr ""
 
-#: user/class-fields.php:429
+#: src/user/class-fields.php:434
 msgid "House Number"
 msgstr ""
 
-#: user/class-fields.php:448
+#: src/user/class-fields.php:453
 msgid "Postal Code"
 msgstr ""
 
-#: user/class-fields.php:467
+#: src/user/class-fields.php:472
 msgid "City"
 msgstr ""
 
-#: user/class-fields.php:486
+#: src/user/class-fields.php:491
 msgid "Country Code"
 msgstr ""
 
-#: user/class-user.php:255
+#: src/user/class-user.php:255
 msgid "SOL ID is missing, make sure the \"membership\" scope is enabled."
 msgstr ""
 
-#: user/class-user.php:260
+#: src/user/class-user.php:260
 msgid "OpenID Connect subject is missing."
 msgstr ""
 
-#: user/class-user.php:268
+#: src/user/class-user.php:268
 msgid "Email is missing, make sure the \"email\" scope is enabled."
 msgstr ""
 
-#: user/class-user.php:297
+#: src/user/class-user.php:297
 msgid "This SOL ID is already linked to another account."
 msgstr ""
 
-#: user/class-user.php:358 user/class-user.php:376 user/class-user.php:440
-#: user/class-user.php:457
+#: src/user/class-user.php:358
+#: src/user/class-user.php:376
+#: src/user/class-user.php:440
+#: src/user/class-user.php:457
 msgid "Email address is already in use by another account"
 msgstr ""
 
-#: user/class-user.php:485
+#: src/user/class-user.php:485
 msgid "User not found for update"
 msgstr ""
 
-#: user/class-user.php:505
+#: src/user/class-user.php:505
 msgid "Something went wrong while trying to log in"
 msgstr ""
 
-#: utilities/class-cronjobs.php:183
+#: src/utilities/class-cronjobs.php:183
 msgid "Sorry, you are not allowed to run Scouting OpenID Connect log cleanup."
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:139
-#: woocommerce/class-woocommercerestrictions.php:169
+#. translators: %s: OpenID Connect scope rejected by Scouts Online, for example roles.
+#: src/utilities/class-errorhandler.php:40
+#, php-format
+msgid "Scouts Online rejected the requested \"%s\" scope. Sign-in could not be completed. Please contact the website administrator."
+msgstr ""
+
+#: src/utilities/class-errorhandler.php:43
+msgid "Scouts Online rejected one or more requested scopes. Sign-in could not be completed. Please contact the website administrator."
+msgstr ""
+
+#: src/utilities/class-errorhandler.php:45
+msgid "For administrators: compare the plugin’s OpenID Connect Scopes setting with the scopes enabled for this website under Managed websites at login.scouting.nl. Enable the requested scopes there, or remove optional scopes you do not use from WordPress. Keep openid, membership, profile, and email enabled in both places. Then try signing in again."
+msgstr ""
+
+#: src/woocommerce/class-woocommercerestrictions.php:139
+#: src/woocommerce/class-woocommercerestrictions.php:169
 msgid "SOL Access"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:144
-#: woocommerce/class-woocommercerestrictions.php:225
+#: src/woocommerce/class-woocommercerestrictions.php:144
+#: src/woocommerce/class-woocommercerestrictions.php:225
 msgid "Require SOL sign-in"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:145
+#: src/woocommerce/class-woocommercerestrictions.php:145
 msgid "Require a signed-in SOL account for all products"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:146
-msgid ""
-"Off by default. When enabled, guests and non-SOL accounts cannot purchase "
-"any product. This overrides individual product settings; organisation and "
-"role restrictions still apply."
+#: src/woocommerce/class-woocommercerestrictions.php:146
+msgid "Off by default. When enabled, guests and non-SOL accounts cannot purchase any product. This overrides individual product settings; organisation and role restrictions still apply."
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:224
-msgid ""
-"Off by default. Require a signed-in SOL account to order this product, even "
-"when no organisation or role is selected. Guests and non-SOL accounts are "
-"blocked, including after logout with items already in the cart. Organisation "
-"and role rules apply only when the roles scope is enabled. The global "
-"setting under WooCommerce > Settings > Products can require SOL sign-in for "
-"all products and cannot be overridden here."
+#: src/woocommerce/class-woocommercerestrictions.php:224
+msgid "Off by default. Require a signed-in SOL account to order this product, even when no organisation or role is selected. Guests and non-SOL accounts are blocked, including after logout with items already in the cart. Organisation and role rules apply only when the roles scope is enabled. The global setting under WooCommerce > Settings > Products can require SOL sign-in for all products and cannot be overridden here."
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:227
-msgid ""
-"SOL sign-in is currently required for all products by the global WooCommerce "
-"setting, regardless of this checkbox."
+#: src/woocommerce/class-woocommercerestrictions.php:227
+msgid "SOL sign-in is currently required for all products by the global WooCommerce setting, regardless of this checkbox."
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:231
-msgid ""
-"The roles scope is disabled. Saved organisation and role restrictions are "
-"paused and preserved. Only the product or global SOL sign-in requirement "
-"applies; without it, these products may be purchased by guests."
+#: src/woocommerce/class-woocommercerestrictions.php:231
+msgid "The roles scope is disabled. Saved organisation and role restrictions are paused and preserved. Only the product or global SOL sign-in requirement applies; without it, these products may be purchased by guests."
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:234
-msgid ""
-"Select organisations or roles that may order this product. A customer needs "
-"one matching active organisation or role. Enable Require both organisation "
-"and role to match both fields on the same active assignment when both fields "
-"contain selections; with only one field selected, only that field is "
-"required. Include descendant organisations to match assignments in groups "
-"beneath a selected parent; turn it off to require a direct assignment in a "
-"selected organisation. Leave both allow fields empty to allow every customer "
-"unless a deny rule matches."
+#: src/woocommerce/class-woocommercerestrictions.php:234
+msgid "Select organisations or roles that may order this product. A customer needs one matching active organisation or role. Enable Require both organisation and role to match both fields on the same active assignment when both fields contain selections; with only one field selected, only that field is required. Include descendant organisations to match assignments in groups beneath a selected parent; turn it off to require a direct assignment in a selected organisation. Leave both allow fields empty to allow every customer unless a deny rule matches."
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:236
+#: src/woocommerce/class-woocommercerestrictions.php:236
 msgid "Allowed SOL organisations"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:237
+#: src/woocommerce/class-woocommercerestrictions.php:237
 msgid "No organisation allow rule"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:244
-#: woocommerce/class-woocommercerestrictions.php:279
+#. translators: %s: organisation ID.
+#: src/woocommerce/class-woocommercerestrictions.php:244
+#: src/woocommerce/class-woocommercerestrictions.php:279
 #, php-format
 msgid "%s (no longer synchronized)"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:250
-#: woocommerce/class-woocommercerestrictions.php:285
+#: src/woocommerce/class-woocommercerestrictions.php:250
+#: src/woocommerce/class-woocommercerestrictions.php:285
 msgid "Include descendant organisations"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:252
+#: src/woocommerce/class-woocommercerestrictions.php:252
 msgid "Allowed SOL roles"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:253
+#: src/woocommerce/class-woocommercerestrictions.php:253
 msgid "No role allow rule"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:260
-#: woocommerce/class-woocommercerestrictions.php:295
+#. translators: %d: role ID.
+#: src/woocommerce/class-woocommercerestrictions.php:260
+#: src/woocommerce/class-woocommercerestrictions.php:295
 #, php-format
 msgid "%d (no longer synchronized)"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:266
-#: woocommerce/class-woocommercerestrictions.php:301
+#: src/woocommerce/class-woocommercerestrictions.php:266
+#: src/woocommerce/class-woocommercerestrictions.php:301
 msgid "Require both organisation and role"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:269
-msgid ""
-"Select organisations or roles that may not order this product. Enable "
-"Require both organisation and role to match both fields on the same active "
-"assignment when both fields contain selections; with only one field "
-"selected, only that field is required. Include descendant organisations to "
-"deny assignments in groups beneath a selected parent; turn it off to deny "
-"only direct assignments in selected organisations. Any matching deny rule "
-"blocks ordering, even when the customer also matches an allow rule."
+#: src/woocommerce/class-woocommercerestrictions.php:269
+msgid "Select organisations or roles that may not order this product. Enable Require both organisation and role to match both fields on the same active assignment when both fields contain selections; with only one field selected, only that field is required. Include descendant organisations to deny assignments in groups beneath a selected parent; turn it off to deny only direct assignments in selected organisations. Any matching deny rule blocks ordering, even when the customer also matches an allow rule."
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:271
+#: src/woocommerce/class-woocommercerestrictions.php:271
 msgid "Denied SOL organisations"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:272
+#: src/woocommerce/class-woocommercerestrictions.php:272
 msgid "No organisation deny rule"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:287
+#: src/woocommerce/class-woocommercerestrictions.php:287
 msgid "Denied SOL roles"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:288
+#: src/woocommerce/class-woocommercerestrictions.php:288
 msgid "No role deny rule"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:659
+#: src/woocommerce/class-woocommercerestrictions.php:661
 msgid "Unknown organisation"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:662
+#. translators: 1: SOL role name, 2: organisation name or ID, 3: unit name or ID, 4: role ID.
+#: src/woocommerce/class-woocommercerestrictions.php:673
 #, php-format
 msgid "%1$s - %2$s / %3$s (%4$d)"
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:737
+#: src/woocommerce/class-woocommercerestrictions.php:748
 msgid "Sign in with your Scouts Online account to order this product."
 msgstr ""
 
-#: woocommerce/class-woocommercerestrictions.php:739
-msgid ""
-"Your current Scouts Online role or organisation does not permit ordering "
-"this product."
+#: src/woocommerce/class-woocommercerestrictions.php:750
+msgid "Your current Scouts Online role or organisation does not permit ordering this product."
 msgstr ""
