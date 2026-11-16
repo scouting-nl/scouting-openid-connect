@@ -141,11 +141,7 @@ The Info tab contains a **Scouting OpenID Connect** section that can be copied i
 
 ## Profile and access synchronization
 
-Scouting OpenID Connect account names and email addresses are refreshed during sign-in. Birth date, gender, phone number, and address are synchronized only when enabled in General Settings and the corresponding OIDC scopes are configured. These optional values are not refreshed continuously.
-
-Users should update profile information in SOL 3 (mijn.scouting.nl). Disabling an optional field stops refreshing its SOL profile metadata but does not erase previously stored values; if WooCommerce synchronization remains enabled, stored values may still be copied to WooCommerce. For an enabled field, a blank SOL value clears the plugin's stored value at the next sign-in. WooCommerce synchronization skips blank names and phone numbers and skips an entirely blank address. If any address component remains populated, all mapped billing and shipping address fields are updated, including blank components.
-
-When the `roles` scope is enabled, role assignments returned by SOL are synchronized and the configured role mapping is applied during sign-in. A matching deny rule blocks that sign-in but does not end an existing WordPress session. Removing a member from SOL does not automatically delete their WordPress account or its stored data; review and remove accounts according to your site's data-retention policy.
+Profile data and enabled SOL roles are refreshed during SOL sign-in, not on return visits. A matching login deny rule ends existing WordPress sessions and removes plugin-managed roles, preserving manual roles and the account. The plugin does not independently detect SOL revocations. See the [wiki](https://github.com/scouting-nl/scouting-openid-connect/wiki/Account-Management-and-Authorization#offboarding-and-access-removal) for access limitations and [data-lifecycle details](https://github.com/scouting-nl/scouting-openid-connect/wiki/Users-and-Data-Lifecycle).
 
 ## Frequently Asked Questions
 

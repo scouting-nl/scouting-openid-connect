@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+- Ends a user's existing WordPress sessions and removes plugin-managed roles when the SOL authentication flow is denied by a configured role mapping. Manual roles and accounts are preserved; the plugin cannot independently detect SOL revocations or check for them in the background.
 - Added direct links to login.scouting.nl website scope management and the plugin wiki, with explicit instructions to enable the roles scope in both places.
 - Clarified rejected OIDC scope errors for users and administrators, including authorization callbacks without a hint and token-endpoint rejections. Added scope configuration guidance in settings, Site Health, and the readmes.
 - Fixed the SOL gender profile dropdown to allow only the synchronized value while retaining native dropdown interaction and its white background. Added an accessible profile synchronization notice and limited SOL profile fields to SOL-linked accounts.

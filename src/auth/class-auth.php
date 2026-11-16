@@ -388,7 +388,10 @@ class Auth {
 
 		$decision = RolesAuthorization::scouting_oidc_roles_authorization_get_user_decision( $user_id, $new_user );
 		if ( ! $decision['login_allowed'] ) {
-			Logger::warning( LogComponent::ROLES, 'Blocked OIDC login because the SOL role mapping does not allow access.', $user_id );
+			if ( ! RolesAuthorization::scouting_oidc_roles_authorization_revoke_user_access( $user_id ) ) {
+				Logger::error( LogComponent::ROLES, 'Could not remove plugin-managed WordPress roles after the SOL role mapping denied access.', $user_id );
+			}
+			Logger::warning( LogComponent::ROLES, 'Blocked OIDC login and ended existing WordPress sessions because the SOL role mapping does not allow access.', $user_id );
 			ErrorHandler::redirect_to_login_error(
 				'access_denied',
 				__( 'Your Scouts Online role is not permitted to access this site.', 'scouting-openid-connect' ),

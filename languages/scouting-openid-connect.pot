@@ -1935,7 +1935,7 @@ msgid "Users should update profile information in Scouts Online. Disabling an op
 msgstr ""
 
 #: src/support/class-support.php:98
-msgid "When the roles scope is enabled, role assignments returned by SOL are synchronized and the configured role mapping is applied during sign-in. A matching deny rule blocks that sign-in but does not end an existing WordPress session. Removing a member from SOL does not automatically delete their WordPress account or its stored data; review and remove accounts according to your site’s data-retention policy."
+msgid "When the roles scope is enabled, role assignments returned by SOL are synchronized and the configured role mapping is applied during sign-in. If a matching deny rule blocks a sign-in, the plugin ends that user’s existing WordPress sessions and removes roles previously assigned by the plugin; manually assigned roles and the WordPress account are preserved. This cleanup runs only when a user completes the SOL authentication flow and the returned roles match a configured deny rule. The plugin cannot independently detect SOL account or role revocations and does not check for them in the background; if SOL blocks the user from authenticating, no login callback is available to trigger cleanup. Removing a member from SOL does not automatically delete their WordPress account or its stored data; review and remove accounts according to your site’s data-retention policy."
 msgstr ""
 
 #: src/support/class-support.php:101
