@@ -22,7 +22,7 @@ Do not report security vulnerabilities in a public issue or support topic. Follo
 
 == Documentation ==
 
-Detailed administrator, deployment, privacy, data-lifecycle, troubleshooting, and developer documentation is available in the project wiki: https://github.com/scouting-nl/scouting-openid-connect/wiki
+Detailed administrator, deployment, privacy, data-lifecycle, troubleshooting, and developer documentation is available in the project [wiki](https://github.com/scouting-nl/scouting-openid-connect/wiki).
 
 == Installation ==
 
