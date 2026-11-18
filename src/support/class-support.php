@@ -41,7 +41,7 @@ class Support {
 	 * Renders the support page content.
 	 *
 	 * @since 1.0.0
-	 * @since Unreleased Links to the plugin documentation.
+	 * @since 2.7.1 Links to the plugin documentation.
 	 */
 	public function scouting_oidc_support_page_callback(): void {
 		?>

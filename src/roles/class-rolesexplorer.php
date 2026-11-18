@@ -28,7 +28,7 @@ class RolesExplorer {
 	/**
 	 * Renders the lazy organisation tree and filtered assignments.
 	 *
-	 * @since Unreleased Adds lazy organisation, unit, and role filters.
+	 * @since 2.7.1 Adds lazy organisation, unit, and role filters.
 	 */
 	public function render_page(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -154,7 +154,7 @@ class RolesExplorer {
 	/**
 	 * Loads the children and units of an organisation, or roles in a unit.
 	 *
-	 * @since Unreleased Loads SOL Explorer tree branches on demand.
+	 * @since 2.7.1 Loads SOL Explorer tree branches on demand.
 	 */
 	public static function ajax_get_tree_children(): void {
 		check_ajax_referer( 'scouting_oidc_roles_explorer_tree' );
@@ -179,7 +179,7 @@ class RolesExplorer {
 	/**
 	 * Finds only the ancestor branches needed to reveal the selected filter.
 	 *
-	 * @since Unreleased Restores the selected tree path on navigation.
+	 * @since 2.7.1 Restores the selected tree path on navigation.
 	 *
 	 * @param array $filters Current assignment filters.
 	 * @return array<int, string>|\WP_Error Branch keys or a database error.
@@ -230,7 +230,7 @@ class RolesExplorer {
 	/**
 	 * Gets top-level organisations only.
 	 *
-	 * @since Unreleased Loads only top-level SOL organisations initially.
+	 * @since 2.7.1 Loads only top-level SOL organisations initially.
 	 *
 	 * @return array<int, array{organisation_id: string, name: string}>|\WP_Error Organisations or a database error.
 	 */
@@ -260,7 +260,7 @@ class RolesExplorer {
 	/**
 	 * Loads a single level of an organisation tree.
 	 *
-	 * @since Unreleased Loads SOL Explorer branches only when expanded.
+	 * @since 2.7.1 Loads SOL Explorer branches only when expanded.
 	 *
 	 * @param string $node_type Tree node type.
 	 * @param string $node_id Tree node identifier.
@@ -363,7 +363,7 @@ class RolesExplorer {
 	/**
 	 * Renders one expandable organisation tree node.
 	 *
-	 * @since Unreleased Adds accessible lazy organisation tree controls.
+	 * @since 2.7.1 Adds accessible lazy organisation tree controls.
 	 *
 	 * @param array $organisation Organisation row.
 	 * @param array $filters Current assignments filters.
@@ -394,7 +394,7 @@ class RolesExplorer {
 	 * Gets one assignment page and the total count for the selected filters.
 	 *
 	 * @since 2.7.0 Lists SOL role assignments.
-	 * @since Unreleased Includes assignments from descendant organisations.
+	 * @since 2.7.1 Includes assignments from descendant organisations.
 	 *
 	 * @param array $filters Normalized filters.
 	 * @param int   $page Current page.
@@ -484,7 +484,7 @@ class RolesExplorer {
 	/**
 	 * Gets an organisation and all of its descendants without revisiting cycles.
 	 *
-	 * @since Unreleased Includes descendant organisations in organisation filters.
+	 * @since 2.7.1 Includes descendant organisations in organisation filters.
 	 *
 	 * @param string $organisation_id Selected organisation ID.
 	 * @return array<int, string>|\WP_Error Organisation IDs or a database error.
@@ -531,7 +531,7 @@ class RolesExplorer {
 	/**
 	 * Formats an organisation unit name with any available category and nature.
 	 *
-	 * @since Unreleased Shows synchronized organisation unit metadata.
+	 * @since 2.7.1 Shows synchronized organisation unit metadata.
 	 *
 	 * @param array $unit Organisation unit or assignment row.
 	 * @return string Formatted unit name.
@@ -554,7 +554,7 @@ class RolesExplorer {
 	/**
 	 * Displays a stored UTC assignment timestamp as its Netherlands calendar date.
 	 *
-	 * @since Unreleased Displays API assignment dates without a synthetic time.
+	 * @since 2.7.1 Displays API assignment dates without a synthetic time.
 	 *
 	 * @param string $date Stored UTC database timestamp.
 	 * @return string Assignment date in Y-m-d format.

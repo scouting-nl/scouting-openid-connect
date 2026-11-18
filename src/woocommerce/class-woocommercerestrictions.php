@@ -624,7 +624,7 @@ class WooCommerceRestrictions {
 	 * Gets role choices for the WooCommerce product editor.
 	 *
 	 * @since 2.7.0 Lists SOL roles with organisation and unit context.
-	 * @since Unreleased Includes organisation unit metadata in role choices.
+	 * @since 2.7.1 Includes organisation unit metadata in role choices.
 	 *
 	 * @return array<int, array{role_id: int|string, role_name: string, organisation_unit_id: int|string, unit_name: string|null, unit_category: string|null, unit_nature: string|null, organisation_id: string|null, organisation_name: string|null}> Roles.
 	 */
@@ -652,7 +652,7 @@ class WooCommerceRestrictions {
 	 * Distinguishes identically named roles by their organisation and unit.
 	 *
 	 * @since 2.7.0 Describes the assignment context in both role selectors.
-	 * @since Unreleased Includes organisation unit metadata in role choices.
+	 * @since 2.7.1 Includes organisation unit metadata in role choices.
 	 *
 	 * @param array $role Synchronized role with joined context.
 	 * @return string Human-readable role choice.

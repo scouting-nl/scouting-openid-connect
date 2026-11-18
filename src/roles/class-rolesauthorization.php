@@ -248,7 +248,7 @@ class RolesAuthorization {
 	/**
 	 * Ends WordPress sessions and removes plugin-managed roles after a denied SOL login.
 	 *
-	 * @since Unreleased Ends existing sessions when a SOL role mapping denies login.
+	 * @since 2.7.1 Ends existing sessions when a SOL role mapping denies login.
 	 *
 	 * @param int $user_id WordPress user ID.
 	 * @return bool Whether plugin-managed roles were removed successfully.
