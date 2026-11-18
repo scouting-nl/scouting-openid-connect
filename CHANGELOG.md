@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+## [[2.7.1](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.7.1)] - 18/11/2026
+
+- When a completed SOL login is denied by a role-mapping rule, existing WordPress sessions are ended and plugin-managed roles are removed. Manual roles and the account are preserved.
+- Improved guidance for rejected OpenID Connect scopes, with direct links to the SOL website-scope settings and plugin documentation.
+- Improved profile synchronization controls and notices, including clearer gender selection and limiting SOL profile fields to SOL-linked accounts.
+- Improved SOL Role Explorer navigation and filtering, with more organization and unit details.
+
 ## [[2.7.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.7.0)] - 02/11/2026
 
 - Added SOL role mapping with searchable organisation, unit, and role selectors, allow and deny rules, rule duplication and reordering, accessible dialogs, a read-only user tester, and contextual help. Unmatched users use the WordPress default role.

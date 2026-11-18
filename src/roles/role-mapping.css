@@ -1,7 +1,8 @@
 /**
  * SOL role mapping layout.
  *
- * @since 2.7.0 Styles wrapping checkbox choices, responsive dialogs and grouped preview results using WordPress admin conventions.
+ * @since 2.7.0 Styles wrapping checkbox choices, responsive dialogs and grouped
+ * preview results using WordPress admin conventions.
  */
 
 .scouting-oidc-rule-list {
@@ -11,6 +12,12 @@
 .scouting-oidc-rule-list td,
 .scouting-oidc-rule-list th {
 	vertical-align: middle;
+}
+
+.scouting-oidc-test-assignments th,
+.scouting-oidc-test-assignments td {
+	width: 33.333%;
+	overflow-wrap: anywhere;
 }
 
 .scouting-oidc-rule-actions {
@@ -90,9 +97,9 @@
 
 .scouting-oidc-rule-dialog {
 	box-sizing: border-box;
-	width: min( 1600px, calc( 100% - 48px ) );
+	width: min(1600px, calc(100% - 48px));
 	max-width: none;
-	max-height: calc( 100% - 32px );
+	max-height: calc(100% - 32px);
 	padding: 0;
 	border: 1px solid #c3c4c7;
 	border-radius: 2px;
@@ -103,7 +110,7 @@
 }
 
 #sol-user-test-dialog {
-	width: min( 800px, calc( 100% - 32px ) );
+	width: min(800px, calc(100% - 32px));
 }
 
 .scouting-oidc-rule-dialog::backdrop {
@@ -189,6 +196,11 @@
 	cursor: pointer;
 }
 
+.scouting-oidc-user-test-body label {
+	display: block;
+	margin-bottom: 8px;
+}
+
 .scouting-oidc-checkbox-choices {
 	max-height: 360px;
 	overflow-y: auto;
@@ -265,7 +277,7 @@
 
 .scouting-oidc-rule-dialog .scouting-oidc-selector-search {
 	display: grid;
-	grid-template-columns: minmax( 0, 1fr ) auto;
+	grid-template-columns: minmax(0, 1fr) auto;
 	align-items: center;
 	gap: 8px;
 	margin: 12px 0 8px;
@@ -282,10 +294,9 @@
 	font-size: 13px;
 }
 
-.scouting-oidc-rule-dialog .scouting-oidc-selector-search .description:empty,
-#sol-search-status:empty,
-#sol-user-test-result:empty {
-	display: none;
+.scouting-oidc-rule-dialog .description {
+	margin: 8px 0 0;
+	color: #50575e;
 }
 
 .scouting-oidc-rule-dialog .scouting-oidc-selector-search .description {
@@ -293,9 +304,16 @@
 	overflow-wrap: anywhere;
 }
 
-.scouting-oidc-rule-dialog .description {
-	margin: 8px 0 0;
-	color: #50575e;
+#sol-user-test-result {
+	margin-top: 24px;
+	padding-top: 20px;
+	border-top: 1px solid #dcdcde;
+}
+
+.scouting-oidc-rule-dialog .scouting-oidc-selector-search .description:empty,
+#sol-search-status:empty,
+#sol-user-test-result:empty {
+	display: none;
 }
 
 .scouting-oidc-editor-actions {
@@ -319,17 +337,8 @@
 	padding: 20px 24px;
 }
 
-.scouting-oidc-user-test-body > p:first-child {
-	margin-top: 0;
-}
-
 .scouting-oidc-rule-dialog .scouting-oidc-user-test-body form {
 	padding: 0;
-}
-
-.scouting-oidc-user-test-body label {
-	display: block;
-	margin-bottom: 8px;
 }
 
 .scouting-oidc-user-test-body input[type="text"] {
@@ -347,12 +356,6 @@
 	margin: 0;
 	padding: 0;
 	border: 0;
-}
-
-#sol-user-test-result {
-	margin-top: 24px;
-	padding-top: 20px;
-	border-top: 1px solid #dcdcde;
 }
 
 #sol-user-test-result:focus {
@@ -403,10 +406,8 @@
 	margin-top: 8px;
 }
 
-.scouting-oidc-test-assignments th,
-.scouting-oidc-test-assignments td {
-	width: 33.333%;
-	overflow-wrap: anywhere;
+.scouting-oidc-user-test-body > p:first-child {
+	margin-top: 0;
 }
 
 .scouting-oidc-test-assignments table {
@@ -414,16 +415,18 @@
 }
 
 @media screen and (min-width: 1200px) {
+
 	.scouting-oidc-rule-dialog .scouting-oidc-condition-fields tbody {
-		grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}
 
 	.scouting-oidc-rule-dialog .scouting-oidc-outcome-fields tbody {
-		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 }
 
 @media (forced-colors: active) {
+
 	.scouting-oidc-rule-dialog .form-table select {
 		background-image: none;
 		appearance: auto;
@@ -431,9 +434,10 @@
 }
 
 @media screen and (max-width: 782px) {
+
 	.scouting-oidc-rule-dialog {
-		width: calc( 100% - 16px );
-		max-height: calc( 100% - 16px );
+		width: calc(100% - 16px);
+		max-height: calc(100% - 16px);
 	}
 
 	.scouting-oidc-rule-dialog .form-table select,
@@ -461,8 +465,9 @@
 }
 
 @media screen and (max-width: 480px) {
+
 	.scouting-oidc-rule-dialog .scouting-oidc-selector-search {
-		grid-template-columns: minmax( 0, 1fr );
+		grid-template-columns: minmax(0, 1fr);
 	}
 
 	.scouting-oidc-rule-dialog .scouting-oidc-selector-search .button {

@@ -250,6 +250,7 @@ class Auth {
 	 *
 	 * @since 1.0.0
 	 * @since 2.5.0 Retrieved profile claims from the UserInfo endpoint after subject binding.
+	 * @since 2.7.1 Handles standard OIDC errors only for a pending authorization request.
 	 */
 	public function scouting_oidc_auth_callback(): void {
 		// Check if we're on the front page.
@@ -279,12 +280,17 @@ class Auth {
 		$param_code              = is_string( $param_code_raw ) ? sanitize_text_field( $param_code_raw ) : null;
 
 		// Handle error callback parameters and forward them to wp-login.
-		if ( filter_has_var( INPUT_GET, 'error_description' ) && filter_has_var( INPUT_GET, 'hint' ) ) {
+		if ( ! empty( $param_error ) || ( filter_has_var( INPUT_GET, 'error_description' ) && filter_has_var( INPUT_GET, 'hint' ) ) ) {
+			if ( empty( $param_state ) || ! $this->oidc_client->has_state( $param_state ) ) {
+				Logger::warning( LogComponent::AUTH, 'Ignored error parameters without a matching pending OIDC authorization state.' );
+				return;
+			}
+
 			$this->oidc_client->unset_states_and_nonce();
 
 			$message = $param_message ?? ( $param_error ?? 'error' );
 
-			ErrorHandler::redirect_to_login_error( $param_error_description ?? '', $param_hint ?? '', $message, $param_error );
+			ErrorHandler::redirect_to_login_error( $param_error_description ?? '', $param_hint ?? $param_error_description ?? $param_error ?? '', $message, $param_error );
 		}
 
 		// Check if 'state' parameter is set in the URL.
@@ -382,7 +388,10 @@ class Auth {
 
 		$decision = RolesAuthorization::scouting_oidc_roles_authorization_get_user_decision( $user_id, $new_user );
 		if ( ! $decision['login_allowed'] ) {
-			Logger::warning( LogComponent::ROLES, 'Blocked OIDC login because the SOL role mapping does not allow access.', $user_id );
+			if ( ! RolesAuthorization::scouting_oidc_roles_authorization_revoke_user_access( $user_id ) ) {
+				Logger::error( LogComponent::ROLES, 'Could not remove plugin-managed WordPress roles after the SOL role mapping denied access.', $user_id );
+			}
+			Logger::warning( LogComponent::ROLES, 'Blocked OIDC login and ended existing WordPress sessions because the SOL role mapping does not allow access.', $user_id );
 			ErrorHandler::redirect_to_login_error(
 				'access_denied',
 				__( 'Your Scouts Online role is not permitted to access this site.', 'scouting-openid-connect' ),

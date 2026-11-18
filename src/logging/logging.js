@@ -21,7 +21,7 @@ document.addEventListener( 'DOMContentLoaded', function() {
 	const params = new URLSearchParams( window.location.search );
 	const hasExplicitSort = params.has( 'orderby' ) || params.has( 'order' );
 	if ( ! hasExplicitSort ) {
-		const createdAtHeader = document.querySelector( 'th#created_at' );
+		const createdAtHeader = document.querySelector( 'th#created-at' );
 		if ( createdAtHeader ) {
 			// Sets the default sorting parameters without reloading the page.
 			params.set( 'orderby', 'id' );

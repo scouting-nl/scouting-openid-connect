@@ -246,6 +246,23 @@ class RolesAuthorization {
 	}
 
 	/**
+	 * Ends WordPress sessions and removes plugin-managed roles after a denied SOL login.
+	 *
+	 * @since 2.7.1 Ends existing sessions when a SOL role mapping denies login.
+	 *
+	 * @param int $user_id WordPress user ID.
+	 * @return bool Whether plugin-managed roles were removed successfully.
+	 */
+	public static function scouting_oidc_roles_authorization_revoke_user_access( int $user_id ): bool {
+		\WP_Session_Tokens::get_instance( $user_id )->destroy_all();
+		if ( get_current_user_id() === $user_id ) {
+			wp_clear_auth_cookie();
+		}
+
+		return self::scouting_oidc_roles_authorization_apply_wordpress_roles( $user_id, array() );
+	}
+
+	/**
 	 * Gets active SOL assignments for a user.
 	 *
 	 * @since 2.7.0 Reads active SOL role assignments for authorization.

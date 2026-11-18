@@ -3,7 +3,7 @@ Contributors: jobvk
 Tags: scouting, scouting nederland, sol, openid connect, oidc
 Requires at least: 6.9.5
 Tested up to: 7.1
-Stable tag: 2.7.0
+Stable tag: 2.7.1
 Requires PHP: 8.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -26,7 +26,7 @@ Detailed administrator, deployment, privacy, data-lifecycle, troubleshooting, an
 
 == Installation ==
 
-Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scouting.nl).
+Make sure you have the role `webmaster` in [SOL 3 (mijn.scouting.nl)](https://mijn.scouting.nl).
 
 1. Go to [https://login.scouting.nl](https://login.scouting.nl), click on `Managed websites` and click on `Add OpenID Connect connection`.
 2. Add the name of your group/website.
@@ -53,6 +53,10 @@ Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scout
 13. Press `Save Settings`.
 14. Log out and try to log in with the Scouts Login button.
 
+Every scope requested in WordPress must also be enabled for this website under Managed websites at login.scouting.nl. If SOL 3 rejects a scope, enable it for that connection or remove it from WordPress if it is optional and unused. Keep openid, membership, profile, and email enabled in both places. Site Health and provider discovery cannot verify the permissions granted to your individual connection.
+
+To use SOL roles, enable the roles scope for your website at [Managed websites at login.scouting.nl](https://login.scouting.nl/managed-websites) as well as in the plugin. See the [plugin documentation](https://github.com/scouting-nl/scouting-openid-connect/wiki/) for setup guidance.
+
 == Site Health ==
 
 Go to Tools > Site Health in WordPress to inspect the plugin's configuration and operational status.
@@ -70,6 +74,10 @@ The Status tab checks:
 When cleanup is overdue, Site Health identifies whether automatic WP-Cron spawning is disabled and offers administrators a Run log cleanup now action. A manual run removes expired logs, records the successful run time, and recreates the daily schedule. The underlying WordPress cron or loopback problem must still be corrected for future automatic cleanup.
 
 The Info tab contains a Scouting OpenID Connect section that can be copied into a support report. It includes useful configuration, cache, user count, WooCommerce, logging, and cron details. Client secrets, user claims, log messages, and other personal data are never included.
+
+== Profile and access synchronization ==
+
+Profile data and enabled SOL roles are refreshed during SOL sign-in, not on return visits. A matching login deny rule ends existing WordPress sessions and removes plugin-managed roles, preserving manual roles and the account. The plugin does not independently detect SOL revocations. See the [wiki](https://github.com/scouting-nl/scouting-openid-connect/wiki/Account-Management-and-Authorization#offboarding-and-access-removal) for access limitations and [data-lifecycle details](https://github.com/scouting-nl/scouting-openid-connect/wiki/Users-and-Data-Lifecycle).
 
 == Frequently Asked Questions ==
 
@@ -98,6 +106,12 @@ Currently not, but this is planned for a future update of this plugin.
 4. Support Page
 
 == Changelog ==
+
+= 2.7.1 =
+* When a completed SOL login is denied by a role-mapping rule, existing WordPress sessions are ended and plugin-managed roles are removed. Manual roles and the account are preserved.
+* Improved guidance for rejected OpenID Connect scopes, with direct links to the SOL website-scope settings and plugin documentation.
+* Improved profile synchronization controls and notices, including clearer gender selection and limiting SOL profile fields to SOL-linked accounts.
+* Improved SOL Role Explorer navigation and filtering, with more organization and unit details.
 
 = 2.7.0 =
 * Added SOL role mapping with searchable organisation, unit, and role selectors, allow and deny rules, rule duplication and reordering, accessible dialogs, a read-only user tester, and contextual help. Unmatched users use the WordPress default role.

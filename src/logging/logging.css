@@ -7,11 +7,11 @@
 	vertical-align: top;
 }
 
-#scouting-oidc-logs-filter .wp-list-table .column-created_at,
+#scouting-oidc-logs-filter .wp-list-table .column-created-at,
 #scouting-oidc-logs-filter .wp-list-table .column-component,
 #scouting-oidc-logs-filter .wp-list-table .column-level,
-#scouting-oidc-logs-filter .wp-list-table .column-user_id,
-#scouting-oidc-logs-filter .wp-list-table .column-sol_id {
+#scouting-oidc-logs-filter .wp-list-table .column-user-id,
+#scouting-oidc-logs-filter .wp-list-table .column-sol-id {
 	width: 1%;
 	white-space: nowrap;
 }

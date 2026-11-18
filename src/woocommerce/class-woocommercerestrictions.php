@@ -167,8 +167,8 @@ class WooCommerceRestrictions {
 	public function scouting_oidc_woocommerce_restrictions_add_product_data_tab( array $tabs ): array {
 		$tabs['scouting_oidc'] = array(
 			'label'    => __( 'SOL Access', 'scouting-openid-connect' ),
-			'target'   => 'scouting_oidc_product_data',
-			'class'    => array( 'scouting_oidc_tab' ),
+			'target'   => 'scouting-oidc-product-data',
+			'class'    => array( 'scouting-oidc-tab' ),
 			'priority' => 80,
 		);
 
@@ -219,7 +219,7 @@ class WooCommerceRestrictions {
 		$organisation_ids         = array_column( $organisations, 'organisation_id' );
 		$role_ids                 = array_map( 'intval', array_column( $roles, 'role_id' ) );
 		?>
-		<div id="scouting_oidc_product_data" class="panel woocommerce_options_panel hidden">
+		<div id="scouting-oidc-product-data" class="panel woocommerce_options_panel hidden">
 			<div class="options_group">
 				<p id="scouting-oidc-login-help" class="scouting-oidc-access-description"><?php esc_html_e( 'Off by default. Require a signed-in SOL account to order this product, even when no organisation or role is selected. Guests and non-SOL accounts are blocked, including after logout with items already in the cart. Organisation and role rules apply only when the roles scope is enabled. The global setting under WooCommerce > Settings > Products can require SOL sign-in for all products and cannot be overridden here.', 'scouting-openid-connect' ); ?></p>
 				<?php $this->scouting_oidc_woocommerce_restrictions_render_checkbox( 'scouting_oidc_require_sol_login', 'scouting-oidc-login-help', __( 'Require SOL sign-in', 'scouting-openid-connect' ), 'yes' === get_post_meta( $product_id, self::REQUIRE_SOL_LOGIN_META_KEY, true ) ); ?>
@@ -624,8 +624,9 @@ class WooCommerceRestrictions {
 	 * Gets role choices for the WooCommerce product editor.
 	 *
 	 * @since 2.7.0 Lists SOL roles with organisation and unit context.
+	 * @since 2.7.1 Includes organisation unit metadata in role choices.
 	 *
-	 * @return array<int, array{role_id: int|string, role_name: string, organisation_unit_id: int|string, unit_name: string|null, organisation_id: string|null, organisation_name: string|null}> Roles.
+	 * @return array<int, array{role_id: int|string, role_name: string, organisation_unit_id: int|string, unit_name: string|null, unit_category: string|null, unit_nature: string|null, organisation_id: string|null, organisation_name: string|null}> Roles.
 	 */
 	private function scouting_oidc_woocommerce_restrictions_get_roles(): array {
 		global $wpdb;
@@ -636,7 +637,7 @@ class WooCommerceRestrictions {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT role.role_id, role.role_name, role.organisation_unit_id, unit.name AS unit_name, unit.organisation_id, organisation.name AS organisation_name FROM %i AS role LEFT JOIN %i AS unit ON unit.organisation_unit_id = role.organisation_unit_id LEFT JOIN %i AS organisation ON organisation.organisation_id = unit.organisation_id ORDER BY role.role_name, organisation.name, unit.name, role.role_id',
+				'SELECT role.role_id, role.role_name, role.organisation_unit_id, unit.name AS unit_name, unit.category AS unit_category, unit.nature AS unit_nature, unit.organisation_id, organisation.name AS organisation_name FROM %i AS role LEFT JOIN %i AS unit ON unit.organisation_unit_id = role.organisation_unit_id LEFT JOIN %i AS organisation ON organisation.organisation_id = unit.organisation_id ORDER BY role.role_name, organisation.name, unit.name, role.role_id',
 				$roles_table,
 				$units_table,
 				$organisations_table
@@ -651,13 +652,23 @@ class WooCommerceRestrictions {
 	 * Distinguishes identically named roles by their organisation and unit.
 	 *
 	 * @since 2.7.0 Describes the assignment context in both role selectors.
+	 * @since 2.7.1 Includes organisation unit metadata in role choices.
 	 *
 	 * @param array $role Synchronized role with joined context.
 	 * @return string Human-readable role choice.
 	 */
 	private function scouting_oidc_woocommerce_restrictions_describe_role( array $role ): string {
-		$organisation = $role['organisation_name'] ?? $role['organisation_id'] ?? __( 'Unknown organisation', 'scouting-openid-connect' );
-		$unit         = $role['unit_name'] ?? (string) $role['organisation_unit_id'];
+		$organisation  = $role['organisation_name'] ?? $role['organisation_id'] ?? __( 'Unknown organisation', 'scouting-openid-connect' );
+		$unit          = $role['unit_name'] ?? (string) $role['organisation_unit_id'];
+		$unit_metadata = array();
+		foreach ( array( 'unit_category', 'unit_nature' ) as $metadata_key ) {
+			if ( isset( $role[ $metadata_key ] ) && is_string( $role[ $metadata_key ] ) && '' !== $role[ $metadata_key ] ) {
+				$unit_metadata[] = $role[ $metadata_key ];
+			}
+		}
+		if ( ! empty( $unit_metadata ) ) {
+			$unit .= ' [' . implode( ' / ', $unit_metadata ) . ']';
+		}
 		/* translators: 1: SOL role name, 2: organisation name or ID, 3: unit name or ID, 4: role ID. */
 		return sprintf( __( '%1$s - %2$s / %3$s (%4$d)', 'scouting-openid-connect' ), $role['role_name'], $organisation, $unit, (int) $role['role_id'] );
 	}

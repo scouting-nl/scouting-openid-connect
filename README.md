@@ -12,7 +12,7 @@
 **Contributors:** [jobvk](https://github.com/jobvk) \
 **Requires at least:** 6.9.5 \
 **Tested up to:** 7.1 \
-**Stable tag:** 2.7.0 \
+**Stable tag:** 2.7.1 \
 **Tags:** scouting, scouting nederland, sol, openid connect, oidc \
 **License:** GPLv3 \
 **License URI:** <https://www.gnu.org/licenses/gpl-3.0.html>
@@ -78,7 +78,7 @@ and developer documentation is available in the
 
 ## Configuration
 
-Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scouting.nl).
+Make sure you have the role `webmaster` in [SOL 3 (mijn.scouting.nl)](https://mijn.scouting.nl).
 
 1. Go to [login.scouting.nl](https://login.scouting.nl), click on `Managed websites` and click on `Add OpenID Connect connection`.
 2. Add the name of your group/website.
@@ -104,6 +104,10 @@ Make sure you have the role `webmaster` in [mijn.scouting.nl](https://mijn.scout
 12. Fill in the General Settings.
 13. Press `Save Settings`.
 14. Log out and try to log in with the Scouts Login button.
+
+Every scope requested in WordPress must also be enabled for this website under **Managed websites** at **login.scouting.nl**. If SOL 3 rejects a scope, enable it for that connection or remove it from WordPress if it is optional and unused. Keep `openid`, `membership`, `profile`, and `email` enabled in both places. Site Health and provider discovery cannot verify the permissions granted to your individual connection.
+
+To use SOL roles, enable the `roles` scope for your website at [Managed websites at login.scouting.nl](https://login.scouting.nl/managed-websites) as well as in the plugin. See the [plugin documentation](https://github.com/scouting-nl/scouting-openid-connect/wiki/) for setup guidance.
 
 ## Shortcodes
 
@@ -134,6 +138,10 @@ The Status tab checks:
 * The daily log cleanup schedule and retention period.
 
 The Info tab contains a **Scouting OpenID Connect** section that can be copied into a support report. It includes useful configuration, cache, user count, WooCommerce, logging, and cron details. Client secrets, user claims, log messages, and other personal data are never included.
+
+## Profile and access synchronization
+
+Profile data and enabled SOL roles are refreshed during SOL sign-in, not on return visits. A matching login deny rule ends existing WordPress sessions and removes plugin-managed roles, preserving manual roles and the account. The plugin does not independently detect SOL revocations. See the [wiki](https://github.com/scouting-nl/scouting-openid-connect/wiki/Account-Management-and-Authorization#offboarding-and-access-removal) for access limitations and [data-lifecycle details](https://github.com/scouting-nl/scouting-openid-connect/wiki/Users-and-Data-Lifecycle).
 
 ## Frequently Asked Questions
 

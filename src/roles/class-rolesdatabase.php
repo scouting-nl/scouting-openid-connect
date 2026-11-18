@@ -23,7 +23,7 @@ class RolesDatabase {
 	 *
 	 * @since 2.7.0 Defines the initial role schema.
 	 */
-	private const SCHEMA_VERSION = '2';
+	private const SCHEMA_VERSION = '3';
 
 	/**
 	 * Option key used to persist the installed role schema version.
@@ -73,6 +73,8 @@ class RolesDatabase {
 			name VARCHAR(255) NOT NULL,
 			unit_type VARCHAR(255) NOT NULL,
 			game_section_type VARCHAR(255) NULL,
+			category VARCHAR(255) NULL,
+			nature VARCHAR(255) NULL,
 			last_seen_at DATETIME NOT NULL,
 			PRIMARY KEY  (organisation_unit_id),
 			KEY organisation_id (organisation_id),
