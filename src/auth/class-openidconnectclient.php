@@ -280,7 +280,7 @@ class OpenIDConnectClient {
 	 * @since 1.0.0
 	 * @since 2.2.0 Added the `$state` parameter.
 	 * @since 2.4.0 Bound token validation to state-specific nonce and PKCE values.
-	 * @since Unreleased Explains scope rejections returned by the token endpoint.
+	 * @since 2.7.1 Explains scope rejections returned by the token endpoint.
 	 *
 	 * @param string      $code The code from the authorization server.
 	 * @param string|null $state Optional. The OIDC state value. Default null.

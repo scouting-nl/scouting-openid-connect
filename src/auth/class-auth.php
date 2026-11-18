@@ -250,7 +250,7 @@ class Auth {
 	 *
 	 * @since 1.0.0
 	 * @since 2.5.0 Retrieved profile claims from the UserInfo endpoint after subject binding.
-	 * @since Unreleased Handles standard OIDC errors only for a pending authorization request.
+	 * @since 2.7.1 Handles standard OIDC errors only for a pending authorization request.
 	 */
 	public function scouting_oidc_auth_callback(): void {
 		// Check if we're on the front page.

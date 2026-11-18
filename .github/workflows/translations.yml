@@ -97,7 +97,7 @@ jobs:
            * Verify committed translation catalogs against current source messages.
            *
            * @package Scouting_OIDC
-           * @since Unreleased Adds workflow-based translation checks.
+           * @since 2.7.1 Adds workflow-based translation checks.
            */
 
           require 'phar://' . getenv( 'WP_CLI_PHAR' ) . '/vendor/autoload.php';

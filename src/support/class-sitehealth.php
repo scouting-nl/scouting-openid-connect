@@ -206,7 +206,7 @@ class SiteHealth {
 	 * Checks required scopes and scopes needed by enabled profile features.
 	 *
 	 * @since 2.5.0
-	 * @since Unreleased Clarifies that provider-side connection permissions cannot be verified locally.
+	 * @since 2.7.1 Clarifies that provider-side connection permissions cannot be verified locally.
 	 *
 	 * @return array Result data.
 	 */

@@ -131,7 +131,7 @@ class Settings_Oidc {
 	 * Renders the scopes field and explains the provider-side configuration.
 	 *
 	 * @since 1.0.0
-	 * @since Unreleased Associates scope configuration guidance with the field.
+	 * @since 2.7.1 Associates scope configuration guidance with the field.
 	 */
 	public function scouting_oidc_settings_oidc_scopes_callback(): void {
 		$value = get_option( 'scouting_oidc_scopes' );

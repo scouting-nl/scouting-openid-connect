@@ -4,12 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
-- Ends a user's existing WordPress sessions and removes plugin-managed roles when the SOL authentication flow is denied by a configured role mapping. Manual roles and accounts are preserved; the plugin cannot independently detect SOL revocations or check for them in the background.
-- Added direct links to login.scouting.nl website scope management and the plugin wiki, with explicit instructions to enable the roles scope in both places.
-- Clarified rejected OIDC scope errors for users and administrators, including authorization callbacks without a hint and token-endpoint rejections. Added scope configuration guidance in settings, Site Health, and the readmes.
-- Fixed the SOL gender profile dropdown to allow only the synchronized value while retaining native dropdown interaction and its white background. Added an accessible profile synchronization notice and limited SOL profile fields to SOL-linked accounts.
-- Added support for organisation parents and organisation unit category and nature from the Scouts Online API.
-- Redesigned the SOL Role Explorer with a lazy-loaded organisation tree and filtering without full page refreshes.
+## [[2.7.1](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.7.1)] - 18/11/2026
+
+- When a completed SOL login is denied by a role-mapping rule, existing WordPress sessions are ended and plugin-managed roles are removed. Manual roles and the account are preserved.
+- Improved guidance for rejected OpenID Connect scopes, with direct links to the SOL website-scope settings and plugin documentation.
+- Improved profile synchronization controls and notices, including clearer gender selection and limiting SOL profile fields to SOL-linked accounts.
+- Improved SOL Role Explorer navigation and filtering, with more organization and unit details.
 
 ## [[2.7.0](https://github.com/scouting-nl/scouting-openid-connect/releases/tag/2.7.0)] - 02/11/2026
 

@@ -1,13 +1,13 @@
 /**
  * Lazy loading SOL organisation tree for the role explorer.
  *
- * @since Unreleased Loads organisation descendants, units, and roles on demand.
+ * @since 2.7.1 Loads organisation descendants, units, and roles on demand.
  */
 
 /**
  * Initializes the progressively loaded SOL organisation tree.
  *
- * @since Unreleased Adds lazy loading and filter links to the role explorer.
+ * @since 2.7.1 Adds lazy loading and filter links to the role explorer.
  * @return {void}
  */
 function scoutingOidcInitializeRoleExplorer() {
@@ -26,7 +26,7 @@ function scoutingOidcInitializeRoleExplorer() {
 	/**
 	 * Creates a URL that filters assignments to the selected tree item.
 	 *
-	 * @since Unreleased Filters assignments from a tree selection.
+	 * @since 2.7.1 Filters assignments from a tree selection.
 	 * @param {Object} node Loaded tree item.
 	 * @return {string} Explorer URL.
 	 */
@@ -48,7 +48,7 @@ function scoutingOidcInitializeRoleExplorer() {
 	/**
 	 * Creates an expand button and child list for an organisation or unit.
 	 *
-	 * @since Unreleased Makes each tree branch independently expandable.
+	 * @since 2.7.1 Makes each tree branch independently expandable.
 	 * @param {Object}        node Loaded tree item.
 	 * @param {HTMLLIElement} item Parent list item.
 	 * @return {HTMLUListElement} Nested child list.
@@ -79,7 +79,7 @@ function scoutingOidcInitializeRoleExplorer() {
 	/**
 	 * Adds one loaded organisation, unit, or role to a branch.
 	 *
-	 * @since Unreleased Builds safe tree nodes from server data.
+	 * @since 2.7.1 Builds safe tree nodes from server data.
 	 * @param {Object}           node           Loaded tree item.
 	 * @param {HTMLUListElement} parentList     Parent list.
 	 * @param {string}           organisationId Owning organisation ID.
@@ -138,7 +138,7 @@ function scoutingOidcInitializeRoleExplorer() {
 	/**
 	 * Expands the selected path without loading unrelated branches.
 	 *
-	 * @since Unreleased Reveals filters supplied through links or direct URLs.
+	 * @since 2.7.1 Reveals filters supplied through links or direct URLs.
 	 * @param {HTMLUListElement} list Current tree level.
 	 * @return {void}
 	 */
@@ -159,7 +159,7 @@ function scoutingOidcInitializeRoleExplorer() {
 	/**
 	 * Updates the selected marker on already loaded tree links.
 	 *
-	 * @since Unreleased Keeps the preserved tree in sync with filter navigation.
+	 * @since 2.7.1 Keeps the preserved tree in sync with filter navigation.
 	 * @return {void}
 	 */
 	function updateSelection() {
@@ -179,7 +179,7 @@ function scoutingOidcInitializeRoleExplorer() {
 	/**
 	 * Refreshes assignments without replacing the open tree or the page.
 	 *
-	 * @since Unreleased Adds progressive filter navigation and browser history.
+	 * @since 2.7.1 Adds progressive filter navigation and browser history.
 	 * @param {string}  url         Filter URL.
 	 * @param {boolean} pushHistory Whether to add a browser history entry.
 	 * @param {boolean} focusResult Whether pagination should move focus to results.
@@ -250,7 +250,7 @@ function scoutingOidcInitializeRoleExplorer() {
 	/**
 	 * Closes every expanded branch below a collapsed organisation or unit.
 	 *
-	 * @since Unreleased Closes descendant branches with their parent.
+	 * @since 2.7.1 Closes descendant branches with their parent.
 	 * @param {HTMLUListElement} childList Branch contents.
 	 * @return {void}
 	 */
@@ -272,7 +272,7 @@ function scoutingOidcInitializeRoleExplorer() {
 	/**
 	 * Requests one tree level and appends it without replacing already loaded branches.
 	 *
-	 * @since Unreleased Fetches only the expanded organisation or unit.
+	 * @since 2.7.1 Fetches only the expanded organisation or unit.
 	 * @param {HTMLButtonElement} toggle    Branch control.
 	 * @param {HTMLUListElement}  childList Branch contents.
 	 * @return {Promise<void>} Completed loading operation.

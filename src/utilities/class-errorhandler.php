@@ -21,7 +21,7 @@ class ErrorHandler {
 	/**
 	 * Explains scope rejections without exposing arbitrary provider error details.
 	 *
-	 * @since Unreleased Adds actionable guidance for all rejected OIDC scopes.
+	 * @since 2.7.1 Adds actionable guidance for all rejected OIDC scopes.
 	 *
 	 * @param string $hint Provider hint or description.
 	 * @param string $error Error code returned by the provider.
@@ -49,7 +49,7 @@ class ErrorHandler {
 	 * Generates a login error URL with the given error details as query parameters.
 	 *
 	 * @since 2.3.0
-	 * @since Unreleased Replaces terse scope errors with user and administrator guidance.
+	 * @since 2.7.1 Replaces terse scope errors with user and administrator guidance.
 	 *
 	 * @param string      $error_description A description of the error that occurred.
 	 * @param string      $hint A hint to help the user understand the error or how to resolve it.
@@ -77,7 +77,7 @@ class ErrorHandler {
 	 * Redirects to login with a normalized error payload.
 	 *
 	 * @since 2.3.0
-	 * @since Unreleased Uses the same scope guidance when headers prevent redirecting.
+	 * @since 2.7.1 Uses the same scope guidance when headers prevent redirecting.
 	 *
 	 * @param string      $error_description A description of the error that occurred.
 	 * @param string      $hint A hint to help the user understand the error or how to resolve it.

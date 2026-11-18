@@ -1,7 +1,7 @@
 /**
  * WordPress CSS lint configuration.
  *
- * @since Unreleased Enforces WordPress CSS coding standards.
+ * @since 2.7.1 Enforces WordPress CSS coding standards.
  */
 
 import { createRequire } from 'node:module';

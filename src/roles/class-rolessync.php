@@ -224,7 +224,7 @@ class RolesSync {
 	 * Normalizes organisation units from UserInfo.
 	 *
 	 * @since 2.7.0 Normalizes UserInfo organisation units.
-	 * @since Unreleased Normalizes organisation unit category and nature.
+	 * @since 2.7.1 Normalizes organisation unit category and nature.
 	 *
 	 * @param array                                                                                                              $raw_organisation_units Raw UserInfo organisation units claim.
 	 * @param array<string, array{organisation_id: string, name: string, parent_ids: array<int, string>, has_parent_data: bool}> $organisations Normalized organisations.
@@ -603,7 +603,7 @@ class RolesSync {
 	 * Upserts a synchronized organisation unit.
 	 *
 	 * @since 2.7.0 Saves synchronized organisation units.
-	 * @since Unreleased Saves organisation unit category and nature.
+	 * @since 2.7.1 Saves organisation unit category and nature.
 	 *
 	 * @param string                                                                                                                                      $organisation_units_table Full organisation units table name.
 	 * @param int                                                                                                                                         $organisation_unit_id Organisation unit ID.

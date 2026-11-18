@@ -37,7 +37,7 @@ class RolesAdmin {
 	/**
 	 * Actual WordPress hook for the registered explorer page.
 	 *
-	 * @since Unreleased Loads the lazy SOL role tree only on the explorer page.
+	 * @since 2.7.1 Loads the lazy SOL role tree only on the explorer page.
 	 *
 	 * @var string|null
 	 */
@@ -869,7 +869,7 @@ class RolesAdmin {
 	/**
 	 * Formats an organisation unit name with any available category and nature.
 	 *
-	 * @since Unreleased Includes organisation unit metadata in mapping choices.
+	 * @since 2.7.1 Includes organisation unit metadata in mapping choices.
 	 *
 	 * @param array $unit Organisation unit or role row containing unit metadata.
 	 * @return string Formatted unit name.
